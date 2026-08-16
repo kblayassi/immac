@@ -1,0 +1,114 @@
+site_name: Mathématiques, SNT et NSI
+site_url: https://kblayassi.github.io/immac/
+theme:
+  name: material #pyodide-mkdocs-theme #OLD :material
+  font: 
+    text: Quicksand
+    code: Red Hat Mono
+
+  logo: assets/logo_immac_blanc.png #a resize
+  favicon: assets/favicon.svg
+  features: 
+    #- navigation.footer
+    - navigation.tabs
+    #- navigation.indexes #Atterir direct sur index
+    #- toc.integrate
+    - content.code.copy  # Optionnel, pour ajouter un bouton "Copier" sur les blocs de code
+    - content.code.annotate
+    - attr_list
+    - md_in_html
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/circle-half-full
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: octicons/sun-16
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: octicons/moon-16
+        name: Switch to system preference
+
+markdown_extensions: #for the emojis
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+          - name: mermaid
+            class: mermaid
+            format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+extra_css:
+  - stylesheets/extra.css
+  - https://unpkg.com/katex@0/dist/katex.min.css
+  - https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css
+
+extra_javascript:
+  - javascripts/katex.js
+  - https://unpkg.com/katex@0/dist/katex.min.js
+  - https://unpkg.com/katex@0/dist/contrib/auto-render.min.js
+  - javascripts/editor-module.js
+  - javascripts/bac_a_sable.js
+
+extra: 
+  social: 
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:kblayassi@immacespalion.org
+    - icon: fontawesome/solid/school
+      link: https://lyceeimmacespalion.org
+    - icon: material/instagram
+      link: https://www.instagram.com/immacespalion?igsh=aXhhZmVoYTNwaG1x
+  analytics:
+    provider: google
+    property: G-65TK1PRCWG
+  alternate:
+    - name: Français
+      link: https://kblayassi.github.io/immac/
+    - name: English
+      link: https://kblayassi-github-io.translate.goog/immac/?_x_tr_sl=fr&_x_tr_tl=en&_x_tr_hl=fr&_x_tr_pto=nui
+      lang: en
+    - name: Español
+      link: https://kblayassi-github-io.translate.goog/immac/?_x_tr_sl=fr&_x_tr_tl=es&_x_tr_hl=fr&_x_tr_pto=nui
+      lang: es
+    - name: Italian
+      link: https://kblayassi-github-io.translate.goog/immac/?_x_tr_sl=fr&_x_tr_tl=it&_x_tr_hl=fr&_x_tr_pto=nui
+      lang: it
+
+hooks: 
+  - plugins/exo_numbering.py
+
+plugins:
+  - search
+  #- pyodide_macros:         # plugin du thème Pyodide
+  #    on_error_fail: true   # conseillé par la doc
+  - macros
+  - mkdocs-nav-weight
+  - glightbox:
+      skip_classes:
+        - skip_light_box

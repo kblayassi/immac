@@ -1,0 +1,14 @@
+# Build MkDocs (regénéré par le CI, cf. .github/workflows/ci.yml)
+site/
+.cache/
+
+# Dépendances (réinstallables : npm install / pip install)
+node_modules/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# macOS
+.DS_Store

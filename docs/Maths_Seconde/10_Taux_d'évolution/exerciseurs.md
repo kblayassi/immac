@@ -1,0 +1,49 @@
+---
+title: Exerciseurs
+weight: 2
+---
+
+# Exerciseurs
+
+Vous trouverez sur cette page plusieurs exerciseurs qui vous permettrons de travailler les objectifs de ce chapitre. 
+
+* Connaitre les différentes écritures d'une proportion
+* Calculer une proportion ou appliquer un pourcentage
+* Travailler sur des situations mettant en jeu des pourcentages de pourcentages
+* Calculer un CM à partir d'un taux d'évolution et inversement
+* Calculer une évolution en pourcentages, une valeur finale ou une valeur initiale
+* Déterminer un taux d'évolution global
+* Déterminer un taux d'évolution réciproque
+
+---
+
+#### Connaitre les différentes écritures d'une proportion
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a29491816278e13380f22272e13bc133511a60f2717ea0f1d17e612c72d0a14572922132b26f117e60f2f181a2a762e5e0f1e2d0a13ff133612d113350f2d29592a7617f82bab2b3a29592cce0e8714c714c7130d27c80e8714c714c71305294b27de139e139e1a400e8714c714d6169727c32d962cf2139e139e13990e8714c714d813f2139e139e197e26ff29592e0727c80e8714c714c713050e8714c715d22b3e0e8714c714c713112cd82c102cdd2954006e" class="exerciseur" allowfullscreen></iframe>
+
+#### Calculer une proportion ou appliquer un pourcentage
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a294917eb133725fa0f22272e13bc133511a70f2717ea0f1d17e612c72d0a14572922132b26f117e60f2f181a2a762e5e0f1e2d0a13ff133612d113350f2d29592a7617f8263127022a762c8e139e139e13992e03277a139e139e13992c132bad2baf2d9a2bab0e8714c714c713102dba139e139e139926352c0d29562dfa2c8e139e139e13992e030e8714c714c713112bb22ccc27c32d922882" class="exerciseur" allowfullscreen></iframe>
+
+
+#### Travailler sur des situations mettant en jeu des pourcentages de pourcentages
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a294917e527ea27220f22272e13bc133511a80f2717ea0f1d17e612c72c682ab212c72922132b26f117e60f2f181a2a762e5e0f1e2d0a13ff133612d113350f2d29592a7618092cca2e5a29512a762c8e139e139e13992d422c8e139e139e139927562cf2139e139e13992d362da6263929542b4c0e8714c714c7130e27c92d922b4d0e8714c714c713062afe139e139e139929ae2dba139e139e139927562cf2139e139e13992c102e0726f22b4d262c27c80e8714c714c71305277a139e139e13992c102e0726f22b4d262c27c8" class="exerciseur" allowfullscreen></iframe>
+
+
+#### Calculer un CM à partir d'un taux d'évolution et inversement
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a294917e514f926600f22272e13bc133611a60f2717ea0f1d17e612c72d0a132b2922132b26f117e60f2f181a2a762e5e0f1e2d0a13ff133612d113350f2d29592a7617f8263127022a762c8e139e139e13992e030e8714c714c712e41e1a139e139e13990e8714c714d813f2139e139e19750e8714c714c7131126372d9a2c8e139e139e13992716139e13a02e030e8714c714c71315263a2ee6139e139e13992716139e13a00e8714c714d813f2139e139e197e2e682a862d9a2bab0e8714c714c713062d56139e139e139929532e5e2cdc27c227c30074" class="exerciseur" allowfullscreen></iframe>
+
+#### Calculer une évolution en pourcentages, une valeur finale ou une valeur initiale
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a294917e6139d14650f22272e13bc133611a70f2717ea0f1d17e612c72d0a14572922132b26f117e60f2f181a2a762e5e0f1e2d0a13ff133612d113350f2d29592a7617f8263127022a762c8e139e139e13992e03277a139e139e13990e8714c714d813f2139e139e197e2e682a862d9a2bab0e8714c714c713062afe139e139e13992c102e0726f22b4d262c27c80e8714c714c71a32139e139e13992e03277a139e139e13992e5a2a762e070e8714c714c7130729532631277a139e139e13992bb20e8714c714c713162b3e0e8714c714c71317263127ca2c8e139e139e13992953295929462a76" class="exerciseur" allowfullscreen></iframe>
+
+
+#### Déterminer un taux d'évolution global
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a294917e5133d27ec0f22272e13bc133711a70f2717ea0f1d17e612c72d0a132b2922132b26f117e60f2f181a2a762e5e0f1e2d0a13ff133612d113350f2d29592a7617f90e8714c714d813f2139e139e197e2d962cd6295327c70e8714c714c713162afe139e139e13992d922e0d0e8714c714c713050e8714c71582139e139e1a400e8714c714d6169b2ba92e0929542afe139e139e139928892b9f2631" class="exerciseur" allowfullscreen></iframe>
+
+#### Déterminer un taux d'évolution réciproque
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a294917ea12da27530f22272e13bc133711a80f2717ea0f1d17e612c72d0a14572922132b26f117e60f2f181a2a762e5e0f1e2d0a13ff133612d113350f2d29592a7617f90e8714c714d813f2139e139e197e2d962cd6295327c70e8714c714c713162afe139e139e13992d922e0d0e8714c714c713050e8714c71582139e139e1a400e8714c714d6169b2ba92e0929542afe139e139e13992c8e139e139e1a400e8714c714d6168829552cd82c7a0065" class="exerciseur" allowfullscreen></iframe>

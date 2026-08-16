@@ -1,0 +1,32 @@
+---
+weight: 0
+---
+
+# Pré-requis
+
+Vous trouverez sur cette page plusieurs exerciseurs qui vous permettrons de travailler les pré-requis de ce chapitre. 
+
+- Dresser le tableau de variation d'une fonction
+- Étudier le signe d'une fonction affine
+- Étudier le signe d'une fonction du second degré
+- Calculer l'expression d'une fonction dérivée
+
+---
+
+#### Dresser le tableau de variation d'une fonction
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a294917e514f714c70f22272e13af13fd11a60f2717ea0f1d17e612c72d0a132b26f117e60f2f181a2a762e5e0f1e2d0a13ff133612d112c72d9a2d9d27921ae327c82d322c942a76112126272a76263a111127802e5a2cd2263929542b042716139e13a02e03278028282b3c2d9a2bab" class="exerciseur" allowfullscreen></iframe>
+
+#### Étudier le signe d'une fonction affine
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a294917e5142f158e0f22272e13af133511aa0f2717ea0f1d17e612c72d0a13f32cff17e60f1c272e12c72e3627c127cb277b27c817e8139a133512d10f2d29592a7617da139e1a400e8714cd16992df9294a2c942a761120294c2b3e11110e8714c715d22b3e11132bab270129542b04262b28222b3e" class="exerciseur" allowfullscreen></iframe>
+
+
+#### Étudier le signe d'une fonction du second degré
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a294917e6155f165c0f22272e13461dc31396151f2b1614bb272e13350f2c17e611a70f1c272e132b2e3627c127cb277b27c817e8139a133512d10f2d29592a7617da139e1a400e8714cd16992df9294a2c942a761120294c2b3e11110e8714c715d22b3e11132bab270129542b042766112027b82bab271c2756288f0e8714d813f2139e197e" class="exerciseur" allowfullscreen></iframe>
+
+
+#### Calculer l'expression d'une fonction dérivée
+
+<iframe src="https://coopmaths.fr/alea/?EEEE2e0a2949181a268d15fa0f22272e13461e8a145e132b2b16132b272e13350f2c17ed0f1c272e132b2e0a2949181a26bd15f90f22272e13461e8a145e13f32b16138f272e13350f2c17eb0f2c13a62da32dfa0f2c140a2da32dfa0f1c272e132b2e0a2949181615f426bd0f22272e13461e8a145e14572b16138f272e13350f2c17ea0f1c272e132b2e0a294917e625fb13070f22272e13461e8a145e14bb2e0a2949181713ff27eb0f22272e13461e8a145e151f2b1613f3272e13350f2c17ea0f2c13a6281a2a84277b26f117e60f2e2dfe272e140016562717294917e61993133911ac0f2717e80f1d17e612c72d0a281a2a84277b26f117e60f2f181a2a762e5e0f1e2d0a13fe133612d112c72d9a2d9d27921a6e2a742e0127c711190e8714c715c22f312cce2d4029542b042716139e13a02e03278028282b3c2d9a2bab11110e8714d813f2139e197e2cd22e1e139e1a400e8714d6168a" class="exerciseur" allowfullscreen></iframe>

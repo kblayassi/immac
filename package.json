@@ -1,0 +1,31 @@
+{
+  "name": "mkdocs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kblayassi/immac.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kblayassi/immac/issues"
+  },
+  "homepage": "https://github.com/kblayassi/immac#readme",
+  "dependencies": {
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/lang-html": "^6.4.11",
+    "@codemirror/state": "^6.5.3",
+    "@codemirror/view": "^6.39.6",
+    "codemirror": "^6.0.2"
+  }
+}

@@ -1,0 +1,575 @@
+
+/* Dark mode */
+[data-md-color-scheme="slate"] {
+    --md-default-bg-color: #141414;
+    --md-primary-fg-color:  #573D91;
+    --md-accent-color: #FF5722 ;
+  }
+
+/* Light mode */
+[data-md-color-scheme="default"] {
+    --md-primary-fg-color: #573D91;
+    --md-accent-color: #FF5722;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+  border-width: 1px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* Appliquer la taille de police par défaut du site aux admonitions */
+.md-typeset .admonition,
+.md-typeset details {
+  font-size: inherit; /* Utilise la taille de police normale du site */
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+}
+
+/* Assurer que les titres des admonitions ont également une taille cohérente */
+.md-typeset .admonition-title,
+.md-typeset summary {
+  font-size: inherit; /* Même taille que le texte standard */
+  font-weight: bold; /* Garde le titre en gras pour le différencier */
+}
+
+/* Arrondir les bandeaux colorés (titres) des admonitions */
+.md-typeset .admonition > .admonition-title {
+  border-radius: 18px 18px 0 0 !important; /* Forcer l'arrondi des coins supérieurs */
+  overflow: hidden;
+  background-clip: padding-box;
+  z-index: 1; /* S'assurer que le bandeau reste au-dessus */
+}
+
+/* Changer la couleur des liens normaux */
+.md-typeset a {
+  color: #7750cd !important; /* Couleur personnalisée pour les liens */
+  text-decoration: none; /* Supprime le soulignement */
+}
+
+/* Changer la couleur des liens au survol */
+.md-typeset a:hover {
+  color: #5100ff  !important; /* Couleur au survol */
+  text-decoration: none; /* Ajoute un soulignement au survol */
+}
+
+/* Masquer le TOC pour la page "EDS Mathématiques" */
+[data-md-file="Maths_1e/index.md"] .md-sidebar__inner {
+  display: none;
+}
+
+
+
+/*IMAGES des Admonitions*/
+:root {
+  /* Définir l'icône personnalisée pour l'admonition méthode */
+  --md-admonition-icon--methode: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M469.3 19.3l23.4 23.4c25 25 25 65.5 0 90.5l-56.4 56.4L322.3 75.7l56.4-56.4c25-25 65.5-25 90.5 0zM44.9 353.2L299.7 98.3 413.7 212.3 158.8 467.1c-6.7 6.7-15.1 11.6-24.2 14.2l-104 29.7c-8.4 2.4-17.4 .1-23.6-6.1s-8.5-15.2-6.1-23.6l29.7-104c2.6-9.2 7.5-17.5 14.2-24.2zM249.4 103.4L103.4 249.4 16 161.9c-18.7-18.7-18.7-49.1 0-67.9L94.1 16c18.7-18.7 49.1-18.7 67.9 0l19.8 19.8c-.3 .3-.7 .6-1 .9l-64 64c-6.2 6.2-6.2 16.4 0 22.6s16.4 6.2 22.6 0l64-64c.3-.3 .6-.7 .9-1l45.1 45.1zM408.6 262.6l45.1 45.1c-.3 .3-.7 .6-1 .9l-64 64c-6.2 6.2-6.2 16.4 0 22.6s16.4 6.2 22.6 0l64-64c.3-.3 .6-.7 .9-1L496 350.1c18.7 18.7 18.7 49.1 0 67.9L417.9 496c-18.7 18.7-49.1 18.7-67.9 0l-87.4-87.4L408.6 262.6z"/></svg>');
+  --md-admonition-icon--definition: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 448c141.4 0 256-93.1 256-208S397.4 32 256 32S0 125.1 0 240c0 45.1 17.7 86.8 47.7 120.9c-1.9 24.5-11.4 46.3-21.4 62.9c-5.5 9.2-11.1 16.6-15.2 21.6c-2.1 2.5-3.7 4.4-4.9 5.7c-.6 .6-1 1.1-1.3 1.4l-.3 .3c0 0 0 0 0 0c0 0 0 0 0 0s0 0 0 0s0 0 0 0c-4.6 4.6-5.9 11.4-3.4 17.4c2.5 6 8.3 9.9 14.8 9.9c28.7 0 57.6-8.9 81.6-19.3c22.9-10 42.4-21.9 54.3-30.6c31.8 11.5 67 17.9 104.1 17.9zM128 208a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm128 0a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm96 32a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg>');
+  --md-admonition-icon--histoire: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M240.1 4.2c9.8-5.6 21.9-5.6 31.8 0l171.8 98.1L448 104l0 .9 47.9 27.4c12.6 7.2 18.8 22 15.1 36s-16.4 23.8-30.9 23.8L32 192c-14.5 0-27.2-9.8-30.9-23.8s2.5-28.8 15.1-36L64 104.9l0-.9 4.4-1.6L240.1 4.2zM64 224l64 0 0 192 40 0 0-192 64 0 0 192 48 0 0-192 64 0 0 192 40 0 0-192 64 0 0 196.3c.6 .3 1.2 .7 1.8 1.1l48 32c11.7 7.8 17 22.4 12.9 35.9S494.1 512 480 512L32 512c-14.1 0-26.5-9.2-30.6-22.7s1.1-28.1 12.9-35.9l48-32c.6-.4 1.2-.7 1.8-1.1L64 224z"/></svg>');
+  --md-admonition-icon--exopapier: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>');
+  --md-admonition-icon--exoordi: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M128 32C92.7 32 64 60.7 64 96l0 256 64 0 0-256 384 0 0 256 64 0 0-256c0-35.3-28.7-64-64-64L128 32zM19.2 384C8.6 384 0 392.6 0 403.2C0 445.6 34.4 480 76.8 480l486.4 0c42.4 0 76.8-34.4 76.8-76.8c0-10.6-8.6-19.2-19.2-19.2L19.2 384z"/></svg>');
+  --md-admonition-icon--python: url("../assets/python.svg");
+  --md-admonition-icon--expert: url("../assets/brain_connected.svg");
+  --md-admonition-icon--propriete: url("../assets/gears-solid.svg");
+  --md-admonition-icon--html: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M128 96L162.9 491.8L319.5 544L477.1 491.8L512 96L128 96zM436.2 223.9L252.4 223.9L256.5 273.3L432.1 273.3L418.5 421.7L320.6 448.7L320.6 449L319.5 449L220.8 421.7L214.8 345.9L262.5 345.9L266 384L319.5 398.5L373.2 384L379.2 321.8L212.3 321.8L199.5 176.2L440.6 176.2L436.2 223.9z"/></svg>');
+  --md-admonition-icon--css: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M128 96L162.9 491.8L320 544L477.1 491.8L512 96L128 96zM441.1 176L436.3 223.3L321 272.6L320.7 272.7L432.2 272.7L419.4 419.3L321.2 448L222.4 418.8L216 344.9L264.9 344.9L268.1 383.2L320.7 396.5L375.4 381.1L379.1 319.5L212.8 319L212.8 318.9L212.6 319L209 272.7L321.1 226L327.6 223.3L204.7 223.3L198.9 176L441.1 176z"/></svg>');
+  --md-admonition-icon--editeur: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M128 128C128 92.7 156.7 64 192 64L341.5 64C358.5 64 374.8 70.7 386.8 82.7L493.3 189.3C505.3 201.3 512 217.6 512 234.6L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128zM336 122.5L336 216C336 229.3 346.7 240 360 240L453.5 240L336 122.5zM282.2 359.6C290.8 349.5 289.7 334.4 279.6 325.8C269.5 317.2 254.4 318.3 245.8 328.4L197.8 384.4C190.1 393.4 190.1 406.6 197.8 415.6L245.8 471.6C254.4 481.7 269.6 482.8 279.6 474.2C289.6 465.6 290.8 450.4 282.2 440.4L247.6 400L282.2 359.6zM394.2 328.4C385.6 318.3 370.4 317.2 360.4 325.8C350.4 334.4 349.2 349.6 357.8 359.6L392.4 400L357.8 440.4C349.2 450.5 350.3 465.6 360.4 474.2C370.5 482.8 385.6 481.7 394.2 471.6L442.2 415.6C449.9 406.6 449.9 393.4 442.2 384.4L394.2 328.4z"/></svg>');
+}
+
+/*Admonition METHODE*/
+.md-typeset .admonition.methode,
+.md-typeset details.methode {
+  border-color: #009900; /* Couleur de la bordure */
+}
+
+.md-typeset .methode > .admonition-title,
+.md-typeset .methode > summary {
+  background-color: rgba(0, 153, 0, 0.1); /* Couleur de l'arrière-plan du titre */
+}
+
+.md-typeset .methode > .admonition-title::before,
+.md-typeset .methode > summary::before {
+  background-color: #009900; /* Couleur de l'icône */
+  -webkit-mask-image: var(--md-admonition-icon--methode);
+          mask-image: var(--md-admonition-icon--methode);
+}
+
+/*Admonition DEFINITION*/
+.md-typeset .admonition.definition,
+.md-typeset details.definition {
+  border-color: #107fb3;
+}
+
+.md-typeset .definition > .admonition-title,
+.md-typeset .definition > summary {
+  background-color: rgba(16, 157, 179, 0.1);
+}
+
+.md-typeset .definition > .admonition-title::before,
+.md-typeset .definition > summary::before {
+  background-color: #107fb3;
+  -webkit-mask-image: var(--md-admonition-icon--definition);
+          mask-image: var(--md-admonition-icon--definition);
+}
+
+/*Admonition HISTOIRE*/
+.md-typeset .admonition.histoire,
+.md-typeset details.histoire {
+  border-color:#E67E22; /* Bordure orange */
+}
+
+.md-typeset .histoire > .admonition-title,
+.md-typeset .histoire > summary {
+  background-color: rgba(230, 126, 34, 0.1) 
+}
+
+.md-typeset .histoire > .admonition-title::before,
+.md-typeset .histoire > summary::before {
+  background-color: #E67E22; /* Fond de l'icône */
+  -webkit-mask-image: var(--md-admonition-icon--histoire);
+          mask-image: var(--md-admonition-icon--histoire);
+  mask-size: contain;
+}
+
+/*Admonition EXOPAPIER*/
+.md-typeset .admonition.exopapier,
+.md-typeset details.exopapier {
+  border-color: #77db2b;
+}
+
+.md-typeset .exopapier > .admonition-title,
+.md-typeset .exopapier > summary {
+  background-color: #77db2b1a;
+}
+
+.md-typeset .exopapier > .admonition-title::before,
+.md-typeset .exopapier > summary::before {
+  background-color: #77db2b;
+  -webkit-mask-image: var(--md-admonition-icon--exopapier);
+          mask-image: var(--md-admonition-icon--exopapier);
+}
+
+/*Admonition EXOORDI*/
+.md-typeset .admonition.exoordi,
+.md-typeset details.exoordi {
+  border-color: #77db2b;
+}
+
+.md-typeset .exoordi > .admonition-title,
+.md-typeset .exoordi > summary {
+  background-color: #77db2b1a;
+}
+
+.md-typeset .exoordi > .admonition-title::before,
+.md-typeset .exoordi > summary::before {
+  background-color: #77db2b;
+  -webkit-mask-image: var(--md-admonition-icon--exoordi);
+          mask-image: var(--md-admonition-icon--exoordi);
+}
+
+/*Admonition PYTHON*/
+.md-typeset .admonition.python,
+.md-typeset details.python {
+  border-color: #F7C539;
+}
+
+.md-typeset .python > .admonition-title,
+.md-typeset .python > summary {
+  background-color: #f7c43929;
+}
+
+.md-typeset .python > .admonition-title::before,
+.md-typeset .python > summary::before {
+  background-color: #F7C539;
+  -webkit-mask-image: var(--md-admonition-icon--python);
+          mask-image: var(--md-admonition-icon--python);
+}
+
+/*Admonition EXPERT*/
+.md-typeset .admonition.expert,
+.md-typeset details.expert {
+  border-color: #f11936;
+}
+
+.md-typeset .expert > .admonition-title,
+.md-typeset .expert > summary {
+  background-color: #f1193617;
+}
+
+.md-typeset .expert > .admonition-title::before,
+.md-typeset .expert > summary::before {
+  background-color: #f11936;
+  -webkit-mask-image: var(--md-admonition-icon--expert);
+          mask-image: var(--md-admonition-icon--expert);
+}
+
+/*Admonition HTML*/
+.md-typeset .admonition.html,
+.md-typeset details.html {
+  border-color: #f06529;
+}
+
+.md-typeset .html > .admonition-title,
+.md-typeset .html > summary {
+  background-color: rgba(240, 101, 41, 0.1);
+}
+
+.md-typeset .html > .admonition-title::before,
+.md-typeset .html > summary::before {
+  background-color: #f06529;
+  -webkit-mask-image: var(--md-admonition-icon--html);
+          mask-image: var(--md-admonition-icon--html);
+}
+
+/*Admonition CSS*/
+.md-typeset .admonition.css,
+.md-typeset details.css {
+  border-color: #2965f1;
+}
+
+.md-typeset .css > .admonition-title,
+.md-typeset .css > summary {
+  background-color: rgba(41, 101, 241, 0.1);
+}
+
+.md-typeset .css > .admonition-title::before,
+.md-typeset .css > summary::before {
+  background-color: #2965f1;
+  -webkit-mask-image: var(--md-admonition-icon--css);
+          mask-image: var(--md-admonition-icon--css);
+}
+
+/*Admonition editeurHTML*/
+.md-typeset .admonition.editeurHTML,
+.md-typeset details.editeurHTML {
+  border-color: #e34c26;
+}
+
+.md-typeset .editeurHTML > .admonition-title,
+.md-typeset .editeurHTML > summary {
+  background-color: #f1193617;
+}
+
+.md-typeset .editeurHTML > .admonition-title::before,
+.md-typeset .editeurHTML > summary::before {
+  background-color: #e34c26;
+  -webkit-mask-image: var(--md-admonition-icon--editeur);
+          mask-image: var(--md-admonition-icon--editeur);
+}
+
+/*Admonition PROPRIETE*/
+.md-typeset .admonition.propriete,
+.md-typeset details.propriete {
+  border-color: #f11936;
+}
+
+.md-typeset .propriete > .admonition-title,
+.md-typeset .propriete > summary {
+  background-color: #f1193617;
+}
+
+.md-typeset .propriete > .admonition-title::before,
+.md-typeset .propriete > summary::before {
+  background-color: #f11936;
+  -webkit-mask-image: var(--md-admonition-icon--propriete);
+          mask-image: var(--md-admonition-icon--propriete);
+}
+
+/* */
+
+iframe.exerciseur {
+  width: 100%;
+  height: 650px;
+  border: 1px solid #216C9A; 
+  border-radius:18px;
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+}
+
+img.image {
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+  border-radius: 18px; 
+  border: 1px solid #5c1aac; 
+  max-width: 100%;
+}
+
+
+/* ✅ Bloc avec numéros de ligne */
+.md-typeset .highlight {
+  background-color: rgba(192, 192, 192, 0.1);
+  border-radius: 18px;
+  border: 1px solid #dedede;
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Nettoyage interne sans toucher aux marges latérales */
+.md-typeset .highlight pre,
+.md-typeset .highlight code,
+.md-typeset .highlighttable,
+.md-typeset .highlighttable td {
+  background: transparent !important;
+  padding-top: 10 !important;
+  padding-bottom: 10 !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.md-typeset pre,
+.md-typeset .highlight {
+  margin-bottom: 0.5em;
+}
+
+
+
+
+.md-typeset [data-html-playground]{
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr; /* 1 colonne par défaut */
+}
+
+.md-typeset [data-html-playground] .toolbar{
+  display:flex;
+  font-size: 12px;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
+
+.md-typeset [data-html-playground] .hint{
+  opacity:.75;
+  font-size:.95rem;
+}
+
+.md-typeset [data-html-playground] .grid{
+  display:grid;
+  gap:12px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px){
+  .md-typeset [data-html-playground]{
+    grid-template-columns: 1fr;
+  }
+}
+
+.md-typeset [data-html-playground] .panel .label{
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.md-typeset [data-html-playground] iframe.preview{
+  width:100%;
+  min-height:340px;
+  border-radius: 18px;
+  border: 1px solid #dedede;
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+}
+
+/* hauteur de CodeMirror */
+.md-typeset [data-html-playground] .cm-editor{
+  height: 340px;
+  background-color: rgba(192, 192, 192, 0.1);
+  border-radius: 18px;
+  border: 1px solid #dedede;
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  font-size: 12px;
+}
+
+.btn{
+  padding: 10px 16px;
+  border: none;
+  border-radius: 999px;     /* full rounded */
+  cursor: pointer;
+  font-weight: 600;
+  background-color: #722dc093;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.btn:hover{
+  transform: scale(1.1);   /* grandit légèrement */
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active{
+  transform: scale(0.98);   /* petit “clic” */
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0);
+}
+
+.btn:focus-visible{
+  outline: 3px solid #b542db;
+  outline-offset: 3px;
+}
+
+/* Empêche le scroll horizontal global */
+.md-typeset [data-html-playground]{
+  max-width: 100%;
+  /*overflow-x: hidden;*/
+}
+
+/* CRUCIAL en grid : autoriser les colonnes à rétrécir */
+.md-typeset [data-html-playground] .panel,
+.md-typeset [data-html-playground] .editor{
+  min-width: 0;
+}
+
+/* CodeMirror : autoriser le contenu à ne pas élargir le conteneur */
+.md-typeset [data-html-playground] .cm-editor,
+.md-typeset [data-html-playground] .cm-scroller{
+  max-width: 100%;
+}
+
+/* Si une ligne est très longue, on scroll à l’intérieur de l’éditeur (pas la page) */
+.md-typeset [data-html-playground] .cm-scroller{
+  overflow-x: auto;
+}
+
+/* L'iframe ne doit jamais dépasser */
+.md-typeset [data-html-playground] iframe.preview{
+  display: block;
+  max-width: 100%;
+}
+
+
+
+
+
+/**---- Structure html/css/js de Nicolas Buyle-Bodin, groupe IREM-ISN de Lyon, sous licence Creative Commons BY-NC-SA ----**/
+/**---- Respect de la Paternité - Pas d'utilisation commerciale - Partage des conditions initiales à l'identique ----**/
+
+#bac_a_sable input[type="color"]{
+  width: 44px;
+  height: 30px;
+  border-radius: 999px;
+  cursor: pointer;
+  background: transparent;
+  vertical-align: middle;
+  display: inline-block;
+  transform-origin: center;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+#bac_a_sable input[type="color"]:hover{
+  transform: scale(1.1);   /* grandit légèrement */
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+}
+
+#bac_a_sable input[type="color"]:active{
+  transform: scale(0.98);   /* petit “clic” */
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0);
+}
+
+#bac_a_sable input[type="color"]:focus-visible{
+  outline: 3px solid #f06529;
+  outline-offset: 3px;
+}
+
+/* Le carré interne (Chrome/Safari) */
+#bac_a_sable input[type="color"]::-webkit-color-swatch-wrapper{
+  padding: 0;
+  border-radius: 999px;
+}
+#bac_a_sable input[type="color"]::-webkit-color-swatch{
+  border: 2px solid rgba(0,0,0,.15);
+  border-radius: 999px;
+}
+
+/* Firefox */
+#bac_a_sable input[type="color"]::-moz-color-swatch{
+  border: 2px solid rgba(0,0,0,.15);
+  border-radius: 999px;
+}
+
+
+/* =========================
+   HTML + CSS playground
+   ========================= */
+
+.md-typeset [data-htmlcss-playground]{
+  display: grid;
+  gap: 12px;
+  max-width: 100%;
+}
+
+/* grille interne : 2 colonnes sur grand écran, sinon 1 */
+.md-typeset [data-htmlcss-playground] .grid{
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px){
+  .md-typeset [data-htmlcss-playground] .grid{
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* le rendu prend toute la largeur */
+  .md-typeset [data-htmlcss-playground] .panel-preview{
+    grid-column: 1 / -1;
+  }
+}
+
+.md-typeset [data-htmlcss-playground] .panel .label{
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* toolbar sous le rendu */
+.md-typeset [data-htmlcss-playground] .toolbar{
+  display:flex;
+  font-size: 12px;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
+
+/* iframe preview */
+.md-typeset [data-htmlcss-playground] iframe.preview{
+  width:100%;
+  min-height:340px;
+  border-radius: 18px;
+  border: 1px solid #dedede;
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+  display: block;
+  max-width: 100%;
+}
+
+/* CodeMirror */
+.md-typeset [data-htmlcss-playground] .cm-editor{
+  height: 340px;
+  background-color: rgba(192, 192, 192, 0.1);
+  border-radius: 18px;
+  border: 1px solid #dedede;
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  font-size: 12px;
+}
+
+/* éviter que la grid déborde */
+.md-typeset [data-htmlcss-playground] .panel,
+.md-typeset [data-htmlcss-playground] .editor{
+  min-width: 0;
+}
+
+.md-typeset [data-htmlcss-playground] .cm-editor,
+.md-typeset [data-htmlcss-playground] .cm-scroller{
+  max-width: 100%;
+}
+
+.md-typeset [data-htmlcss-playground] .cm-scroller{
+  overflow-x: auto;
+}
