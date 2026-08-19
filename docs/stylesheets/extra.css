@@ -573,3 +573,219 @@ img.image {
 .md-typeset [data-htmlcss-playground] .cm-scroller{
   overflow-x: auto;
 }
+
+/* =========================
+   Playground Python
+   ========================= */
+
+.md-typeset [data-python-playground]{
+  display: grid;
+  gap: 12px;
+  max-width: 100%;
+}
+
+.md-typeset [data-python-playground] .grid{
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px){
+  .md-typeset [data-python-playground] .grid{
+    grid-template-columns: 1fr 1fr;
+  }
+  /* code à gauche, console à droite ; le reste sur toute la largeur */
+  .md-typeset [data-python-playground] .panel-resultats,
+  .md-typeset [data-python-playground] .panel-correction{
+    grid-column: 1 / -1;
+  }
+}
+
+.md-typeset [data-python-playground] .panel,
+.md-typeset [data-python-playground] .editor{
+  min-width: 0;
+}
+
+.md-typeset [data-python-playground] .panel .label{
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.md-typeset [data-python-playground] .panel .label .hint{
+  font-weight: 400;
+  font-size: 0.75em;
+  opacity: .75;
+}
+
+.md-typeset [data-python-playground] .toolbar{
+  display: flex;
+  font-size: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 10px 0 10px 5px;
+}
+
+.md-typeset [data-python-playground] .btn:disabled{
+  opacity: .5;
+  cursor: progress;
+  transform: none;
+}
+
+.md-typeset [data-python-playground] .btn-check{ background-color: #2dc07a93; }
+.md-typeset [data-python-playground] .btn-solution{ background-color: #c0982d93; }
+.md-typeset [data-python-playground] .btn-solution.actif{ background-color: #c0982ddd; }
+
+/* Éditeur */
+.md-typeset [data-python-playground] .cm-editor{
+  height: var(--pp-hauteur, 320px);
+  background-color: rgba(192, 192, 192, 0.1);
+  border-radius: 18px;
+  border: 1px solid #dedede;
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  font-size: 12px;
+}
+
+.md-typeset [data-python-playground] .cm-editor,
+.md-typeset [data-python-playground] .cm-scroller{ max-width: 100%; }
+.md-typeset [data-python-playground] .cm-scroller{ overflow-x: auto; }
+
+/* Console */
+.md-typeset [data-python-playground] .sortie{
+  height: var(--pp-hauteur, 320px);
+  margin: 0;
+  padding: 12px 14px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 18px;
+  border: 1px solid #dedede;
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+  background-color: rgba(192, 192, 192, 0.1);
+}
+
+.md-typeset [data-python-playground] .sortie[data-etat="erreur"]{
+  color: #b3261e;
+  border-color: #b3261e66;
+}
+.md-typeset [data-python-playground] .sortie[data-etat="vide"],
+.md-typeset [data-python-playground] .sortie[data-etat="attente"]{
+  opacity: .6;
+  font-style: italic;
+}
+
+
+/* Résultats de validation */
+.md-typeset [data-python-playground] ul.resultats{
+  list-style: none;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid #dedede;
+  background-color: rgba(192, 192, 192, 0.1);
+}
+
+.md-typeset [data-python-playground] ul.resultats li{
+  margin: 4px 0;
+  font-size: .85em;
+}
+
+.md-typeset [data-python-playground] ul.resultats li.reussi{ color: #1f7a4d; }
+.md-typeset [data-python-playground] ul.resultats li.echoue{ color: #b3261e; }
+
+.md-typeset [data-python-playground] ul.resultats li.bilan{
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #dedede;
+  font-weight: 700;
+}
+
+.md-typeset [data-python-playground] ul.resultats pre.detail{
+  margin: 4px 0 8px 1.4em;
+  padding: 8px 10px;
+  font-size: .95em;
+  white-space: pre-wrap;
+  border-radius: 10px;
+  background-color: rgba(179, 38, 30, 0.08);
+  color: inherit;
+}
+
+/* Correction */
+.md-typeset [data-python-playground] pre.correction{
+  margin: 0;
+  overflow: hidden;            /* clippe le code aux angles arrondis */
+  border-radius: 18px;
+  border: 1px solid #dedede;
+  background-color: rgba(192, 152, 45, 0.08);
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.1);
+}
+
+.md-typeset [data-python-playground] pre.correction > code{
+  display: block;
+  padding: 12px 14px;
+  font-size: 12px;
+  white-space: pre;
+  overflow-x: auto;
+  background: transparent;     /* le fond est porté par le <pre> */
+  border-radius: inherit;
+  box-shadow: none;
+}
+
+/* Boutons réduits à leur pictogramme */
+.md-typeset [data-python-playground] .btn-icone{
+  padding: 10px 13px;
+  line-height: 1;
+}
+
+/* Saisie de input() directement dans la console */
+.md-typeset [data-python-playground] input.saisie{
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid currentColor;
+  outline: none;
+  padding: 0 2px;
+  min-width: 8ch;
+  caret-color: currentColor;
+}
+
+.md-typeset [data-python-playground] .sortie[data-etat="saisie"]{
+  opacity: 1;
+  font-style: normal;
+  border-color: #722dc0aa;
+}
+
+/* =========================
+   Zones redimensionnables
+   ========================= */
+
+/* Éditeurs CodeMirror des trois playgrounds : la hauteur posée par la macro
+   n'est qu'un point de départ, l'élève peut l'ajuster. */
+.md-typeset [data-python-playground] .cm-editor,
+.md-typeset [data-html-playground] .cm-editor,
+.md-typeset [data-htmlcss-playground] .cm-editor{
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Console Python */
+.md-typeset [data-python-playground] .sortie{
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Rendus HTML / HTML+CSS */
+.md-typeset [data-html-playground] iframe.preview,
+.md-typeset [data-htmlcss-playground] iframe.preview{
+  resize: vertical;
+  overflow: auto;
+  min-height: 120px;
+}

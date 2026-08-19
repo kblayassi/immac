@@ -74,6 +74,7 @@ extra_javascript:
   - https://unpkg.com/katex@0/dist/katex.min.js
   - https://unpkg.com/katex@0/dist/contrib/auto-render.min.js
   - javascripts/editor-module.js
+  - javascripts/python-playground.js
   - javascripts/bac_a_sable.js
 
 extra: 
