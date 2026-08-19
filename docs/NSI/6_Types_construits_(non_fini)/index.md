@@ -16,10 +16,11 @@ Mais dès qu’on souhaite organiser plusieurs données ensemble, on a besoin de
 !!! definition "Types construits"
     Un **type construit** est une structure qui permet de rassembler plusieurs valeurs pour former un tout cohérent.
 
-Dans ce chapitre, nous étudierons trois structures essentielles :
+Au chapitre 4, nous avons déjà rencontré le premier d'entre eux : le **tableau**.
+Nous allons ici y revenir, puis découvrir deux autres structures essentielles :
 
+- **Retour sur les tableaux** (*listes* en Python) : plusieurs valeurs modifiables et indexées.  
 - **Les p-uplets** (*tuples*) : regroupent plusieurs valeurs, non modifiables.  
-- **Les tableaux** (*listes* en Python) : regroupent plusieurs valeurs modifiables et indexées.  
 - **Les dictionnaires** : associent des **clés** à des **valeurs** pour structurer des données.
 
 Ces structures sont indispensables pour manipuler efficacement des informations complexes.

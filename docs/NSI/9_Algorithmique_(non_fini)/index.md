@@ -1,6 +1,6 @@
 ---
 title: Introduction
-weight: 10
+weight: 9
 ---
 
 # Introduction à l'algorithmique 🧩

@@ -1,6 +1,6 @@
 ---
 title: Introduction
-weight: 5
+weight: 8
 ---
 
 # Expression booléenne et encodage des caractères ✅❌

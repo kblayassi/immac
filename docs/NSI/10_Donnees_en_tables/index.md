@@ -1,6 +1,6 @@
 ---
 title: Introduction
-weight: 8
+weight: 10
 ---
 
 # Traitement de données en tables 📊

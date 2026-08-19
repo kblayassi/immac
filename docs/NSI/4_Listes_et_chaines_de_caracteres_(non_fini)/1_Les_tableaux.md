@@ -1,6 +1,6 @@
 ---
 title: Les tableaux (listes)
-weight: 2
+weight: 1
 ---
 
 # Les tableaux (listes) 📚
