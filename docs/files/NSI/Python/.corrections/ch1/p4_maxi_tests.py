@@ -1,0 +1,8 @@
+assert maxi_2(3, 5) == 5, "maxi_2(3, 5) doit renvoyer 5"
+assert maxi_2(8, 5) == 8, "maxi_2(8, 5) doit renvoyer 8"
+assert maxi_2(7, 7) == 7, "maxi_2(7, 7) doit renvoyer 7"
+assert maxi_2(-4, -9) == -4, "maxi_2 doit aussi fonctionner avec des nombres négatifs"
+assert maxi_3(8, 5, 2) == 8, "maxi_3(8, 5, 2) doit renvoyer 8"
+assert maxi_3(5, 5, 0) == 5, "maxi_3(5, 5, 0) doit renvoyer 5"
+assert maxi_3(8, 5, 10) == 10, "maxi_3(8, 5, 10) doit renvoyer 10"
+assert maxi_3(7, 7, 7) == 7, "maxi_3(7, 7, 7) doit renvoyer 7"

@@ -1,0 +1,5 @@
+assert prix_etudiants(1, 2, 3) == 181, "1 adulte, 2 étudiants et 3 enfants : 37 + 60 + 84 = 181 €"
+assert prix_etudiants(0, 0, 0) == 0, "Un groupe vide ne paie rien"
+assert prix_etudiants(2, 0, 0) == 74, "2 adultes paient 74 €"
+assert prix_etudiants(0, 1, 0) == 30, "1 étudiant paie 30 €"
+assert prix_etudiants(0, 0, 5) == 140, "5 enfants paient 140 €"

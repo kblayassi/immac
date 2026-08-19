@@ -1,0 +1,6 @@
+assert abs(reaction(50) - 13.8888888) < 0.001, "reaction(50) doit valoir environ 13,89 m"
+assert abs(reaction(0)) < 1e-9, "À l'arrêt, la distance de réaction est nulle"
+assert freinage(50) == 12.5, "freinage(50) doit valoir 12,5 m"
+assert freinage(130) == 84.5, "freinage(130) doit valoir 84,5 m"
+assert abs(arret(50) - 26.3888888) < 0.001, "arret(50) doit valoir environ 26,39 m"
+assert abs(arret(130) - 120.6111111) < 0.001, "arret(130) doit valoir environ 120,61 m : la distance explose avec la vitesse"

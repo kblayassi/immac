@@ -1,0 +1,8 @@
+assert promo_A(10, 20) == 25, "promo_A(10, 20) doit renvoyer 25 (20 + la moitié de 10)"
+assert promo_A(20, 10) == 25, "promo_A(20, 10) doit renvoyer 25 : l'ordre des prix ne change rien"
+assert promo_A(20, 20) == 30, "promo_A(20, 20) doit renvoyer 30"
+assert promo_B(10, 20) == 24, "promo_B(10, 20) doit renvoyer 24 (80 % de 30)"
+assert promo_B(20, 10) == 24, "promo_B(20, 10) doit renvoyer 24"
+assert meilleure_formule(10, 20) == "B", "Pour 10 € et 20 €, la formule B est plus avantageuse (24 € contre 25 €)"
+assert meilleure_formule(20, 20) == "A", "Pour deux parfums à 20 €, la formule A est plus avantageuse (30 € contre 32 €)"
+assert meilleure_formule(30, 20) == "A", "Pour 30 € et 20 €, les deux formules donnent 40 € : on garde A"

@@ -1,0 +1,5 @@
+assert nombre_voyelles("Hello") == 2, "« Hello » contient 2 voyelles : e et o"
+assert nombre_voyelles("bonjour") == 3, "« bonjour » contient 3 voyelles : o, o et u"
+assert nombre_voyelles("rythme") == 2, "« rythme » contient 2 voyelles : y et e"
+assert nombre_voyelles("xz") == 0, "« xz » ne contient aucune voyelle"
+assert nombre_voyelles("") == 0, "Un mot vide contient 0 voyelle"

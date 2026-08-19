@@ -1,0 +1,5 @@
+assert x == 5 and y == 3, "1. x doit valoir 5 et y doit valoir 3"
+assert somme == 8, "1. somme doit valoir 8, c'est-à-dire x + y"
+assert score == 115, "2. score doit valoir 115 après l'augmentation de 15"
+assert cellule == 2, "3. cellule doit valoir 2 après la multiplication par 2"
+assert abs(capital - 950) < 1e-9, "4. capital doit valoir 950 après la baisse de 5 %"
