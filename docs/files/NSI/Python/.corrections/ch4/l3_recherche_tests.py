@@ -1,0 +1,6 @@
+assert recherche([12, 15, 8], 15), "15 figure bien dans [12, 15, 8]"
+assert not recherche([12, 15, 8], 20), "20 ne figure pas dans [12, 15, 8]"
+assert not recherche([], 1), "Rien n'est présent dans un tableau vide"
+assert recherche([12, 15, 8], 12), "La valeur peut être en première position"
+assert recherche([12, 15, 8], 8), "La valeur peut être en dernière position : attention au return False mal placé !"
+assert recherche([5, 5, 5], 5), "Plusieurs occurrences : la réponse reste True"

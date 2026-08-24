@@ -1,0 +1,10 @@
+assert premier_indice([12, 15, 8, 15], 15) == 1, "La première occurrence de 15 est à l'indice 1"
+assert premier_indice([12, 15, 8], 12) == 0, "La valeur peut être en première position"
+assert premier_indice([12, 15, 8], 20) == -1, "Une valeur absente doit renvoyer -1"
+assert premier_indice([], 5) == -1, "Un tableau vide ne contient rien"
+
+assert indices_occurrences([7, 3, 7, 7, 1], 7) == [0, 2, 3], "Le 7 apparaît aux indices 0, 2 et 3"
+assert indices_occurrences([7, 3, 7, 7, 1], 3) == [1], "Une seule occurrence : un tableau d'un seul indice"
+assert indices_occurrences([7, 3], 5) == [], "Une valeur absente donne un tableau vide"
+assert indices_occurrences([], 5) == [], "Un tableau vide donne un tableau vide"
+assert indices_occurrences([2, 2], 2) == [0, 1], "Deux occurrences côte à côte"

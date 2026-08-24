@@ -1,0 +1,10 @@
+assert maximum([12, 15, 9, 18, 14]) == 18, "Le maximum vaut 18"
+assert maximum([12, -3, 8, 15, -7, 4]) == 15, "Le maximum des températures vaut 15"
+assert maximum([-3, -7, -1]) == -1, "N'initialise surtout pas le record à 0 : ici toutes les valeurs sont négatives"
+assert maximum([5]) == 5, "Un tableau d'une seule valeur"
+assert maximum([1, 2, 9]) == 9, "Le record peut se trouver en dernière position"
+
+assert moyenne([12, 15, 9, 18, 14]) == 13.6, "La moyenne vaut 13.6"
+assert moyenne([2, 4]) == 3, "La moyenne de 2 et 4 vaut 3"
+assert moyenne([7]) == 7, "La moyenne d'une seule valeur, c'est cette valeur"
+assert moyenne([-5, 5]) == 0, "Ça doit marcher avec des valeurs négatives"

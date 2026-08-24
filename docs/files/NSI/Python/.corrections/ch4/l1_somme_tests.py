@@ -1,0 +1,7 @@
+assert somme([12, 15, 8, 18]) == 53, "somme([12, 15, 8, 18]) doit valoir 53"
+assert somme([]) == 0, "La somme d'un tableau vide vaut 0 : attention à bien initialiser l'accumulateur"
+assert somme([-5, 5]) == 0, "Ça doit marcher avec des valeurs négatives"
+assert somme([7]) == 7, "Un tableau d'un seul élément"
+assert moyenne([12, 15, 8, 18]) == 13.25, "moyenne([12, 15, 8, 18]) doit valoir 13.25"
+assert moyenne([10]) == 10, "La moyenne d'une seule valeur, c'est cette valeur"
+assert moyenne([2, 4]) == 3, "moyenne([2, 4]) doit valoir 3"

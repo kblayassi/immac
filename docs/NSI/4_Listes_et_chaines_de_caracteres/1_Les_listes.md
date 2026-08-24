@@ -1,12 +1,12 @@
 ---
-title: Les tableaux (listes)
+title: Les listes
 weight: 1
 ---
 
-# Les tableaux (listes) 📚
+# Les listes : principes de base 📚
 
 En Python, on appelle **tableau** une structure permettant de stocker plusieurs valeurs accessibles par leur **index**.  
-En pratique, Python utilise le type `list`, qui est **modifiable**, contrairement aux p-uplets vus précédemment.
+En pratique, Python utilise le type `list`, qui a la particularité d'être **modifiable** : son contenu peut changer après sa création.
 
 !!! definition "Définition : tableau (liste)"
     Un **tableau** (ou *liste* en Python) est une collection **ordonnée**, **indexée** et **modifiable** d’éléments.
@@ -39,18 +39,11 @@ Dans une liste, les termes doivent être séparés par des virgules et entourés
     L = []
     ```
 
-!!! expert "Conversion d'un `tuple` en `list`"
-    La fonction `list` permet de convertir un p-uplet de valeurs en une liste : 
-
-    ```python linenums="1"
-    L = list((1, 2, 3))  # conversion d'un tuple en liste
-    ```
-
 ---
 
 ## Indexation des éléments
 
-Tout comme pour les p-uplets, les éléments d’une liste sont accessibles grâce à leurs **indices**.
+Les éléments d’une liste sont accessibles grâce à leurs **indices**.
 
 !!! definition "Index"
     L’**index** est la position d’un élément dans la liste.  
@@ -59,12 +52,11 @@ Tout comme pour les p-uplets, les éléments d’une liste sont accessibles grâ
 !!! python "Accéder à un élément"
     On peut accéder à l'élément de rang `i` de la liste `L` grâce à la syntaxe `L[i]` : 
 
-    ```python linenums="1"
-    L = [10, 20, 30, 40]
-    print(L[0])   # 10
-    print(L[2])   # 30
-    print(L[-1])  # 40 (dernier élément)
-    ```
+{{ python_playground(
+      key="ch4-cours-indexation",
+      hauteur="200px",
+      example_file="files/NSI/Python/exemples/ch4/cours_indexation.py"
+    ) }}
 
 !!! warning "Index hors limites"
     Un accès comme `L[10]` sur une liste de 4 éléments provoque une erreur :
@@ -81,37 +73,34 @@ Les listes sont **modifiables** (on dit *mutables*). On peut donc utiliser la sy
 !!! example "Modifier un élément"
     On considère la liste `notes_NSI` contenant les notes de NSI de Quentin au premier trimestre. Suite à un rattrapage, sa denière note est passée de 9 à 15 : 
 
-    ```python linenums="1"
-    notes_NSI = [16, 14, 9]
-    notes_NSI[2] = 15
-    print(notes_NSI)   # [16, 14, 15]
-    ```
+{{ python_playground(
+      key="ch4-cours-modifier",
+      hauteur="180px",
+      example_file="files/NSI/Python/exemples/ch4/cours_modifier.py"
+    ) }}
 
 Ou même ajouter de nouveaux éléments : 
 
 !!! python "Méthode `append()`"
     La méthode `append()` ajoute un élément à la fin d’une liste.
 
-    ```python linenums="1"
-    notes = [12, 15, 9]
-    notes.append(18)
-    print(notes)   # [12, 15, 9, 18]
-    ```
+{{ python_playground(
+      key="ch4-cours-append",
+      hauteur="180px",
+      example_file="files/NSI/Python/exemples/ch4/cours_append.py"
+    ) }}
 ---
 
 ## Quelques fonctions utiles
 
 !!! python "Fonctions `len()`, `sum()`, `min()`, `max()`, `in`"
-    Voici quelques fonctions Python qui pourront nous être utile lorsque l'on travaillera avec les listes : 
+    Voici quelques fonctions Python qui pourront nous être utiles lorsque l'on travaillera avec les listes. Exécutez le programme, puis modifiez la liste `L` pour vérifier que les résultats suivent :
 
-    ```python linenums="1"
-    L = [3, 6, 9]
-    len(L)     # Renvoie la longueur de la liste (ici 3)
-    sum(L)     # Renvoie la somme des éléments de la liste (ici 18)
-    min(L)     # Renvoie la valeur minimum de la liste (ici 3)
-    max(L)     # Renvoie la valeur maximale de la liste (ici 9)
-    6 in L     # Vérifie si 6 est dans la liste L (ici True)
-    ```
+{{ python_playground(
+      key="ch4-cours-fonctions",
+      hauteur="240px",
+      example_file="files/NSI/Python/exemples/ch4/cours_fonctions.py"
+    ) }}
 
 ---
 
@@ -121,21 +110,21 @@ Deux façons principales : **par élément** ou **par index**.
 
 !!! python "Parcours par élément"
     On utilise le mot-clé `in` pour parcours les éléments de la liste. On peut ainsi agir directement avec les éléments. 
-    ```python linenums="1"
-    L = [4, 6, 8]
-    for valeur in L:
-        print(valeur)
-    ```
+{{ python_playground(
+      key="ch4-cours-parcours-element",
+      hauteur="180px",
+      example_file="files/NSI/Python/exemples/ch4/cours_parcours_element.py"
+    ) }}
 
 !!! python "Parcours par index"
     On utilise une variable de boucle allant de `0` (premier élément de la liste) à `len(L)` (dernier élément de la liste). On peut ainsi agit directement avec l'index des éléments. 
-    ```python linenums="1"
-    L = [4, 6, 8]
-    for i in range(len(L)):
-        print("Index :", i, " - Valeur :", L[i])
-    ```
+{{ python_playground(
+      key="ch4-cours-parcours-index",
+      hauteur="180px",
+      example_file="files/NSI/Python/exemples/ch4/cours_parcours_index.py"
+    ) }}
 
-!!! expert "Quel parcours choisir ?"
+!!! tip "Quel parcours choisir ?"
     - Si seul le **contenu** t’intéresse → parcours direct  
     - Si tu as besoin de l’**index** → parcours par index  
 
@@ -204,64 +193,6 @@ Les compréhensions permettent de créer des listes de façon **compacte et lisi
 
 ---
 
-## Tableaux de tableaux : matrices
-
-Une **matrice** peut être représentée par une liste contenant d’autres listes.
-
-!!! definition "Matrice"
-    Une **matrice** est un tableau à deux dimensions :  
-    une liste dont chaque élément est une **ligne**, elle-même représentée par une liste.
-
-Par exemple, voici la matrice représentant le tableau ci-dessous : 
-
-
-
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-
-  <div>
-    <div align="center">
-        <img src="../../../files/NSI/Types_construits/matrice1.png" width=40%>
-    </div>
-  </div>
-
-  <div>
-    ```python linenums="1"
-    M = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-    ]
-    ```
-  </div>
-
-</div>
-
-!!! warning "Restriction du programme"
-    Dans le cadre du programme NSI, toutes les lignes doivent avoir la même taille.
-
-    On parlera alors de **matrices homogènes**
-
-!!! python "Accéder à un élément d'une matrice"
-    Pour accéder à un élément d'une matrice `M`, on utilisera la syntaxe : `M[ligne][colone]`
-
-    Dans l'exemple ci-dessus, `M[2][2]` vaut 9, `M[0][1]` vaut 2, ...
-
-!!! python "Parcourir une matrice"
-    Deux possibilités pour parcourir une matrice : **par ligne** si l'on souhaite travailler avec les lignes entières ou **par lignes et colonnes** si l'on souhaite exploiter les valeurs directement.
-
-    ```python linenums="1" title="Parcours par lignes"
-    for ligne in M: 
-        print(ligne) #Affichera les lignes une à une
-    ```
-
-    ```python linenums="1" title="Parcours par lignes et colonnes"
-    for i in range(len(M)):         # lignes 
-        for j in range(len(M[i])):  # colonnes 
-            print(M[i][j]) #Affichera les éléments un à un
-    ```
-
----
-
 ## À retenir 📌
 
 !!! info "Résumé"
@@ -269,4 +200,6 @@ Par exemple, voici la matrice représentant le tableau ci-dessous :
     - Les éléments sont accessibles **via leurs indices**.
     - Deux types de parcours : **par élément** ou **par index**.
     - Les **compréhensions** permettent de créer rapidement de nouvelles listes.
-    - Une **matrice** est un **tableau de tableaux**, avec accès via `M[i][j]`.
+
+Un tableau peut contenir bien autre chose que des nombres — y compris d'autres tableaux.
+C'est ce que nous verrons dans la partie suivante, avec les **matrices**. 🧮

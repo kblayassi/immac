@@ -1,0 +1,8 @@
+assert somme_matrice([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == 45, "La somme des entiers de 1 à 9 vaut 45"
+assert somme_matrice([[7]]) == 7, "Une matrice d'une seule case"
+assert somme_matrice([[1, 1], [1, 1]]) == 4, "Une matrice 2 x 2 remplie de 1"
+assert somme_matrice([[1, 2, 3]]) == 6, "Une matrice d'une seule ligne"
+assert identite(1) == [[1]], "identite(1) doit renvoyer [[1]]"
+assert identite(2) == [[1, 0], [0, 1]], "identite(2) doit renvoyer [[1, 0], [0, 1]]"
+assert identite(3) == [[1, 0, 0], [0, 1, 0], [0, 0, 1]], "identite(3) doit avoir des 1 sur la diagonale"
+assert len(identite(5)) == 5 and len(identite(5)[0]) == 5, "identite(5) doit compter 5 lignes de 5 colonnes"

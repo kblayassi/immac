@@ -1,0 +1,6 @@
+assert pgcd(782, 221) == 17, "Le PGCD de 782 et 221 vaut 17"
+assert pgcd(48, 36) == 12, "Le PGCD de 48 et 36 vaut 12, comme dans l'exemple"
+assert pgcd(221, 782) == 17, "L'ordre des arguments ne doit rien changer : l'algorithme se réajuste au premier tour"
+assert pgcd(100, 25) == 25, "Quand b divise a, le PGCD est b"
+assert pgcd(13, 5) == 1, "Deux nombres premiers entre eux ont pour PGCD 1"
+assert pgcd(7, 7) == 7, "Le PGCD d'un nombre avec lui-même, c'est lui-même"
