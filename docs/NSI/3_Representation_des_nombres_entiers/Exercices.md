@@ -262,6 +262,14 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
     1. Vérifier que $47_{10}$ est bien égal à $2F_{16}$.
     2. Donner l’écriture binaire de $83$, puis vérifier le résultat à la main. 
 
+    {{ python_playground(
+      key="ch3-bases",
+      hauteur="320px",
+      example_file="files/NSI/Python/exemples/ch3/n_bases.py",
+      solution_file="files/NSI/Python/.corrections/ch3/n_bases_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch3/n_bases_tests.py"
+    ) }}
+
     ??? success "Correction"
         En Python :  
 

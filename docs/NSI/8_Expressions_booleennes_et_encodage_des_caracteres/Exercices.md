@@ -315,6 +315,14 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
     j = not c and (d or e)
     ```
 
+    {{ python_playground(
+      key="ch8-predire",
+      hauteur="380px",
+      example_file="files/NSI/Python/exemples/ch8/b_predire.py"
+    ) }}
+
+    💡 Pas de bouton **Valider** ici : c'est l'exécution elle-même qui vous donne la réponse. Confrontez chaque ligne affichée à ce que vous aviez prévu — et cherchez à comprendre chaque écart.
+
 !!! exoordi "Exercice 9 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-regular-star:"
     Dans chaque cas, x et y sont des variables contenant des entiers.
 
@@ -324,6 +332,18 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
     2. `x` est compris entre 0 (exclus) et 10 (inclus).
     3. `x` est égal à 0 ou à 1.
     4. `x` est égal à 0 ou `y` est égal à 0, mais pas les deux en même temps.
+
+    Chaque phrase devient une fonction, pour que la validation puisse l'éprouver sur plusieurs valeurs.
+
+    {{ python_playground(
+      key="ch8-expressions",
+      hauteur="440px",
+      example_file="files/NSI/Python/exemples/ch8/b_expressions.py",
+      solution_file="files/NSI/Python/.corrections/ch8/b_expressions_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch8/b_expressions_tests.py"
+    ) }}
+
+    ⚠️ Attention aux bornes : « entre 0 exclu et 10 inclus » se joue précisément sur les valeurs 0 et 10.
 
     ??? success "Correction"
          1. `x!=0 and y!= 0` ou `(x!=0) & (y!=0)`
@@ -348,7 +368,17 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 
     1. Écrire une fonction `chiffre` qui prendra en paramètre un mot `mot_clair` et un mot de passe `cle` de **même taille** que `mot_clair` et qui renvoie la chaîne de caractères obtenue en XORant `mot_clair` avec `cle`.
     2. Chiffrer le mot `"BONJOUR"` avec la clé `"MAURIAC"`.
-    3. Reprendre la chaîne de caractères précédemment obtenue et la rechiffrer à nouveau avec la clé `"MAURIAC"`. Que constate-t-on ? Etait-ce prévisible ?
+    3. Reprendre la chaîne de caractères précédemment obtenue et la rechiffrer à nouveau avec la clé `"MAURIAC"`. Que constate-t-on ? Était-ce prévisible ?
+
+    {{ python_playground(
+      key="ch8-xor",
+      hauteur="320px",
+      example_file="files/NSI/Python/exemples/ch8/b_xor.py",
+      solution_file="files/NSI/Python/.corrections/ch8/b_xor_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch8/b_xor_tests.py"
+    ) }}
+
+    💡 Pensez à une précondition : que se passe-t-il si la clé n'a pas la même longueur que le mot ?
 
     ??? success "Correction"
         1. Voici la fonction : 

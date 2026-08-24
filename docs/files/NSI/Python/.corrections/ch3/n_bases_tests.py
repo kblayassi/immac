@@ -1,0 +1,5 @@
+assert verification is True, "47 vaut bien 2F en hexadécimal : ta vérification doit renvoyer True"
+assert binaire_83 == "0b1010011", "L'écriture binaire de 83 est 0b1010011"
+assert int("1010011", 2) == 83, "Relu en base 10, 1010011 vaut bien 83"
+assert hex(47) == "0x2f", "hex(47) renvoie la chaîne 0x2f"
+assert int("2F", 16) == 47, "int(\"2F\", 16) vaut 47"
