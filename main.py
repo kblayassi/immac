@@ -1,6 +1,7 @@
 from pathlib import Path
 from markupsafe import Markup, escape
 import base64
+import json
 
 def define_env(env):
     docs_dir = Path(env.conf["docs_dir"]).resolve()
@@ -30,13 +31,15 @@ def define_env(env):
     @env.macro
     def python_playground(key="", example=None, example_file=None,
                           solution=None, solution_file=None,
-                          tests=None, tests_file=None,
+                          tests=None, tests_file=None, module_files=None,
                           titre="Python", hauteur="320px", timeout=15):
         """Éditeur Python exécuté dans le navigateur (Pyodide).
 
         - example / example_file : code de départ proposé à l'élève
         - solution / solution_file : correction, révélée à la demande
         - tests / tests_file : assertions d'auto-validation
+        - module_files : chemins de modules déposés à côté du programme, sans
+          être montrés à l'élève. Il les utilise par un import ordinaire.
 
         input() est saisi directement dans la console, sans réglage préalable.
         """
@@ -51,6 +54,14 @@ def define_env(env):
         if tests_file:
             tests = _lire(tests_file, "tests_file")
 
+        # Modules déposés dans le système de fichiers de Python avant l'exécution :
+        # l'élève les importe, mais leur contenu n'apparaît pas dans l'éditeur.
+        modules = {}
+        if module_files:
+            chemins = [module_files] if isinstance(module_files, str) else module_files
+            for chemin in chemins:
+                modules[Path(chemin).name] = _lire(chemin, "module_files")
+
         code = example if example is not None else default_example
 
         attrs = [
@@ -64,6 +75,8 @@ def define_env(env):
             attrs.append(f'data-solution-b64="{_b64(solution)}"')
         if tests is not None:
             attrs.append(f'data-tests-b64="{_b64(tests)}"')
+        if modules:
+            attrs.append(f'data-modules-b64="{_b64(json.dumps(modules))}"')
 
         boutons = [bouton("run", "fa-play", "Exécuter")]
         if tests is not None:

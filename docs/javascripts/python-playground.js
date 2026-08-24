@@ -202,6 +202,9 @@
                     "# Modifie-moi 🙂\nprint(\"Bonjour !\")\n";
     const solution = bloc.dataset.solutionB64 ? decodeB64Utf8(bloc.dataset.solutionB64) : null;
     const tests = bloc.dataset.testsB64 ? decodeB64Utf8(bloc.dataset.testsB64) : null;
+    const modules = bloc.dataset.modulesB64
+      ? safeJSONParse(decodeB64Utf8(bloc.dataset.modulesB64)) || {}
+      : {};
     const delaiMs = (parseInt(bloc.dataset.timeout, 10) || 15) * 1000;
 
     const cleStockage = bloc.dataset.storageKey || `python_editor:${location.pathname}:${index}`;
@@ -256,7 +259,7 @@
       const reponses = [];
       for (;;) {
         const r = await demander(
-          { action, code: vue.state.doc.toString(), tests, reponses },
+          { action, code: vue.state.doc.toString(), tests, reponses, modules },
           delaiMs
         );
 

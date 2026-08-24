@@ -62,6 +62,24 @@ class _Sortie(io.StringIO):
             raise RuntimeError("Trop de texte affiche : le programme boucle-t-il ?")
         return super().write(s)
 
+def _installer(modules):
+    """Depose les modules fournis par l'enseignant a cote du programme.
+
+    Leur contenu n'apparait pas dans l'editeur : l'eleve les utilise par un
+    import ordinaire, comme un fichier voisin de son script.
+    """
+    if not modules:
+        return
+    import os
+    dossier = os.getcwd()
+    if dossier not in sys.path:      # sans cela, l'import ne trouverait rien
+        sys.path.insert(0, dossier)
+    for nom, contenu in modules.items():
+        with open(os.path.join(dossier, nom), "w") as fichier:
+            fichier.write(contenu)
+        sys.modules.pop(nom[:-3] if nom.endswith(".py") else nom, None)
+
+
 def _prepare(reponses):
     sortie = _Sortie()
     sys.stdout = sortie
@@ -81,7 +99,8 @@ def _fonctions(espace):
             and getattr(valeur, "__code__", None) is not None
             and valeur.__code__.co_filename == FICHIER_ELEVE]
 
-def executer(code, reponses=None):
+def executer(code, reponses=None, modules=None):
+    _installer(modules)
     sortie = _prepare(reponses)
     espace = {"__name__": "__main__"}
     erreur = None
@@ -106,7 +125,8 @@ def _libelle(noeud, source):
     ligne = (source or "").strip().splitlines()[0] if source else ""
     return ligne or "assertion"
 
-def valider(code, tests, reponses=None):
+def valider(code, tests, reponses=None, modules=None):
+    _installer(modules)
     sortie = _prepare(reponses)
     espace = {"__name__": "__main__"}
 
@@ -180,7 +200,7 @@ async function demarrer() {
 }
 
 self.onmessage = async (event) => {
-  const { id, action, code, tests, reponses } = event.data || {};
+  const { id, action, code, tests, reponses, modules } = event.data || {};
   try {
     const py = await demarrer();
     if (action === "prechauffer") {
@@ -189,10 +209,12 @@ self.onmessage = async (event) => {
     }
     const fn = py.globals.get(action === "check" ? "valider" : "executer");
     const saisies = py.toPy(reponses || []);
+    const fichiers = py.toPy(modules || {});
     const brut = action === "check"
-      ? fn(code, tests || "", saisies)
-      : fn(code, saisies);
+      ? fn(code, tests || "", saisies, fichiers)
+      : fn(code, saisies, fichiers);
     saisies.destroy();
+    fichiers.destroy();
     fn.destroy();
     self.postMessage({ id, ok: true, ...JSON.parse(brut) });
   } catch (err) {
