@@ -1,9 +1,9 @@
 ---
-title: TP5 - Convertisseur français → anglais
-weight: 3.1
+title: TP3 - Convertisseur français → anglais
+weight: 2.1
 ---
 
-# TP5 - Convertisseur français → anglais
+# TP3 - Convertisseur français → anglais
 
 Pierre, qui a des difficultés à retenir les verbes irréguliers d’anglais, a l’idée d’écrire un programme en Python pour s’auto-évaluer. Son professeur de NSI lui suggère d’utiliser un dictionnaire Python.
 

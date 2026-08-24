@@ -89,7 +89,7 @@ Les éléments d'un p-uplet sont **indexés** afin de permettre un accés rapide
 !!! expert "Pour aller plus loin : p-uplet nommé"
     Un **p-uplet nommé** permet d’accéder aux valeurs par nom de champ, au lieu des indices.
 
-    Ce type de p-uplet n'existe pas en Python. Il sera donc implémenté à l'aide d'un dictionnaire (voir partie 3 de ce chapitre).
+    Ce type de p-uplet n'existe pas en Python : c'est le **dictionnaire** qui joue ce rôle, comme nous le verrons dans la partie qui lui est consacrée.
 
 ---
 
@@ -152,6 +152,29 @@ Parfois, il sera indispensable pour une fonction de retourner plusieurs valeurs.
         ```
 
         Ici, on récupère le résultat de la fonction dans deux variables distinctes `xI` et `yI`. 
+
+---
+
+## Convertir un p-uplet en liste
+
+Un p-uplet et une liste se ressemblent beaucoup : ce sont deux séquences ordonnées et indexées. Seule l'**immuabilité** les sépare. Il est donc naturel de vouloir passer de l'un à l'autre.
+
+!!! python "Les fonctions `list()` et `tuple()`"
+    La fonction `list()` fabrique une liste à partir d'un p-uplet, et `tuple()` fait le chemin inverse :
+
+    ```python linenums="1"
+    coordonnees = (1, 2, 3)
+
+    L = list(coordonnees)   # [1, 2, 3]  : une liste, donc modifiable
+    L[0] = 100              # autorisé !
+
+    T = tuple(L)            # (100, 2, 3) : de nouveau un p-uplet
+    ```
+
+!!! tip "À quoi cela sert-il ?"
+    C'est la technique classique pour « modifier » un p-uplet, qui ne se modifie pourtant jamais : on le convertit en liste, on travaille dessus, puis on reconstruit un p-uplet.
+
+    Vous avez déjà rencontré exactement ce détour au chapitre sur les listes, pour « modifier » une chaîne de caractères — qui est, elle aussi, immuable.
 
 ---
 

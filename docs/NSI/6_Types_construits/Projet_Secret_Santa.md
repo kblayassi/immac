@@ -1,6 +1,6 @@
 ---
 title: Projet - Secret Santa
-weight: 7
+weight: 6
 ---
 # Projet : Secret-Santa 🎅🏼
 

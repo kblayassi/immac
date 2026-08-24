@@ -1,0 +1,5 @@
+assert extremes((3, 7, 9)) == (3, 9), "extremes((3, 7, 9)) doit renvoyer (3, 9)"
+assert isinstance(extremes((3, 7, 9)), tuple), "La fonction doit renvoyer un p-uplet, pas une liste"
+assert extremes((5,)) == (5, 5), "Avec une seule valeur, le minimum et le maximum sont confondus"
+assert extremes((-3, -7, -1)) == (-7, -1), "Ça doit marcher avec des valeurs négatives"
+assert extremes((2, 2, 2)) == (2, 2), "Des valeurs toutes égales"

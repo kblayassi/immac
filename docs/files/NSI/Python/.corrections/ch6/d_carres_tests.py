@@ -1,0 +1,6 @@
+assert carres(3) == {1: 1, 2: 4, 3: 9}, "carres(3) doit renvoyer {1: 1, 2: 4, 3: 9}"
+assert carres(1) == {1: 1}, "carres(1) doit renvoyer {1: 1}"
+assert carres(5) == {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}, "N'oublie pas la valeur n elle-même"
+assert len(carres(10)) == 10, "carres(10) doit contenir 10 entrées"
+assert carres_comprehension(5) == carres(5), "Les deux versions doivent donner le même dictionnaire"
+assert carres_comprehension(1) == {1: 1}, "La version par compréhension doit gérer les mêmes cas"

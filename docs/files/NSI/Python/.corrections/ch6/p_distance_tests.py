@@ -1,0 +1,5 @@
+assert distance_origine((3, 4)) == 5.0, "Le point (3, 4) est à une distance 5 de l'origine"
+assert distance_origine((0, 0)) == 0, "L'origine est à une distance nulle d'elle-même"
+assert distance_origine((-3, -4)) == 5.0, "Une distance est toujours positive"
+assert distance_origine((5, 0)) == 5.0, "Un point sur l'axe des abscisses"
+assert abs(distance_origine((1, 1)) - 1.41421356) < 1e-6, "La distance peut ne pas être entière"

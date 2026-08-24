@@ -1,0 +1,6 @@
+assert lettre_la_plus_frequente("informatique") == "i", "Le i revient deux fois, les autres une seule"
+assert lettre_la_plus_frequente("aaabb") == "a", "Le a revient trois fois"
+assert lettre_la_plus_frequente("z") == "z", "Un texte d'une seule lettre"
+assert lettre_la_plus_frequente("abc") == "a", "En cas d'égalité, on garde la première rencontrée"
+assert lettre_la_plus_frequente("bbbaaa") == "b", "En cas d'égalité, on garde la première rencontrée"
+assert lettre_la_plus_frequente("bonjour") == "o", "Le o revient deux fois dans bonjour"

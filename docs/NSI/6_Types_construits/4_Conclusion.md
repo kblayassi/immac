@@ -1,6 +1,6 @@
 ---
 title: Conclusion
-weight: 5
+weight: 4
 ---
 
 # Conclusion 🏁
@@ -12,14 +12,19 @@ Ces structures sont omniprésentes en programmation et constituent la base de la
 
 Les savoir-faire du chapitre sont donc :
 
-- [x] Créer et manipuler un **p-uplet**, accéder à ses composantes  
-- [x] Écrire une **fonction renvoyant un p-uplet**  
-- [x] Créer une **liste**, lire ou modifier ses éléments par index  
-- [x] Parcourir un tableau **par élément** ou **par index**  
-- [x] Construire une liste **en compréhension**  
-- [x] Manipuler des **matrices** (tableaux de tableaux)  
-- [x] Créer un **dictionnaire**, ajouter/modifier/supprimer des entrées  
-- [x] Parcourir un dictionnaire en utilisant `keys()`, `values()` et `items()`
+- [x] Créer et manipuler un **p-uplet**, accéder à ses composantes
+- [x] Écrire une **fonction renvoyant un p-uplet**, et récupérer ses valeurs par déballage
+- [x] Expliquer pourquoi un p-uplet est **immuable**, et convertir un p-uplet en liste
+- [x] Créer un **dictionnaire**, ajouter, modifier et supprimer des entrées
+- [x] Tester la présence d'une **clé** avant d'y accéder
+- [x] Parcourir un dictionnaire avec `keys()`, `values()` et `items()`
+- [x] Construire un dictionnaire **au fil d'un parcours**, notamment pour compter des occurrences
+- [x] Choisir la structure adaptée à une situation donnée
+
+!!! info "Et les tableaux ?"
+    Ils étaient au programme du **chapitre 4**, avec les indices, les parcours, les compréhensions
+    et les matrices. Ce chapitre s'appuie dessus sans les réexpliquer : en cas de doute, c'est là
+    qu'il faut retourner.
 
 Ces compétences te permettront de travailler avec des données plus riches et d’écrire des programmes plus **structurés**, **efficaces** et **lisibles**.
 

@@ -1,9 +1,9 @@
 ---
-title: TP4 - Découverte du type dictionnaire
-weight: 2.9
+title: TP2 - Découverte du type dictionnaire
+weight: 1.9
 ---
 
-# TP4 - Découverte du type dictionnaire
+# TP2 - Découverte du type dictionnaire
 
 Les éléments d’un p-uplet ou d’une liste sont accessibles en lecture grâce à leur indice `0`, `1`, `2`, etc. Dans un dictionnaire, on accède à un élément non pas avec son indice, mais avec une **clé**, à laquelle est associée une **valeur**.
 

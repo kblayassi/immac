@@ -1,6 +1,6 @@
 ---
 title: Les dictionnaires (dict)
-weight: 3
+weight: 2
 ---
 
 # Les dictionnaires (dict) 🗂️
@@ -15,6 +15,21 @@ C’est un type construit très utile pour représenter des données structurée
 
 !!! python "Type d'un dictionnaire"
     En Python, un dictionnaire est de type `dict`.
+
+!!! info "Le fameux « p-uplet nommé »"
+    Souvenez-vous du p-uplet `("Alice", 16, 15)` : pour le relire, il fallait se rappeler que
+    la deuxième composante était l'âge. On aimerait pouvoir **nommer** les composantes plutôt
+    que les numéroter — c'est ce qu'on appelle un **p-uplet nommé**, ou un **enregistrement**.
+
+    Ce type n'existe pas tel quel en Python : **c'est précisément le dictionnaire qui joue ce rôle**.
+
+    ```python linenums="1"
+    eleve = {"nom": "Alice", "age": 16, "moyenne": 15}
+    print(eleve["age"])      # bien plus lisible que eleve[1]
+    ```
+
+    Gardez cette idée en tête : au chapitre sur les **données en tables**, une table ne sera rien
+    d'autre qu'une **liste d'enregistrements partageant les mêmes descripteurs**. 📊
 
 ---
 
@@ -64,6 +79,37 @@ Les valeurs sont, toutefois, accessibles grâce à leur **clé**. Raison pour la
     ```
     >>> personne['adresse']
     KeyError: 'adresse'
+    ```
+
+Pour éviter cette erreur, il suffit de **demander d'abord si la clé existe**.
+
+!!! python "L'opérateur `in`"
+    Sur un dictionnaire, `in` teste la présence d'une **clé** — jamais d'une valeur :
+
+    ```python linenums="1"
+    personne = {"nom": "Alice", "age": 23}
+
+    print("nom" in personne)        # True
+    print("adresse" in personne)    # False
+    print("Alice" in personne)      # False : Alice est une valeur, pas une clé !
+    ```
+
+    On protège alors l'accès :
+
+    ```python linenums="1"
+    if "adresse" in personne:
+        print(personne["adresse"])
+    else:
+        print("Adresse inconnue")
+    ```
+
+!!! expert "Pour aller plus loin : la méthode `get()`"
+    Elle fait la même chose en une seule instruction, en renvoyant une valeur de repli
+    au lieu de déclencher une erreur :
+
+    ```python linenums="1"
+    print(personne.get("adresse"))                 # None
+    print(personne.get("adresse", "inconnue"))     # inconnue
     ```
 
 ---
@@ -155,6 +201,43 @@ Il existe **trois façons principales** de parcourir un dictionnaire.
     !!! tip "Utiliser `items()`"
         La méthode `items()` est indispensable lorsque les deux informations (clé et valeur) sont nécessaires.
 
+
+---
+
+## Construire un dictionnaire au fil d'un parcours
+
+Jusqu'ici, nos dictionnaires étaient écrits à la main. Mais le cas le plus fréquent est tout
+autre : on part d'un dictionnaire **vide** et on le remplit au cours d'une boucle.
+
+!!! example "Compter les occurrences de chaque lettre"
+    C'est **le** cas d'usage emblématique du dictionnaire. Pour chaque lettre rencontrée : si
+    elle est déjà connue, on incrémente son compteur ; sinon, on crée son entrée avec la valeur 1.
+
+    ```python linenums="1"
+    def compter_lettres(texte):
+        compteurs = {}                      # on part d'un dictionnaire vide
+        for lettre in texte:
+            if lettre in compteurs:         # déjà rencontrée ?
+                compteurs[lettre] = compteurs[lettre] + 1
+            else:
+                compteurs[lettre] = 1       # première rencontre : on crée l'entrée
+        return compteurs
+
+    print(compter_lettres("banane"))
+    # {'b': 1, 'a': 2, 'n': 2, 'e': 1}
+    ```
+
+!!! tip "Le chaînon manquant du chapitre 4"
+    Au chapitre sur les chaînes de caractères, l'analyse fréquentielle butait sur un obstacle :
+    il aurait fallu **un compteur par lettre**, et écrire vingt-six variables n'avait aucun sens.
+
+    Le voilà, le chaînon manquant. Un dictionnaire, c'est exactement cela : autant de compteurs
+    que nécessaire, chacun désigné par un nom plutôt que par un numéro. 🔡
+
+!!! methode "Le schéma à retenir"
+    Ce motif — tester l'existence de la clé, puis incrémenter ou initialiser — revient sans cesse :
+    compter des mots, des notes, des votes, des couleurs de pixels... Reconnaissez-le, il vous
+    servira bien au-delà de ce chapitre.
 
 ---
 
