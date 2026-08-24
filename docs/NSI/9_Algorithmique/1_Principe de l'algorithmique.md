@@ -102,6 +102,9 @@ Il existe des complexités temporelles "classiques" que nous croiserons dans une
     
     Ces complexités seront rencontrées dans des chapitres plus avancés.
 
+    !!! info "Ce qui est exigible cette année"
+        Le programme de première ne demande de savoir reconnaître que deux coûts : le coût **linéaire** $O(n)$ d'un parcours, et le coût **quadratique** $O(n^2)$ de deux boucles imbriquées. Tout le reste de ce tableau est là pour situer le paysage — et parce que vous croiserez ces noms ailleurs.
+
 
 Dans les tableaux précédents, on remarquera l'utilisation d'une notation particulière pour la complexité. On appelle cette notation la "notation grand O" : 
 
@@ -316,11 +319,7 @@ Nous utiliserons cette idée pour justifier la correction partielle des **tris p
     - **Variant** : quelle quantité diminue pour garantir l'arrêt d'une boucle ?
     - **Invariant** : quelle propriété reste vraie pendant l'exécution ?
 
-Dans les parties suivantes, nous utiliserons ces outils pour étudier des algorithmes classiques :
+Dans les parties suivantes, nous mettrons ces outils au travail :
 
-- parcourir un tableau ;
-- rechercher une occurrence ;
-- rechercher un maximum ou un minimum ;
-- calculer une moyenne ;
-- trier un tableau par sélection ;
-- trier un tableau par insertion.
+- en **analysant le coût** des algorithmes de parcours écrits au chapitre *Listes et chaînes de caractères* — recherche d'une occurrence, extremum, moyenne ;
+- en étudiant deux algorithmes de **tri**, par sélection et par insertion, dont nous justifierons la terminaison, la correction et le coût.

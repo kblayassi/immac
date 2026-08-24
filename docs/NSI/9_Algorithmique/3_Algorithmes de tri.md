@@ -5,7 +5,7 @@ weight: 3
 
 # Algorithmes de tri 📊
 
-Dans la partie précédente, nous avons vu comment parcourir un tableau pour rechercher une valeur, trouver un extremum ou calculer une moyenne.
+Dans la partie précédente, nous avons analysé le coût de nos algorithmes de parcours, et découvert qu'une double boucle faisait basculer un algorithme en $O(n^2)$.
 
 Dans cette partie, nous allons nous intéresser à une autre opération fondamentale : **trier des données**.
 
@@ -81,6 +81,18 @@ tableau = [3, 5, 7, 12, 18]
 
 !!! info "À retenir"
     Les tris par sélection et par insertion que nous allons étudier sont des tris en place.
+
+!!! warning "Un piège classique : trier ne renvoie pas toujours"
+    Nos deux fonctions se terminent par `return tableau`, par commodité. Mais elles trient **déjà** le tableau sur place : le `return` n'ajoute rien, il renvoie simplement le tableau que l'on vient de modifier.
+
+    Les deux écritures suivantes fonctionnent donc, et donnent le même résultat :
+
+    ```python linenums="1"
+    tri_selection(tableau)              # le tableau est trié sur place
+    tableau = tri_selection(tableau)    # ... et en plus, on récupère le résultat
+    ```
+
+    ⚠️ Attention : ce n'est **pas** toujours le cas ! Une fonction de tri en place qui ne renvoie rien — ce qui est la convention la plus courante — donnerait `tableau = None` avec la seconde écriture. Vérifiez toujours ce que renvoie la fonction que vous utilisez.
 
 ---
 
@@ -407,7 +419,24 @@ Cependant, ils ne se comportent pas exactement de la même manière.
     
     Ils sont donc adaptés pour comprendre les principes du tri, mais ils deviennent peu efficaces sur de très grands tableaux.
 
-!!! expert "Pour aller plus loin"
-    Il existe des algorithmes de tri plus efficaces, comme le tri fusion ou le tri rapide.
-    
-    Certains de ces algorithmes peuvent atteindre un coût en $O(n \log n)$ dans de nombreux cas.
+!!! python "Et Python, comment trie-t-il ?"
+    Python sait évidemment trier tout seul, de deux façons — qui reproduisent exactement la distinction du paragraphe 2 :
+
+    ```python linenums="1"
+    tableau = [12, 5, 18, 7, 3]
+
+    tableau.sort()            # trie EN PLACE, et ne renvoie rien
+    print(tableau)            # [3, 5, 7, 12, 18]
+
+    autre = [12, 5, 18]
+    trie = sorted(autre)      # renvoie un NOUVEAU tableau trié
+    print(autre)              # [12, 5, 18]  : l'original est intact
+    print(trie)               # [5, 12, 18]
+    ```
+
+    Utilisez-les dans vos programmes... mais sachez **toujours** réécrire les deux algorithmes de ce chapitre : ce sont eux qui sont évalués.
+
+!!! expert "Pour aller plus loin : des tris plus efficaces"
+    Il existe des algorithmes de tri bien plus rapides, comme le **tri fusion** ou le **tri rapide**, qui atteignent un coût en $O(n \log n)$ dans de nombreux cas.
+
+    C'est d'ailleurs un tri de cette famille que Python utilise pour `sort()` et `sorted()`. Vous les étudierez en Terminale.

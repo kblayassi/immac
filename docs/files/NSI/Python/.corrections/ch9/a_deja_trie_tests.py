@@ -1,0 +1,7 @@
+assert deja_trie([1, 2, 3, 4]), "Ce tableau est bien trié"
+assert not deja_trie([3, 2, 1]), "Ce tableau est rangé à l'envers"
+assert not deja_trie([1, 3, 2]), "Une seule inversion suffit à répondre False"
+assert deja_trie([]), "Un tableau vide est considéré comme trié"
+assert deja_trie([5]), "Un tableau d'un seul élément est trié"
+assert deja_trie([1, 1, 2]), "Des valeurs égales ne rompent pas l'ordre croissant"
+assert not deja_trie([1, 2, 3, 0]), "L'inversion peut se trouver tout à la fin : il faut aller jusqu'au bout pour répondre True"

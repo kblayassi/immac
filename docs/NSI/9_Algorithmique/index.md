@@ -129,19 +129,23 @@ La question **P = NP ?** est l'un des grands problèmes ouverts des mathématiqu
 
 ## 5 - Objectifs du chapitre 🎯
 
-Dans ce chapitre, nous allons découvrir les premières notions d'algorithmique à travers des problèmes simples sur les tableaux.
+Dans ce chapitre, nous allons apprendre à **analyser** les algorithmes, puis à en découvrir de nouveaux.
 
 Nous apprendrons notamment à :
 
 - analyser le coût d'un algorithme ;
 - comprendre les notions de correction et de terminaison ;
 - utiliser les idées de variant et d'invariant ;
-- parcourir un tableau ;
-- rechercher une occurrence ;
-- rechercher un minimum ou un maximum ;
-- calculer une moyenne ;
+- distinguer le **meilleur cas** du **pire cas** d'un algorithme ;
+- comparer le coût des algorithmes de parcours écrits au chapitre *Listes et chaînes de caractères* ;
+- reconnaître un coût quadratique derrière deux boucles imbriquées ;
 - trier un tableau par sélection ;
 - trier un tableau par insertion.
+
+!!! tip "Un pré-requis"
+    Ce chapitre s'appuie sur les algorithmes écrits dans le chapitre **Listes et chaînes de caractères** : recherche d'une occurrence, liste des occurrences, minimum, maximum, moyenne.
+
+    Nous ne les réécrirons pas : nous les **analyserons**.
 
 !!! info "Objectif général"
     L'objectif n'est pas seulement d'écrire du code qui fonctionne.

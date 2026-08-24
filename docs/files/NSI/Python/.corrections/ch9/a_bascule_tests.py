@@ -1,0 +1,5 @@
+assert bascule() == 6312, "La bascule se produit à n = 6312"
+assert duree_maxime(6311) <= duree_arthur(6311), "Juste avant la bascule, Maxime est encore le plus rapide"
+assert duree_maxime(6312) > duree_arthur(6312), "À partir de la bascule, Arthur l'emporte"
+assert duree_maxime(1000) < duree_arthur(1000), "Sur de petites données, la machine de Maxime compense son algorithme"
+assert duree_maxime(100000) > duree_arthur(100000), "Sur de grandes données, l'algorithme d'Arthur l'emporte largement"
