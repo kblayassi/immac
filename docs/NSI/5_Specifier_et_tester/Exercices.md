@@ -23,7 +23,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 
 ## Langages de programmation
 
-!!! exoordi "Exercice 1 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-regular-star:"
+!!! exopapier "Exercice 1 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-regular-star:"
     Noaïtte a lu que le langage **C** est utilisé pour programmer le système d’exploitation **UNIX** et qu’il est toujours très populaire.  
     Elle veut comparer sa syntaxe à celle du langage **Python**. Voici une même fonction écrite dans les deux langages :
 
@@ -58,7 +58,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
         2. Le mot-clé `float` indique que la fonction et les variables manipulent des **nombres réels** (à virgule).  
         3. En langage C, chaque instruction doit se terminer par un **point-virgule** pour signaler la fin de la ligne d’exécution.  
 
-!!! exoordi "Exercice 2 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-regular-star:"
+!!! exopapier "Exercice 2 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-regular-star:"
     Léo découvre le langage **JavaScript**, très utilisé dans le développement web.  
     Il souhaite comparer sa syntaxe avec celle du langage **Python**.  
     Voici une même fonction, écrite dans les deux langages :
@@ -87,7 +87,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
         3. Les **accolades** servent à indiquer le **début et la fin du bloc** d’instructions de la fonction.  
         4. Le **point-virgule `;`** marque la fin de chaque instruction (il est facultatif, mais recommandé pour éviter les erreurs).
 
-!!! exoordi "Exercice 3 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-solid-star:"
+!!! exopapier "Exercice 3 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-solid-star:"
     Manon apprend le langage **Swift**, utilisé sur iPhone et Mac.  
     Elle veut comparer sa syntaxe à celle de **Python**.  
     Voici une même fonction écrite dans les deux langages :
@@ -125,7 +125,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 
 ## Spécification de fonctions
 
-!!! exoordi "Exercice 4 - :fontawesome-solid-star: :fontawesome-regular-star: :fontawesome-regular-star:"
+!!! exopapier "Exercice 4 - :fontawesome-solid-star: :fontawesome-regular-star: :fontawesome-regular-star:"
     On considère la fonction suivante :
 
     ```python linenums="1"
@@ -156,7 +156,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
                 return L * l
             ```
 
-!!! exoordi "Exercice 5 - :fontawesome-solid-star:  :fontawesome-regular-star: :fontawesome-regular-star:"
+!!! exopapier "Exercice 5 - :fontawesome-solid-star:  :fontawesome-regular-star: :fontawesome-regular-star:"
     On considère la fonction suivante :
 
     ```python linenums="1"
@@ -207,6 +207,14 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
         - une assertion correspondant à la précondition.
 
 
+    {{ python_playground(
+      key="ch5-division",
+      hauteur="300px",
+      example_file="files/NSI/Python/exemples/ch5/s_division.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_division_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_division_tests.py"
+    ) }}
+
     ??? success "Correction"
         1. Elle renvoie le quotient `a / b`.
         2. Précondition : `b` doit être non nul.
@@ -239,6 +247,14 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
     3. Écris la fonction `racine_carree(x)`, correctement documenter, en Python en utilisant `assert` pour faire respecter la précondition.
 
 
+    {{ python_playground(
+      key="ch5-racine",
+      hauteur="300px",
+      example_file="files/NSI/Python/exemples/ch5/s_racine.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_racine_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_racine_tests.py"
+    ) }}
+
     ??? success "Correction"
         1. Précondition : `x` doit être positif ou nul (`x >= 0`).
         2. Postcondition : le résultat renvoyé doit être positif, et son carré doit être (environ) égal à `x`.
@@ -265,7 +281,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
                 return res
             ```
 
-!!! exoordi "Exercice 8 - :fontawesome-solid-star:  :fontawesome-solid-star: :fontawesome-regular-star:"
+!!! exopapier "Exercice 8 - :fontawesome-solid-star:  :fontawesome-solid-star: :fontawesome-regular-star:"
     On considère la fonction suivante :
 
     ```python linenums="1"
@@ -304,7 +320,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
             ```
 
 
-!!! exoordi "Exercice 9 - :fontawesome-solid-star:  :fontawesome-solid-star: :fontawesome-regular-star:"
+!!! exopapier "Exercice 9 - :fontawesome-solid-star:  :fontawesome-solid-star: :fontawesome-regular-star:"
     On considère la fonction suivante :
 
     ```python linenums="1"
@@ -354,6 +370,14 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
     1. Donner le **prototype** de cette fonction.  
     2. Écrire la **spécification complète** (docstring avec paramètres, retour et préconditions).  
     3. Proposer une **implémentation Python** correcte.
+
+    {{ python_playground(
+      key="ch5-moyenne",
+      hauteur="320px",
+      example_file="files/NSI/Python/exemples/ch5/s_moyenne.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_moyenne_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_moyenne_tests.py"
+    ) }}
 
     ??? success "Correction"
         1. Prototype : `def moyenne(note4: float) -> float`  
@@ -417,6 +441,14 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
     2. Pour chaque appel, précise le résultat attendu (True ou False).
 
 
+    {{ python_playground(
+      key="ch5-est-pair",
+      hauteur="240px",
+      example_file="files/NSI/Python/exemples/ch5/s_est_pair.py"
+    ) }}
+
+    💡 Ici, pas de bouton **Valider** : c'est l'exécution elle-même qui te donne la réponse. Compare chaque affichage au résultat que tu avais prévu.
+
     ??? success "Correction"
         Par exemple :
 
@@ -443,6 +475,14 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
         - un nombre négatif ;
         - zéro.
 
+
+    {{ python_playground(
+      key="ch5-test-valeur-absolue",
+      hauteur="380px",
+      example_file="files/NSI/Python/exemples/ch5/s_test_valeur_absolue.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_test_valeur_absolue_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_test_valeur_absolue_tests.py"
+    ) }}
 
     ??? success "Correction"
         1. Cette fonction renvoie la valeur absolue de `x`, c'est-à-dire la distance entre `x` et 0.
@@ -472,6 +512,14 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
     1. Que fait cette fonction ?
     2. Écrire un jeu de tests pour cette fonction.
 
+    {{ python_playground(
+      key="ch5-test-fizzbuzz",
+      hauteur="420px",
+      example_file="files/NSI/Python/exemples/ch5/s_test_fizzbuzz.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_test_fizzbuzz_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_test_fizzbuzz_tests.py"
+    ) }}
+
     ??? success "Correction"
         1. Si le nombre est multiple de 3 et de 5, elle renvoie `"FizzBuzz"`, si le nombre est uniquement mutliple de 3, elle renvoie uniquement `"Fizz"` et si le nombre est uniquement multiple de 5, elle renvoie uniquement `"Buzz"`. 
         2. Il faut tester au moins 4 cas, un pour chaque retour possible : 
@@ -500,6 +548,14 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 
     1. Quel est son rôle ?
     2. Écrire un jeu de tests pour cette fonction.
+
+    {{ python_playground(
+      key="ch5-test-voyelles",
+      hauteur="420px",
+      example_file="files/NSI/Python/exemples/ch5/s_test_voyelles.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_test_voyelles_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_test_voyelles_tests.py"
+    ) }}
 
     ??? success "Correction"
         1. Compter le nombre de voyelle dans une phrase passée en argument. 
@@ -533,7 +589,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
             return "Erreur 2"
         elif prix_unitaire(20, 10) != 2:
             return "Erreur 3"
-        elif prix_unitaire(36, 20) != 2:
+        elif prix_unitaire(40, 18) != 2:
             return "Erreur 4"
         return "OK"
     ```
@@ -543,7 +599,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 
         ```python linenums="1"
         def prix_unitaire(total, nb):
-            if total in (2, 10, 20, 36):
+            if total in (2, 10, 20, 40):
                 return 2
             else:
                 return 0
@@ -553,6 +609,14 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 
     3. Que peux-tu conclure ?  
     4. Selon toi, la réussite de ce test prouve-t-elle que la fonction est correcte ? 
+
+    {{ python_playground(
+      key="ch5-prix-unitaire",
+      hauteur="460px",
+      example_file="files/NSI/Python/exemples/ch5/s_prix_unitaire.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_prix_unitaire_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_prix_unitaire_tests.py"
+    ) }}
 
     ??? success "Correction"
         1. Une fonction correcte pourrait être :
@@ -573,12 +637,22 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 ## Bibliothèques Python
 
 !!! exoordi "Exercice 16 - :fontawesome-solid-star:  :fontawesome-regular-star: :fontawesome-regular-star:"
-    Dans la console Python de Basthon : 
+    Dans l'éditeur ci-dessous :
 
-    1. Calculer la racine carrée de 25, puis de 2;
-    2. Calculer $\pi^2$
+    1. Calculer la racine carrée de 25, puis de 2 ;
+    2. Calculer $\pi^2$.
 
-    La fonction racine carré (*square root* en anglais) et la constante $\pi$ se trouve dans le module `math`.
+    La fonction racine carrée (*square root* en anglais) et la constante $\pi$ se trouvent dans le module `math`. À vous de l'importer.
+
+    {{ python_playground(
+      key="ch5-math",
+      hauteur="260px",
+      example_file="files/NSI/Python/exemples/ch5/s_math.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_math_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_math_tests.py"
+    ) }}
+
+    💡 Deux façons d'importer : `import math` puis `math.sqrt(25)`, ou `from math import sqrt, pi` puis directement `sqrt(25)`.
 
     ??? success "Correction"
         1. `sqrt(25)` et `sqrt(2)`
@@ -597,7 +671,9 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
     plt.show()
     ```
 
-    1. Copier et exécuter ce programme dans Basthon Notebook
+    1. Copier et exécuter ce programme dans [Basthon Notebook :octicons-link-external-16:](https://notebook.basthon.fr)
+
+        ⚠️ C'est le seul exercice de ce chapitre qui ne se fait pas dans l'éditeur du site : celui-ci n'affiche pas de graphiques.
     2. Remplacer l'argument `"-o"` à la ligne 6 successivement par : 
 
         - `"o"`
@@ -612,9 +688,16 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 !!! exoordi "Exercice 18 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-regular-star:"
     On souhaite comparer la fonction `random()` du langage **JavaScript** et l’équivalent en **Python**.
 
-    1. Ouvrir un nouveau [notebook Basthon](https://notebook.basthon.fr), ouvrir le cahier de NSI puis cliquer sur **« Éditeur Python »**.  
-    2. Importer le module Python `random`, puis afficher la documentation de la fonction `randint(a,b)` dans la console Python.  
-    3. Que fait cette fonction ?  
+    1. Importer le module Python `random`, puis afficher la documentation de la fonction `randint(a, b)` avec `help(random.randint)`.
+    2. Que fait cette fonction ? Exécuter plusieurs fois pour observer.
+
+    {{ python_playground(
+      key="ch5-random",
+      hauteur="320px",
+      example_file="files/NSI/Python/exemples/ch5/s_random.py"
+    ) }}
+
+    3. Poursuivre : 
     4. Le langage JavaScript ne possède pas de fonction identique, mais dispose d’une fonction `Math.random()` dans la bibliothèque `Math`.  
 
         La documentation indique que cette fonction renvoie un **nombre flottant pseudo-aléatoire entre 0 inclus et 1 exclu**.  
@@ -632,11 +715,22 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
         6. La fonction `random()` du module `random` de Python est identique à celle de JavaScript. 
 
 !!! exoordi "Exercice 19 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-regular-star:"
-    Dans le module [`marvel`](../../files/NSI/Specification_et_test/marvel.py) à télécharger, il y a une liste nommée `personnages` contenant les noms (type `str`) de tous les personnages de l'Univers Marvel.
+    Le module `marvel` contient une liste nommée `personnages`, avec les noms (type `str`) de tous les personnages de l'univers Marvel. **Il est déjà disponible dans l'éditeur ci-dessous** : un simple `import marvel` suffit.
 
-    Combien de personnages contiennent la chaine de caractères `"Black"` ?
+    Combien de personnages contiennent la chaîne de caractères `"Black"` ?
 
-    On pourra s'aider du code à compléter donné en Indication.
+    {{ python_playground(
+      key="ch5-marvel",
+      hauteur="400px",
+      example_file="files/NSI/Python/exemples/ch5/s_marvel.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_marvel_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_marvel_tests.py",
+      module_files="files/NSI/.modules/marvel.py"
+    ) }}
+
+    💡 Le module est bien réel, mais son contenu ne s'affiche pas : c'est exactement la situation d'une **bibliothèque** que l'on utilise sans jamais en lire le code.
+
+    
 
     ??? info "Indication"
         ```python linenums="1"
@@ -668,7 +762,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 !!! exoordi "Exercice 20 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-solid-star:"
     L'objectif de cet exercice est de mesurer le temps d'exécution d'un programme. On va pour cela utiliser le module `time`.
 
-    1. Dans la console Basthon : 
+    1. Dans l'éditeur ci-dessous : 
         1. Importer le module `time`
         2. Consulter la documentation de ce module. Repérer dans la description les deux façons de représenter le temps. Nous utiliserons la première. 
         3. Noter la date correspondante à "the Epoch"
@@ -681,13 +775,21 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
             pass
         ```
 
-        Dans Basthon Notebook : 
+        Compléter la fonction `duree_boucle(n)` ci-dessous :
 
-        1. Importer le module `time`
-        2. Copier-coller le code ci-dessus
-        3. Affecter à une variable `temps_debut` le temps courant **avant** la boucle `for`. 
-        4. Affecter à une variable `temps_fin` le temps courant **après** la boucle `for`. 
-        5. Ajouter une instruction pour afficher le temps d'exécution du programme.
+        1. Affecter à une variable `temps_debut` le temps courant **avant** la boucle `for`.
+        2. Affecter à une variable `temps_fin` le temps courant **après** la boucle `for`.
+        3. Renvoyer la durée d'exécution.
+
+    {{ python_playground(
+      key="ch5-chrono",
+      hauteur="340px",
+      example_file="files/NSI/Python/exemples/ch5/s_chrono.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_chrono_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_chrono_tests.py"
+    ) }}
+
+    3. Faire varier `n` : la durée est-elle proportionnelle au nombre de tours ?
 
     ??? success "Correction"
         1. Réponse de la question 1
@@ -706,3 +808,88 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 
             print(temps_fin-temps_debut)
             ```
+
+---
+
+## Démasquer un bug
+
+!!! info "Le principe de ces trois exercices"
+    Un stagiaire a livré une version **subtilement buguée** de chacune des fonctions ci-dessous. Vous ne la voyez pas, mais la validation, elle, la connaît.
+
+    Votre jeu de tests doit satisfaire **deux exigences** :
+
+    1. passer sur la version correcte, celle qui est affichée dans l'éditeur ;
+    2. **échouer** sur la version buguée.
+
+    Un test qui passe partout ne prouve rien : c'est toute la leçon de ce chapitre.
+
+!!! exoordi "Exercice 21 - Une histoire de borne - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-regular-star:"
+    La fonction `est_majeur(age)` indique si une personne est majeure.
+
+    Écrire `test_est_majeur()` de façon à démasquer la version buguée du stagiaire.
+
+    {{ python_playground(
+      key="ch5-bug-majeur",
+      hauteur="400px",
+      example_file="files/NSI/Python/exemples/ch5/s_bug_majeur.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_bug_majeur_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_bug_majeur_tests.py"
+    ) }}
+
+    ??? tip "Coup de pouce"
+        Tester 25 ans et 12 ans ne suffira pas : ces deux cas sont sans ambiguïté, et une fonction même approximative les traitera correctement.
+
+        Le bug se cache là où l'on hésite. À partir de quel âge exactement devient-on majeur ? Testez **cette valeur-là**, et celle juste en dessous.
+
+    ??? success "Ce qu'il fallait comprendre"
+        La version buguée écrivait `age > 18` au lieu de `age >= 18` : une personne de **18 ans pile** y était déclarée mineure.
+
+        On appelle cela une **erreur de borne**, et c'est l'un des bugs les plus fréquents en programmation. D'où la règle : quand une condition fait intervenir un seuil, on teste **toujours** la valeur du seuil elle-même.
+
+!!! exoordi "Exercice 22 - La note fantôme - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-regular-star:"
+    La fonction `moyenne(notes)` calcule la moyenne d'un tableau de notes.
+
+    Écrire `test_moyenne()` de façon à démasquer la version buguée.
+
+    {{ python_playground(
+      key="ch5-bug-moyenne",
+      hauteur="420px",
+      example_file="files/NSI/Python/exemples/ch5/s_bug_moyenne.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_bug_moyenne_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_bug_moyenne_tests.py"
+    ) }}
+
+    ??? tip "Coup de pouce"
+        Essayez d'abord `moyenne([10, 10, 10])`. Le test passe — sur les deux versions. Pourquoi ?
+
+        Parce qu'avec des notes toutes identiques, en oublier une ne change rien au résultat. Il faut donc des notes **bien différentes** les unes des autres, et surtout une **dernière note** qui se distingue nettement.
+
+    ??? success "Ce qu'il fallait comprendre"
+        La version buguée s'arrêtait à l'avant-dernière note : `range(len(notes) - 1)` au lieu de `range(len(notes))`. C'est l'**erreur d'indice** classique, celle du décalage de un.
+
+        La leçon dépasse ce bug : un jeu de tests n'est bon que si ses données sont **discriminantes**. Des valeurs toutes égales, des tableaux de taille 1, des zéros partout : ce sont de mauvais cas de test, car ils masquent les erreurs au lieu de les révéler.
+
+!!! exoordi "Exercice 23 - La fonction qui récite - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-solid-star:"
+    La fonction `aire_disque(rayon)` renvoie l'aire d'un disque.
+
+    Cette fois, le stagiaire n'a pas fait d'erreur de calcul : il n'a **rien calculé du tout**. Sa fonction connaît par cœur quelques résultats et les récite.
+
+    Écrire `test_aire_disque()` de façon à la démasquer.
+
+    {{ python_playground(
+      key="ch5-bug-triche",
+      hauteur="420px",
+      example_file="files/NSI/Python/exemples/ch5/s_bug_triche.py",
+      solution_file="files/NSI/Python/.corrections/ch5/s_bug_triche_solution.py",
+      tests_file="files/NSI/Python/.corrections/ch5/s_bug_triche_tests.py"
+    ) }}
+
+    ??? tip "Coup de pouce"
+        Les rayons auxquels on pense spontanément — 0, 1, 2, 10 — sont précisément ceux qu'une fonction tricheuse aura appris par cœur.
+
+        Prenez un rayon dont personne n'aurait l'idée. C'est aussi une bonne habitude en général : des jeux de tests trop prévisibles finissent par ne tester que la mémoire du programmeur.
+
+    ??? success "Ce qu'il fallait comprendre"
+        Vous venez de retrouver, par l'autre bout, la conclusion de l'exercice 15 : **la réussite d'un test ne prouve pas qu'un programme est correct**. Elle prouve seulement qu'il se comporte bien sur les cas testés.
+
+        C'est pourquoi on ne se contente jamais des cas « évidents » : on cherche systématiquement les **cas limites**, les **valeurs inattendues** et les **données discriminantes**. Et lorsqu'un programme doit vraiment être sûr — un logiciel médical, un pilote automatique — les tests ne suffisent plus : il faut **prouver** sa correction, comme vous le ferez au chapitre d'algorithmique avec les invariants de boucle.
