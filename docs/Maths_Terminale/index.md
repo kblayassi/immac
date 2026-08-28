@@ -49,17 +49,4 @@ Accédez aux sujets et corrigés pour vous préparer efficacement aux évaluatio
 ## À propos
 Cette section est enrichie tout au long de l’année pour vous accompagner dans vos révisions. Consultez régulièrement les nouveautés !
 
-??? info "Historique des mises à jour"
-    * 04.05.2026 - Ajout du bac blanc 2 + correction
-    * 18.03.2026 - Ajout de nouveaux TD+correction
-    * 07.02.2026 - Ajout de manuels pour le Grand Oral
-    * 04.02.2026 - Exerciseurs logarithme + nouveau documents
-    * 24.01.2026 - Ajout de la page Grand Oral
-    * 23.01.2026 - Pleins de nouveaux documents
-    * 06.12.2025 - Ajout du DS3+correction, bac blanc 0 + correction
-    * 01.12.2025 - Ajout de la page "Documents" avec TD+correction
-    * 10.10.2025 - Ajout DS1 et correction
-    * 01.10.2025 - Ajout des chapitres 1, 2 et 3 (succint)
-    * 17.08.2025 - Création de la page de présentation
-
 Bonne navigation et excellente année en mathématiques ! 🚀

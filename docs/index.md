@@ -13,17 +13,16 @@ hide:
        style="width: 25%; margin-left: 10px;">
 </h1>
 
-???+ warning "Attention"
-    Ce site est en cours d'élaboration. 
-    
-    De nombreux contenus sont encore absents et le contenu déjà présent peut être incomplet ou contenir des erreurs. 
-
-
 Bienvenue à tous, chers **lycéens** ! Ce site a été spécialement conçu pour vous accompagner tout au long de l'année scolaire dans les disciplines suivantes :
 
+- **Mathématiques** - Classe de Seconde
 - **Sciences Numériques et Technologie (SNT)** - Classe de Seconde
 - **Enseignement de Spécialité Mathématiques (EDS Maths)** - Classe de Première
 - **Enseignement de Spécialité Numérique et Sciences Informatiques (EDS NSI)** - Classe de Première
+- **Enseignement de Spécialité Mathématiques (EDS Maths)** - Classe de Terminale
+
+S'y ajoute la **Course aux nombres**, le concours de calcul mental organisé chaque année de la
+sixième à la terminale, ouvert à tous les niveaux.
 
 ## Objectifs du site
 

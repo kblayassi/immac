@@ -83,8 +83,3 @@ L’année est structurée autour de **sept grandes thématiques** :
 
 ## À propos
 Cette section est mise à jour régulièrement pour inclure de nouvelles ressources. N'hésitez pas à revenir fréquemment pour découvrir les ajouts.
-
-??? info "Historique des mises à jour"
-    * 06.02.2025 - Ajout des nouveaux TP pate à crêpes
-    * 02.01.2026 - Ajout des playgrounds
-    * 15.02.2025 - Création de la page de présentation, de la page du TP sur la pate à crepes et hébergement des premières productions
