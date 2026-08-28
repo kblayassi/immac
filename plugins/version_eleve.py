@@ -8,7 +8,11 @@ Le site est construit deux fois à partir des mêmes sources :
 
 En version élève, ce hook retire des pages de NSI, *avant* la conversion en HTML :
 
-* les corrections d'exercices — toutes les admonitions `??? success` ;
+* les corrections d'exercices — toutes les admonitions `??? success`. Le
+  contenu de cours qu'elles hébergent parfois est conservé : une `definition`
+  n'est jamais une réponse, et un bloc `expert` intitulé « Pour aller plus
+  loin » va, par convention du site, au-delà de l'exercice. Les deux sont
+  remontés au niveau de la correction retirée ;
 * les blocs « À retenir » des leçons, remplacés par une ligne d'attente ;
 * la correction embarquée dans les éditeurs Python — l'attribut
   `data-solution-b64`, son panneau et son bouton « Afficher la correction ».
@@ -27,6 +31,13 @@ DEBUT_RETENIR = re.compile(r'^(?P<indent>[ \t]*)!{3}\+?[ \t]+\w+[ \t]+"À reteni
 TITRE_RETENIR = re.compile(r'^#{2,3}[ \t]+À retenir\b')
 
 REMPLACEMENT = '!!! info "À retenir"\n    Cette synthèse est construite en classe.\n'
+
+# Contenu de cours qui peut se trouver niché dans une correction : il survit au
+# retrait de celle-ci. Le titre « Pour aller plus loin » est la convention du
+# site pour distinguer un approfondissement d'une variante de corrigé.
+A_CONSERVER = re.compile(
+    r'^(?P<indent>[ \t]*)(?:!{3}|\?{3})\+?[ \t]+'
+    r'(?:definition\b|expert[ \t]+"Pour aller plus loin)')
 
 
 def _fin_du_bloc(lignes, debut, indent):
@@ -49,6 +60,25 @@ def _fin_du_bloc(lignes, debut, indent):
     return i
 
 
+def _contenu_de_cours(lignes, debut, fin, indent_cible):
+    """Remonte au niveau `indent_cible` les blocs de cours nichés dans [debut, fin[."""
+    garde = []
+    i = debut
+    while i < fin:
+        m = A_CONSERVER.match(lignes[i])
+        if not m:
+            i += 1
+            continue
+        indent = m.group('indent')
+        bout = min(_fin_du_bloc(lignes, i, indent), fin)
+        retrait = len(indent) - len(indent_cible)
+        for l in lignes[i:bout]:
+            garde.append(l[retrait:] if l[:retrait].strip() == '' else l)
+        garde.append('')
+        i = bout
+    return garde
+
+
 def _epurer(markdown):
     lignes = markdown.split('\n')
     sortie = []
@@ -60,7 +90,10 @@ def _epurer(markdown):
 
         m = DEBUT_SUCCESS.match(ligne)
         if m:
-            i = _fin_du_bloc(lignes, i, m.group('indent'))
+            indent = m.group('indent')
+            fin = _fin_du_bloc(lignes, i, indent)
+            sortie.extend(_contenu_de_cours(lignes, i + 1, fin, indent))
+            i = fin
             retires += 1
             continue
 
@@ -72,22 +105,20 @@ def _epurer(markdown):
             retires += 1
             continue
 
-        # section « ## À retenir 📌 » : on vide ses admonitions, on garde le titre
+        # Section « ## À retenir 📌 » : seule la synthèse qui ouvre la section est
+        # remplacée. Ce qui suit — une transition, un bloc de crédits — ne la
+        # concerne pas et reste en place.
         if TITRE_RETENIR.match(ligne):
             sortie.append(ligne)
             i += 1
-            bloc_pose = False
-            while i < n and not re.match(r'^#{1,3}[ \t]', lignes[i]):
-                m2 = re.match(r'^(?P<indent>[ \t]*)[!?]{3}\+?[ \t]+\w+', lignes[i])
-                if m2:
-                    i = _fin_du_bloc(lignes, i, m2.group('indent'))
-                    retires += 1
-                    if not bloc_pose:
-                        sortie.extend(REMPLACEMENT.split('\n'))
-                        bloc_pose = True
-                else:
-                    sortie.append(lignes[i])
-                    i += 1
+            while i < n and not lignes[i].strip():
+                sortie.append(lignes[i])
+                i += 1
+            m2 = re.match(r'^(?P<indent>[ \t]*)[!?]{3}\+?[ \t]+\w+', lignes[i]) if i < n else None
+            if m2:
+                i = _fin_du_bloc(lignes, i, m2.group('indent'))
+                sortie.extend(REMPLACEMENT.split('\n'))
+                retires += 1
             continue
 
         sortie.append(ligne)
