@@ -30,4 +30,10 @@ jobs:
       - run: pip install mkdocs-to-pdf
       - run: pip install mkdocs-glightbox
       - run: pip install mkdocs-macros-plugin
-      - run: mkdocs gh-deploy --force
+      # Version élève à la racine : corrections et blocs « À retenir » de NSI
+      # absents du HTML produit.
+      - run: mkdocs build
+      # Version prof dans prof/ : le site complet. Construite après, pour ne pas
+      # être effacée par le nettoyage du dossier de sortie de la version élève.
+      - run: mkdocs build -f mkdocs-prof.yml
+      - run: ghp-import --no-jekyll --push --force --no-history site

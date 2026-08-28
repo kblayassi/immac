@@ -1,0 +1,17 @@
+# Version prof : le site complet, corrections comprises.
+#
+#   mkdocs build -f mkdocs-prof.yml
+#
+# Elle se construit dans site/prof/ et se consulte en ajoutant « prof/ » à
+# l'adresse du site : https://kblayassi.github.io/immac/prof/
+#
+# Attention : cette adresse n'est pas listée, mais elle n'est pas protégée.
+# Qui la connait y accède. Ne rien y déposer qui ne doive pas fuiter.
+
+INHERIT: mkdocs.yml
+
+site_url: https://kblayassi.github.io/immac/prof/
+site_dir: site/prof
+
+extra:
+  version: prof

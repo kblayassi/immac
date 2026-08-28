@@ -78,6 +78,9 @@ extra_javascript:
   - javascripts/bac_a_sable.js
 
 extra: 
+  # eleve : corrections et blocs « À retenir » de NSI retirés du HTML produit.
+  # La version prof se construit avec mkdocs-prof.yml.
+  version: eleve
   social: 
     - icon: fontawesome/solid/paper-plane
       link: mailto:kblayassi@immacespalion.org
@@ -103,6 +106,7 @@ extra:
 
 hooks: 
   - plugins/exo_numbering.py
+  - plugins/version_eleve.py
 
 plugins:
   - search
