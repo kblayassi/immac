@@ -1,17 +1,18 @@
 ---
 title: Objectifs
-weight: 4
+weight: 9
 ---
 
-# Nombres réels
+# Évolutions
 
 ## Objectifs
 
 Dans ce chapitre, nous allons apprendre à
 
-* Reconnaitre le plus petit ensemble de nombres auquel appartient un nombre
-* Représenter un intervalle et tester l'appartenance d'un réel
-* Déterminer l'intersection et la réunion de deux intervalles
+* Calculer une proportion, un pourcentage, un effectif
+* Calculer un pourcentage de pourcentage
+* Calculer un taux d'évolution, un coefficient multiplicateur, une valeur initiale ou finale
+* Déterminer un taux d'évolution global et un taux d'évolution réciproque
 
 !!! warning "**Attention**" 
     Les exerciseurs proposés sont un complément pour renforcer vos compétences. Ils ne suffisent pas à eux seuls pour réviser efficacement le chapitre. Pensez à étudier le cours et à revoir les exercices traités en classe pour une maîtrise complète des notions.

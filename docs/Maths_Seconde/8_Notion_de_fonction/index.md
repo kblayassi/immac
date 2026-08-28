@@ -1,17 +1,17 @@
 ---
 title: Objectifs
-weight: 4
+weight: 8
 ---
 
-# Nombres réels
+# Notion de fonction
 
 ## Objectifs
 
 Dans ce chapitre, nous allons apprendre à
 
-* Reconnaitre le plus petit ensemble de nombres auquel appartient un nombre
-* Représenter un intervalle et tester l'appartenance d'un réel
-* Déterminer l'intersection et la réunion de deux intervalles
+* Déterminer l'image et les antécédents d'un nombre par une fonction
+* Déterminer l'ensemble de définition d'une fonction
+* Exploiter la représentation graphique d'une fonction
 
 !!! warning "**Attention**" 
     Les exerciseurs proposés sont un complément pour renforcer vos compétences. Ils ne suffisent pas à eux seuls pour réviser efficacement le chapitre. Pensez à étudier le cours et à revoir les exercices traités en classe pour une maîtrise complète des notions.

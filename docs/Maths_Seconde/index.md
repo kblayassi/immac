@@ -30,16 +30,22 @@ La Seconde est une **année de transition** entre le collège et le lycée. Elle
 
 ## Ressources disponibles
 
-### 1. **Fiches de cours et de méthodes 📚** (bientôt disponible)
-Des résumés structurés de chaque chapitre avec définitions, propriétés, méthodes et exemples.
+### 1. **Fiches de cours et de méthodes 📚**
+Une page par savoir-faire : la méthode en étapes numérotées, illustrée sur un exemple traité.
 
-### 2. **Exerciseurs pour s’entraîner ✏️**
+* Les fiches sont numérotées **en continu sur l'année**, de la fiche 1 à la fiche 58.
+* Chaque chapitre s'ouvre sur une page **Objectifs** qui annonce ce que l'on va apprendre à faire.
+
+### 2. **Livret de cours et TD 📄**
+Le **livret de cours** en version élève, à compléter, est téléchargeable sur la page [Documents](Documents.md). Les **TD et leurs corrections** y seront déposés au fur et à mesure de l'année.
+
+### 3. **Exerciseurs pour s’entraîner ✏️**
 Des exercices interactifs et progressifs pour acquérir des automatismes et tester vos connaissances.
 
 !!! warning "**Attention**"
     Les exerciseurs complètent le travail fait en classe, mais ne remplacent pas l’étude du cours ni les exercices papier. Combinez les différentes méthodes pour une progression solide.
 
-### 3. **Sujets et corrections de devoirs 📄** (bientôt disponible)
+### 4. **Sujets et corrections de devoirs 📄** (bientôt disponible)
 Accès aux devoirs surveillés et à leurs corrigés pour vous entraîner dans des conditions proches de l’évaluation.
 
 ---
@@ -50,12 +56,5 @@ Accès aux devoirs surveillés et à leurs corrigés pour vous entraîner dans d
 
 ## À propos
 Cette section sera mise à jour tout au long de l’année avec de nouvelles ressources.
-
-??? info "Historique des mises à jour"
-    * 12.12.2025 - Ajout du chapitre 5
-    * 24.11.2025 - Ajout du chapitre 4
-    * 14.10.2025 - Ajout du chapitre 3
-    * 01.10.2025 - Ajout du chapitre 2
-    * 16.09.2025 - Ajout de la page et du chapitre 1
 
 Bonne navigation et excellente année en mathématiques ! 😊
