@@ -1,7 +1,9 @@
 """Banc de test d'une séance du parcours Python.
 
-Usage : python3 tools/parcours/verifier_seance.py s03
-        (ou sans argument pour vérifier les onze séances)
+Usage : python3 tools/parcours/verifier_seance.py [parcours] [séance]
+        sans argument      : tous les parcours, toutes les séances
+        parcours-nsi       : toutes les séances de ce parcours
+        parcours-nsi s03   : une seule séance
 
 Pour chaque étape de code :
   1. la solution officielle s'exécute sans erreur ;
@@ -102,8 +104,8 @@ def valider(code, v, saisies=None):
                 signal.signal(signal.SIGALRM, ancien)
     return echecs
 
-def main(seance):
-    brut = subprocess.run(["node", str(RACINE / "extraire.mjs"), seance],
+def main(seance, parcours="parcours-python"):
+    brut = subprocess.run(["node", str(RACINE / "extraire.mjs"), parcours, seance],
                           cwd=RACINE, capture_output=True, text=True)
     if brut.returncode:
         print(brut.stderr); sys.exit(1)
@@ -165,11 +167,20 @@ def main(seance):
         print("\n✓ séance intégralement vérifiée")
     return len(souci)
 
+def seances_de(parcours):
+    dossier = RACINE.parent.parent / "docs" / parcours / "seances"
+    return sorted(f.stem for f in dossier.glob("s*.js"))
+
+
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        sys.exit(min(main(sys.argv[1]), 1))
+    args = sys.argv[1:]
+    if len(args) == 2:
+        sys.exit(min(main(args[1], args[0]), 1))
+    parcours = [args[0]] if args else sorted(
+        d.name for d in (RACINE.parent.parent / "docs").glob("parcours-*") if d.is_dir())
     total = 0
-    for numero in range(1, 12):
-        total += main(f"s{numero:02d}")
-    print(f"\n{'✓ toutes les séances sont vérifiées' if not total else f'{total} problème(s) au total'}")
+    for p in parcours:
+        for s in seances_de(p):
+            total += main(s, p)
+    print(f"\n{'✓ tout est vérifié' if not total else f'{total} problème(s) au total'}")
     sys.exit(min(total, 1))

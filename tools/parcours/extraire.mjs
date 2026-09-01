@@ -11,8 +11,9 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const ici = dirname(fileURLToPath(import.meta.url));
-const id = process.argv[2];
-const source = readFileSync(join(ici, "..", "..", "docs", "parcours-python", "seances", `${id}.js`), "utf8");
+const parcours = process.argv[2];      // « parcours-python », « parcours-nsi »…
+const id = process.argv[3];
+const source = readFileSync(join(ici, "..", "..", "docs", parcours, "seances", `${id}.js`), "utf8");
 const def = (await import("data:text/javascript;charset=utf-8," + encodeURIComponent(source))).default;
 
 const etapes = [];

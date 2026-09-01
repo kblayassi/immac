@@ -17,8 +17,8 @@ En version élève, ce hook retire des pages de NSI, *avant* la conversion en HT
 * la correction embarquée dans les éditeurs Python — l'attribut
   `data-solution-b64`, son panneau et son bouton « Afficher la correction ».
 
-Il retire enfin, dans le **parcours Python** de SNT (`docs/parcours-python/`,
-copié tel quel par MkDocs et donc invisible des hooks de page), le champ
+Il retire enfin, les **parcours interactifs** (`docs/parcours-*/`, copiés tels quels par
+MkDocs et donc invisibles des hooks de page), le champ
 `solution` de chaque étape des fichiers `seances/*.js`. Sans lui, l'application
 n'affiche pas le bouton « Correction » : rien n'est masqué, il n'y a
 simplement plus rien à afficher.
@@ -201,10 +201,9 @@ SOLUTION_PARCOURS = re.compile(r'^[ \t]*solution:\s*`(?:[^`\\]|\\.)*`,[ \t]*\n',
 def on_post_build(config):
     if config.get('extra', {}).get('version') != 'eleve':
         return
-    dossier = Path(config['site_dir']) / 'parcours-python' / 'seances'
-    if not dossier.is_dir():
-        return
-    for fichier in sorted(dossier.glob('s*.js')):
+    racine = Path(config['site_dir'])
+    for dossier in sorted(racine.glob('parcours-*/seances')):
+      for fichier in sorted(dossier.glob('s*.js')):
         source = fichier.read_text(encoding='utf-8')
         epure, retires = SOLUTION_PARCOURS.subn('', source)
         if retires:

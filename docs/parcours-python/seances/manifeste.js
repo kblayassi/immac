@@ -9,6 +9,18 @@
  * de l'audit des savoir-faire (partie « Algorithmique et programmation »).
  */
 
+/* Identité de ce parcours : lue par le moteur partagé (docs/parcours/app.js). */
+export const PARCOURS = {
+  cle: "parcours-python",
+  titre: "Parcours Python",
+  surTitre: "SNT · Seconde · Algorithmique et programmation",
+  h1: "Apprendre Python, une étape à la fois",
+  accroche: `Tu viens de Scratch, et c'est exactement le bon point de départ.
+    Chaque séance t'explique une idée pas à pas, te fait écrire du code tout de suite,
+    et vérifie ton travail à ta place. Ta progression est enregistrée automatiquement.`,
+  retour: { href: "../SNT/1_Python/", libelle: "Retour au site" },
+};
+
 export const PALIERS = [
   {
     id: "t6",

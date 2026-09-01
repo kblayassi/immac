@@ -9,11 +9,16 @@
  * rien des notions enseignées, il sait dérouler des étapes et les valider.
  */
 
-import { PALIERS, CATALOGUE } from "./seances/manifeste.js";
+/* Le moteur est partagé par plusieurs parcours (SNT, NSI). Il ne se repère donc
+   pas à sa propre adresse mais à celle de la PAGE qui le charge : les séances et
+   la configuration se trouvent toujours à côté de l'index.html, jamais à côté
+   de ce fichier. */
+const PAGE = new URL(".", document.baseURI);
+const URL_WORKER = new URL("../javascripts/pyodide-worker.js", PAGE).href;
+const URL_BUNDLE = new URL("../javascripts/codemirror-bundle.js", PAGE).href;
 
-const BASE = new URL(".", import.meta.url);
-const URL_WORKER = new URL("../javascripts/pyodide-worker.js", BASE).href;
-const URL_BUNDLE = new URL("../javascripts/codemirror-bundle.js", BASE).href;
+const { PARCOURS, PALIERS, CATALOGUE } =
+  await import(new URL("seances/manifeste.js", PAGE).href);
 
 /* ====================================================================== Outils */
 
@@ -59,7 +64,7 @@ function toast(message) {
 
 /* ================================================================= Progression */
 
-const CLE = "parcours-python:v1";
+const CLE = `${PARCOURS.cle}:v1`;
 
 /* Forme stockée :
    { version, eleve:{prenom}, seances:{ s01:{ etapes:{ e1:{reussi,essais,indices,correction} },
@@ -127,7 +132,7 @@ function restaurer(json) {
 
 /* ======================================================================= Thème */
 
-const CLE_THEME = "parcours-python:theme";
+const CLE_THEME = "parcours:theme";
 
 function appliquerTheme(valeur) {
   if (valeur === "clair") document.documentElement.dataset.theme = "light";
@@ -312,7 +317,7 @@ function aller(hash) {
 function rendreHub() {
   const vue = $("#vue");
   vue.textContent = "";
-  $("#barre-titre").textContent = "Parcours Python";
+  $("#barre-titre").textContent = PARCOURS.titre;
   majRetour("hub");
 
   const total = Object.keys(CATALOGUE).reduce((s, id) => s + totalEtapes(id), 0);
@@ -322,11 +327,9 @@ function rendreHub() {
 
   const chapeau = elem("div", "chapeau");
   chapeau.innerHTML = `
-    <div class="sur-titre">SNT · Seconde · Algorithmique et programmation</div>
-    <h1>Apprendre Python, une étape à la fois</h1>
-    <p class="accroche">Tu viens de Scratch, et c'est exactement le bon point de départ.
-    Chaque séance t'explique une idée pas à pas, te fait écrire du code tout de suite,
-    et vérifie ton travail à ta place. Ta progression est enregistrée automatiquement.</p>`;
+    <div class="sur-titre">${PARCOURS.surTitre}</div>
+    <h1>${PARCOURS.h1}</h1>
+    <p class="accroche">${PARCOURS.accroche}</p>`;
   vue.appendChild(chapeau);
 
   for (const palier of PALIERS) {
@@ -381,9 +384,9 @@ function majRetour(vue) {
     libelle.textContent = "Toutes les séances";
     lien.title = "Revenir à la liste des séances";
   } else {
-    lien.href = "../SNT/1_Python/";
-    libelle.textContent = "Retour au site";
-    lien.title = "Revenir au site du cours";
+    lien.href = PARCOURS.retour.href;
+    libelle.textContent = PARCOURS.retour.libelle;
+    lien.title = PARCOURS.retour.titre || "Revenir au site du cours";
   }
 }
 
@@ -404,7 +407,7 @@ async function rendreSeance(id) {
 
   let def;
   try {
-    def = (await import(`./seances/${id}.js`)).default;
+    def = (await import(new URL(`seances/${id}.js`, PAGE).href)).default;
   } catch (e) {
     vue.textContent = "";
     vue.appendChild(elem("p", null, "Cette séance n'est pas encore disponible."));
@@ -938,7 +941,7 @@ function initPanneau() {
     const nom = (etat.eleve?.prenom || "eleve").normalize("NFD").replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase();
     const lien = document.createElement("a");
     lien.href = URL.createObjectURL(new Blob([JSON.stringify(etat, null, 2)], { type: "application/json" }));
-    lien.download = `progression-python-${nom}.json`;
+    lien.download = `${PARCOURS.cle}-${nom}.json`;
     lien.click();
     setTimeout(() => URL.revokeObjectURL(lien.href), 5000);
     toast("Fichier téléchargé");
