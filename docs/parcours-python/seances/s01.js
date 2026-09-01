@@ -641,7 +641,7 @@ Nombre d'heures de SNT : 72</code></pre>
           titre: "Le losange",
           contenu: `
             <p>Plus dur que le sapin, parce qu'il faut redescendre :</p>
-            <pre class="bloc-code"><code>   *
+            <pre class="bloc-code sans-copie"><code>   *
   * *
  *   *
 *     *
