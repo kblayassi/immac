@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr" >
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parcours Python — Seconde</title>
+<meta name="description" content="Apprendre Python pas à pas, en Seconde : cours interactif, exercices auto-corrigés et défis.">
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header class="barre">
+  <div class="barre-interieur">
+    <a class="marque" href="#/" id="lien-accueil">
+      <span class="logo" aria-hidden="true">&gt;_</span>
+      <span class="cache-mobile">Parcours&nbsp;Python</span>
+    </a>
+
+    <div class="barre-titre" id="barre-titre" hidden></div>
+
+    <span class="barre-espace"></span>
+
+    <div class="jauge" id="jauge-barre" role="progressbar" aria-label="Avancement" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+    <span class="compteur" id="compteur-barre"></span>
+
+    <button class="bouton fantome icone" id="btn-theme" title="Changer de thème" aria-label="Changer de thème">◐</button>
+    <button class="bouton fantome icone" id="btn-progression" title="Ma progression" aria-label="Ma progression">☰</button>
+  </div>
+</header>
+
+<main id="vue" class="page" tabindex="-1"></main>
+
+<!-- Sauvegarde : la progression vit dans ce navigateur ; ce panneau sert à
+     l'emporter d'un poste à l'autre. -->
+<dialog class="panneau" id="panneau-progression">
+  <form method="dialog" class="corps">
+    <h2>Ma progression</h2>
+    <p id="resume-progression"></p>
+
+    <div class="champ">
+      <label for="champ-prenom">Mon prénom (affiché nulle part ailleurs)</label>
+      <input type="text" id="champ-prenom" autocomplete="off" placeholder="Ada">
+    </div>
+
+    <p style="font-size:.9rem;color:var(--texte-doux)">
+      Ta progression est enregistrée <strong>dans ce navigateur</strong>, automatiquement.
+      Si tu changes de poste, emporte-la avec ton <strong>code de reprise</strong>.
+    </p>
+
+    <div class="champ">
+      <label for="champ-code">Code de reprise</label>
+      <textarea id="champ-code" spellcheck="false" placeholder="Colle ici un code de reprise pour restaurer ta progression…"></textarea>
+    </div>
+  </form>
+
+  <div class="pied">
+    <button class="bouton fantome" id="btn-copier">Copier mon code</button>
+    <button class="bouton fantome" id="btn-telecharger">Télécharger</button>
+    <button class="bouton" id="btn-restaurer">Restaurer</button>
+    <button class="bouton fantome" id="btn-fermer-progression">Fermer</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
