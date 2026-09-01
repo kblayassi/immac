@@ -9,7 +9,7 @@ export default {
   numero: 5,
   titre: "La boucle bornée for",
   sousTitre: "Répéter sans se répéter",
-  palier: "T7 — Boucle bornée et boucle non bornée",
+  palier: "Partie 2 — Boucle bornée et boucle non bornée",
 
   accroche: `Écrire dix fois la même ligne, c'est perdre son temps — et le meilleur
     moyen de se tromper. La boucle <code>for</code> dit à Python : « refais ça
@@ -189,7 +189,7 @@ Bonjour !</code></pre>
           felicitation: "Dix lignes, une instruction. C'est ça, la puissance d'une boucle. ✖️",
           indices: [
             "Dans le corps de la boucle, <code>i</code> vaut successivement 1, 2, … 10.",
-            "<code>print(\"7 x\", i, \"=\", 7 * i)</code>",
+            "Un seul <code>print</code>, à quatre morceaux séparés par des virgules : le texte « 7 x », la variable de boucle, le signe égal entre guillemets, et le produit de 7 par cette variable.",
           ],
           solution: `for i in range(1, 11):\n    print("7 x", i, "=", 7 * i)\n`,
         },
@@ -244,6 +244,7 @@ print(somme)     # 15</code></pre>
           depart: `somme = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bsomme\\b[\\s\\S]*\\bsomme\\b", message: "Sers-toi de la variable somme déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut une boucle." },
             ],
             codeAbsent: [
@@ -273,6 +274,7 @@ print(somme)     # 15</code></pre>
           depart: `compteur = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bcompteur\\b[\\s\\S]*\\bcompteur\\b", message: "Sers-toi de la variable compteur déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut parcourir les nombres avec une boucle." },
               { motif: "\\bif\\b", message: "Il faut tester chaque nombre avec un if." },
               { motif: "%", message: "Le test de divisibilité utilise le reste %." },
@@ -366,8 +368,9 @@ Décollage !</code></pre>
             sortie: "10\n9\n8\n7\n6\n5\n4\n3\n2\n1\n0\nDécollage !",
           },
           indices: [
-            "<code>range(10, -1, -1)</code> : on part de 10, on s'arrête avant −1, en reculant de 1.",
-            "Le <code>print(\"Décollage !\")</code> est en dehors de la boucle.",
+            "<code>range</code> accepte un troisième argument : le pas. Un pas négatif fait descendre.",
+            "Attention à la borne d'arrivée : elle est exclue, donc pour afficher 0 il faut s'arrêter juste après.",
+            "Le message de décollage s'affiche une seule fois : il est en dehors de la boucle.",
           ],
           solution: `for i in range(10, -1, -1):\n    print(i)\n\nprint("Décollage !")\n`,
         },
@@ -394,8 +397,8 @@ Décollage !</code></pre>
             sortieContient: ["9 x 10 = 90"],
           },
           indices: [
-            "<code>table = int(input(\"Quelle table ? \"))</code>",
-            "Puis <code>for i in range(1, 11):</code> et un <code>print</code> avec <code>table * i</code>.",
+            "Commence par demander le numéro de la table, en convertissant la saisie.",
+            "Puis une boucle de 1 à 10, avec un seul <code>print</code> qui affiche la table, le multiplicateur, le signe égal et leur produit.",
           ],
           solution: `table = int(input("Quelle table ? "))\n\nfor i in range(1, 11):\n    print(table, "x", i, "=", table * i)\n`,
         },
@@ -413,6 +416,7 @@ Décollage !</code></pre>
           depart: `somme = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bsomme\\b[\\s\\S]*\\bsomme\\b", message: "Sers-toi de la variable somme déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut une boucle." },
             ],
             codeAbsent: [
@@ -433,7 +437,7 @@ Décollage !</code></pre>
           titre: "L'escalier d'étoiles",
           contenu: `
             <p>Affiche cet escalier :</p>
-            <pre class="bloc-code"><code>*
+            <pre class="bloc-code sans-copie"><code>*
 **
 ***
 ****
@@ -492,6 +496,7 @@ Décollage !</code></pre>
           depart: `produit = \n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bproduit\\b[\\s\\S]*\\bproduit\\b", message: "Sers-toi de la variable produit déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut une boucle." },
             ],
             codeAbsent: [
@@ -525,6 +530,7 @@ Moyenne : 13.0</code></pre>
           saisiesTest: ["12", "15", "9", "18", "11"],
           validation: {
             codeContient: [
+              { motif: "\\bsomme\\b[\\s\\S]*\\bsomme\\b", message: "Sers-toi de la variable somme déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut une boucle." },
               { motif: "int\\s*\\(\\s*input", message: "Chaque note doit être demandée et convertie." },
             ],
@@ -536,9 +542,9 @@ Moyenne : 13.0</code></pre>
           },
           felicitation: "Saisie répétée et accumulation : un vrai outil. 📊",
           indices: [
-            "<code>for i in range(1, 6):</code> pour numéroter les notes de 1 à 5.",
-            "Dans la boucle : <code>note = int(input(\"Note ? \"))</code> puis <code>somme = somme + note</code>.",
-            "Après la boucle : <code>print(\"Moyenne :\", somme / 5)</code>.",
+            "Cinq notes à saisir : une boucle bornée de cinq tours suffit.",
+            "Deux lignes dans la boucle : demander la note en convertissant la saisie, puis l'ajouter à <code>somme</code>.",
+            "Après la boucle, affiche <code>somme</code> divisée par le nombre de notes.",
           ],
           solution: `somme = 0\n\nfor i in range(1, 6):\n    note = int(input("Note ? "))\n    somme = somme + note\n\nprint("Moyenne :", somme / 5)\n`,
         },
@@ -561,6 +567,7 @@ Le plus grand est 45</code></pre>
           saisiesTest: ["12", "45", "7", "45", "3"],
           validation: {
             codeContient: [
+              { motif: "\\bmaximum\\b[\\s\\S]*\\bmaximum\\b", message: "Sers-toi de la variable maximum déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut une boucle." },
               { motif: "\\bif\\b", message: "Il faut comparer chaque nombre au champion actuel." },
             ],
@@ -597,6 +604,8 @@ Le plus grand est 45</code></pre>
           depart: `nombre = 36\ncompteur = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bnombre\\b[\\s\\S]*\\bnombre\\b", message: "Sers-toi de la variable nombre déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bcompteur\\b[\\s\\S]*\\bcompteur\\b", message: "Sers-toi de la variable compteur déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut parcourir les diviseurs possibles." },
               { motif: "%", message: "Le test de divisibilité utilise le reste." },
             ],
@@ -632,7 +641,7 @@ Le plus grand est 45</code></pre>
           contenu: `
             <p>Le sapin de la séance 1, mais construit par une boucle, à partir d'une
             variable <code>hauteur</code>. Avec <code>hauteur = 5</code> :</p>
-            <pre class="bloc-code"><code>    *
+            <pre class="bloc-code sans-copie"><code>    *
    ***
   *****
  *******
@@ -678,6 +687,7 @@ Le plus grand est 45</code></pre>
           depart: `a = 1\nb = 1\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut une boucle." },
             ],
             codeAbsent: [
@@ -707,6 +717,7 @@ Le plus grand est 45</code></pre>
           depart: `n = 97\npremier = True\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bn\\b[\\s\\S]*\\bn\\b", message: "Sers-toi de la variable n déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut chercher des diviseurs avec une boucle." },
               { motif: "premier\\s*=\\s*False", message: "Le drapeau doit être baissé quand un diviseur est trouvé." },
             ],
@@ -763,7 +774,7 @@ Le plus grand est 45</code></pre>
           titre: "Le triangle de nombres",
           contenu: `
             <p>Un défi de précision. Affiche exactement :</p>
-            <pre class="bloc-code"><code>1
+            <pre class="bloc-code sans-copie"><code>1
 22
 333
 4444

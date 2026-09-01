@@ -10,7 +10,7 @@ export default {
   numero: 11,
   titre: "La boîte à outils des maths",
   sousTitre: "Tous les algorithmes exigibles, rassemblés",
-  palier: "Pour finir",
+  palier: "Partie 4 — Pour finir",
 
   accroche: `Le programme de mathématiques de Seconde nomme une dizaine d'algorithmes
     que tu dois savoir lire, compléter ou écrire. Tu les as déjà tous croisés dans le
@@ -138,8 +138,8 @@ export default {
           felicitation: "Quatre décimales exactes de √2, à la demande. 📐",
           indices: [
             "Pars de <code>n = unite</code>, qui représente 1,00.",
-            "<code>while n * n &lt;= 2 * unite * unite:</code> puis <code>n = n + 1</code>.",
-            "À la sortie, <code>n</code> a dépassé : la borne inférieure est <code>(n - 1) / unite</code>.",
+            "La boucle avance d'un cran tant que le carré de <code>n</code> ne dépasse pas 2, exprimé à la même échelle — donc multiplié deux fois par <code>unite</code>.",
+            "À la sortie, <code>n</code> a franchi la limite : la borne inférieure est le cran précédent, ramené à l'échelle par une division.",
           ],
           solution: `def borne_inferieure(unite):\n    n = unite\n    while n * n <= 2 * unite * unite:\n        n = n + 1\n    return (n - 1) / unite\n`,
         },
@@ -235,9 +235,9 @@ print(premiere_puissance(7, 10**9))</code></pre>
           },
           felicitation: "Un encadrement pour n'importe quelle racine, à n'importe quelle précision. 📐",
           indices: [
-            "Cette fois, on part de <code>n = 0</code> : le nombre peut être inférieur à 1.",
-            "La condition : <code>while n * n &lt;= nombre * unite * unite:</code>.",
-            "<code>return (n - 1) / unite</code>",
+            "Cette fois, pars de <code>n = 0</code> : la racine cherchée peut être inférieure à 1.",
+            "La condition compare le carré de <code>n</code> au nombre visé, tous deux ramenés à l'échelle de l'unité — donc multiplié deux fois par <code>unite</code>.",
+            "À la sortie, <code>n</code> a dépassé d'un cran : la borne inférieure est celle d'avant, ramenée à l'échelle.",
           ],
           solution: `def encadrer_racine(nombre, unite):\n    n = 0\n    while n * n <= nombre * unite * unite:\n        n = n + 1\n    return (n - 1) / unite\n`,
         },
@@ -290,8 +290,8 @@ print(premiere_puissance(7, 10**9))</code></pre>
             tests: `assert est_multiple(91, 7) == True, "91 est un multiple de 7"\nassert est_multiple(91, 5) == False, "91 n'est pas un multiple de 5"\nassert plus_grand_multiple(7, 100) == 98, "le plus grand multiple de 7 sous 100 est 98"\nassert plus_grand_multiple(12, 12) == 12, "12 est un multiple de 12"\nassert plus_grand_multiple(25, 7) == 0, "aucun multiple de 25 sous 7, sauf 0"`,
           },
           indices: [
-            "<code>return a % b == 0</code>",
-            "<code>return (b // a) * a</code>",
+            "Pour la première : « a est multiple de b » signifie que le reste de la division de a par b est nul.",
+            "Pour la seconde : le quotient entier de b par a compte combien de fois a tient dans b ; il suffit de le remultiplier par a.",
           ],
           solution: `def est_multiple(a, b):\n    return a % b == 0\n\ndef plus_grand_multiple(a, b):\n    return (b // a) * a\n`,
         },
@@ -310,8 +310,8 @@ print(premiere_puissance(7, 10**9))</code></pre>
             tests: `assert sont_alignes(1, 2, 4, 11, 2, 5) == True, "A(1;2), B(4;11), C(2;5) sont alignés"\nassert sont_alignes(0, 0, 1, 1, 2, 3) == False, "ces trois points ne sont pas alignés"\nassert sont_alignes(3, 3, 3, 7, 3, -2) == True, "trois points d'une même verticale sont alignés"\nassert sont_alignes(0, 0, 0, 0, 5, 5) == True, "deux points confondus : le déterminant est nul"`,
           },
           indices: [
-            "<code>determinant = (xb - xa) * (yc - ya) - (yb - ya) * (xc - xa)</code>",
-            "<code>return determinant == 0</code>",
+            "Range le déterminant dans une variable avant de le tester : deux lignes valent mieux qu'une ligne illisible.",
+            "Le déterminant croise les deux vecteurs : abscisse du premier par ordonnée du second, moins ordonnée du premier par abscisse du second. Les points sont alignés quand il est nul.",
           ],
           solution: `def sont_alignes(xa, ya, xb, yb, xc, yc):\n    determinant = (xb - xa) * (yc - ya) - (yb - ya) * (xc - xa)\n    return determinant == 0\n`,
         },
@@ -391,6 +391,8 @@ Droite verticale d'équation x = 2</code></pre>
           depart: `def f(x):\n    return -x * x + 4 * x + 1\n\nmeilleur_x = 0\nmeilleur_y = f(0)\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bmeilleur_x\\b[\\s\\S]*\\bmeilleur_x\\b", message: "Sers-toi de la variable meilleur_x déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bmeilleur_y\\b[\\s\\S]*\\bmeilleur_y\\b", message: "Sers-toi de la variable meilleur_y déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Le balayage parcourt tous les points : boucle for." },
               { motif: "f\\s*\\(", message: "Utilise la fonction f fournie." },
             ],
@@ -428,9 +430,9 @@ Droite verticale d'équation x = 2</code></pre>
           },
           felicitation: "Vingt étapes là où le balayage en demandait des millions. ⚡",
           indices: [
-            "<code>while b - a > precision:</code>",
-            "<code>m = (a + b) / 2</code> ; si <code>m * m &lt; 2</code>, la racine est au-dessus donc <code>a = m</code>, sinon <code>b = m</code>.",
-            "Après la boucle : <code>return (a + b) / 2</code>.",
+            "La boucle tourne tant que l'amplitude de l'intervalle dépasse la précision demandée.",
+            "À chaque tour : calcule le milieu, puis compare son carré à 2 pour savoir laquelle des deux moitiés garder.",
+            "Après la boucle, renvoie le milieu de l'intervalle final — c'est la meilleure estimation disponible.",
           ],
           solution: `def dichotomie(a, b, precision):\n    while b - a > precision:\n        m = (a + b) / 2\n        if m * m < 2:\n            a = m\n        else:\n            b = m\n    return (a + b) / 2\n`,
         },
@@ -462,9 +464,9 @@ Droite verticale d'équation x = 2</code></pre>
           },
           felicitation: "Tous les algorithmes exigibles du programme sont écrits. 🎓",
           indices: [
-            "<code>dx = 1 / n</code>, puis une boucle <code>for i in range(n):</code>.",
-            "<code>x1 = i * dx</code> et <code>x2 = (i + 1) * dx</code> ; l'écart vertical vaut <code>f(x2) - f(x1)</code>.",
-            "<code>total = total + (dx * dx + dy * dy) ** 0.5</code>",
+            "La largeur d'un segment vaut 1 divisé par leur nombre ; la boucle parcourt les <code>n</code> segments.",
+            "Pour chaque segment, calcule ses deux abscisses, puis l'écart vertical entre les deux images par <code>f</code>.",
+            "Ajoute au total la racine carrée de la somme des carrés des deux écarts — c'est Pythagore, comme pour la distance de la séance 8.",
           ],
           solution: `def f(x):\n    return x * x\n\ndef longueur(n):\n    total = 0\n    dx = 1 / n\n    for i in range(n):\n        x1 = i * dx\n        x2 = (i + 1) * dx\n        dy = f(x2) - f(x1)\n        total = total + (dx * dx + dy * dy) ** 0.5\n    return total\n`,
         },

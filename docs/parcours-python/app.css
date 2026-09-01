@@ -221,8 +221,21 @@ li { margin-bottom: .3em; }
   color: #fff; font-size: .95rem;
 }
 
-.cache-mobile { display: inline; }
-@media (max-width: 720px) { .cache-mobile { display: none; } }
+/* Le libellé du retour disparaît sur petit écran ; la flèche suffit. */
+@media (max-width: 720px) { .libelle-retour { display: none; } }
+.bouton.retour { white-space: nowrap; }
+
+dialog.panneau input[type="file"] {
+  width: 100%;
+  font: inherit;
+  font-size: .9rem;
+  padding: .5em .7em;
+  border-radius: var(--rayon-petit);
+  border: 1px dashed var(--bordure);
+  background: var(--surface-2);
+  color: var(--texte);
+  cursor: pointer;
+}
 
 .barre-titre { font-weight: 700; font-size: .98rem; }
 .barre-titre small { display: block; font-weight: 500; font-size: .78rem; color: var(--texte-doux); }

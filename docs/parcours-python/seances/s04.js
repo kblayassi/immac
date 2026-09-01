@@ -8,7 +8,7 @@ export default {
   numero: 4,
   titre: "L'instruction conditionnelle",
   sousTitre: "Faire choisir ton programme",
-  palier: "T6 — Variables, affectation, instruction conditionnelle",
+  palier: "Partie 1 — Variables, affectation, instruction conditionnelle",
 
   accroche: `Tes programmes savent comparer, mais ils font toujours la même chose.
     Avec <code>if</code>, ils vont enfin <strong>bifurquer</strong> : faire une chose
@@ -21,7 +21,7 @@ export default {
     "utiliser une condition composée dans un test",
   ],
 
-  motDeLaFin: `La fiche T6 est bouclée : variables, affectation, conditionnelle.
+  motDeLaFin: `La partie 1 est bouclée : variables, affectation, conditionnelle.
     À la séance 5, on apprend à répéter — et tes programmes vont changer d'échelle.`,
 
   parties: [
@@ -157,6 +157,7 @@ else:
           depart: `age = 15\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bage\\b[\\s\\S]*\\bage\\b", message: "Sers-toi de la variable age déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bif\\b", message: "Il faut un if…" },
               { motif: "\\belse\\b", message: "… et un else pour l'autre cas." },
             ],
@@ -221,6 +222,7 @@ else:
           depart: `age = 25\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bage\\b[\\s\\S]*\\bage\\b", message: "Sers-toi de la variable age déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\belif\\b", message: "Trois cas : utilise elif plutôt que d'empiler des if." },
               { motif: "\\belse\\b", message: "Le dernier cas se traite avec else." },
             ],
@@ -254,6 +256,8 @@ else:
           depart: `age = 16\naccompagne = True\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bage\\b[\\s\\S]*\\bage\\b", message: "Sers-toi de la variable age déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\baccompagne\\b[\\s\\S]*\\baccompagne\\b", message: "Sers-toi de la variable accompagne déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bif\\b", message: "Il faut un if." },
               { motif: "\\bor\\b", message: "La règle contient un « ou bien » : il te faut un or." },
               { motif: "\\band\\b", message: "La deuxième moitié de la règle contient un « et » : il te faut un and." },
@@ -288,6 +292,8 @@ else:
           depart: `age = 20\npermis = False\n\nif age >= 18:\n    print("À remplacer par un second test")\nelse:\n    print("Tu es trop jeune pour conduire.")\n`,
           validation: {
             codeContient: [
+              { motif: "\\bage\\b[\\s\\S]*\\bage\\b", message: "Sers-toi de la variable age déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bpermis\\b[\\s\\S]*\\bpermis\\b", message: "Sers-toi de la variable permis déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\n {4,}if\\b", message: "Le second if doit être imbriqué dans le premier, donc décalé." },
             ],
             sortie: "Tu es majeur mais tu n'as pas le permis.",
@@ -381,6 +387,7 @@ Tu es majeur.</code></pre>`,
           depart: `n = 47\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bn\\b[\\s\\S]*\\bn\\b", message: "Sers-toi de la variable n déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "%", message: "La parité se teste avec le reste de la division par 2." },
               { motif: "\\bif\\b", message: "Il faut un test." },
             ],
@@ -409,6 +416,7 @@ Tu es majeur.</code></pre>`,
               { motif: "\\babs\\s*\\(", message: "abs() est interdite : reconstruis la valeur absolue avec un test." },
             ],
             codeContient: [
+              { motif: "\\bx\\b[\\s\\S]*\\bx\\b", message: "Sers-toi de la variable x déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bif\\b", message: "Il faut distinguer deux cas selon le signe." },
             ],
             sortie: "La valeur absolue de -12 est 12",
@@ -439,6 +447,7 @@ Tu es majeur.</code></pre>`,
           depart: `age = 14\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bage\\b[\\s\\S]*\\bage\\b", message: "Sers-toi de la variable age déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "elif[\\s\\S]*elif", message: "Quatre cas, donc au moins deux elif." },
             ],
             sortie: "Tarif : 7 euros",
@@ -468,6 +477,7 @@ Tu es majeur.</code></pre>`,
           depart: `moyenne = 15.5\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bmoyenne\\b[\\s\\S]*\\bmoyenne\\b", message: "Sers-toi de la variable moyenne déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "elif[\\s\\S]*elif[\\s\\S]*elif", message: "Cinq cas, donc au moins trois elif." },
             ],
             sortie: "Mention bien",
@@ -490,7 +500,10 @@ Tu es majeur.</code></pre>`,
             <code>note = 15</code>, le programme doit afficher :</p>
             <pre class="bloc-code"><code>Reçu</code></pre>`,
           depart: `note = 15\n\nif note >= 10\nprint("Reçu")\nelse note < 10:\n    print("Recalé")\n`,
-          validation: { sortie: "Reçu" },
+          validation: {
+            codeContient: [
+              { motif: "\\bnote\\b[\\s\\S]*\\bnote\\b", message: "Sers-toi de la variable note déjà définie, plutôt que de réécrire sa valeur." },
+            ], sortie: "Reçu" },
           felicitation: "Deux-points, indentation, else sans condition : le triplé gagnant. 🐞",
           indices: [
             "Ligne 3 : il manque les deux-points à la fin.",
@@ -513,6 +526,7 @@ Tu es majeur.</code></pre>`,
           depart: `a = 23\nb = 23\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\belif\\b", message: "Trois cas possibles : il te faut un elif." },
             ],
             sortie: "Les deux nombres sont égaux.",
@@ -536,6 +550,7 @@ Tu es majeur.</code></pre>`,
           depart: `n = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bn\\b[\\s\\S]*\\bn\\b", message: "Sers-toi de la variable n déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\belif\\b", message: "Trois cas : positif, négatif, nul." },
             ],
             sortie: "0 est nul.",
@@ -610,6 +625,8 @@ Boisson servie. Rendu : 3 euros</code></pre>`,
               { motif: "\\b19\\b\\s*\\)", message: "Le résultat doit venir des variables, pas être écrit." },
             ],
             codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bc\\b[\\s\\S]*\\bc\\b", message: "Sers-toi de la variable c déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bif\\b", message: "Il faut comparer avec des tests." },
             ],
             sortie: "Le plus grand est 19",
@@ -641,6 +658,7 @@ Boisson servie. Rendu : 3 euros</code></pre>`,
           depart: `a = 0\nb = 5\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\belif\\b", message: "Trois cas à distinguer : il te faut un elif." },
               { motif: "/", message: "Le cas général demande une division." },
             ],
@@ -671,6 +689,8 @@ Boisson servie. Rendu : 3 euros</code></pre>`,
           depart: `a = 5\nb = 5\nc = 8\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bc\\b[\\s\\S]*\\bc\\b", message: "Sers-toi de la variable c déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bif\\b[\\s\\S]*\\bif\\b", message: "Il faut d'abord tester l'existence, puis la nature : deux tests au moins." },
               { motif: "\\bor\\b", message: "« Deux côtés égaux » se traduit par plusieurs égalités reliées par or." },
             ],
@@ -735,6 +755,7 @@ Boisson servie. Rendu : 3 euros</code></pre>`,
               { motif: "\\band\\b|\\bor\\b", message: "Pour ce défi, and et or sont interdits : imbrique des if." },
             ],
             codeContient: [
+              { motif: "\\bannee\\b[\\s\\S]*\\bannee\\b", message: "Sers-toi de la variable annee déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\n {4,}if\\b", message: "Il faut au moins un if imbriqué dans un autre." },
             ],
             sortie: "2000 est bissextile.",
@@ -769,7 +790,7 @@ Boisson servie. Rendu : 3 euros</code></pre>`,
             ],
             sortieNonVide: true,
           },
-          felicitation: "Séance 4 terminée, et la fiche T6 avec elle. 🏁",
+          felicitation: "Séance 4 terminée, et la partie 1 avec elle. 🏁",
           indices: [
             "Structure : une saisie, une conversion, puis <code>if</code> / <code>elif</code> / <code>else</code>.",
             "Pense à afficher un message dans <em>chaque</em> branche, sinon certains cas resteront muets.",

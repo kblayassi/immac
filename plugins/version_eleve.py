@@ -17,6 +17,12 @@ En version élève, ce hook retire des pages de NSI, *avant* la conversion en HT
 * la correction embarquée dans les éditeurs Python — l'attribut
   `data-solution-b64`, son panneau et son bouton « Afficher la correction ».
 
+Il retire enfin, dans le **parcours Python** de SNT (`docs/parcours-python/`,
+copié tel quel par MkDocs et donc invisible des hooks de page), le champ
+`solution` de chaque étape des fichiers `seances/*.js`. Sans lui, l'application
+n'affiche pas le bouton « Correction » : rien n'est masqué, il n'y a
+simplement plus rien à afficher.
+
 Le contenu retiré n'est donc pas présent dans le HTML publié : ce n'est pas
 un masquage par CSS, il n'y a rien à révéler dans la page.
 
@@ -24,6 +30,7 @@ Le choix de la version se lit dans `extra.version` du fichier de configuration.
 """
 
 import re
+from pathlib import Path
 
 # Une admonition commence par !!! ou ??? (avec ou sans +) suivi de son type.
 DEBUT_SUCCESS = re.compile(r'^(?P<indent>[ \t]*)\?{3}\+?[ \t]+success\b')
@@ -178,3 +185,27 @@ def on_post_page(output, page, config):
     output = _retirer_div(output, OUVERTURE_PANNEAU)
     output = BOUTON_SOLUTION.sub('', output)
     return output
+
+
+# ---------------------------------------------------------------------------
+# Parcours Python (SNT)
+#
+# Ces fichiers ne passent par aucun hook de page : MkDocs les copie tels quels.
+# On les retouche donc après la construction, dans le dossier de sortie — jamais
+# dans docs/, qui reste la source complète.
+
+# `solution: `…`,` sur une ligne : littéral gabarit, échappements compris.
+SOLUTION_PARCOURS = re.compile(r'^[ \t]*solution:\s*`(?:[^`\\]|\\.)*`,[ \t]*\n', re.M)
+
+
+def on_post_build(config):
+    if config.get('extra', {}).get('version') != 'eleve':
+        return
+    dossier = Path(config['site_dir']) / 'parcours-python' / 'seances'
+    if not dossier.is_dir():
+        return
+    for fichier in sorted(dossier.glob('s*.js')):
+        source = fichier.read_text(encoding='utf-8')
+        epure, retires = SOLUTION_PARCOURS.subn('', source)
+        if retires:
+            fichier.write_text(epure, encoding='utf-8')

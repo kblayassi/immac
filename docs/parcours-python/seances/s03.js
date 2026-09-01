@@ -9,7 +9,7 @@ export default {
   numero: 3,
   titre: "Dialoguer et comparer",
   sousTitre: "Poser des questions, obtenir des réponses vraies ou fausses",
-  palier: "T6 — Variables, affectation, instruction conditionnelle",
+  palier: "Partie 1 — Variables, affectation, instruction conditionnelle",
 
   accroche: `Jusqu'ici tes programmes récitaient. Ils vont maintenant
     <strong>poser des questions</strong> et <strong>comparer</strong>. Deux nouveautés
@@ -85,8 +85,8 @@ Bonjour Ada !</code></pre>`,
           },
           felicitation: "Ton programme parle avec l'utilisateur. 💬",
           indices: [
-            "Ligne 1 : <code>prenom = input(\"Comment t'appelles-tu ? \")</code>.",
-            "Ligne 2 : <code>print(\"Bonjour\", prenom, \"!\")</code>.",
+            "Ligne 1 : range dans une variable <code>prenom</code> ce que renvoie <code>input</code>, en lui donnant la question entre ses parenthèses.",
+            "Ligne 2 : un <code>print</code> à trois morceaux séparés par des virgules — le mot Bonjour, la variable, le point d'exclamation. Seuls les deux textes prennent des guillemets.",
           ],
           solution: `prenom = input("Comment t'appelles-tu ? ")\nprint("Bonjour", prenom, "!")\n`,
         },
@@ -127,6 +127,7 @@ L'an prochain tu auras 16 ans.</code></pre>
           saisiesTest: ["15"],
           validation: {
             codeContient: [
+              { motif: "\\bage\\b[\\s\\S]*\\bage\\b", message: "Sers-toi de la variable age déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "int\\s*\\(", message: "La saisie est du texte : convertis-la avec int()." },
               { motif: "\\+\\s*1", message: "L'âge de l'an prochain, c'est l'âge actuel plus 1." },
             ],
@@ -135,8 +136,8 @@ L'an prochain tu auras 16 ans.</code></pre>
           },
           felicitation: "Saisie convertie, calcul réussi. 🔢",
           indices: [
-            "Modifie la ligne 1 : <code>age = int(input(\"Quel âge as-tu ? \"))</code> — deux parenthèses fermantes.",
-            "Puis <code>print(\"L'an prochain tu auras\", age + 1, \"ans.\")</code>.",
+            "Ligne 1 : enveloppe l'appel à <code>input</code> dans <code>int(…)</code>. Attention, il faudra alors <strong>deux</strong> parenthèses fermantes de suite.",
+            "Ligne 2 : trois morceaux séparés par des virgules — le début de la phrase, l'âge augmenté de 1, puis le mot « ans. ».",
           ],
           solution: `age = int(input("Quel âge as-tu ? "))\nprint("L'an prochain tu auras", age + 1, "ans.")\n`,
         },
@@ -194,6 +195,10 @@ a different de b : True</code></pre>
             doivent être <strong>produits par des comparaisons</strong>.</p>`,
           depart: `a = 7\nb = 12\n\n`,
           validation: {
+            codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bb\\b[\\s\\S]*\\bb\\b", message: "Sers-toi de la variable b déjà définie, plutôt que de réécrire sa valeur." },
+            ],
             codeAbsent: [
               { motif: "True|False", message: "True et False doivent venir de comparaisons, pas être tapés." },
             ],
@@ -271,6 +276,7 @@ Il fait extreme : False</code></pre>
           depart: `temperature = 18\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\btemperature\\b[\\s\\S]*\\btemperature\\b", message: "Sers-toi de la variable temperature déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\band\\b", message: "« Entre 15 et 25 » demande deux conditions reliées par and." },
               { motif: "\\bor\\b", message: "« En dessous de 0 ou au-dessus de 35 » demande un or." },
             ],
@@ -395,6 +401,7 @@ Moyenne : 12.0</code></pre>`,
           depart: `n = 91\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bn\\b[\\s\\S]*\\bn\\b", message: "Sers-toi de la variable n déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "%", message: "Le test de divisibilité utilise le reste %." },
             ],
             codeAbsent: [
@@ -422,6 +429,10 @@ a == b : True</code></pre>
             <p>Un cas volontairement piégeux : deux valeurs identiques.</p>`,
           depart: `a = 15\nb = 15\n\n`,
           validation: {
+            codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bb\\b[\\s\\S]*\\bb\\b", message: "Sers-toi de la variable b déjà définie, plutôt que de réécrire sa valeur." },
+            ],
             codeAbsent: [
               { motif: "True|False", message: "Les booléens doivent être calculés." },
             ],
@@ -448,6 +459,7 @@ Mention tres bien : False</code></pre>
           depart: `note = 14\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bnote\\b[\\s\\S]*\\bnote\\b", message: "Sers-toi de la variable note déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\band\\b", message: "Un intervalle demande deux conditions reliées par and." },
             ],
             codeAbsent: [
@@ -476,6 +488,8 @@ Le double vaut 42</code></pre>`,
           saisiesTest: ["21"],
           validation: {
             codeContient: [
+              { motif: "\\bnombre\\b[\\s\\S]*\\bnombre\\b", message: "Sers-toi de la variable nombre déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bdouble\\b[\\s\\S]*\\bdouble\\b", message: "Sers-toi de la variable double déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "int\\s*\\(", message: "Il manque la conversion de la saisie en nombre." },
             ],
             sortieRegex: "Le double vaut 42",
@@ -533,6 +547,7 @@ Le double vaut 42</code></pre>`,
           depart: `annee = 1900\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bannee\\b[\\s\\S]*\\bannee\\b", message: "Sers-toi de la variable annee déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\band\\b", message: "La règle combine un and…" },
               { motif: "\\bor\\b", message: "… et un or." },
             ],
@@ -609,6 +624,11 @@ Est un adolescent : True</code></pre>
 Rectangle : True</code></pre>`,
           depart: `a = 3\nb = 4\nc = 5\n\n`,
           validation: {
+            codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bb\\b[\\s\\S]*\\bb\\b", message: "Sers-toi de la variable b déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bc\\b[\\s\\S]*\\bc\\b", message: "Sers-toi de la variable c déjà définie, plutôt que de réécrire sa valeur." },
+            ],
             codeAbsent: [
               { motif: "True|False", message: "Le booléen doit être calculé." },
             ],
@@ -635,6 +655,10 @@ Le point (6, 2) est dans le disque : False</code></pre>`,
           depart: `rayon = 5\nx1 = 3\ny1 = 4\nx2 = 6\ny2 = 2\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bx1\\b[\\s\\S]*\\bx1\\b", message: "Sers-toi de la variable x1 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\by1\\b[\\s\\S]*\\by1\\b", message: "Sers-toi de la variable y1 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bx2\\b[\\s\\S]*\\bx2\\b", message: "Sers-toi de la variable x2 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\by2\\b[\\s\\S]*\\by2\\b", message: "Sers-toi de la variable y2 déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "rayon", message: "Utilise la variable rayon plutôt que d'écrire 25." },
             ],
             codeAbsent: [
@@ -665,6 +689,7 @@ Strictement croissant : False</code></pre>
           depart: `a = 3\nb = 7\nc = 7\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bc\\b[\\s\\S]*\\bc\\b", message: "Sers-toi de la variable c déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\band\\b", message: "Vérifier un ordre sur trois nombres demande deux comparaisons reliées par and." },
             ],
             codeAbsent: [
@@ -707,8 +732,8 @@ Acces autorise : True</code></pre>
           },
           felicitation: "Les comparaisons marchent aussi sur les mots. 🔐",
           indices: [
-            "<code>saisi = input(\"Mot de passe : \")</code>",
-            "<code>print(\"Acces autorise :\", saisi == attendu)</code>",
+            "Range la réponse de l'utilisateur dans une variable, par exemple <code>saisi</code>.",
+            "Puis affiche le texte, une virgule, et la comparaison entre cette variable et <code>attendu</code>. Attention : la comparaison, pas l'affectation.",
           ],
           solution: `attendu = "python2026"\n\nsaisi = input("Mot de passe : ")\nprint("Acces autorise :", saisi == attendu)\n`,
         },

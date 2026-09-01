@@ -8,7 +8,7 @@ export default {
   numero: 2,
   titre: "Variables, types et calculs",
   sousTitre: "Faire retenir des choses à l'ordinateur",
-  palier: "T6 — Variables, affectation, instruction conditionnelle",
+  palier: "Partie 1 — Variables, affectation, instruction conditionnelle",
 
   accroche: `En Scratch, tu avais des variables : <em>score</em>, <em>vie</em>,
     <em>chrono</em>. En Python, c'est la même idée en beaucoup plus souple — et c'est
@@ -245,6 +245,8 @@ print(type("Ada"))    # &lt;class 'str'&gt;</code></pre>
           depart: `a = "5"\nb = "3"\nprint("La somme vaut", a + b)\n`,
           validation: {
             codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bb\\b[\\s\\S]*\\bb\\b", message: "Sers-toi de la variable b déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "int\\s*\\(", message: "Utilise int(…) pour convertir le texte en nombre." },
             ],
             sortie: "La somme vaut 8",
@@ -280,6 +282,7 @@ print(type("Ada"))    # &lt;class 'str'&gt;</code></pre>
           depart: `duree = 147\nprint(duree, "minutes, c'est", , "h et", , "min.")\n`,
           validation: {
             codeContient: [
+              { motif: "\\bduree\\b[\\s\\S]*\\bduree\\b", message: "Sers-toi de la variable duree déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "//", message: "Le nombre d'heures s'obtient avec la division entière //." },
               { motif: "%", message: "Le nombre de minutes restantes s'obtient avec le reste %." },
             ],
@@ -389,6 +392,10 @@ Prix TTC : 300.0 euros</code></pre>
             </div>`,
           depart: `prix_ht = 250\ntva = \nprix_ttc = \n\nprint("Prix HT :", prix_ht, "euros")\nprint("TVA :", tva, "euros")\nprint("Prix TTC :", prix_ttc, "euros")\n`,
           validation: {
+            codeContient: [
+              { motif: "\\bprix_ht\\b[\\s\\S]*\\bprix_ht\\b", message: "Sers-toi de la variable prix_ht déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\btva\\b[\\s\\S]*\\btva\\b", message: "Sers-toi de la variable tva déjà définie, plutôt que de réécrire sa valeur." },
+            ],
             codeAbsent: [
               { motif: "tva\\s*=\\s*50", message: "La TVA doit être calculée à partir du prix HT, pas écrite en dur." },
             ],
@@ -396,9 +403,9 @@ Prix TTC : 300.0 euros</code></pre>
           },
           felicitation: "Un vrai calcul commercial, en trois variables. 💶",
           indices: [
-            "20 % de 250, c'est <code>250 * 20 / 100</code>.",
-            "Utilise la variable : <code>tva = prix_ht * 20 / 100</code>.",
-            "Puis <code>prix_ttc = prix_ht + tva</code>.",
+            "Prendre 20 % d'un nombre, c'est le multiplier par 20 puis diviser par 100.",
+            "Range ce calcul dans <code>tva</code>, en partant de la variable <code>prix_ht</code> et non du nombre 250 : si le prix change, tout suivra.",
+            "Le prix TTC, c'est le prix hors taxes augmenté de la TVA — une addition des deux variables précédentes.",
           ],
           solution: `prix_ht = 250\ntva = prix_ht * 20 / 100\nprix_ttc = prix_ht + tva\n\nprint("Prix HT :", prix_ht, "euros")\nprint("TVA :", tva, "euros")\nprint("Prix TTC :", prix_ttc, "euros")\n`,
         },
@@ -427,8 +434,8 @@ Aire : 84</code></pre>
             sortie: "Périmètre : 38\nAire : 84",
           },
           indices: [
-            "<code>print(\"Périmètre :\", 2 * (longueur + largeur))</code>",
-            "L'aire : <code>longueur * largeur</code>.",
+            "Le périmètre combine les deux variables : leur somme, entre parenthèses, multipliée par 2.",
+            "L'aire est leur produit. Aucun des deux nombres 12 et 7 ne doit réapparaître.",
           ],
           solution: `longueur = 12\nlargeur = 7\n\nprint("Périmètre :", 2 * (longueur + largeur))\nprint("Aire :", longueur * largeur)\n`,
         },
@@ -444,15 +451,20 @@ Moyenne : 12.0</code></pre>
             <p>La moyenne doit être calculée, évidemment.</p>`,
           depart: `note1 = 12\nnote2 = 15\nnote3 = 9\n\n`,
           validation: {
+            codeContient: [
+              { motif: "\\bnote1\\b[\\s\\S]*\\bnote1\\b", message: "Sers-toi de la variable note1 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bnote2\\b[\\s\\S]*\\bnote2\\b", message: "Sers-toi de la variable note2 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bnote3\\b[\\s\\S]*\\bnote3\\b", message: "Sers-toi de la variable note3 déjà définie, plutôt que de réécrire sa valeur." },
+            ],
             codeAbsent: [
               { motif: "12\\.0", message: "La moyenne doit être calculée à partir des trois notes." },
             ],
             sortie: "Notes : 12 15 9\nMoyenne : 12.0",
           },
           indices: [
-            "La première ligne : <code>print(\"Notes :\", note1, note2, note3)</code>.",
-            "La moyenne : la somme des trois, divisée par 3. Pense aux parenthèses !",
-            "<code>(note1 + note2 + note3) / 3</code>",
+            "La première ligne affiche le texte puis les trois variables, séparés par des virgules.",
+            "La moyenne : la somme des trois notes, divisée par 3.",
+            "Attention à la priorité des opérations — sans parenthèses autour de la somme, seule la dernière note serait divisée.",
           ],
           solution: `note1 = 12\nnote2 = 15\nnote3 = 9\n\nprint("Notes :", note1, note2, note3)\nprint("Moyenne :", (note1 + note2 + note3) / 3)\n`,
         },
@@ -471,6 +483,10 @@ Après : a = 8 et b = 3</code></pre>
             <strong>troisième variable</strong> pour mettre une valeur de côté.</p>`,
           depart: `a = 3\nb = 8\nprint("Avant : a =", a, "et b =", b)\n\n# Échange ici\n\nprint("Après : a =", a, "et b =", b)\n`,
           validation: {
+            codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bb\\b[\\s\\S]*\\bb\\b", message: "Sers-toi de la variable b déjà définie, plutôt que de réécrire sa valeur." },
+            ],
             codeAbsent: [
               { motif: "a\\s*=\\s*8", message: "Interdit d'écrire directement les nouvelles valeurs : il faut vraiment échanger." },
             ],
@@ -478,8 +494,8 @@ Après : a = 8 et b = 3</code></pre>
           },
           felicitation: "L'échange par variable temporaire : un classique de l'algorithmique. 🔄",
           indices: [
-            "Range d'abord la valeur de <code>a</code> dans une variable <code>temporaire</code>.",
-            "Puis <code>a = b</code>, et enfin <code>b = temporaire</code>.",
+            "Mets d'abord la valeur de <code>a</code> à l'abri dans une troisième variable.",
+            "Tu peux alors écraser <code>a</code> avec la valeur de <code>b</code>, puis rendre à <code>b</code> ce que la troisième variable avait conservé.",
           ],
           solution: `a = 3\nb = 8\nprint("Avant : a =", a, "et b =", b)\n\ntemporaire = a\na = b\nb = temporaire\n\nprint("Après : a =", a, "et b =", b)\n`,
         },
@@ -492,7 +508,11 @@ Après : a = 8 et b = 3</code></pre>
             <p>Trois erreurs, toutes liées aux variables. Le programme doit afficher :</p>
             <pre class="bloc-code"><code>Le total est 30</code></pre>`,
           depart: `Prix = 10\nquantite = 3\ntotal = prix * quantité\nprint("Le total est" total)\n`,
-          validation: { sortie: "Le total est 30" },
+          validation: {
+            codeContient: [
+              { motif: "\\bquantite\\b[\\s\\S]*\\bquantite\\b", message: "Sers-toi de la variable quantite déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\btotal\\b[\\s\\S]*\\btotal\\b", message: "Sers-toi de la variable total déjà définie, plutôt que de réécrire sa valeur." },
+            ], sortie: "Le total est 30" },
           felicitation: "NameError, accent et virgule oubliée : les trois classiques. 🐞",
           indices: [
             "Ligne 1 : <code>Prix</code> et <code>prix</code> sont deux variables différentes pour Python.",
@@ -514,6 +534,9 @@ Après : a = 8 et b = 3</code></pre>
             <p>Tout doit être calculé à partir de la variable <code>metres</code>.</p>`,
           depart: `metres = 2500\n\n`,
           validation: {
+            codeContient: [
+              { motif: "\\bmetres\\b[\\s\\S]*\\bmetres\\b", message: "Sers-toi de la variable metres déjà définie, plutôt que de réécrire sa valeur." },
+            ],
             codeAbsent: [
               { motif: "2\\.5\\b|250000", message: "Les conversions doivent être calculées à partir de metres." },
             ],
@@ -540,6 +563,8 @@ Il reste 2 bonbons.</code></pre>
           depart: `bonbons = 230\nparsachet = 12\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bbonbons\\b[\\s\\S]*\\bbonbons\\b", message: "Sers-toi de la variable bonbons déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bparsachet\\b[\\s\\S]*\\bparsachet\\b", message: "Sers-toi de la variable parsachet déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "//", message: "Le nombre de sachets pleins, c'est une division entière //." },
               { motif: "%", message: "Ce qui reste, c'est le reste %." },
             ],
@@ -566,21 +591,38 @@ Il reste 2 bonbons.</code></pre>
 2 stylos a 1 euro : 2
 1 classeur a 4 euros : 4
 Total : 12 euros</code></pre>
-            <p>Chaque sous-total et le total doivent être calculés à partir des variables.</p>`,
-          depart: `nb_cahiers = 3\nprix_cahier = 2\nnb_stylos = 2\nprix_stylo = 1\nnb_classeurs = 1\nprix_classeur = 4\n\n`,
+            <div class="encadre" data-ton="astuce">
+              <span class="chapo">Calcule d'abord, affiche ensuite</span>
+              Les quatre variables <code>total_cahiers</code>, <code>total_stylos</code>,
+              <code>total_classeurs</code> et <code>total</code> t'attendent à 0.
+              Remplis-les <strong>avant</strong> d'écrire le moindre <code>print</code> :
+              un affichage qui contient un calcul devient vite illisible, et une valeur
+              calculée une fois peut resservir — ici, les trois sous-totaux servent aussi
+              à obtenir le total.
+            </div>`,
+          depart: `nb_cahiers = 3\nprix_cahier = 2\nnb_stylos = 2\nprix_stylo = 1\nnb_classeurs = 1\nprix_classeur = 4\n\ntotal_cahiers = 0\ntotal_stylos = 0\ntotal_classeurs = 0\ntotal = 0\n\n`,
           validation: {
+            codeContient: [
+              { motif: "total_cahiers\\s*=[^\\n]*nb_cahiers", message: "total_cahiers doit être calculé à partir de nb_cahiers et prix_cahier." },
+              { motif: "total_stylos\\s*=[^\\n]*nb_stylos", message: "total_stylos doit être calculé à partir de nb_stylos et prix_stylo." },
+              { motif: "total_classeurs\\s*=[^\\n]*nb_classeurs", message: "total_classeurs doit être calculé à partir de nb_classeurs et prix_classeur." },
+              { motif: "total\\s*=[^\\n]*total_cahiers", message: "Le total général s'obtient en additionnant les trois sous-totaux." },
+              { motif: "\\btotal_cahiers\\b[\\s\\S]*\\btotal_cahiers\\b", message: "Sers-toi de la variable total_cahiers dans ton affichage." },
+              { motif: "\\btotal\\b[\\s\\S]*\\btotal\\b", message: "Sers-toi de la variable total dans ton affichage." },
+            ],
             codeAbsent: [
-              { motif: ":\\s*\\d+\\s*\\)|Total\\s*:\\s*\"?\\s*,?\\s*12", message: "Les totaux doivent être calculés à partir des variables." },
+              { motif: "print[^\\n]*\\*", message: "Plus aucun calcul dans les print : les sous-totaux sont déjà rangés dans des variables." },
               { motif: "\\b12\\b", message: "Le total doit être calculé, pas écrit à la main." },
             ],
             sortie: "3 cahiers a 2 euros : 6\n2 stylos a 1 euro : 2\n1 classeur a 4 euros : 4\nTotal : 12 euros",
           },
-          felicitation: "Un vrai petit programme de caisse. Tu as bouclé les exercices. 🧾",
+          felicitation: "Calculs séparés de l'affichage : c'est du code propre. 🧾",
           indices: [
-            "Une ligne : <code>print(nb_cahiers, \"cahiers a\", prix_cahier, \"euros :\", nb_cahiers * prix_cahier)</code>.",
-            "Pour le total, additionne les trois produits — pense à une variable <code>total</code>.",
+            "Chaque sous-total est une multiplication de deux variables déjà présentes.",
+            "Le total général additionne les trois sous-totaux — pas les prix unitaires.",
+            "Les quatre lignes de <code>print</code> ne contiennent alors plus que des variables et du texte.",
           ],
-          solution: `nb_cahiers = 3\nprix_cahier = 2\nnb_stylos = 2\nprix_stylo = 1\nnb_classeurs = 1\nprix_classeur = 4\n\nprint(nb_cahiers, "cahiers a", prix_cahier, "euros :", nb_cahiers * prix_cahier)\nprint(nb_stylos, "stylos a", prix_stylo, "euro :", nb_stylos * prix_stylo)\nprint(nb_classeurs, "classeur a", prix_classeur, "euros :", nb_classeurs * prix_classeur)\n\ntotal = nb_cahiers * prix_cahier + nb_stylos * prix_stylo + nb_classeurs * prix_classeur\nprint("Total :", total, "euros")\n`,
+          solution: `nb_cahiers = 3\nprix_cahier = 2\nnb_stylos = 2\nprix_stylo = 1\nnb_classeurs = 1\nprix_classeur = 4\n\ntotal_cahiers = nb_cahiers * prix_cahier\ntotal_stylos = nb_stylos * prix_stylo\ntotal_classeurs = nb_classeurs * prix_classeur\ntotal = total_cahiers + total_stylos + total_classeurs\n\nprint(nb_cahiers, "cahiers a", prix_cahier, "euros :", total_cahiers)\nprint(nb_stylos, "stylos a", prix_stylo, "euro :", total_stylos)\nprint(nb_classeurs, "classeur a", prix_classeur, "euros :", total_classeurs)\nprint("Total :", total, "euros")\n`
         },
       ],
     },
@@ -661,6 +703,9 @@ Total : 12 euros</code></pre>
             donne ce qu'il reste à traiter.</p>`,
           depart: `total = 100000\n\n`,
           validation: {
+            codeContient: [
+              { motif: "\\btotal\\b[\\s\\S]*\\btotal\\b", message: "Sers-toi de la variable total déjà définie, plutôt que de réécrire sa valeur." },
+            ],
             codeAbsent: [
               { motif: "\\b46\\b", message: "Les nombres doivent être calculés, pas écrits à la main." },
             ],
@@ -687,6 +732,7 @@ Total : 12 euros</code></pre>
           depart: `nombre = 4728\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bnombre\\b[\\s\\S]*\\bnombre\\b", message: "Sers-toi de la variable nombre déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "//", message: "Il faut la division entière // pour atteindre les chiffres de gauche." },
               { motif: "%", message: "Il faut le reste % pour isoler un chiffre." },
             ],
@@ -724,6 +770,8 @@ Total : 12 euros</code></pre>
           depart: `paye = 100\nachat = 63\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bpaye\\b[\\s\\S]*\\bpaye\\b", message: "Sers-toi de la variable paye déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bachat\\b[\\s\\S]*\\bachat\\b", message: "Sers-toi de la variable achat déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "//", message: "Le nombre de coupures d'une valeur, c'est une division entière." },
               { motif: "%", message: "Ce qui reste après avoir donné les coupures, c'est un reste." },
             ],

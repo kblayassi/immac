@@ -11,7 +11,7 @@ export default {
   numero: 6,
   titre: "La boucle non bornée while",
   sousTitre: "Répéter jusqu'à ce que…",
-  palier: "T7 — Boucle bornée et boucle non bornée",
+  palier: "Partie 2 — Boucle bornée et boucle non bornée",
 
   accroche: `Avec <code>for</code>, tu sais combien de tours tu vas faire. Mais
     « combien de fois faut-il doubler 1 € pour dépasser 1 000 € ? » — là, tu ne sais pas
@@ -24,7 +24,7 @@ export default {
     "encadrer un nombre par <strong>balayage</strong>",
   ],
 
-  motDeLaFin: `La fiche T7 est bouclée. Les deux boucles de Python n'ont plus de secret.
+  motDeLaFin: `La partie 2 est bouclée. Les deux boucles de Python n'ont plus de secret.
     À la séance 7, on range du code dans des boîtes réutilisables : les fonctions.`,
 
   parties: [
@@ -176,6 +176,7 @@ Note enregistrée : 14</code></pre>`,
           saisiesTest: ["25", "14"],
           validation: {
             codeContient: [
+              { motif: "\\bnote\\b[\\s\\S]*\\bnote\\b", message: "Sers-toi de la variable note déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while pour redemander." },
               { motif: "input[\\s\\S]*input", message: "Il faut deux saisies : une avant la boucle, une dedans." },
             ],
@@ -243,6 +244,8 @@ Puissance : 1024</code></pre>
           depart: `puissance = 1\nexposant = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bpuissance\\b[\\s\\S]*\\bpuissance\\b", message: "Sers-toi de la variable puissance déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bexposant\\b[\\s\\S]*\\bexposant\\b", message: "Sers-toi de la variable exposant déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while : on ne sait pas d'avance combien de tours." },
             ],
             codeAbsent: [
@@ -298,6 +301,7 @@ Puissance : 1024</code></pre>
           depart: `n = 100\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bn\\b[\\s\\S]*\\bn\\b", message: "Sers-toi de la variable n déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Le balayage s'écrit avec une boucle while." },
             ],
             codeAbsent: [
@@ -371,6 +375,7 @@ Décollage !</code></pre>`,
           depart: `n = 5\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bn\\b[\\s\\S]*\\bn\\b", message: "Sers-toi de la variable n déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while." },
             ],
             codeAbsent: [
@@ -398,6 +403,8 @@ La somme vaut alors 105</code></pre>
           depart: `somme = 0\nterme = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bsomme\\b[\\s\\S]*\\bsomme\\b", message: "Sers-toi de la variable somme déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bterme\\b[\\s\\S]*\\bterme\\b", message: "Sers-toi de la variable terme déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "On ne sait pas combien de termes : il faut un while." },
             ],
             codeAbsent: [
@@ -431,15 +438,19 @@ La somme vaut alors 105</code></pre>
               { motif: "//|%", message: "// et % sont interdits : utilise des soustractions." },
             ],
             codeContient: [
+              { motif: "\\bdividende\\b[\\s\\S]*\\bdividende\\b", message: "Sers-toi de la variable dividende déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bdiviseur\\b[\\s\\S]*\\bdiviseur\\b", message: "Sers-toi de la variable diviseur déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bquotient\\b[\\s\\S]*\\bquotient\\b", message: "Sers-toi de la variable quotient déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\breste\\b[\\s\\S]*\\breste\\b", message: "Sers-toi de la variable reste déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while." },
             ],
             sortie: "47 = 5 x 9 + 2",
           },
           felicitation: "Tu viens de reconstruire la division euclidienne. ➗",
           indices: [
-            "Tant que le reste est assez grand, on peut encore retirer le diviseur : <code>while reste >= diviseur:</code>.",
-            "Dans la boucle : <code>reste = reste - diviseur</code> et <code>quotient = quotient + 1</code>.",
-            "L'affichage : <code>print(dividende, \"=\", diviseur, \"x\", quotient, \"+\", reste)</code>.",
+            "Tant que le reste est encore au moins aussi grand que le diviseur, on peut le retirer une fois de plus.",
+            "Deux lignes dans la boucle : retirer le diviseur du reste, et ajouter 1 au quotient.",
+            "L'affichage reprend les quatre variables dans l'ordre de l'égalité, séparées par les textes « = », « x » et « + ».",
           ],
           solution: `dividende = 47\ndiviseur = 5\nquotient = 0\nreste = dividende\n\nwhile reste >= diviseur:\n    reste = reste - diviseur\n    quotient = quotient + 1\n\nprint(dividende, "=", diviseur, "x", quotient, "+", reste)\n`,
         },
@@ -456,6 +467,8 @@ La somme vaut alors 105</code></pre>
           depart: `capital = 1000\nannees = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bcapital\\b[\\s\\S]*\\bcapital\\b", message: "Sers-toi de la variable capital déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bannees\\b[\\s\\S]*\\bannees\\b", message: "Sers-toi de la variable annees déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut un algorithme de seuil, donc un while." },
               { motif: "1\\.05|105", message: "Augmenter de 5 % revient à multiplier par 1.05." },
             ],
@@ -484,6 +497,9 @@ La somme vaut alors 105</code></pre>
           depart: `nombre = 48273\nreste = nombre\nchiffres = 1\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bnombre\\b[\\s\\S]*\\bnombre\\b", message: "Sers-toi de la variable nombre déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\breste\\b[\\s\\S]*\\breste\\b", message: "Sers-toi de la variable reste déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bchiffres\\b[\\s\\S]*\\bchiffres\\b", message: "Sers-toi de la variable chiffres déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while." },
               { motif: "//", message: "Retirer un chiffre, c'est diviser par 10 en division entière." },
             ],
@@ -548,6 +564,7 @@ Bravo ! Trouvé en 3 essais.</code></pre>`,
           saisiesTest: ["30", "50", "42"],
           validation: {
             codeContient: [
+              { motif: "\\bsecret\\b[\\s\\S]*\\bsecret\\b", message: "Sers-toi de la variable secret déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut rejouer tant que ce n'est pas trouvé." },
               { motif: "\\bif\\b", message: "Il faut dire si c'est plus ou moins." },
               { motif: "input[\\s\\S]*input", message: "Deux saisies : une avant la boucle, une dedans." },
@@ -577,6 +594,7 @@ Bravo ! Trouvé en 3 essais.</code></pre>`,
           depart: `a = 48\nb = 36\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while." },
               { motif: "\\bif\\b", message: "Il faut savoir lequel des deux est le plus grand." },
             ],
@@ -606,6 +624,9 @@ Bravo ! Trouvé en 3 essais.</code></pre>`,
           depart: `nombre = 4728\nreste = nombre\nenvers = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bnombre\\b[\\s\\S]*\\bnombre\\b", message: "Sers-toi de la variable nombre déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\breste\\b[\\s\\S]*\\breste\\b", message: "Sers-toi de la variable reste déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\benvers\\b[\\s\\S]*\\benvers\\b", message: "Sers-toi de la variable envers déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while." },
               { motif: "%", message: "Le dernier chiffre s'obtient avec le reste %." },
               { motif: "//", message: "Retirer le dernier chiffre, c'est diviser par 10 en division entière." },
@@ -648,6 +669,7 @@ Bravo ! Trouvé en 3 essais.</code></pre>`,
           depart: `n = 1000\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bn\\b[\\s\\S]*\\bn\\b", message: "Sers-toi de la variable n déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while." },
               { motif: "1000", message: "Cette fois, on compte en millièmes." },
             ],
@@ -680,6 +702,8 @@ Bravo ! Trouvé en 3 essais.</code></pre>`,
           depart: `a = 1\nb = 2\netapes = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\betapes\\b[\\s\\S]*\\betapes\\b", message: "Sers-toi de la variable etapes déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while." },
               { motif: "/\\s*2|\\*\\s*0\\.5", message: "La dichotomie calcule le milieu de l'intervalle." },
               { motif: "\\bif\\b", message: "Il faut choisir quelle moitié garder." },
@@ -716,6 +740,10 @@ Altitude maximale : 9232</code></pre>`,
           depart: `depart = 27\nn = depart\netapes = 0\nmaximum = depart\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bdepart\\b[\\s\\S]*\\bdepart\\b", message: "Sers-toi de la variable depart déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bn\\b[\\s\\S]*\\bn\\b", message: "Sers-toi de la variable n déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\betapes\\b[\\s\\S]*\\betapes\\b", message: "Sers-toi de la variable etapes déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bmaximum\\b[\\s\\S]*\\bmaximum\\b", message: "Sers-toi de la variable maximum déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while." },
               { motif: "\\bif\\b", message: "Il faut distinguer les nombres pairs des impairs." },
             ],
@@ -747,6 +775,8 @@ Nombre d'etapes : 3</code></pre>`,
           depart: `a = 1071\nb = 462\netapes = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\ba\\b[\\s\\S]*\\ba\\b", message: "Sers-toi de la variable a déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\betapes\\b[\\s\\S]*\\betapes\\b", message: "Sers-toi de la variable etapes déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while." },
               { motif: "%", message: "La version rapide utilise le reste %." },
             ],
@@ -778,6 +808,8 @@ Valeur : 177147</code></pre>
           depart: `puissance = 1\nexposant = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bpuissance\\b[\\s\\S]*\\bpuissance\\b", message: "Sers-toi de la variable puissance déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bexposant\\b[\\s\\S]*\\bexposant\\b", message: "Sers-toi de la variable exposant déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bwhile\\b", message: "Il faut une boucle while." },
               { motif: "\\*\\s*3|3\\s*\\*", message: "À chaque tour, la puissance est multipliée par 3." },
             ],
@@ -814,7 +846,7 @@ Valeur : 177147</code></pre>
             ],
             sortieNonVide: true,
           },
-          felicitation: "Séance 6 terminée, fiche T7 bouclée. Les deux boucles sont à toi. 🏁",
+          felicitation: "Séance 6 terminée, partie 2 bouclée. Les deux boucles sont à toi. 🏁",
           indices: [
             "Structure : une quantité, un compteur, une boucle qui fait évoluer les deux.",
             "Exemple de la feuille pliée : <code>epaisseur = 0.1</code> en millimètres, la tour Eiffel fait 330 000 mm.",

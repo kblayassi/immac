@@ -12,7 +12,7 @@ export default {
   numero: 10,
   titre: "Projet & bilan",
   sousTitre: "Assembler tout ce que tu sais",
-  palier: "Pour finir",
+  palier: "Partie 4 — Pour finir",
 
   accroche: `Neuf séances, neuf outils. Il est temps de les faire tenir ensemble dans
     un seul programme qui sert vraiment à quelque chose : un <strong>bulletin de
@@ -66,6 +66,8 @@ print(3 * 4)</code></pre>`,
           depart: `total = 197\nparpage = 12\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\btotal\\b[\\s\\S]*\\btotal\\b", message: "Sers-toi de la variable total déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bparpage\\b[\\s\\S]*\\bparpage\\b", message: "Sers-toi de la variable parpage déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "//", message: "Le nombre de pages pleines s'obtient avec //." },
               { motif: "%", message: "Ce qui dépasse s'obtient avec %." },
             ],
@@ -105,7 +107,8 @@ print(age * 2)</code></pre>
             <code>Excès de vitesse</code> ; sinon → <code>Vitesse correcte</code>.</p>`,
           depart: `vitesse = 92\n\n`,
           validation: {
-            codeContient: [{ motif: "\\belif\\b", message: "Trois cas : il te faut un elif." }],
+            codeContient: [
+              { motif: "\\bvitesse\\b[\\s\\S]*\\bvitesse\\b", message: "Sers-toi de la variable vitesse déjà définie, plutôt que de réécrire sa valeur." },{ motif: "\\belif\\b", message: "Trois cas : il te faut un elif." }],
             sortie: "Excès de vitesse",
           },
           indices: ["Commence par le cas le plus élevé : <code>if vitesse > 130:</code>."],
@@ -121,7 +124,8 @@ print(age * 2)</code></pre>
             <pre class="bloc-code"><code>Somme : 15150</code></pre>`,
           depart: `somme = 0\n\n`,
           validation: {
-            codeContient: [{ motif: "\\bfor\\b", message: "Il faut une boucle." }],
+            codeContient: [
+              { motif: "\\bsomme\\b[\\s\\S]*\\bsomme\\b", message: "Sers-toi de la variable somme déjà définie, plutôt que de réécrire sa valeur." },{ motif: "\\bfor\\b", message: "Il faut une boucle." }],
             codeAbsent: [{ motif: "15150", message: "La somme doit être calculée." }],
             sortie: "Somme : 15150",
           },
@@ -143,7 +147,9 @@ print(age * 2)</code></pre>
             <pre class="bloc-code"><code>Il faut 20 heures.</code></pre>`,
           depart: `bacteries = 1\nheures = 0\n\n`,
           validation: {
-            codeContient: [{ motif: "\\bwhile\\b", message: "On ne sait pas d'avance : il faut un while." }],
+            codeContient: [
+              { motif: "\\bbacteries\\b[\\s\\S]*\\bbacteries\\b", message: "Sers-toi de la variable bacteries déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bheures\\b[\\s\\S]*\\bheures\\b", message: "Sers-toi de la variable heures déjà définie, plutôt que de réécrire sa valeur." },{ motif: "\\bwhile\\b", message: "On ne sait pas d'avance : il faut un while." }],
             codeAbsent: [{ motif: "\\b20\\b", message: "Le nombre d'heures doit être compté." }],
             sortie: "Il faut 20 heures.",
           },
@@ -173,8 +179,8 @@ print(age * 2)</code></pre>
             tests: `assert arrondi_au_dixieme(3.14159) == 3.1, "3.14159 arrondi au dixième vaut 3.1"\nassert arrondi_au_dixieme(2.75) == 2.8, "2.75 arrondi au dixième vaut 2.8"\nassert arrondi_au_dixieme(5) == 5, "un entier reste lui-même"`,
           },
           indices: [
-            "<code>int(x * 10 + 0.5)</code> donne le nombre de dixièmes, arrondi.",
-            "<code>return int(x * 10 + 0.5) / 10</code>",
+            "Multiplier par 10 amène les dixièmes devant la virgule ; ajouter 0,5 avant de tronquer réalise l'arrondi.",
+            "Il ne reste qu'à rediviser par 10 pour revenir à l'échelle de départ.",
           ],
           solution: `def arrondi_au_dixieme(x):\n    return int(x * 10 + 0.5) / 10\n`,
         },
@@ -190,6 +196,7 @@ print(age * 2)</code></pre>
           depart: `from random import randint\n\ncompteur = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bcompteur\\b[\\s\\S]*\\bcompteur\\b", message: "Sers-toi de la variable compteur déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut répéter l'expérience." },
               { motif: "randint[\\s\\S]*randint", message: "Deux lancers par essai, donc deux appels." },
             ],
@@ -279,8 +286,8 @@ Saisie terminée.</code></pre>`,
             sortieContient: ["Saisie terminée."],
           },
           indices: [
-            "<code>nombre = int(input(\"Combien de notes ? \"))</code>",
-            "<code>for i in range(nombre):</code> puis, dedans, <code>note = int(input(\"Note ? \"))</code>.",
+            "Commence par demander le nombre de notes, en convertissant la saisie.",
+            "Une boucle bornée de ce nombre de tours, contenant la saisie d'une note — elle aussi convertie.",
           ],
           solution: `nombre = int(input("Combien de notes ? "))\n\nfor i in range(nombre):\n    note = int(input("Note ? "))\n\nprint("Saisie terminée.")\n`,
         },
@@ -307,8 +314,8 @@ Moyenne : 12.0</code></pre>`,
             sortieRegexMessage: "Avec 12, 15 et 9, la moyenne doit valoir 12.0.",
           },
           indices: [
-            "Dans la boucle, après la saisie : <code>somme = somme + note</code>.",
-            "Après la boucle : <code>print(\"Moyenne :\", somme / nombre)</code>.",
+            "Dans la boucle, juste après la saisie, ajoute la note à l'accumulateur.",
+            "Après la boucle, affiche l'accumulateur divisé par le nombre de notes saisies — pas par 3 ni par une autre valeur écrite en dur.",
           ],
           solution: `nombre = int(input("Combien de notes ? "))\nsomme = 0\n\nfor i in range(nombre):\n    note = int(input("Note ? "))\n    somme = somme + note\n\nprint("Moyenne :", somme / nombre)\n`,
         },
@@ -332,6 +339,8 @@ Note la plus haute : 15</code></pre>
           saisiesTest: ["3", "12", "15", "9"],
           validation: {
             codeContient: [
+              { motif: "\\bnombre\\b[\\s\\S]*\\bnombre\\b", message: "Sers-toi de la variable nombre déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bsomme\\b[\\s\\S]*\\bsomme\\b", message: "Sers-toi de la variable somme déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "mini\\s*=\\s*note", message: "Quand une note est plus petite que mini, mini doit la recevoir." },
               { motif: "maxi\\s*=\\s*note", message: "Même chose pour maxi." },
             ],
@@ -366,6 +375,10 @@ Note la plus haute : 15</code></pre>
           saisiesTest: ["3", "12", "15", "9"],
           validation: {
             codeContient: [
+              { motif: "\\bnombre\\b[\\s\\S]*\\bnombre\\b", message: "Sers-toi de la variable nombre déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bsomme\\b[\\s\\S]*\\bsomme\\b", message: "Sers-toi de la variable somme déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bmini\\b[\\s\\S]*\\bmini\\b", message: "Sers-toi de la variable mini déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bmaxi\\b[\\s\\S]*\\bmaxi\\b", message: "Sers-toi de la variable maxi déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\breturn\\b", message: "La fonction doit renvoyer l'appréciation." },
               { motif: "\\belif\\b", message: "Cinq cas : il te faut des elif." },
               { motif: "appreciation\\s*\\(\\s*moyenne\\s*\\)", message: "Appelle la fonction avec la moyenne calculée." },
@@ -398,6 +411,11 @@ Tranche 15-20 : 1</code></pre>
           saisiesTest: ["3", "12", "15", "9"],
           validation: {
             codeContient: [
+              { motif: "\\bnombre\\b[\\s\\S]*\\bnombre\\b", message: "Sers-toi de la variable nombre déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bt1\\b[\\s\\S]*\\bt1\\b", message: "Sers-toi de la variable t1 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bt2\\b[\\s\\S]*\\bt2\\b", message: "Sers-toi de la variable t2 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bt3\\b[\\s\\S]*\\bt3\\b", message: "Sers-toi de la variable t3 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bt4\\b[\\s\\S]*\\bt4\\b", message: "Sers-toi de la variable t4 déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\belif\\b", message: "Quatre tranches : une cascade de elif." },
             ],
             sortieRegex: "Tranche 0-5 : 0\\nTranche 5-10 : 1\\nTranche 10-15 : 1\\nTranche 15-20 : 1",
@@ -419,7 +437,7 @@ Tranche 15-20 : 1</code></pre>
           contenu: `
             <p>Remplace les quatre affichages par un histogramme : une barre de dièses,
             longue comme l'effectif de la tranche.</p>
-            <pre class="bloc-code"><code> 0 à  5 |
+            <pre class="bloc-code sans-copie"><code> 0 à  5 |
  5 à 10 |#
 10 à 15 |#
 15 à 20 |#</code></pre>
@@ -428,6 +446,10 @@ Tranche 15-20 : 1</code></pre>
           depart: `def barre(libelle, effectif):\n    \n\nt1 = 0\nt2 = 1\nt3 = 1\nt4 = 1\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bt1\\b[\\s\\S]*\\bt1\\b", message: "Sers-toi de la variable t1 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bt2\\b[\\s\\S]*\\bt2\\b", message: "Sers-toi de la variable t2 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bt3\\b[\\s\\S]*\\bt3\\b", message: "Sers-toi de la variable t3 déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bt4\\b[\\s\\S]*\\bt4\\b", message: "Sers-toi de la variable t4 déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "def\\s+barre\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)", message: "La fonction barre doit avoir deux paramètres." },
               { motif: "\\*\\s*effectif|effectif\\s*\\*", message: "La longueur de la barre vient de l'effectif." },
             ],
@@ -539,6 +561,7 @@ Note enregistrée : 12</code></pre>
           saisiesTest: ["2", "12", "1", "16", "3"],
           validation: {
             codeContient: [
+              { motif: "\\bnombre\\b[\\s\\S]*\\bnombre\\b", message: "Sers-toi de la variable nombre déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "input[\\s\\S]*input", message: "Deux saisies par note : la valeur et le coefficient." },
               { motif: "total_coef", message: "Il faut aussi accumuler la somme des coefficients." },
             ],
@@ -547,9 +570,9 @@ Note enregistrée : 12</code></pre>
           },
           felicitation: "La vraie moyenne du bulletin. 🎯",
           indices: [
-            "Dans la boucle : <code>note = int(input(\"Note ? \"))</code> puis <code>coef = int(input(\"Coefficient ? \"))</code>.",
-            "<code>total = total + note * coef</code> et <code>total_coef = total_coef + coef</code>.",
-            "À la fin : <code>total / total_coef</code>, et surtout pas <code>/ nombre</code>.",
+            "Dans la boucle, deux saisies converties : la note, puis son coefficient.",
+            "Deux accumulateurs à faire grandir : l'un reçoit le produit note × coefficient, l'autre le coefficient seul.",
+            "La moyenne pondérée divise le premier accumulateur par le second — surtout pas par le nombre de notes.",
           ],
           solution: `nombre = int(input("Combien de notes ? "))\ntotal = 0\ntotal_coef = 0\n\nfor i in range(nombre):\n    note = int(input("Note ? "))\n    coef = int(input("Coefficient ? "))\n    total = total + note * coef\n    total_coef = total_coef + coef\n\nprint("Moyenne pondérée :", total / total_coef)\n`,
         },
@@ -603,6 +626,10 @@ Au-dessus de 10 : 16</code></pre>
           depart: `from random import randint\n\nsomme = 0\nmini = 21\nmaxi = -1\nau_dessus = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bsomme\\b[\\s\\S]*\\bsomme\\b", message: "Sers-toi de la variable somme déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bmini\\b[\\s\\S]*\\bmini\\b", message: "Sers-toi de la variable mini déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bmaxi\\b[\\s\\S]*\\bmaxi\\b", message: "Sers-toi de la variable maxi déjà définie, plutôt que de réécrire sa valeur." },
+              { motif: "\\bau_dessus\\b[\\s\\S]*\\bau_dessus\\b", message: "Sers-toi de la variable au_dessus déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "randint\\s*\\(\\s*0\\s*,\\s*20\\s*\\)", message: "Les notes vont de 0 à 20 : randint(0, 20)." },
               { motif: "\\bfor\\b", message: "Il faut une boucle sur les 30 élèves." },
             ],

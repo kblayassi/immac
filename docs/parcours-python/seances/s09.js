@@ -13,7 +13,7 @@ export default {
   numero: 9,
   titre: "Hasard et simulation",
   sousTitre: "Faire des expériences par milliers",
-  palier: "T8 — Fonctions et aléatoire",
+  palier: "Partie 3 — Fonctions et aléatoire",
 
   accroche: `Lancer un dé mille fois à la main prend une heure. Ton programme le fera
     en un centième de seconde — et te montrera quelque chose que personne n'avait pu
@@ -97,8 +97,8 @@ print(randint(1, 6))</code></pre>
           },
           felicitation: "Ton premier dé numérique. 🎲",
           indices: [
-            "<code>for i in range(5):</code>",
-            "Dans la boucle : <code>print(randint(1, 6))</code>.",
+            "Cinq lancers : une boucle bornée de cinq tours.",
+            "Dans la boucle, une seule ligne : afficher directement le résultat d'un tirage entre 1 et 6.",
           ],
           solution: `from random import randint\n\nfor i in range(5):\n    print(randint(1, 6))\n`,
         },
@@ -155,8 +155,8 @@ def lancer_de():
           },
           felicitation: "400 lancers, six faces, aucune valeur interdite. 🎲",
           indices: [
-            "<code>return randint(1, 6)</code>",
-            "Attention : <code>randint(1, 7)</code> donnerait parfois 7, et <code>randint(0, 6)</code> parfois 0.",
+            "Une seule ligne dans la fonction : renvoyer un tirage au hasard entre les deux bornes d'un dé.",
+            "Attention aux bornes : <code>randint</code> les inclut toutes les deux. Avec 1 et 7 tu obtiendrais parfois 7, avec 0 et 6 parfois 0.",
           ],
           solution: `from random import randint\n\ndef lancer_de():\n    return randint(1, 6)\n`,
         },
@@ -208,6 +208,7 @@ Fréquence : 0.173</code></pre>
           depart: `from random import randint\n\ndef lancer_de():\n    return randint(1, 6)\n\nnombre_de_six = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bnombre_de_six\\b[\\s\\S]*\\bnombre_de_six\\b", message: "Sers-toi de la variable nombre_de_six déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut répéter l'expérience avec une boucle." },
               { motif: "lancer_de\\s*\\(\\s*\\)", message: "Utilise la fonction lancer_de()." },
               { motif: "/\\s*1000|1000\\s*\\)", message: "La fréquence est le nombre de succès divisé par 1000." },
@@ -380,8 +381,8 @@ print(succes / n)             # la fréquence</code></pre>
             tests: `tirages = [pile_ou_face() for essai in range(400)]\nassert set(tirages) == {"pile", "face"}, "la fonction doit renvoyer exactement pile ou face"\nassert 120 < tirages.count("pile") < 280, "les deux résultats doivent être à peu près équiprobables"`,
           },
           indices: [
-            "Tire un entier entre 1 et 2 : <code>if randint(1, 2) == 1:</code>.",
-            "<code>return \"pile\"</code> dans un cas, <code>return \"face\"</code> dans l'autre.",
+            "Tire un entier entre 1 et 2, et teste s'il vaut 1 : cela partage les cas en deux moitiés égales.",
+            "Chaque branche renvoie l'une des deux chaînes. Attention : <code>return</code>, pas <code>print</code>.",
           ],
           solution: `from random import randint\n\ndef pile_ou_face():\n    if randint(1, 2) == 1:\n        return "pile"\n    return "face"\n`,
         },
@@ -432,8 +433,8 @@ Face : 53</code></pre>
             sortieRegexMessage: "Ton programme doit afficher exactement six numéros, un par ligne.",
           },
           indices: [
-            "<code>return randint(1, 49)</code>",
-            "Puis <code>for i in range(6): print(tirage_loto())</code>.",
+            "Une seule ligne dans la fonction : renvoyer un tirage entre les deux bornes du loto.",
+            "Puis, en dehors, une boucle de six tours qui affiche à chaque fois un appel à ta fonction.",
           ],
           solution: `from random import randint\n\ndef tirage_loto():\n    return randint(1, 49)\n\nfor i in range(6):\n    print(tirage_loto())\n`,
         },
@@ -479,6 +480,7 @@ Face : 53</code></pre>
           depart: `from random import randint\n\ndef somme_deux_des():\n    return randint(1, 6) + randint(1, 6)\n\ncompteur = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bcompteur\\b[\\s\\S]*\\bcompteur\\b", message: "Sers-toi de la variable compteur déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut répéter l'expérience." },
               { motif: "==\\s*7", message: "On compte les sommes égales à 7." },
             ],
@@ -551,9 +553,9 @@ Somme 12 : 0.0281</code></pre>`,
           },
           felicitation: "Le promeneur ne s'éloigne pas beaucoup : c'est tout l'intérêt de la marche aléatoire. 🚶",
           indices: [
-            "Dans la boucle : <code>if randint(1, 2) == 1:</code> alors <code>position = position + 1</code>, sinon <code>position = position - 1</code>.",
-            "<code>return position</code> après la boucle.",
-            "Puis <code>for i in range(5): print(marche(100))</code>.",
+            "Dans la boucle, tire à pile ou face et fais avancer ou reculer la position d'une unité selon le résultat.",
+            "La position finale se renvoie après la boucle, pas dedans.",
+            "En dehors de la fonction, une boucle de cinq tours qui affiche à chaque fois une promenade de 100 pas.",
           ],
           solution: `from random import randint\n\ndef marche(pas):\n    position = 0\n    for i in range(pas):\n        if randint(1, 2) == 1:\n            position = position + 1\n        else:\n            position = position - 1\n    return position\n\nfor i in range(5):\n    print(marche(100))\n`,
         },
@@ -645,6 +647,7 @@ Somme 12 : 0.0281</code></pre>`,
           depart: `from random import random\n\ndedans = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bdedans\\b[\\s\\S]*\\bdedans\\b", message: "Sers-toi de la variable dedans déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut lancer les fléchettes une par une." },
               { motif: "random\\s*\\(\\s*\\)[\\s\\S]*random\\s*\\(\\s*\\)", message: "Chaque fléchette a deux coordonnées : deux appels à random()." },
               { motif: "\\*\\s*4|4\\s*\\*", message: "L'estimation de π vaut quatre fois la proportion." },
@@ -654,9 +657,9 @@ Somme 12 : 0.0281</code></pre>`,
           },
           felicitation: "π estimé par des fléchettes. Von Neumann faisait ça en 1946. 🎯",
           indices: [
-            "Dans la boucle : <code>x = random()</code> et <code>y = random()</code>.",
-            "<code>if x * x + y * y &lt;= 1:</code> alors <code>dedans = dedans + 1</code>.",
-            "À la fin : <code>print(\"Estimation de pi :\", 4 * dedans / 50000)</code>.",
+            "Chaque fléchette a deux coordonnées tirées au hasard entre 0 et 1, par deux appels distincts.",
+            "Elle est dans le quart de disque quand la somme des carrés de ses coordonnées ne dépasse pas 1 : compte ces cas-là.",
+            "À la fin, l'estimation vaut quatre fois la proportion de fléchettes tombées dedans.",
           ],
           solution: `from random import random\n\ndedans = 0\n\nfor essai in range(50000):\n    x = random()\n    y = random()\n    if x * x + y * y <= 1:\n        dedans = dedans + 1\n\nprint("Estimation de pi :", 4 * dedans / 50000)\n`,
         },
@@ -773,6 +776,7 @@ Match nul : 0.1663</code></pre>
           depart: `from random import randint\n\nsix = 0\n\n`,
           validation: {
             codeContient: [
+              { motif: "\\bsix\\b[\\s\\S]*\\bsix\\b", message: "Sers-toi de la variable six déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bfor\\b", message: "Il faut une boucle sur les 10 000 lancers." },
               { motif: "%\\s*1000\\s*==\\s*0", message: "Pour afficher tous les 1000 essais, teste le reste de la division par 1000." },
               { motif: "\\*\\s*100|int\\s*\\(", message: "La barre se construit avec int(frequence * 100) dièses." },
@@ -782,9 +786,9 @@ Match nul : 0.1663</code></pre>
           },
           felicitation: "La loi des grands nombres, visible d'un coup d'œil. 📉",
           indices: [
-            "La boucle va de 1 à 10 000 : <code>for essai in range(1, 10001):</code>.",
-            "<code>if essai % 1000 == 0:</code> déclenche l'affichage.",
-            "<code>frequence = six / essai</code> puis <code>print(essai, \"|\", frequence, \"|\" + \"#\" * int(frequence * 100))</code>.",
+            "La boucle doit compter les essais à partir de 1, sinon la première division serait par zéro.",
+            "L'affichage ne se déclenche que quand le numéro d'essai est un multiple de 1000 : c'est un test sur le reste.",
+            "La fréquence est le nombre de 6 divisé par le numéro d'essai courant ; la barre se construit en répétant un dièse <code>int(frequence * 100)</code> fois.",
           ],
           solution: `from random import randint\n\nsix = 0\n\nfor essai in range(1, 10001):\n    if randint(1, 6) == 6:\n        six = six + 1\n    if essai % 1000 == 0:\n        frequence = six / essai\n        print(essai, "|", frequence, "|" + "#" * int(frequence * 100))\n`,
         },
@@ -810,7 +814,7 @@ Match nul : 0.1663</code></pre>
             ],
             sortieNonVide: true,
           },
-          felicitation: "Séance 9 terminée, fiche T8 bouclée. Tu as vu tout le Python de la Seconde. 🏁",
+          felicitation: "Séance 9 terminée, partie 3 bouclée. Tu as vu tout le Python de la Seconde. 🏁",
           indices: [
             "Structure : <code>def experience(): …</code>, un compteur, une boucle, une division.",
             "Exemple : au moins un 6 en trois lancers — la probabilité théorique vaut 1 − (5/6)³ ≈ 0,42.",

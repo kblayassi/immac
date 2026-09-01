@@ -15,12 +15,15 @@
 
 <header class="barre">
   <div class="barre-interieur">
-    <a class="marque" href="#/" id="lien-accueil">
+    <a class="marque" href="#/" id="lien-accueil" title="Accueil du parcours">
       <span class="logo" aria-hidden="true">&gt;_</span>
-      <span class="cache-mobile">Parcours&nbsp;Python</span>
     </a>
 
-    <div class="barre-titre" id="barre-titre" hidden></div>
+    <a class="bouton fantome retour" id="lien-retour" href="../SNT/1_Python/">
+      <span aria-hidden="true">←</span> <span class="libelle-retour">Retour au site</span>
+    </a>
+
+    <div class="barre-titre" id="barre-titre"></div>
 
     <span class="barre-espace"></span>
 
@@ -48,19 +51,18 @@
 
     <p style="font-size:.9rem;color:var(--texte-doux)">
       Ta progression est enregistrée <strong>dans ce navigateur</strong>, automatiquement.
-      Si tu changes de poste, emporte-la avec ton <strong>code de reprise</strong>.
+      Si tu changes de poste, télécharge le fichier ci-dessous et redépose-le sur
+      l'autre ordinateur.
     </p>
 
     <div class="champ">
-      <label for="champ-code">Code de reprise</label>
-      <textarea id="champ-code" spellcheck="false" placeholder="Colle ici un code de reprise pour restaurer ta progression…"></textarea>
+      <label for="champ-fichier">Reprendre une progression enregistrée</label>
+      <input type="file" id="champ-fichier" accept="application/json,.json">
     </div>
   </form>
 
   <div class="pied">
-    <button class="bouton fantome" id="btn-copier">Copier mon code</button>
-    <button class="bouton fantome" id="btn-telecharger">Télécharger</button>
-    <button class="bouton" id="btn-restaurer">Restaurer</button>
+    <button class="bouton" id="btn-telecharger">Télécharger ma progression</button>
     <button class="bouton fantome" id="btn-fermer-progression">Fermer</button>
   </div>
 </dialog>

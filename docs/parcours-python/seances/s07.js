@@ -9,7 +9,7 @@ export default {
   numero: 7,
   titre: "Écrire une fonction",
   sousTitre: "Ranger du code dans une boîte réutilisable",
-  palier: "T8 — Fonctions et aléatoire",
+  palier: "Partie 3 — Fonctions et aléatoire",
 
   accroche: `En Scratch, tu pouvais « créer un bloc » et le réutiliser partout.
     En Python, ça s'appelle une <strong>fonction</strong>, et c'est l'outil qui permet
@@ -243,9 +243,9 @@ print(y + 1)              # ERREUR</code></pre>
           },
           felicitation: "Deux appels, une addition : la fonction devient une brique. 🧱",
           indices: [
-            "<code>return ht + ht * 20 / 100</code>",
-            "Puis, en dehors de la fonction : <code>total = prix_ttc(100) + prix_ttc(50)</code>.",
-            "Et enfin <code>print(\"Total TTC :\", total)</code>.",
+            "Le prix TTC, c'est le prix hors taxes augmenté de 20 % de lui-même. Une seule ligne dans la fonction, avec <code>return</code>.",
+            "En dehors de la fonction, appelle-la deux fois — une par article — et additionne les deux résultats dans une variable.",
+            "Il ne reste plus qu'à afficher cette variable, précédée du texte attendu.",
           ],
           solution: `def prix_ttc(ht):\n    return ht + ht * 20 / 100\n\ntotal = prix_ttc(100) + prix_ttc(50)\nprint("Total TTC :", total)\n`,
         },
@@ -276,7 +276,7 @@ print(y + 1)              # ERREUR</code></pre>
           },
           felicitation: "Une ligne, quatre cas justes. C'est ça, du code élégant. ✨",
           indices: [
-            "<code>return age >= 18</code> — c'est tout.",
+            "Ne construis rien : la comparaison demandée vaut <em>déjà</em> True ou False. Il suffit de la renvoyer telle quelle.",
           ],
           solution: `def est_majeur(age):\n    return age >= 18\n`,
         },
@@ -386,8 +386,8 @@ valeur = nom_de_la_fonction(3)   # l'appel</code></pre>
             sortie: "Périmètre : 28",
           },
           indices: [
-            "<code>return 4 * cote</code>",
-            "L'affichage se fait <strong>en dehors</strong> : <code>print(\"Périmètre :\", perimetre_carre(7))</code>.",
+            "Le périmètre d'un carré, c'est quatre fois son côté. Une ligne, avec <code>return</code>.",
+            "L'affichage se fait <strong>en dehors</strong> de la fonction : un <code>print</code> avec le texte, puis un appel à ta fonction avec 7 en argument.",
           ],
           solution: `def perimetre_carre(cote):\n    return 4 * cote\n\nprint("Périmètre :", perimetre_carre(7))\n`,
         },
@@ -416,9 +416,9 @@ valeur = nom_de_la_fonction(3)   # l'appel</code></pre>
           },
           felicitation: "Une fonction appelée dans une boucle : le duo gagnant. 🌡️",
           indices: [
-            "<code>return celsius * 9 / 5 + 32</code>",
-            "La boucle : <code>for c in range(0, 41, 10):</code>.",
-            "<code>print(c, \"°C =\", en_fahrenheit(c), \"°F\")</code>",
+            "La formule est donnée dans l'énoncé : traduis-la telle quelle après <code>return</code>, en remplaçant C par le paramètre.",
+            "La boucle va de 0 à 40 par pas de 10 — souviens-toi que la borne de droite de <code>range</code> est exclue.",
+            "Dans la boucle, un seul <code>print</code> à quatre morceaux : la température, le texte « °C = », l'appel à ta fonction, et le texte « °F ».",
           ],
           solution: `def en_fahrenheit(celsius):\n    return celsius * 9 / 5 + 32\n\nfor c in range(0, 41, 10):\n    print(c, "°C =", en_fahrenheit(c), "°F")\n`,
         },
@@ -480,8 +480,8 @@ valeur = nom_de_la_fonction(3)   # l'appel</code></pre>
             tests: `assert valeur_absolue(5) == 5, "la valeur absolue de 5 est 5"\nassert valeur_absolue(-12) == 12, "la valeur absolue de -12 est 12"\nassert valeur_absolue(0) == 0, "la valeur absolue de 0 est 0"`,
           },
           indices: [
-            "<code>if n &lt; 0:</code> puis <code>return -n</code>.",
-            "Le second <code>return n</code> peut se passer de <code>else</code> : on ne l'atteint que si le premier n'a pas été exécuté.",
+            "Si le nombre est négatif, sa valeur absolue est son opposé : un <code>return</code> avec le signe moins devant le paramètre.",
+            "Le second <code>return</code> peut se passer de <code>else</code> : on ne l'atteint que si le premier n'a pas été exécuté.",
           ],
           solution: `def valeur_absolue(n):\n    if n < 0:\n        return -n\n    return n\n`,
         },
@@ -504,8 +504,8 @@ valeur = nom_de_la_fonction(3)   # l'appel</code></pre>
           },
           felicitation: "L'accumulateur emballé dans une fonction : réutilisable partout. 📦",
           indices: [
-            "<code>for i in range(1, n + 1):</code> — le paramètre sert de borne.",
-            "Le <code>return somme</code> est décalé de quatre espaces (dans la fonction), pas de huit (pas dans la boucle).",
+            "La boucle va de 1 jusqu'au paramètre inclus : c'est lui qui sert de borne.",
+            "Le <code>return</code> se place à quatre espaces — dans la fonction, mais après la boucle. À huit espaces, il l'interromprait au premier tour.",
           ],
           solution: `def somme_jusqu_a(n):\n    somme = 0\n    for i in range(1, n + 1):\n        somme = somme + i\n    return somme\n`,
         },
@@ -629,7 +629,7 @@ valeur = nom_de_la_fonction(3)   # l'appel</code></pre>
             <p>Une fonction ne renvoie pas forcément un nombre. Écris <code>ligne(n)</code>
             qui renvoie une <strong>chaîne</strong> de <code>n</code> étoiles, puis sers-t'en
             pour dessiner un escalier :</p>
-            <pre class="bloc-code"><code>*
+            <pre class="bloc-code sans-copie"><code>*
 **
 ***
 ****
@@ -645,8 +645,8 @@ valeur = nom_de_la_fonction(3)   # l'appel</code></pre>
           },
           felicitation: "Une fonction qui fabrique du texte : très pratique pour dessiner. ⭐",
           indices: [
-            "<code>return \"*\" * n</code>",
-            "Puis <code>for i in range(1, 6): print(ligne(i))</code>.",
+            "Souviens-toi du défi des quarante tirets : multiplier un texte le répète. Ici le texte est une étoile, et le nombre de répétitions est le paramètre.",
+            "En dehors de la fonction, une boucle de 1 à 5 qui affiche, à chaque tour, le résultat de ta fonction appelée avec le compteur.",
           ],
           solution: `def ligne(n):\n    return "*" * n\n\nfor i in range(1, 6):\n    print(ligne(i))\n`,
         },
@@ -670,9 +670,9 @@ valeur = nom_de_la_fonction(3)   # l'appel</code></pre>
           },
           felicitation: "L'algorithme du chapitre 3, désormais réutilisable partout. 📈",
           indices: [
-            "<code>puissance = 1</code> puis <code>while puissance &lt;= seuil:</code>.",
-            "Dans la boucle : <code>puissance = puissance * 2</code>.",
-            "Le <code>return puissance</code> vient après la boucle.",
+            "Une variable qui part de 1, et une boucle qui tourne tant que cette variable n'a pas dépassé le seuil.",
+            "Dans la boucle, une seule ligne : doubler la variable.",
+            "Le <code>return</code> vient <strong>après</strong> la boucle, jamais dedans — sinon la fonction s'arrêterait au premier tour.",
           ],
           solution: `def premiere_puissance_2(seuil):\n    puissance = 1\n    while puissance <= seuil:\n        puissance = puissance * 2\n    return puissance\n`,
         },

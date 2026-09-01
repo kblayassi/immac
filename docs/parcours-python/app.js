@@ -114,28 +114,12 @@ function totalEtapes(idSeance) {
 
 /* ------------------------------------------------------- Emporter sa progression */
 
-function codeDeReprise() {
-  // btoa n'accepte que du latin-1 : on passe par un encodage UTF-8 explicite.
-  const octets = new TextEncoder().encode(JSON.stringify(etat));
-  let binaire = "";
-  for (const o of octets) binaire += String.fromCharCode(o);
-  return btoa(binaire);
-}
-
-function restaurer(code) {
-  const texte = code.trim();
-  if (!texte) throw new Error("Le code de reprise est vide.");
-  let json;
-  if (texte.startsWith("{")) {
-    json = texte;                                   // fichier .json déposé tel quel
-  } else {
-    const binaire = atob(texte.replace(/\s+/g, ""));
-    const octets = Uint8Array.from(binaire, (c) => c.charCodeAt(0));
-    json = new TextDecoder("utf-8").decode(octets);
-  }
+/* La progression s'échange par un fichier .json : c'est le seul geste qu'un élève
+   puisse faire de façon fiable d'un poste à l'autre. */
+function restaurer(json) {
   const lu = JSON.parse(json);
   if (!lu || typeof lu !== "object" || !lu.seances) {
-    throw new Error("Ce code ne ressemble pas à une progression.");
+    throw new Error("Ce fichier ne contient pas une progression.");
   }
   etat = { ...structureVide(), ...lu };
   ecrireEtat();
@@ -328,7 +312,8 @@ function aller(hash) {
 function rendreHub() {
   const vue = $("#vue");
   vue.textContent = "";
-  $("#barre-titre").hidden = true;
+  $("#barre-titre").textContent = "Parcours Python";
+  majRetour("hub");
 
   const total = Object.keys(CATALOGUE).reduce((s, id) => s + totalEtapes(id), 0);
   const faites = Object.keys(CATALOGUE).reduce((s, id) => s + Math.min(nbReussies(id), totalEtapes(id)), 0);
@@ -386,6 +371,22 @@ function rendreHub() {
   }
 }
 
+/* Un seul bouton de retour, dont la destination suit la vue : on ne se retrouve
+   jamais coincé dans une séance sans savoir comment en sortir. */
+function majRetour(vue) {
+  const lien = $("#lien-retour");
+  const libelle = lien.querySelector(".libelle-retour");
+  if (vue === "seance") {
+    lien.href = "#/";
+    libelle.textContent = "Toutes les séances";
+    lien.title = "Revenir à la liste des séances";
+  } else {
+    lien.href = "../SNT/1_Python/";
+    libelle.textContent = "Retour au site";
+    lien.title = "Revenir au site du cours";
+  }
+}
+
 function majJauge(jauge, fait, total) {
   const pct = total ? Math.round((fait / total) * 100) : 0;
   jauge.querySelector("i").style.width = pct + "%";
@@ -419,7 +420,7 @@ async function rendreSeance(id) {
     console.warn(`[parcours] ${id} : ${rang} étapes réelles, ${totalEtapes(id)} annoncées dans le manifeste.`);
   }
 
-  $("#barre-titre").hidden = false;
+  majRetour("seance");
   $("#barre-titre").innerHTML =
     `Séance ${def.numero} — ${echapper(def.titre)}<small>${echapper(def.sousTitre || "")}</small>`;
 
@@ -924,26 +925,12 @@ function initPanneau() {
     $("#resume-progression").textContent =
       `${pluriel(faites, "étape validée", "étapes validées")} sur ${total}.`;
     $("#champ-prenom").value = etat.eleve?.prenom || "";
-    $("#champ-code").value = "";
     dlg.showModal();
   });
 
   $("#champ-prenom").addEventListener("input", (ev) => {
     etat.eleve = { ...etat.eleve, prenom: ev.target.value.slice(0, 40) };
     ecrireEtat();
-  });
-
-  $("#btn-copier").addEventListener("click", async (ev) => {
-    ev.preventDefault();
-    const code = codeDeReprise();
-    try {
-      await navigator.clipboard.writeText(code);
-      toast("Code de reprise copié");
-    } catch {
-      $("#champ-code").value = code;
-      $("#champ-code").select();
-      toast("Copie automatique refusée : sélectionne et copie le texte");
-    }
   });
 
   $("#btn-telecharger").addEventListener("click", (ev) => {
@@ -957,15 +944,18 @@ function initPanneau() {
     toast("Fichier téléchargé");
   });
 
-  $("#btn-restaurer").addEventListener("click", (ev) => {
-    ev.preventDefault();
+  $("#champ-fichier").addEventListener("change", async (ev) => {
+    const fichier = ev.target.files && ev.target.files[0];
+    if (!fichier) return;
+    ev.target.value = "";                       // permet de redéposer le même fichier
+    if (!confirm("Remplacer la progression enregistrée sur cet ordinateur par celle du fichier ?")) return;
     try {
-      restaurer($("#champ-code").value);
+      restaurer(await fichier.text());
       dlg.close();
       rendre();
       toast("Progression restaurée");
     } catch (e) {
-      toast(e.message || "Code de reprise illisible");
+      toast(e.message || "Fichier illisible");
     }
   });
 

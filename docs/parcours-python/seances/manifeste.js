@@ -12,22 +12,22 @@
 export const PALIERS = [
   {
     id: "t6",
-    titre: "T6 — Variables, affectation, instruction conditionnelle",
+    titre: "Partie 1 — Variables, affectation, instruction conditionnelle",
     seances: ["s01", "s02", "s03", "s04"],
   },
   {
     id: "t7",
-    titre: "T7 — Boucle bornée et boucle non bornée",
+    titre: "Partie 2 — Boucle bornée et boucle non bornée",
     seances: ["s05", "s06"],
   },
   {
     id: "t8",
-    titre: "T8 — Fonctions et aléatoire",
+    titre: "Partie 3 — Fonctions et aléatoire",
     seances: ["s07", "s08", "s09"],
   },
   {
     id: "fin",
-    titre: "Pour finir",
+    titre: "Partie 4 — Pour finir",
     seances: ["s10", "s11"],
   },
 ];

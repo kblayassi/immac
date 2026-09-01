@@ -13,7 +13,7 @@ export default {
   numero: 1,
   titre: "De Scratch à Python",
   sousTitre: "Ton tout premier programme",
-  palier: "T6 — Variables, affectation, instruction conditionnelle",
+  palier: "Partie 1 — Variables, affectation, instruction conditionnelle",
 
   accroche: `Tu sais déjà programmer. En Scratch, tu empilais des blocs ;
     ici, tu vas écrire ces mêmes ordres au clavier. C'est tout ce qui change —
@@ -178,7 +178,7 @@ export default {
           felicitation: "Python est maintenant ta calculatrice.",
           indices: [
             "Le calcul se met entre les parenthèses, <strong>sans</strong> guillemets.",
-            "La forme est : <code>print(17 * 24)</code> — à toi de la retrouver.",
+            "Une seule ligne suffit : l'instruction d'affichage, et à l'intérieur le produit des deux nombres — l'étoile joue le rôle du signe ×.",
           ],
           solution: `print(17 * 24)\n`,
         },

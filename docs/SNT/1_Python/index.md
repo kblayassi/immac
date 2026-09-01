@@ -11,7 +11,7 @@ La partie **algorithmique et programmation** du programme de Seconde se travaill
 ici, dans une application à part : un cours interactif où **chaque étape se valide
 avant d'ouvrir la suivante**.
 
-[Ouvrir le parcours Python :material-arrow-right:](../../parcours-python/){ .md-button .md-button--primary }
+[Ouvrir le parcours Python :material-arrow-right:](../../parcours-python/){ .md-button }
 
 ## Comment ça marche
 
@@ -24,9 +24,9 @@ avant d'ouvrir la suivante**.
 
 !!! warning "Si tu changes d'ordinateur"
     La progression est enregistrée **sur le poste que tu utilises**. Pour la retrouver
-    ailleurs, ouvre le menu **☰** en haut à droite du parcours et récupère ton
-    **code de reprise** (ou télécharge le fichier). Sur le nouveau poste, colle-le
-    au même endroit puis clique sur *Restaurer*.
+    ailleurs, ouvre le menu **☰** en haut à droite du parcours et clique sur
+    **Télécharger ma progression**. Sur le nouveau poste, ouvre le même menu et
+    dépose le fichier obtenu.
 
 ## Les séances
 
@@ -44,18 +44,3 @@ avant d'ouvrir la suivante**.
 | 10 | Projet & bilan | trois sujets au choix, trois niveaux |
 | 11 | Bonus | les algorithmes du programme de maths, rassemblés |
 
----
-
-!!! note "Pour l'enseignant"
-    Le contenu de chaque séance vit dans `docs/parcours-python/seances/sNN.js` ;
-    le moteur (étapes, verrous, validation, sauvegarde) est dans `app.js` et ne
-    contient aucune notion de cours. Après toute modification d'une séance :
-
-    ```bash
-    python3 tools/parcours/verifier_seance.py        # les onze séances
-    python3 tools/parcours/verifier_seance.py s03    # une seule
-    ```
-
-    Le banc exécute chaque solution de référence, compare sa sortie à celle annoncée,
-    rejoue les assertions, et vérifie que le code de départ ne passe pas déjà la
-    validation. Penser à mettre `nbEtapes` à jour dans `seances/manifeste.js`.
