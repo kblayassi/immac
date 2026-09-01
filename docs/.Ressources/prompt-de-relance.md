@@ -44,6 +44,12 @@ Ce document sert à **reprendre le travail sur le site** après une interruption
 | **Numérotation des exercices** | automatique, hook `plugins/exo_numbering.py` : il réécrit les titres `!!! exoordi "Exercice N - …"` |
 | **Ordre des pages** | champ `weight` du front matter ; celui de `index.md` positionne le **chapitre** dans la navigation |
 
+!!! info "Les parcours interactifs ont leur propre fiche"
+    Les cours interactifs de SNT et de NSI — étapes qui se valident une par une, moteur
+    partagé, banc de test dédié — ne suivent aucune des conventions ci-dessous : ce sont
+    des pages statiques hors gabarit MkDocs. Tout est dans
+    [parcours-interactifs.md](parcours-interactifs.md).
+
 !!! warning "Les dossiers commençant par un point ne sont pas publiés"
     C'est ce qui permet de cacher des fichiers tout en les utilisant au build :
 
