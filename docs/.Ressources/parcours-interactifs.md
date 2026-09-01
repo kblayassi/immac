@@ -1,12 +1,16 @@
 ---
-title: Parcours Python (SNT)
+title: Les parcours interactifs
 ---
 
-# Le parcours Python de SNT
+# Les parcours interactifs
 
-Application autonome pour la partie **algorithmique et programmation** du programme
-de mathématiques de Seconde, traitée en SNT. Cours interactif où chaque étape se
+Deux parcours partagent le **même moteur** : cours interactif où chaque étape se
 valide avant d'ouvrir la suivante.
+
+| Parcours | Dossier | Adresse | Contenu |
+|---|---|---|---|
+| SNT — Seconde | `docs/parcours-python/` | `…/parcours-python/` | 11 séances, 266 étapes |
+| NSI — chapitre 1 | `docs/parcours-nsi/` | `…/parcours-nsi/` | 13 séances, 225 étapes |
 
 !!! danger "Ce dossier n'est pas publié"
     `.Ressources` commence par un point : MkDocs ne le copie pas dans le site.
@@ -15,17 +19,28 @@ valide avant d'ouvrir la suivante.
 ## Où ça vit
 
 ```
-docs/parcours-python/
-├── index.html          coquille de l'app (page statique, hors gabarit MkDocs)
-├── app.css
-├── app.js              moteur : étapes, verrous, validation, sauvegarde
+docs/parcours/                  LE MOTEUR, partagé
+├── app.js                      étapes, verrous, validation, sauvegarde
+└── app.css
+
+docs/parcours-python/           un parcours
+├── index.html                  coquille (page statique, hors gabarit MkDocs)
 └── seances/
-    ├── manifeste.js    catalogue : titres, résumés, nbEtapes, disponibilité
-    └── sNN.js          tout le contenu pédagogique
+    ├── manifeste.js            PARCOURS (identité) · PALIERS · CATALOGUE
+    └── sNN.js                  tout le contenu pédagogique
+
+docs/parcours-nsi/              l'autre, même structure
 ```
 
-MkDocs copie ce dossier **tel quel** : il est servi à `/parcours-python/`, sans nav
-ni thème Material. Le lien depuis le site est dans `docs/SNT/1_Python/index.md`.
+MkDocs copie ces dossiers **tels quels** : ils sont servis sans nav ni thème Material.
+Le moteur ne se repère pas à sa propre adresse mais à celle de la **page** qui le
+charge : il trouve donc toujours les séances à côté de l'`index.html`.
+
+Pour **ajouter un parcours** : dupliquer un `index.html`, créer `seances/manifeste.js`
+avec son bloc `PARCOURS`, et écrire les séances. Rien à modifier dans le moteur.
+
+Les liens depuis le site sont dans `docs/SNT/1_Python/index.md` et
+`docs/NSI/1bis_Parcours_interactif/index.md`.
 
 L'exécution Python et l'éditeur viennent de l'existant : `docs/javascripts/pyodide-worker.js`
 et `docs/javascripts/codemirror-bundle.js`.
@@ -39,8 +54,8 @@ révéler dans le fichier publié.
 
 | Version | Adresse | Corrections |
 |---|---|---|
-| élève | `…/immac/parcours-python/` | absentes du fichier |
-| prof | `…/immac/prof/parcours-python/` | présentes |
+| élève | `…/immac/parcours-*/` | absentes du fichier |
+| prof | `…/immac/prof/parcours-*/` | présentes |
 
 L'adresse `prof/` n'est pas listée, mais **elle n'est pas protégée** : qui la connaît
 y accède.
@@ -91,8 +106,9 @@ sont bloqués, et le bloc porte le repère « à recopier ».
 ## Vérifier après modification
 
 ```bash
-python3 tools/parcours/verifier_seance.py        # les onze séances
-python3 tools/parcours/verifier_seance.py s03    # une seule
+python3 tools/parcours/verifier_seance.py                    # tout
+python3 tools/parcours/verifier_seance.py parcours-nsi       # un parcours
+python3 tools/parcours/verifier_seance.py parcours-nsi s03   # une séance
 ```
 
 Pour chaque étape, le banc exécute la solution de référence, compare sa sortie à
