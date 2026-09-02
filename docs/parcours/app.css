@@ -675,3 +675,89 @@ dialog.panneau input[type="text"] {
 :root[data-theme="dark"] .hote-editeur .cm-selectionBackground,
 :root[data-theme="dark"] .hote-editeur .cm-content ::selection { background: #3a3357 !important; }
 :root[data-theme="dark"] .hote-editeur .cm-tooltip { background: var(--surface-2); border-color: var(--bordure); color: var(--texte); }
+
+/* ==================================================== Atelier web (HTML/CSS)
+
+   L'élève voit son code et son résultat en même temps : c'est ce qui rend la
+   notion de balise concrète. En dessous de 900 px, les deux colonnes s'empilent. */
+
+.atelier-onglets {
+  display: flex; gap: .2rem;
+  padding: .35rem .5rem 0;
+  border-bottom: 1px solid var(--bordure);
+  overflow-x: auto;
+}
+.atelier-onglets .onglet {
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--texte-doux);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 7px 7px 0 0;
+  padding: .4em .8em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.atelier-onglets .onglet:hover { color: var(--texte); }
+.atelier-onglets .onglet[data-actif="1"] {
+  color: var(--violet-vif);
+  font-weight: 600;
+  background: var(--surface);
+  border-color: var(--bordure);
+}
+
+.atelier-double { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 900px) {
+  .atelier-double { grid-template-columns: 1fr 1fr; }
+  .atelier-double .colonne-apercu { border-left: 1px solid var(--bordure); }
+}
+.atelier-double .colonne-code { min-width: 0; background: var(--surface); }
+.atelier-double .colonne-apercu { min-width: 0; display: flex; flex-direction: column; }
+.atelier-web .hote-editeur .cm-editor { height: 22em; max-height: 60vh; }
+
+.apercu-barre {
+  display: flex; align-items: center; gap: .5em;
+  padding: .45em .9em;
+  border-bottom: 1px solid var(--bordure);
+  background: var(--surface-2);
+}
+.apercu-barre .apercu-libelle {
+  font-size: .68rem; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  color: var(--texte-doux);
+}
+.apercu-barre .apercu-page { font-family: var(--mono); font-size: .78rem; color: var(--violet-vif); }
+
+/* Fond blanc imposé : une page d'élève sans CSS doit ressembler à ce qu'elle
+   sera dans un navigateur, y compris quand le parcours est en thème sombre. */
+.apercu-cadre {
+  flex: 1;
+  width: 100%;
+  min-height: 22em;
+  border: 0;
+  background: #fff;
+  color-scheme: light;
+}
+
+/* ------------------------------------------------ Bandeau d'accompagnement */
+.bandeau-aide {
+  margin: 1.2rem 0 .4rem;
+  padding: .8rem 1rem;
+  border-radius: var(--rayon-petit);
+  border: 1px solid var(--bordure);
+  border-left: 3px solid var(--violet-vif);
+  background: var(--surface);
+}
+.bandeau-aide .etiquette {
+  display: inline-block;
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--violet-vif);
+  margin-bottom: .3em;
+}
+.bandeau-aide p { margin: 0; font-size: .92rem; color: var(--texte-doux); }
+.bandeau-aide[data-niveau="autonome"] { border-left-color: var(--vert); }
+.bandeau-aide[data-niveau="autonome"] .etiquette { color: var(--vert); }
+.bandeau-aide[data-niveau="pas-a-pas"] { border-left-color: var(--or); }
+.bandeau-aide[data-niveau="pas-a-pas"] .etiquette { color: var(--or); }

@@ -197,6 +197,33 @@ def on_post_page(output, page, config):
 # `solution: `…`,` sur une ligne : littéral gabarit, échappements compris.
 SOLUTION_PARCOURS = re.compile(r'^[ \t]*solution:\s*`(?:[^`\\]|\\.)*`,[ \t]*\n', re.M)
 
+# Les parcours web ont plusieurs fichiers par étape : leur solution est un objet
+# qui s'étend sur plusieurs lignes. On l'ouvre à `solution: {` et on la referme
+# à la première ligne `},` de même indentation.
+DEBUT_SOLUTION_OBJET = re.compile(r'^(?P<indent>[ \t]*)solution:\s*\{[ \t]*$')
+
+
+def retirer_solutions_objet(source):
+    lignes = source.split('\n')
+    sortie, i, retires = [], 0, 0
+    while i < len(lignes):
+        debut = DEBUT_SOLUTION_OBJET.match(lignes[i])
+        if not debut:
+            sortie.append(lignes[i])
+            i += 1
+            continue
+        fin = debut.group('indent') + '},'
+        j = i + 1
+        while j < len(lignes) and lignes[j].rstrip() != fin:
+            j += 1
+        if j >= len(lignes):        # accolade jamais refermée : on ne touche à rien
+            sortie.append(lignes[i])
+            i += 1
+            continue
+        i = j + 1
+        retires += 1
+    return '\n'.join(sortie), retires
+
 
 def on_post_build(config):
     if config.get('extra', {}).get('version') != 'eleve':
@@ -206,5 +233,6 @@ def on_post_build(config):
       for fichier in sorted(dossier.glob('s*.js')):
         source = fichier.read_text(encoding='utf-8')
         epure, retires = SOLUTION_PARCOURS.subn('', source)
-        if retires:
+        epure, retires_objet = retirer_solutions_objet(epure)
+        if retires or retires_objet:
             fichier.write_text(epure, encoding='utf-8')

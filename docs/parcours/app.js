@@ -20,6 +20,26 @@ const URL_BUNDLE = new URL("../javascripts/codemirror-bundle.js", PAGE).href;
 const { PARCOURS, PALIERS, CATALOGUE } =
   await import(new URL("seances/manifeste.js", PAGE).href);
 
+/* Un parcours n'enseigne pas forcément Python : le manifeste annonce son langage,
+   et le moteur choisit l'atelier correspondant. « python » reste le défaut, donc
+   les parcours existants ne changent pas d'un caractère. */
+const LANGAGE = PARCOURS.langage || "python";
+
+/* L'analyseur HTML/CSS ne sert qu'aux parcours web : on ne le charge que là.
+   Il vit à côté de ce fichier, pas à côté de la page : import.meta.url. */
+let VerifWeb = null;
+async function chargerVerifWeb() {
+  if (!VerifWeb) VerifWeb = await import(new URL("web-verif.js", import.meta.url).href);
+  return VerifWeb;
+}
+
+/* Fabrique l'archive ZIP du bouton « Télécharger mon site ». */
+let Archive = null;
+async function chargerArchive() {
+  if (!Archive) Archive = await import(new URL("archive.js", import.meta.url).href);
+  return Archive;
+}
+
 /* ====================================================================== Outils */
 
 const $ = (sel, racine = document) => racine.querySelector(sel);
@@ -67,10 +87,10 @@ function toast(message) {
 const CLE = `${PARCOURS.cle}:v1`;
 
 /* Forme stockée :
-   { version, eleve:{prenom}, seances:{ s01:{ etapes:{ e1:{reussi,essais,indices,correction} },
+   { version, eleve:{nom,prenom}, seances:{ s01:{ etapes:{ e1:{reussi,essais,indices,correction} },
                                               codes:{ e1:"..." } } } } */
 function structureVide() {
-  return { version: 1, eleve: { prenom: "" }, seances: {} };
+  return { version: 1, eleve: { nom: "", prenom: "" }, seances: {} };
 }
 
 let etat = lireEtat();
@@ -218,21 +238,25 @@ async function chargerCodeMirror() {
   return CM;
 }
 
-async function creerEditeur(hote, depart, onChange) {
-  const { EditorView, EditorState, basicSetup, indentUnit, keymap, indentMore, indentLess, python } =
-    await chargerCodeMirror();
+async function creerEditeur(hote, depart, onChange, langage = "python") {
+  const { EditorView, EditorState, basicSetup, indentUnit, keymap, indentMore, indentLess,
+          python, html, css } = await chargerCodeMirror();
+
+  // Deux espaces en HTML/CSS, quatre en Python : ce sont les usages de chaque langage.
+  const tabulation = langage === "python" ? "    " : "  ";
 
   const extensions = [
     basicSetup,
-    EditorState.tabSize.of(4),
-    indentUnit.of("    "),                      // PEP 8 : 4 espaces, jamais de tabulation
+    EditorState.tabSize.of(tabulation.length),
+    indentUnit.of(tabulation),
     keymap.of([
       { key: "Tab", run: indentMore, preventDefault: true },
       { key: "Shift-Tab", run: indentLess, preventDefault: true },
     ]),
     EditorView.updateListener.of((u) => { if (u.docChanged) onChange(u.state.doc.toString()); }),
   ];
-  if (python) extensions.splice(4, 0, python());
+  const coloration = { python, html, css }[langage];
+  if (coloration) extensions.splice(4, 0, coloration());
 
   const vue = new EditorView({ parent: hote, state: EditorState.create({ doc: depart, extensions }) });
 
@@ -440,6 +464,17 @@ async function rendreSeance(id) {
     </div>`;
   vue.appendChild(chapeau);
 
+  // Séance « projet » : on annonce à l'élève le niveau d'étayage qu'il va recevoir.
+  if (def.adaptatif) {
+    const niveau = niveauAide(def.id);
+    const info = NIVEAUX_AIDE[niveau];
+    const bandeau = elem("div", "bandeau-aide");
+    bandeau.dataset.niveau = niveau;
+    bandeau.innerHTML =
+      `<span class="etiquette">Accompagnement : ${info.libelle}</span><p>${info.texte}</p>`;
+    vue.appendChild(bandeau);
+  }
+
   for (const partie of def.parties) {
     const entete = elem("div", "partie-entete");
     entete.dataset.partie = partie.id;
@@ -466,7 +501,7 @@ async function rendreSeance(id) {
   vue.appendChild(final);
 
   rafraichirVerrous();
-  Python.prechauffer();
+  if (LANGAGE !== "web") Python.prechauffer();
 }
 
 /* -------------------------------------------------------- Verrous et jauges */
@@ -510,6 +545,9 @@ const LIBELLE_TYPE = {
 };
 
 function construireEtape(def, partie, etape) {
+  // Le projet final décline ses consignes selon le niveau d'accompagnement.
+  if (etape.variantes) etape = appliquerNiveau(etape, niveauAide(def.id));
+
   const bloc = elem("div", "etape");
   bloc.id = `etape-${etape.id}`;
 
@@ -532,7 +570,7 @@ function construireEtape(def, partie, etape) {
   if (etape.type === "cours")            monterCours(def, etape, corps);
   else if (etape.type === "qcm")         monterQcm(def, etape, corps);
   else if (etape.type === "prediction")  monterQcm(def, etape, corps);
-  else if (etape.type === "code")        monterCode(def, etape, corps);
+  else if (etape.type === "code")        (etape.fichiers ? monterCodeWeb : monterCode)(def, etape, corps);
 
   bloc.append(rail, corps);
   return bloc;
@@ -641,6 +679,52 @@ function monterQcm(def, etape, corps) {
     });
     apres.hidden = false;
   }
+}
+
+/* Le pavé de réussite ou d'échec, commun aux deux ateliers (Python et web). */
+function construireVerdict(etape, s, bilan) {
+  const boite = elem("div", "verdict");
+  boite.dataset.issue = bilan.reussi ? "reussi" : "rate";
+
+  const entete = elem("div", "entete");
+  entete.textContent = bilan.reussi
+    ? (etape.felicitation || "C'est juste ! 🎉")
+    : "Pas encore.";
+  boite.appendChild(entete);
+
+  if (bilan.reussi) {
+    if (etape.apres) {
+      const suite = elem("div");
+      suite.innerHTML = etape.apres;
+      boite.appendChild(suite);
+    }
+    return boite;
+  }
+
+  const liste = elem("ul");
+  for (const e of bilan.echecs) liste.appendChild(elem("li", null, e));
+  boite.appendChild(liste);
+
+  if (bilan.comparaison) {
+    const comp = elem("div", "comparaison");
+    for (const [libelle, valeur] of [["Attendu", bilan.comparaison.attendu],
+                                     ["Ton programme affiche", bilan.comparaison.obtenu]]) {
+      const c = elem("div");
+      c.appendChild(elem("div", "libelle", libelle));
+      c.appendChild(elem("pre", null, valeur));
+      comp.appendChild(c);
+    }
+    boite.appendChild(comp);
+  }
+
+  if (s.essais >= 2 && (etape.indices || []).length > s.indices) {
+    const relance = elem("p");
+    relance.style.marginTop = ".6em";
+    relance.style.marginBottom = "0";
+    relance.innerHTML = "Bloqué ? Le bouton <strong>💡 Coup de pouce</strong> est là pour ça.";
+    boite.appendChild(relance);
+  }
+  return boite;
 }
 
 /* -------------------------------------------------------------- Étape : code */
@@ -825,47 +909,7 @@ function monterCode(def, etape, corps) {
 
   function afficherVerdict(bilan) {
     zoneVerdict.textContent = "";
-    const boite = elem("div", "verdict");
-    boite.dataset.issue = bilan.reussi ? "reussi" : "rate";
-
-    const entete = elem("div", "entete");
-    entete.textContent = bilan.reussi
-      ? (etape.felicitation || "C'est juste ! 🎉")
-      : "Pas encore.";
-    boite.appendChild(entete);
-
-    if (bilan.reussi) {
-      if (etape.apres) {
-        const suite = elem("div");
-        suite.innerHTML = etape.apres;
-        boite.appendChild(suite);
-      }
-    } else {
-      const liste = elem("ul");
-      for (const e of bilan.echecs) liste.appendChild(elem("li", null, e));
-      boite.appendChild(liste);
-
-      if (bilan.comparaison) {
-        const comp = elem("div", "comparaison");
-        for (const [libelle, valeur] of [["Attendu", bilan.comparaison.attendu],
-                                         ["Ton programme affiche", bilan.comparaison.obtenu]]) {
-          const c = elem("div");
-          c.appendChild(elem("div", "libelle", libelle));
-          c.appendChild(elem("pre", null, valeur));
-          comp.appendChild(c);
-        }
-        boite.appendChild(comp);
-      }
-
-      if (s.essais >= 2 && (etape.indices || []).length > s.indices) {
-        const relance = elem("p");
-        relance.style.marginTop = ".6em";
-        relance.style.marginBottom = "0";
-        relance.innerHTML = "Bloqué ? Le bouton <strong>💡 Coup de pouce</strong> est là pour ça.";
-        boite.appendChild(relance);
-      }
-    }
-    zoneVerdict.appendChild(boite);
+    zoneVerdict.appendChild(construireVerdict(etape, s, bilan));
   }
 
   /* --- coups de pouce, révélés un par un */
@@ -917,6 +961,461 @@ function monterCode(def, etape, corps) {
   }
 }
 
+/* ================================================== Accompagnement adaptatif
+
+   Le projet final est le même pour tout le monde : c'est l'échafaudage autour
+   qui change. Le moteur lit ce qui est déjà enregistré (réussites du premier
+   coup, coups de pouce ouverts) et choisit le niveau d'étayage. L'enseignant
+   peut le forcer en ajoutant ?aide=pas-a-pas à l'adresse du parcours. */
+
+const NIVEAUX_AIDE = {
+  "pas-a-pas": {
+    libelle: "Pas à pas",
+    texte: `Le projet est découpé en petites étapes, avec un squelette de page déjà
+            commencé : tu remplis les trous. Prends ton temps, tout est indiqué.`,
+  },
+  "reperes": {
+    libelle: "Avec repères",
+    texte: `Tu as le cahier des charges et, pour chaque page, la liste des balises
+            attendues. La mise en place, c'est toi qui la fais.`,
+  },
+  "autonome": {
+    libelle: "En autonomie",
+    texte: `Tu as le cahier des charges, et rien d'autre : tes trois premières séances
+            montrent que tu n'en as pas besoin. Les coups de pouce restent disponibles
+            si tu changes d'avis.`,
+  },
+};
+
+const ORDRE_AIDE = ["pas-a-pas", "reperes", "autonome"];
+
+/* Le profil ne regarde jamais la séance en cours : le niveau ne doit pas changer
+   sous les pieds de l'élève pendant qu'il travaille. */
+function niveauAide(idSeanceExclue) {
+  const force = new URLSearchParams(location.search).get("aide");
+  if (NIVEAUX_AIDE[force]) return force;
+
+  let tentees = 0, premierCoup = 0, aides = 0;
+  for (const [id, dossier] of Object.entries(etat.seances || {})) {
+    if (id === idSeanceExclue) continue;
+    for (const s of Object.values(dossier.etapes || {})) {
+      if (!s.essais) continue;                 // une étape de cours ne dit rien du niveau
+      tentees++;
+      if (s.reussi && s.essais === 1) premierCoup++;
+      aides += (s.indices || 0) + (s.correction ? 2 : 0);
+    }
+  }
+  if (tentees < 5) return "reperes";           // trop peu de matière pour trancher
+
+  const taux = premierCoup / tentees;
+  const etayage = aides / tentees;
+  if (taux >= 0.8 && etayage <= 0.25) return "autonome";
+  if (taux < 0.5 || etayage >= 1) return "pas-a-pas";
+  return "reperes";
+}
+
+/* Une étape peut décliner son énoncé, son code de départ et ses indices selon le
+   niveau. La VALIDATION, elle, ne varie jamais : l'exigence est la même pour tous. */
+function appliquerNiveau(etape, niveau) {
+  if (!etape.variantes) return etape;
+  // Si le niveau demandé n'est pas déclaré, on se rabat d'abord vers PLUS
+  // d'accompagnement — jamais vers moins : mieux vaut trop d'aide que pas assez.
+  const depart = ORDRE_AIDE.indexOf(niveau);
+  const ordreDeRepli = [
+    ...ORDRE_AIDE.slice(0, depart + 1).reverse(),
+    ...ORDRE_AIDE.slice(depart + 1),
+  ];
+  for (const candidat of ordreDeRepli) {
+    const variante = etape.variantes[candidat];
+    if (variante) return { ...etape, ...variante, validation: etape.validation };
+  }
+  return etape;
+}
+
+/* ------------------------------------------------- Étape : code HTML / CSS
+
+   Même squelette que l'atelier Python, avec trois différences :
+   · plusieurs fichiers, en onglets ;
+   · pas de console mais un aperçu réel, rafraîchi pendant la frappe ;
+   · les liens de l'aperçu naviguent entre les pages du mini-site.
+
+   L'aperçu est une iframe `sandbox="allow-scripts"`, donc d'origine opaque :
+   la page de l'élève ne peut ni lire ni écrire quoi que ce soit du parcours. */
+
+const APERCUS = new Map();                     // jeton d'iframe → routeur de liens
+
+window.addEventListener("message", (ev) => {
+  const message = ev.data;
+  if (!message || !message.parcoursApercu) return;
+  const naviguer = APERCUS.get(message.parcoursApercu);
+  if (naviguer) naviguer(String(message.href || ""));
+});
+
+/* Injecté en fin d'aperçu.
+   · Un lien interne ne doit pas emporter la page du parcours : on le remonte au
+     parent, qui change l'aperçu de page.
+   · Un lien externe, lui, s'ouvre NATIVEMENT dans un nouvel onglet. Passer par le
+     parent ferait perdre le geste de l'élève, et le navigateur bloquerait alors
+     l'ouverture comme une fenêtre surgissante. D'où `allow-popups` sur l'iframe. */
+const SCRIPT_LIENS = `
+<script>
+(function () {
+  function externe(href) { return /^(https?:)?\/\//i.test(href) || /^mailto:/i.test(href); }
+
+  function preparer() {
+    var liens = document.getElementsByTagName("a");
+    for (var i = 0; i < liens.length; i++) {
+      if (externe(liens[i].getAttribute("href") || "")) {
+        liens[i].target = "_blank";
+        liens[i].rel = "noopener";
+      }
+    }
+  }
+  preparer();
+  document.addEventListener("DOMContentLoaded", preparer);
+
+  document.addEventListener("click", function (ev) {
+    var noeud = ev.target;
+    while (noeud && noeud.nodeName !== "A") noeud = noeud.parentNode;
+    if (!noeud) return;
+    var href = noeud.getAttribute("href") || "";
+    if (externe(href) || href.charAt(0) === "#") return;   // le navigateur s'en charge
+    ev.preventDefault();
+    parent.postMessage({ parcoursApercu: "@JETON@", href: href }, "*");
+  }, true);
+}());
+<\/script>`;
+
+function monterCodeWeb(def, etape, corps) {
+  const s = suivi(def.id, etape.id);
+  const dossier = dossierSeance(def.id);
+  const fichiers = etape.fichiers;
+  const jeton = `${def.id}-${etape.id}-${Math.random().toString(36).slice(2, 8)}`;
+
+  /* --- les sources, reprises du brouillon si l'énoncé n'a pas bougé */
+  const modele = JSON.stringify(fichiers.map((f) => [f.nom, f.depart ?? ""]));
+  dossier.modeles ||= {};
+  if (dossier.modeles[etape.id] !== modele) {
+    delete dossier.codes[etape.id];
+    dossier.modeles[etape.id] = modele;
+    ecrireEtat();
+  }
+  /* `reprend` désigne l'étape dont il faut repartir : dans un projet en plusieurs
+     temps, l'élève ne doit pas réécrire son site à chaque étape. On ne reprend
+     que tant qu'il n'a rien tapé ici — sinon on écraserait son travail. */
+  const heritage = () => (etape.reprend ? dossier.codes[etape.reprend] : null);
+
+  const source = {};
+  function semer() {
+    const brouillon = dossier.codes[etape.id];
+    const repris = brouillon ? null : heritage();
+    for (const f of fichiers) {
+      const garde = brouillon && typeof brouillon === "object" ? brouillon[f.nom] : null;
+      const herite = repris && typeof repris === "object" ? repris[f.nom] : null;
+      source[f.nom] = garde != null ? garde : (herite != null ? herite : (f.depart ?? ""));
+    }
+    return !!repris;
+  }
+  semer();
+  const pages = fichiers.map((f) => f.nom).filter((n) => /\.html?$/i.test(n));
+  let pageCourante = source[etape.apercu] != null ? etape.apercu : (pages[0] || fichiers[0].nom);
+
+  /* --- squelette */
+  const atelier = elem("div", "atelier atelier-web");
+  const onglets = elem("div", "atelier-onglets");
+  atelier.appendChild(onglets);
+
+  const double = elem("div", "atelier-double");
+  const colonneCode = elem("div", "colonne-code");
+  const colonneVue = elem("div", "colonne-apercu");
+  double.append(colonneCode, colonneVue);
+  atelier.appendChild(double);
+
+  const barreApercu = elem("div", "apercu-barre");
+  const titreApercu = elem("span", "apercu-page", pageCourante);
+  barreApercu.append(elem("span", "apercu-libelle", "Aperçu"), titreApercu);
+  const cadre = document.createElement("iframe");
+  cadre.className = "apercu-cadre";
+  // Pas de `allow-same-origin` : la page de l'élève ne peut rien lire du parcours.
+  // `allow-popups` laisse ses liens externes s'ouvrir vraiment, et l'onglet ouvert
+  // sort du bac à sable pour que le site de destination fonctionne normalement.
+  cadre.setAttribute("sandbox", "allow-scripts allow-popups allow-popups-to-escape-sandbox");
+  cadre.setAttribute("title", "Aperçu de ta page");
+  colonneVue.append(barreApercu, cadre);
+
+  const actions = elem("div", "atelier-actions");
+  const btnExec = elem("button", "bouton fantome", "▶ Rafraîchir");
+  const btnValider = elem("button", "bouton vert", "✓ Valider");
+  const espace = elem("span", "espace");
+  const btnIndice = elem("button", "bouton fantome", "💡 Coup de pouce");
+  const btnReset = elem("button", "bouton fantome icone", "↺");
+  btnReset.title = "Revenir au code de départ";
+  actions.append(btnExec, btnValider, espace, btnIndice, btnReset);
+  if (etape.reprend) {
+    const btnReprendre = elem("button", "bouton fantome", "↩ Reprendre mon site");
+    btnReprendre.title = "Recopier ici le travail de l'étape précédente";
+    actions.insertBefore(btnReprendre, btnIndice);
+    actions.btnReprendre = btnReprendre;
+  }
+  if (etape.telechargeable) {
+    const btnZip = elem("button", "bouton fantome", "⬇ Télécharger mon site");
+    btnZip.title = "Enregistrer les fichiers de ton site dans une archive ZIP";
+    actions.insertBefore(btnZip, btnIndice);
+    actions.btnZip = btnZip;
+  }
+  if (etape.solution) {
+    const btnCorr = elem("button", "bouton fantome", "Correction");
+    btnCorr.hidden = true;
+    actions.appendChild(btnCorr);
+    atelier.dataset.avecCorrection = "1";
+    actions.btnCorr = btnCorr;
+  }
+  atelier.appendChild(actions);
+
+  const journal_ = elem("pre", "console");
+  journal_.dataset.etat = "vide";
+  journal_.textContent = "L'aperçu se met à jour tout seul pendant que tu écris.";
+  atelier.appendChild(journal_);
+
+  corps.appendChild(atelier);
+  const zoneIndices = elem("div", "indices");
+  const zoneVerdict = elem("div");
+  corps.append(zoneIndices, zoneVerdict);
+
+  function journal(texte, etatJournal) {
+    journal_.textContent = texte;
+    journal_.dataset.etat = etatJournal || "";
+  }
+
+  /* --- onglets et éditeurs */
+  const hotes = {};
+  const editeurs = {};
+  let actif = fichiers[0].nom;
+
+  for (const f of fichiers) {
+    const hote = elem("div", "hote-editeur");
+    hote.hidden = f.nom !== actif;
+    hotes[f.nom] = hote;
+    colonneCode.appendChild(hote);
+
+    const onglet = elem("button", "onglet", f.nom);
+    onglet.type = "button";
+    onglet.dataset.actif = f.nom === actif ? "1" : "";
+    onglet.addEventListener("click", () => choisirFichier(f.nom));
+    onglets.appendChild(onglet);
+  }
+
+  function choisirFichier(nom) {
+    actif = nom;
+    for (const f of fichiers) hotes[f.nom].hidden = f.nom !== nom;
+    Array.from(onglets.children).forEach((b, i) => {
+      b.dataset.actif = fichiers[i].nom === nom ? "1" : "";
+    });
+    // Un éditeur créé dans un onglet masqué s'est mesuré à zéro : il faut le lui
+    // redemander au moment où il devient visible, sinon le curseur tombe à côté.
+    if (editeurs[nom]) { editeurs[nom].vue.requestMeasure(); editeurs[nom].vue.focus(); }
+  }
+
+  let prets = false;
+  async function preparerEditeurs() {
+    if (prets) return;
+    prets = true;
+    // L'étape précédente a pu être terminée depuis la construction de celle-ci.
+    if (semer()) { rafraichirApercu(); journal("Ton travail de l'étape précédente a été repris.", ""); }
+    for (const f of fichiers) {
+      editeurs[f.nom] = await creerEditeur(hotes[f.nom], source[f.nom], (texte) => {
+        source[f.nom] = texte;
+        dossier.codes[etape.id] = { ...source };
+        ecrireEtat();
+        programmerApercu();
+      }, /\.css$/i.test(f.nom) ? "css" : "html");
+    }
+  }
+
+  const observateur = new IntersectionObserver((entrees, obs) => {
+    if (!entrees.some((e) => e.isIntersecting)) return;
+    obs.disconnect();
+    preparerEditeurs();
+  }, { rootMargin: "600px 0px" });
+  observateur.observe(atelier);
+
+  const attendreEditeurs = async () => { observateur.disconnect(); await preparerEditeurs(); };
+
+  /* --- l'aperçu
+
+     Les <link rel="stylesheet"> sont remplacés par le contenu du fichier CSS de
+     l'atelier : c'est ce qui permet à l'élève d'écrire un vrai site en plusieurs
+     fichiers alors que l'iframe n'en reçoit qu'un seul. */
+  function assembler(nom) {
+    let html = source[nom] ?? "";
+    html = html.replace(/<link\b[^>]*>/gi, (balise) => {
+      const trouve = /href\s*=\s*["']([^"']+)["']/i.exec(balise);
+      const cible = trouve ? trouve[1].replace(/^\.\//, "") : null;
+      return cible != null && source[cible] != null ? `<style>\n${source[cible]}\n</style>` : balise;
+    });
+    const script = SCRIPT_LIENS.replace("@JETON@", jeton);
+    return /<\/body>/i.test(html) ? html.replace(/<\/body>/i, script + "</body>") : html + script;
+  }
+
+  let minuteurApercu;
+  function programmerApercu() {
+    clearTimeout(minuteurApercu);
+    minuteurApercu = setTimeout(rafraichirApercu, 450);
+  }
+  function rafraichirApercu() {
+    clearTimeout(minuteurApercu);
+    if (source[pageCourante] == null) pageCourante = pages[0] || fichiers[0].nom;
+    titreApercu.textContent = pageCourante;
+    cadre.srcdoc = assembler(pageCourante);
+  }
+
+  /* N'arrivent ici que les liens internes : les externes sont partis tout seuls. */
+  APERCUS.set(jeton, (href) => {
+    const brut = href.trim();
+    if (!brut) return;
+    const cible = brut.replace(/^\.\//, "").split("#")[0];
+
+    if (source[cible] != null && /\.html?$/i.test(cible)) {
+      pageCourante = cible;
+      rafraichirApercu();
+      return journal(`Le lien fonctionne : tu es maintenant sur ${cible}.`, "");
+    }
+    // Faute classique : une adresse de site écrite sans son protocole. Le navigateur
+    // la prend alors pour un nom de fichier voisin, et le lien ne mène nulle part.
+    if (/^[\w-]+(\.[\w-]+)+(\/|$)/.test(brut) && !/\.html?$/i.test(cible)) {
+      return journal(`« ${brut} » ressemble à une adresse de site, mais il lui manque ` +
+                     `le protocole : écris https://${brut}`, "erreur");
+    }
+    journal(`Le lien « ${brut} » ne mène à aucune page de ton site.\n` +
+            `Les pages disponibles ici sont : ${pages.join(", ")}.`, "erreur");
+  });
+
+  rafraichirApercu();
+
+  /* --- boutons */
+  function verrouiller(occupe) {
+    [btnExec, btnValider, btnReset].forEach((b) => { b.disabled = occupe; });
+    if (occupe) btnIndice.disabled = true; else afficherIndices();
+  }
+
+  btnExec.addEventListener("click", async () => {
+    await attendreEditeurs();
+    rafraichirApercu();
+    journal("Aperçu rafraîchi.", "");
+  });
+
+  btnValider.addEventListener("click", async () => {
+    await attendreEditeurs();
+    verrouiller(true);
+    zoneVerdict.textContent = "";
+    journal("Vérification en cours…", "attente");
+
+    const V = await chargerVerifWeb();
+    const bilan = V.validerWeb(etape, { ...source });
+    rafraichirApercu();
+    verrouiller(false);
+
+    s.essais++;
+    ecrireEtat();
+    journal(bilan.reussi
+      ? "Ta page est conforme à la consigne."
+      : "Il reste quelque chose à corriger — le détail est juste en dessous.",
+      bilan.reussi ? "" : "erreur");
+    zoneVerdict.appendChild(construireVerdict(etape, s, bilan));
+
+    if (bilan.reussi) {
+      marquerReussie(def, etape, corps);
+    } else if (etape.solution && (s.essais >= 3 || s.indices >= (etape.indices || []).length)) {
+      if (actions.btnCorr) actions.btnCorr.hidden = false;
+    }
+  });
+
+  /* --- coups de pouce, révélés un par un */
+  function afficherIndices() {
+    zoneIndices.textContent = "";
+    const indices = etape.indices || [];
+    for (let i = 0; i < Math.min(s.indices, indices.length); i++) {
+      const boite = elem("div", "indice");
+      boite.innerHTML = `<span class="rang">Coup de pouce ${i + 1}</span>${indices[i]}`;
+      zoneIndices.appendChild(boite);
+    }
+    const reste = indices.length - s.indices;
+    btnIndice.hidden = indices.length === 0;
+    btnIndice.textContent = reste > 0 ? `💡 Coup de pouce (${reste})` : "💡 Plus d'indice";
+    btnIndice.disabled = reste <= 0;
+    if (etape.solution && s.indices >= indices.length && actions.btnCorr) actions.btnCorr.hidden = false;
+  }
+
+  btnIndice.addEventListener("click", () => {
+    s.indices = Math.min(s.indices + 1, (etape.indices || []).length);
+    ecrireEtat();
+    afficherIndices();
+  });
+  afficherIndices();
+
+  btnReset.addEventListener("click", async () => {
+    await attendreEditeurs();
+    for (const f of fichiers) editeurs[f.nom].ecrire(f.depart ?? "");
+    rafraichirApercu();
+    zoneVerdict.textContent = "";
+    journal("Code de départ rechargé.", "vide");
+  });
+
+  if (actions.btnZip) {
+    actions.btnZip.addEventListener("click", async () => {
+      await attendreEditeurs();
+      const { creerZip, nomDeRendu, telecharger } = await chargerArchive();
+      const rendu = nomDeRendu(etat.eleve?.nom, etat.eleve?.prenom);
+      if (!rendu) {
+        journal("Avant de télécharger, indique ton nom et ton prénom dans le menu ☰, " +
+                "en haut à droite : c'est ce qui donne son nom à l'archive.", "erreur");
+        toast("Renseigne ton nom et ton prénom");
+        return $("#btn-progression").click();
+      }
+      telecharger(creerZip({ ...source }), `${rendu}.zip`);
+      journal(`Archive ${rendu}.zip téléchargée : elle contient tes ${fichiers.length} fichiers.\n` +
+              "Décompresse-la, puis double-clique sur index.html : ton site s'ouvre.", "");
+      toast("Site téléchargé");
+    });
+  }
+
+  if (actions.btnReprendre) {
+    actions.btnReprendre.addEventListener("click", async () => {
+      await attendreEditeurs();
+      const repris = heritage();
+      if (!repris || typeof repris !== "object") {
+        return journal("Rien à reprendre : l'étape précédente n'a pas encore été travaillée.", "erreur");
+      }
+      for (const f of fichiers) {
+        if (repris[f.nom] != null) editeurs[f.nom].ecrire(repris[f.nom]);
+      }
+      rafraichirApercu();
+      journal("Ton travail de l'étape précédente a été recopié ici.", "");
+    });
+  }
+
+  if (actions.btnCorr) {
+    actions.btnCorr.addEventListener("click", async () => {
+      await attendreEditeurs();
+      for (const f of fichiers) {
+        if (etape.solution[f.nom] != null) editeurs[f.nom].ecrire(etape.solution[f.nom]);
+      }
+      s.correction = true;
+      ecrireEtat();
+      rafraichirApercu();
+      journal("Correction chargée. Lis-la balise par balise, puis compare avec ce que tu avais écrit.", "vide");
+      toast("Correction chargée dans l'éditeur");
+    });
+  }
+
+  if (s.reussi) {
+    const rappel = elem("div", "verdict");
+    rappel.dataset.issue = "reussi";
+    rappel.innerHTML = `<div class="entete">✓ Étape déjà réussie</div>`;
+    zoneVerdict.appendChild(rappel);
+  }
+}
+
 /* ============================================== Panneau « Ma progression » */
 
 function initPanneau() {
@@ -928,6 +1427,7 @@ function initPanneau() {
     $("#resume-progression").textContent =
       `${pluriel(faites, "étape validée", "étapes validées")} sur ${total}.`;
     $("#champ-prenom").value = etat.eleve?.prenom || "";
+    if ($("#champ-nom")) $("#champ-nom").value = etat.eleve?.nom || "";
     dlg.showModal();
   });
 
@@ -936,14 +1436,20 @@ function initPanneau() {
     ecrireEtat();
   });
 
-  $("#btn-telecharger").addEventListener("click", (ev) => {
+  // Ce champ n'existe que dans les parcours qui demandent un rendu nommé.
+  if ($("#champ-nom")) {
+    $("#champ-nom").addEventListener("input", (ev) => {
+      etat.eleve = { ...etat.eleve, nom: ev.target.value.slice(0, 40) };
+      ecrireEtat();
+    });
+  }
+
+  $("#btn-telecharger").addEventListener("click", async (ev) => {
     ev.preventDefault();
-    const nom = (etat.eleve?.prenom || "eleve").normalize("NFD").replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase();
-    const lien = document.createElement("a");
-    lien.href = URL.createObjectURL(new Blob([JSON.stringify(etat, null, 2)], { type: "application/json" }));
-    lien.download = `${PARCOURS.cle}-${nom}.json`;
-    lien.click();
-    setTimeout(() => URL.revokeObjectURL(lien.href), 5000);
+    const { nomDeRendu, telecharger } = await chargerArchive();
+    const rendu = nomDeRendu(etat.eleve?.nom, etat.eleve?.prenom) || "eleve";
+    telecharger(new Blob([JSON.stringify(etat, null, 2)], { type: "application/json" }),
+                `${PARCOURS.cle}-${rendu}.json`);
     toast("Fichier téléchargé");
   });
 

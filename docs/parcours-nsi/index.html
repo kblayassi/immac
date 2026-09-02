@@ -45,9 +45,19 @@
     <p id="resume-progression"></p>
 
     <div class="champ">
-      <label for="champ-prenom">Mon prénom (affiché nulle part ailleurs)</label>
+      <label for="champ-nom">Mon nom</label>
+      <input type="text" id="champ-nom" autocomplete="off" placeholder="Lovelace">
+    </div>
+
+    <div class="champ">
+      <label for="champ-prenom">Mon prénom</label>
       <input type="text" id="champ-prenom" autocomplete="off" placeholder="Ada">
     </div>
+
+    <p style="font-size:.9rem;color:var(--texte-doux)">
+      Ils restent dans ce navigateur, et servent à nommer les fichiers que tu
+      télécharges — <strong>NOM_Prenom</strong>.
+    </p>
 
     <p style="font-size:.9rem;color:var(--texte-doux)">
       Ta progression est enregistrée <strong>dans ce navigateur</strong>, automatiquement.

@@ -171,15 +171,31 @@ def seances_de(parcours):
     dossier = RACINE.parent.parent / "docs" / parcours / "seances"
     return sorted(f.stem for f in dossier.glob("s*.js"))
 
+def est_web(parcours):
+    """Un parcours qui enseigne HTML/CSS n'a rien à faire dans un interpréteur
+    Python : il est vérifié par verifier_web.mjs, qui partage avec le navigateur
+    le même analyseur (docs/parcours/web-verif.js)."""
+    manifeste = RACINE.parent.parent / "docs" / parcours / "seances" / "manifeste.js"
+    return manifeste.exists() and re.search(r'langage:\s*"web"', manifeste.read_text(encoding="utf-8"))
+
+def deleguer_au_banc_web(parcours, seance=None):
+    argv = ["node", str(RACINE / "verifier_web.mjs"), parcours] + ([seance] if seance else [])
+    return subprocess.run(argv, cwd=RACINE.parent.parent).returncode
+
 
 if __name__ == "__main__":
     args = sys.argv[1:]
     if len(args) == 2:
+        if est_web(args[0]):
+            sys.exit(min(deleguer_au_banc_web(args[0], args[1]), 1))
         sys.exit(min(main(args[1], args[0]), 1))
     parcours = [args[0]] if args else sorted(
         d.name for d in (RACINE.parent.parent / "docs").glob("parcours-*") if d.is_dir())
     total = 0
     for p in parcours:
+        if est_web(p):
+            total += deleguer_au_banc_web(p)
+            continue
         for s in seances_de(p):
             total += main(s, p)
     print(f"\n{'✓ tout est vérifié' if not total else f'{total} problème(s) au total'}")
