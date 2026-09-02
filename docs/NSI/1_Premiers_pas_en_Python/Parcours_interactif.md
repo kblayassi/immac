@@ -1,21 +1,21 @@
 ---
 title: Parcours interactif
-weight: 1.5
+weight: 0.2
 hide:
     - toc
 ---
 
-# 🐍 Chapitre 1 bis — Le parcours interactif
+# 🐍 Le parcours interactif
 
-Le chapitre 1 **au complet**, mais autrement : découpé en petites étapes qui se
+Ce chapitre **au complet**, mais autrement : découpé en petites étapes qui se
 valident une par une, avec le cours, les exercices et des défis supplémentaires.
 
 [Ouvrir le parcours :material-arrow-right:](../../parcours-nsi/){ .md-button }
 
 !!! tip "Même contenu, autre chemin"
-    Rien n'est retiré du [chapitre 1](../1_Premiers_pas_en_Python/index.md) : les deux
-    versions coexistent. Le cours classique reste la référence à relire avant un devoir ;
-    ce parcours est fait pour **travailler**, pas pour lire.
+    Rien n'est retiré des [pages de cours](index.md) : les deux versions coexistent.
+    Le cours classique reste la référence à relire avant un devoir ; ce parcours est
+    fait pour **travailler**, pas pour lire.
 
 ## Comment ça marche
 
@@ -54,6 +54,6 @@ valident une par une, avec le cours, les exercices et des défis supplémentaire
 | 13 | Variables locales, globales et docstring | portée des variables, documentation |
 
 !!! info "Et les exercices du chapitre ?"
-    Les **40 exercices** du chapitre 1 sont tous repris dans le parcours, à leur place
+    Les **40 exercices** du chapitre sont tous repris dans le parcours, à leur place
     dans la progression. Les quatre exercices « sans ordinateur » sont devenus des
     questions à choix multiples.

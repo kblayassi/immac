@@ -104,7 +104,7 @@ export const PARCOURS = {
   surTitre: "NSI · Première · Chapitre 1",
   h1: "Premiers pas en Python, version interactive",
   accroche: `Deux ou trois phrases qui disent à qui ça s'adresse et ce qu'on y fait.`,
-  retour: { href: "../NSI/1bis_Parcours_interactif/", libelle: "Retour au site" },
+  retour: { href: "../NSI/1_Premiers_pas_en_Python/Parcours_interactif/", libelle: "Retour au site" },
 };
 
 export const PALIERS = [                 // regroupe les séances sur l'accueil

@@ -16,7 +16,7 @@ export const PARCOURS = {
   accroche: `Le même chapitre que dans le cours, mais découpé en petites étapes
     qui se valident une par une. Tu écris du code dès la première minute, la page
     vérifie ton travail, et ta progression est enregistrée automatiquement.`,
-  retour: { href: "../NSI/1bis_Parcours_interactif/", libelle: "Retour au site" },
+  retour: { href: "../NSI/1_Premiers_pas_en_Python/Parcours_interactif/", libelle: "Retour au site" },
 };
 
 export const PALIERS = [
