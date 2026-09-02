@@ -44,6 +44,8 @@ début d'une session ; le reste est la fiche de référence.
 | **Nature** | pages **statiques**, copiées telles quelles par MkDocs — pas de gabarit Material, pas de nav |
 | **Moteur** | `docs/parcours/app.js` et `app.css`, **partagés** par tous les parcours |
 | **Exécution Python** | `docs/javascripts/pyodide-worker.js` — le même que les playgrounds du site |
+| **Analyse HTML/CSS** | `docs/parcours/web-verif.js` — sans dépendance, partagé avec le banc de test |
+| **Archive du rendu** | `docs/parcours/archive.js` — écrit un ZIP à la main, sans dépendance |
 | **Éditeur** | `docs/javascripts/codemirror-bundle.js` |
 | **Sauvegarde** | `localStorage`, clé issue de `PARCOURS.cle` · export/import par fichier `.json` |
 | **Version élève / prof** | `plugins/version_eleve.py` retire le champ `solution` de tous les `parcours-*` à la construction |
@@ -61,6 +63,7 @@ docs/parcours-python/           un parcours (SNT)
     └── sNN.js                  tout le contenu pédagogique
 
 docs/parcours-nsi/              l'autre (NSI chapitre 1), même structure
+docs/parcours-web/              le troisième (SNT, Le Web) — langage: "web"
 ```
 
 !!! info "Le moteur ne sait rien du cours"
@@ -75,8 +78,9 @@ docs/parcours-nsi/              l'autre (NSI chapitre 1), même structure
 
 | Parcours | Adresse élève | Adresse prof | Volume |
 |:--|:--|:--|:--|
-| SNT — Seconde | `…/immac/parcours-python/` | `…/immac/prof/parcours-python/` | 11 séances, 266 étapes |
+| SNT — Python | `…/immac/parcours-python/` | `…/immac/prof/parcours-python/` | 11 séances, 266 étapes |
 | NSI — chapitre 1 | `…/immac/parcours-nsi/` | `…/immac/prof/parcours-nsi/` | 13 séances, 225 étapes |
+| SNT — Le Web | `…/immac/parcours-web/` | `…/immac/prof/parcours-web/` | 4 séances, 84 étapes |
 
 L'adresse `prof/` n'est pas listée mais **n'est pas protégée** : qui la connaît y accède.
 
@@ -406,6 +410,159 @@ qui vient d'être acquis, pas « bravo ». Un emoji par message, au plus.
 
 ---
 
+## 9 bis · Les parcours web (HTML / CSS)
+
+Un parcours dont le manifeste porte `langage: "web"` bascule sur un autre atelier :
+plusieurs fichiers en onglets, un **aperçu réel** rafraîchi 450 ms après la frappe, et
+une validation par **analyse du code** au lieu d'une sortie console. Tout le reste — rail
+des étapes, verrous, progression, QCM, coups de pouce — est le moteur commun.
+
+### L'étape de code
+
+```js
+{ id: "d3", type: "code", titre: "…",
+  contenu: `…`,
+  fichiers: [
+    { nom: "index.html", depart: `…` },
+    { nom: "style.css",  depart: `…` },
+  ],
+  apercu: "index.html",     // page affichée au départ ; défaut : le 1er .html
+  reprend: "d2",            // recopie le travail de l'étape d2 (projets en plusieurs temps)
+  validation: { … },
+  indices: [ … ],
+  solution: {               // TOUJOURS la forme multiligne : c'est elle que le hook retire
+    "index.html": `…`,
+  },
+}
+```
+
+L'aperçu remplace chaque `<link rel="stylesheet">` par le contenu du fichier CSS de
+l'atelier : l'élève écrit un vrai site en plusieurs fichiers alors que l'iframe n'en reçoit
+qu'un.
+
+**Les liens y fonctionnent vraiment**, et pas de la même façon selon leur nature :
+
+| Lien | Ce qui se passe |
+|:--|:--|
+| `href="autre.html"` | intercepté, remonté au parent, l'aperçu change de page |
+| `href="#ancre"` | laissé au navigateur |
+| `href="https://…"`, `mailto:` | **ouvert nativement** dans un nouvel onglet |
+| `href="www.site.fr"` | refusé, avec le message « il manque le protocole : écris https://… » |
+| page inexistante | refusé, avec la liste des pages disponibles |
+
+!!! danger "Un lien externe ne peut PAS passer par le parent"
+    Première version : le script d'aperçu remontait tous les clics et le parent appelait
+    `window.open`. Or `postMessage` est asynchrone : l'appel se retrouve hors du geste de
+    l'élève, et le navigateur le bloque comme une fenêtre surgissante. La bonne solution
+    est de poser `target="_blank"` sur les liens externes et de **laisser le navigateur
+    faire** — d'où `allow-popups` et `allow-popups-to-escape-sandbox` dans le `sandbox`
+    de l'iframe (jamais `allow-same-origin` : le code de l'élève ne doit rien pouvoir
+    lire du parcours).
+
+### Les clés de validation
+
+Jouées dans cet ordre, et le premier groupe qui échoue s'affiche seul : **syntaxe →
+forme du code → structure → style effectif**.
+
+| Clé | Effet |
+|:--|:--|
+| *(automatique)* | toute erreur de syntaxe HTML ou CSS est signalée **avec son numéro de ligne** ; `tolererErreurs: true` la désactive |
+| `contient` / `absent` | `{ fichier, motif, message, options }` — `fichier: "*"` vise tous les fichiers |
+| `elements` | `{ fichier, selecteur, min, max, texteNonVide, texteContient, texteMotif, motsMin, attributs:[{nom, motif}], contient:[{selecteur,min}], tous }` |
+| `styles` | `{ css, page, selecteur, propriete, valeur \| motif, message, tous }` — sur le style **effectif** |
+
+- `min` vaut 1 par défaut ; `min: 0` avec `max: 0` exige une **absence**.
+- sans `tous: true`, un contrôle est satisfait dès qu'**un** élément le remplit : l'élève
+  choisit son contenu, on n'impose que la structure ;
+- `styles` lit la **cascade et l'héritage** : centrer via `body` ou via `h1` passe aussi
+  bien. C'est ce qui permet de valider une intention plutôt qu'une écriture.
+- les sélecteurs acceptent `balise`, `.classe`, `#id`, `[attribut]`, `[attribut="valeur"]`,
+  la descendance, `>` et les listes séparées par des virgules.
+
+!!! danger "Le piège qui a coûté une relecture"
+    `contenu`, `apres`, `question`, `option.texte`, `option.explication` et les `indices`
+    sont injectés en **innerHTML**. Écrire `<h1>` dans une explication y crée donc un
+    **vrai titre**, avec sa taille géante, au milieu du bouton du QCM. Une balise citée
+    s'écrit toujours échappée : `<code>&lt;h1&gt;</code>`.
+
+    Le banc refuse désormais ces étapes — il contrôle la prose de **chaque niveau
+    d'accompagnement**, pas seulement celle de l'étape de base.
+
+!!! warning "Pas de vrai `<a href>` dans un `contenu`"
+    Un clic changerait le `hash` de la page et renverrait l'élève à l'accueil du parcours.
+    Pour montrer l'allure d'un lien, un `<span>` souligné suffit.
+
+### L'accompagnement adaptatif
+
+Une étape peut décliner son énoncé selon trois niveaux :
+
+```js
+variantes: {
+  autonome:    { contenu: `…`, indices: [ … ] },
+  reperes:     { contenu: `…`, indices: [ … ] },
+  "pas-a-pas": { contenu: `…`, indices: [ … ], fichiers: [ … ] },
+}
+```
+
+`niveauAide()` lit la progression enregistrée **des autres séances** — réussites du
+premier coup, coups de pouce ouverts, corrections demandées — et choisit :
+
+| Niveau | Déclenché par | Ce que l'élève reçoit |
+|:--|:--|:--|
+| `autonome` | ≥ 80 % du 1ᵉʳ coup et peu d'aide | le cahier des charges seul |
+| `reperes` | entre les deux, ou moins de 5 étapes tentées | + la liste des balises attendues |
+| `pas-a-pas` | < 50 % du 1ᵉʳ coup, ou beaucoup d'aide | + la marche à suivre numérotée et un squelette commenté |
+
+L'enseignant force le niveau par `?aide=pas-a-pas` dans l'adresse du parcours. La séance
+qui porte `adaptatif: true` affiche un bandeau annonçant le niveau retenu.
+
+!!! danger "La validation ne varie jamais"
+    `appliquerNiveau()` réinjecte toujours la `validation` de l'étape de base. Seul
+    l'échafaudage change ; l'exigence est la même pour tous. Le banc vérifie que les
+    **trois** niveaux sont déclarés, que chacun a des coups de pouce, et que le code de
+    départ de chacun ne passe pas déjà.
+
+### Rendre son site : l'archive ZIP
+
+`telechargeable: true` sur une étape de code ajoute un bouton **⬇ Télécharger mon site**,
+qui enregistre tous les fichiers de l'atelier dans une archive **`NOM_Prenom.zip`**.
+
+`docs/parcours/archive.js` écrit le ZIP octet par octet — en-têtes locaux, catalogue
+central, CRC-32, méthode « stored » sans compression. Aucune dépendance, et l'archive
+passe `unzip -t`. Le nom vient des champs *Mon nom* et *Mon prénom* du panneau
+**☰** (`etat.eleve.nom` / `.prenom`) ; s'ils manquent, le bouton ouvre le panneau au lieu
+de télécharger. Ces deux champs nomment aussi le fichier `.json` de progression.
+
+!!! warning "L'archive ne contient que les fichiers de l'atelier"
+    Aucune image n'y est rangée. C'est pourquoi la validation du projet exige que les
+    `src` d'images soient des **adresses complètes** en `https://` : un site dont les
+    images pointent vers `../files/…` s'ouvrirait sans elles une fois décompressé.
+
+### Un projet en plusieurs temps
+
+`reprend: "<id de l'étape précédente>"` recopie le travail de l'élève dans l'étape
+suivante, tant qu'il n'a rien tapé dans celle-ci. Le `depart` déclaré ne sert alors que de
+filet : il décrit l'état attendu à ce moment du projet. Un bouton **↩ Reprendre mon site**
+permet de forcer la reprise.
+
+!!! warning "Le `depart` d'une étape est la solution de la précédente"
+    C'est le prix du filet de secours : dans `s04.js`, les constantes du site témoin
+    servent à la fois de code de départ et de correction. Le hook retire les champs
+    `solution`, pas ces constantes. Le risque reste théorique — le site témoin parle d'un
+    autre métier que celui de l'élève, et cela se verrait immédiatement.
+
+### Vérifier
+
+```bash
+node tools/parcours/verifier_web.mjs parcours-web        # tout le parcours
+node tools/parcours/verifier_web.mjs parcours-web s03    # une séance
+```
+
+`verifier_seance.py` détecte `langage: "web"` dans le manifeste et délègue tout seul :
+la commande habituelle sans argument couvre les trois parcours.
+
+---
+
 ## 10 · Vérifier : le banc de test
 
 ```bash
@@ -454,8 +611,9 @@ mkdocs build -f mkdocs-prof.yml   # version prof : corrections conservées
 
 | Parcours | Séances | Étapes | État |
 |:--|:--:|:--:|:--|
-| SNT — Seconde | 11 | 266 | ✅ complet, vérifié |
+| SNT — Python | 11 | 266 | ✅ complet, vérifié |
 | NSI — chapitre 1 | 13 | 225 | ✅ complet, vérifié |
+| SNT — Le Web | 4 | 84 | ✅ complet, vérifié |
 
 ### Décisions arrêtées, à ne pas re-proposer
 
