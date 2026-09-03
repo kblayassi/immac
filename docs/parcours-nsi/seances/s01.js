@@ -434,8 +434,7 @@ Points de vie à la fin : 75</code></pre>
           type: "code",
           titre: "Traduire, encore",
           contenu: `
-            <p>Même travail qu'à l'étape « Exercice 3 — Traduire une phrase en code »,
-            dans la découverte, avec d'autres consignes :</p>
+            <p>Même travail qu'à l'étape 7 de la découverte, avec d'autres consignes :</p>
             <ol>
               <li><code>romans</code> vaut 48, puis on le divise par 2 (résultat entier) ;</li>
               <li><code>bd</code> vaut 20, puis on lui ajoute 3 ;</li>
