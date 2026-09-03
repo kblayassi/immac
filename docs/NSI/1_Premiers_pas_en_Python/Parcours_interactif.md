@@ -10,7 +10,7 @@ hide:
 Ce chapitre **au complet**, mais autrement : découpé en petites étapes qui se
 valident une par une, avec le cours, les exercices et des défis supplémentaires.
 
-[Ouvrir le parcours :material-arrow-right:](../../parcours-nsi/){ .md-button }
+[Ouvrir le parcours :material-arrow-right:](../../../parcours-nsi/){ .md-button }
 
 !!! tip "Même contenu, autre chemin"
     Rien n'est retiré des [pages de cours](index.md) : les deux versions coexistent.

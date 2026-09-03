@@ -11,7 +11,7 @@ Le thème **Le Web** se travaille ici, dans une application à part : un cours
 interactif où **chaque étape se valide avant d'ouvrir la suivante**, avec ton
 code à gauche et ta page à droite, qui se dessine pendant que tu tapes.
 
-[Ouvrir le parcours Web :material-arrow-right:](../../parcours-web/){ .md-button }
+[Ouvrir le parcours Web :material-arrow-right:](../../../parcours-web/){ .md-button }
 
 ## Comment ça marche
 
