@@ -434,28 +434,30 @@ Points de vie à la fin : 75</code></pre>
           type: "code",
           titre: "Traduire, encore",
           contenu: `
-            <p>Même exercice que le 3 de la découverte, avec d'autres consignes :</p>
+            <p>Même travail qu'à l'étape « Exercice 3 — Traduire une phrase en code »,
+            dans la découverte, avec d'autres consignes :</p>
             <ol>
-              <li><code>temperature</code> vaut 20, puis on lui ajoute 3 ;</li>
-              <li><code>population</code> vaut 5000, puis on l'augmente de 10 % ;</li>
-              <li><code>stock</code> vaut 48, puis on le divise par 2 (résultat entier) ;</li>
-              <li><code>total</code> reçoit la somme de <code>temperature</code> et de
-                <code>stock</code>.</li>
+              <li><code>romans</code> vaut 48, puis on le divise par 2 (résultat entier) ;</li>
+              <li><code>bd</code> vaut 20, puis on lui ajoute 3 ;</li>
+              <li><code>total</code> reçoit la somme de <code>romans</code> et de
+                <code>bd</code> ;</li>
+              <li><code>abonnes</code> vaut 5000, puis on l'augmente de 10 %.</li>
             </ol>`,
-          depart: `temperature = \n\n\npopulation = \n\n\nstock = \n\n\ntotal = \n`,
+          depart: `# 1. romans vaut 48, puis on le divise par 2\nromans = \n\n\n# 2. bd vaut 20, puis on lui ajoute 3\nbd = \n\n\n# 3. total contient la somme des deux\ntotal = \n\n# 4. abonnes vaut 5000, puis on l'augmente de 10 %\nabonnes = \n\n`,
           validation: {
             codeAbsent: [
-              { motif: "temperature\\s*=\\s*23\\b", message: "temperature doit être augmentée à partir de sa valeur." },
-              { motif: "population\\s*=\\s*5500", message: "population doit être calculée à partir de sa valeur." },
+              { motif: "bd\\s*=\\s*23\\b", message: "bd doit être augmenté à partir de sa valeur." },
+              { motif: "total\\s*=\\s*47\\b", message: "total doit être calculé à partir de romans et bd, pas écrit en dur." },
+              { motif: "abonnes\\s*=\\s*5500", message: "abonnes doit être calculé à partir de sa valeur." },
             ],
-            tests: `assert temperature == 23, "temperature doit valoir 23"\nassert abs(population - 5500) < 0.0001, "population doit valoir 5500 après +10 %"\nassert stock == 24, "stock doit valoir 24"\nassert total == 47, "total doit valoir 23 + 24 = 47"`,
+            tests: `assert romans == 24, "romans doit valoir 24 après la division"\nassert bd == 23, "bd doit valoir 23 après l'ajout"\nassert total == 47, "total doit valoir 24 + 23 = 47"\nassert abs(abonnes - 5500) < 0.0001, "abonnes doit valoir 5500 après +10 %"`,
           },
           indices: [
-            "Augmenter de 10 %, c'est multiplier par 1.1.",
             "« Résultat entier » : la division entière s'écrit avec deux barres obliques.",
-            "La dernière ligne réutilise deux variables déjà calculées.",
+            "La ligne du total ne recalcule rien : elle réutilise les deux variables déjà obtenues.",
+            "Augmenter de 10 %, c'est multiplier par 1.1.",
           ],
-          solution: `temperature = 20\ntemperature = temperature + 3\n\npopulation = 5000\npopulation = population * 1.1\n\nstock = 48\nstock = stock // 2\n\ntotal = temperature + stock\n`,
+          solution: `romans = 48\nromans = romans // 2\n\nbd = 20\nbd = bd + 3\n\ntotal = romans + bd\n\nabonnes = 5000\nabonnes = abonnes * 1.1\n`,
         },
 
         {
