@@ -48,7 +48,7 @@ début d'une session ; le reste est la fiche de référence.
 | **Archive du rendu** | `docs/parcours/archive.js` — écrit un ZIP à la main, sans dépendance |
 | **Éditeur** | `docs/javascripts/codemirror-bundle.js` |
 | **Sauvegarde** | `localStorage`, clé issue de `PARCOURS.cle` · export/import par fichier `.json` |
-| **Version élève / prof** | `plugins/version_eleve.py` retire le champ `solution` de tous les `parcours-*` à la construction |
+| **Version élève / prof** | `plugins/version_eleve.py` retire le champ `solution` de tous les `parcours-*` à la construction, et pose côté prof le drapeau `window.PARCOURS_PROF` qui déverrouille les étapes et rend la correction |
 | **Vérification** | `python3 tools/parcours/verifier_seance.py` |
 
 ```
@@ -83,6 +83,15 @@ docs/parcours-web/              le troisième (SNT, Le Web) — langage: "web"
 | SNT — Le Web | `…/immac/parcours-web/` | `…/immac/prof/parcours-web/` | 4 séances, 84 étapes |
 
 L'adresse `prof/` n'est pas listée mais **n'est pas protégée** : qui la connaît y accède.
+
+Côté prof, les corrections sont conservées **et toutes les étapes sont ouvertes** : on
+y navigue dans la séance sans avoir à la réussir pas à pas. La première étape non
+réussie reste marquée comme active, les suivantes passent à l'état `ouvert` au lieu
+de `verrouille`. Le bouton **Correction** des ateliers y est visible d'emblée.
+
+Côté élève, **il n'y a jamais de correction** : l'aide s'arrête aux coups de pouce.
+Le moteur ne construit le bouton qu'en version prof, et `plugins/version_eleve.py`
+retire de toute façon le champ `solution` des séances publiées.
 
 ---
 

@@ -19,12 +19,18 @@ En version élève, ce hook retire des pages de NSI, *avant* la conversion en HT
 
 Il retire enfin, les **parcours interactifs** (`docs/parcours-*/`, copiés tels quels par
 MkDocs et donc invisibles des hooks de page), le champ
-`solution` de chaque étape des fichiers `seances/*.js`. Sans lui, l'application
-n'affiche pas le bouton « Correction » : rien n'est masqué, il n'y a
-simplement plus rien à afficher.
+`solution` de chaque étape des fichiers `seances/*.js`. **L'élève n'a jamais de
+correction : son aide s'arrête aux coups de pouce.** Deux verrous, indépendants :
+le moteur ne construit le bouton « Correction » qu'en version prof, et le champ
+qui l'alimente est retiré ici.
 
 Le contenu retiré n'est donc pas présent dans le HTML publié : ce n'est pas
 un masquage par CSS, il n'y a rien à révéler dans la page.
+
+En version prof, il fait l'inverse : il pose dans chaque `parcours-*/index.html`
+le drapeau `window.PARCOURS_PROF`. Le moteur le lit pour n'y verrouiller aucune
+étape et y offrir la correction d'emblée : on y prépare une séance, on ne la
+suit pas.
 
 Le choix de la version se lit dans `extra.version` du fichier de configuration.
 """
@@ -225,8 +231,35 @@ def retirer_solutions_objet(source):
     return '\n'.join(sortie), retires
 
 
+# ---------------------------------------------------------------------------
+# Parcours, version prof : tout est ouvert
+#
+# Le moteur n'ouvre une étape que lorsque la précédente est réussie. C'est bon
+# pour l'élève, absurde pour qui prépare la séance : la version prof pose donc
+# ce drapeau dans la page. Un script classique s'exécute avant le module qui
+# charge le moteur, où qu'il soit placé : `</head>` fait l'affaire.
+
+FIN_ENTETE = '</head>'
+DRAPEAU_PROF = '<script>window.PARCOURS_PROF = true;</script>\n'
+
+
+def ouvrir_les_parcours(config):
+    """Déverrouille les parcours de la version prof, dans le dossier de sortie."""
+    racine = Path(config['site_dir'])
+    for page in sorted(racine.glob('parcours-*/index.html')):
+        source = page.read_text(encoding='utf-8')
+        if 'PARCOURS_PROF' in source or FIN_ENTETE not in source:
+            continue
+        page.write_text(
+            source.replace(FIN_ENTETE, DRAPEAU_PROF + FIN_ENTETE, 1), encoding='utf-8')
+
+
 def on_post_build(config):
-    if config.get('extra', {}).get('version') != 'eleve':
+    version = config.get('extra', {}).get('version')
+    if version == 'prof':
+        ouvrir_les_parcours(config)
+        return
+    if version != 'eleve':
         return
     racine = Path(config['site_dir'])
     for dossier in sorted(racine.glob('parcours-*/seances')):

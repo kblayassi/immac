@@ -25,6 +25,12 @@ const { PARCOURS, PALIERS, CATALOGUE } =
    les parcours existants ne changent pas d'un caractère. */
 const LANGAGE = PARCOURS.langage || "python";
 
+/* Version prof : le site complet (mkdocs-prof.yml) pose ce drapeau dans la page
+   avant de charger le moteur. On y prépare une séance, on ne la suit pas : le
+   parcours doit donc être ouvert d'un bout à l'autre, sans avoir à réussir les
+   étapes une à une pour lire la suivante. */
+const PROF = window.PARCOURS_PROF === true;
+
 /* L'analyseur HTML/CSS ne sert qu'aux parcours web : on ne le charge que là.
    Il vit à côté de ce fichier, pas à côté de la page : import.meta.url. */
 let VerifWeb = null;
@@ -513,6 +519,9 @@ function rafraichirVerrous() {
   // Le parcours est linéaire d'un bout à l'autre : chaque étape réussie ouvre la
   // suivante, et les défis n'apparaissent qu'une fois les exercices terminés.
   // C'est ce qui garantit qu'aucune notion n'est rencontrée avant d'être vue.
+  // En version prof, rien ne se verrouille : les étapes à venir sont « ouvertes »,
+  // lisibles et jouables tout de suite. La première non réussie reste marquée
+  // « actif », pour garder le repère de là où on en est.
   let ouvert = true;
   for (const partie of def.parties) {
     for (const etape of partie.etapes) {
@@ -521,8 +530,8 @@ function rafraichirVerrous() {
       const s = suivi(id, etape.id);
 
       if (s.reussi) noeud.dataset.etat = "reussi";
-      else if (!ouvert) noeud.dataset.etat = "verrouille";
-      else { noeud.dataset.etat = "actif"; ouvert = false; }
+      else if (ouvert) { noeud.dataset.etat = "actif"; ouvert = false; }
+      else noeud.dataset.etat = PROF ? "ouvert" : "verrouille";
     }
   }
 
@@ -747,9 +756,12 @@ function monterCode(def, etape, corps) {
   const btnReset = elem("button", "bouton fantome icone", "↺");
   btnReset.title = "Revenir au code de départ";
   actions.append(btnExec, btnValider, espace, btnIndice, btnReset);
-  if (etape.solution) {
+  // La correction n'existe que dans la version prof, et elle y est là d'emblée.
+  // Côté élève, l'aide s'arrête aux coups de pouce : le bouton n'est pas caché,
+  // il n'est pas construit — et le champ `solution` a de toute façon été retiré
+  // du fichier de séance à la construction (plugins/version_eleve.py).
+  if (PROF && etape.solution) {
     const btnCorr = elem("button", "bouton fantome", "Correction");
-    btnCorr.hidden = true;
     actions.appendChild(btnCorr);
     atelier.dataset.avecCorrection = "1";
     actions.btnCorr = btnCorr;
@@ -899,12 +911,7 @@ function monterCode(def, etape, corps) {
     ecrireEtat();
     afficherVerdict(bilan);
 
-    if (bilan.reussi) {
-      marquerReussie(def, etape, corps);
-    } else if (etape.solution && (s.essais >= 3 || s.indices >= (etape.indices || []).length)) {
-      // La correction n'apparaît qu'après un vrai effort.
-      if (actions.btnCorr) actions.btnCorr.hidden = false;
-    }
+    if (bilan.reussi) marquerReussie(def, etape, corps);
   });
 
   function afficherVerdict(bilan) {
@@ -925,7 +932,6 @@ function monterCode(def, etape, corps) {
     btnIndice.hidden = indices.length === 0;
     btnIndice.textContent = reste > 0 ? `💡 Coup de pouce (${reste})` : "💡 Plus d'indice";
     btnIndice.disabled = reste <= 0;
-    if (etape.solution && s.indices >= indices.length && actions.btnCorr) actions.btnCorr.hidden = false;
   }
 
   btnIndice.addEventListener("click", () => {
@@ -1163,9 +1169,12 @@ function monterCodeWeb(def, etape, corps) {
     actions.insertBefore(btnZip, btnIndice);
     actions.btnZip = btnZip;
   }
-  if (etape.solution) {
+  // La correction n'existe que dans la version prof, et elle y est là d'emblée.
+  // Côté élève, l'aide s'arrête aux coups de pouce : le bouton n'est pas caché,
+  // il n'est pas construit — et le champ `solution` a de toute façon été retiré
+  // du fichier de séance à la construction (plugins/version_eleve.py).
+  if (PROF && etape.solution) {
     const btnCorr = elem("button", "bouton fantome", "Correction");
-    btnCorr.hidden = true;
     actions.appendChild(btnCorr);
     atelier.dataset.avecCorrection = "1";
     actions.btnCorr = btnCorr;
@@ -1323,11 +1332,7 @@ function monterCodeWeb(def, etape, corps) {
       bilan.reussi ? "" : "erreur");
     zoneVerdict.appendChild(construireVerdict(etape, s, bilan));
 
-    if (bilan.reussi) {
-      marquerReussie(def, etape, corps);
-    } else if (etape.solution && (s.essais >= 3 || s.indices >= (etape.indices || []).length)) {
-      if (actions.btnCorr) actions.btnCorr.hidden = false;
-    }
+    if (bilan.reussi) marquerReussie(def, etape, corps);
   });
 
   /* --- coups de pouce, révélés un par un */
@@ -1343,7 +1348,6 @@ function monterCodeWeb(def, etape, corps) {
     btnIndice.hidden = indices.length === 0;
     btnIndice.textContent = reste > 0 ? `💡 Coup de pouce (${reste})` : "💡 Plus d'indice";
     btnIndice.disabled = reste <= 0;
-    if (etape.solution && s.indices >= indices.length && actions.btnCorr) actions.btnCorr.hidden = false;
   }
 
   btnIndice.addEventListener("click", () => {
