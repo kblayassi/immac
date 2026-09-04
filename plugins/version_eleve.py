@@ -22,7 +22,9 @@ MkDocs et donc invisibles des hooks de page), le champ
 `solution` de chaque étape des fichiers `seances/*.js`. **L'élève n'a jamais de
 correction : son aide s'arrête aux coups de pouce.** Deux verrous, indépendants :
 le moteur ne construit le bouton « Correction » qu'en version prof, et le champ
-qui l'alimente est retiré ici.
+qui l'alimente est retiré ici. Un `solution` écrit dans une forme que le retrait
+ne reconnaît pas fait échouer la construction plutôt que d'être publié
+(`verifier_aucune_solution`).
 
 Le contenu retiré n'est donc pas présent dans le HTML publié : ce n'est pas
 un masquage par CSS, il n'y a rien à révéler dans la page.
@@ -200,8 +202,10 @@ def on_post_page(output, page, config):
 # On les retouche donc après la construction, dans le dossier de sortie — jamais
 # dans docs/, qui reste la source complète.
 
-# `solution: `…`,` sur une ligne : littéral gabarit, échappements compris.
-SOLUTION_PARCOURS = re.compile(r'^[ \t]*solution:\s*`(?:[^`\\]|\\.)*`,[ \t]*\n', re.M)
+# `solution: `…`` sur une ligne : littéral gabarit, échappements compris. La
+# virgule finale est facultative — un `solution` en dernière propriété n'en a pas,
+# et la ligne doit disparaître tout autant.
+SOLUTION_PARCOURS = re.compile(r'^[ \t]*solution:\s*`(?:[^`\\]|\\.)*`,?[ \t]*\n', re.M)
 
 # Les parcours web ont plusieurs fichiers par étape : leur solution est un objet
 # qui s'étend sur plusieurs lignes. On l'ouvre à `solution: {` et on la referme
@@ -254,6 +258,23 @@ def ouvrir_les_parcours(config):
             source.replace(FIN_ENTETE, DRAPEAU_PROF + FIN_ENTETE, 1), encoding='utf-8')
 
 
+# Aucune correction ne doit survivre côté élève : l'aide s'y arrête aux coups de
+# pouce. Un champ `solution` écrit dans une forme qu'aucune des deux découpes ne
+# reconnaît passerait inaperçu — d'où cette relecture, qui fait échouer la
+# construction plutôt que de publier la correction.
+RESTE_UNE_SOLUTION = re.compile(r'^[ \t]*solution:', re.M)
+
+
+def verifier_aucune_solution(fichier, source):
+    fuite = RESTE_UNE_SOLUTION.search(source)
+    if not fuite:
+        return
+    ligne = source.count('\n', 0, fuite.start()) + 1
+    raise RuntimeError(
+        f"version élève : une correction survit dans {fichier} (ligne {ligne}). "
+        "Écris ce champ `solution` sur une seule ligne, ou en objet `solution: {`…`},`.")
+
+
 def on_post_build(config):
     version = config.get('extra', {}).get('version')
     if version == 'prof':
@@ -267,5 +288,6 @@ def on_post_build(config):
         source = fichier.read_text(encoding='utf-8')
         epure, retires = SOLUTION_PARCOURS.subn('', source)
         epure, retires_objet = retirer_solutions_objet(epure)
+        verifier_aucune_solution(fichier, epure)
         if retires or retires_objet:
             fichier.write_text(epure, encoding='utf-8')

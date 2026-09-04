@@ -91,7 +91,8 @@ de `verrouille`. Le bouton **Correction** des ateliers y est visible d'emblée.
 
 Côté élève, **il n'y a jamais de correction** : l'aide s'arrête aux coups de pouce.
 Le moteur ne construit le bouton qu'en version prof, et `plugins/version_eleve.py`
-retire de toute façon le champ `solution` des séances publiées.
+retire de toute façon le champ `solution` des séances publiées — la construction
+échoue si l'un d'eux lui échappe.
 
 ---
 
