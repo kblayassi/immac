@@ -253,16 +253,28 @@ la forme du code, puis l'exécution, puis la sortie, puis les assertions.
 |:--|:--|
 | `codeContient` | liste de `{ motif, message, options }` : le motif **doit** être présent |
 | `codeAbsent` | idem, mais le motif est **interdit** |
-| `sortie` | sortie attendue, comparée après normalisation |
-| `sortieContient` | liste de fragments obligatoires |
-| `sortieRegex` (+ `sortieRegexMessage`, `sortieRegexOptions`) | motif sur la sortie |
+| `sortie` | sortie attendue, comparée **sans tenir compte de la casse ni de l'espacement** |
+| `sortieContient` | liste de fragments obligatoires, cherchés avec la même indulgence |
+| `sortieRegex` (+ `sortieRegexMessage`, `sortieRegexOptions`) | motif sur la sortie, insensible à la casse par défaut |
 | `sortieNonVide` | le programme doit afficher quelque chose |
+| `sortieStricte` | force la comparaison exacte, espacement compris |
 | `tests` | assertions Python jouées **dans l'espace de noms de l'élève** |
 
 - `motif` est une **chaîne** d'expression régulière JavaScript : les antislashs se doublent
   (`"\\bnom\\b"`). `options` accepte les drapeaux, en pratique `"m"` pour le mode multiligne.
 - La **normalisation** de la sortie retire les espaces en fin de ligne et les lignes vides
-  du début et de la fin. Les espaces de début de ligne, eux, comptent.
+  du début et de la fin.
+- La **comparaison** ne juge pas une frappe mais une réponse : `Total :30`, `total : 30` et
+  `TOTAL:  30` sont acceptés indifféremment. Un espace reste exigé **entre deux caractères
+  alphanumériques**, sinon `1 2 3` et `123` deviendraient la même réponse — et là, le
+  programme n'est plus le même.
+- **Sauf quand l'espacement est l'exercice.** Si la sortie attendue indente une ligne ou
+  aligne des colonnes — sapin, losange, cadre, table de vérité, histogramme — la comparaison
+  redevient exacte, automatiquement. Onze étapes sont dans ce cas. `sortieStricte: true`
+  permet de l'imposer ailleurs.
+- Ce que la sortie ne dit plus, les règles sur le **code** continuent de le dire :
+  `codeContient` et `codeAbsent` sont inchangés, et restent le bon endroit pour exiger un
+  `print(a, b)` plutôt qu'une concaténation.
 - Le message de chaque `assert` s'affiche à l'élève : **le rédiger comme une explication**
   du comportement attendu, jamais comme un code d'erreur.
 

@@ -75,6 +75,27 @@ function normaliser(texte) {
     .replace(/^\n+/, "");
 }
 
+/* Comparaison indulgente, pour juger une réponse et non une frappe : ni la casse
+   ni l'espacement ne sont l'objet des exercices. « Total :30 », « total : 30 » et
+   « TOTAL:  30 » sont la même réponse.
+
+   Un espace reste exigé entre deux caractères alphanumériques : sans cela
+   « 1 2 3 » et « 123 » deviendraient identiques, et là c'est bien la réponse qui
+   change — print(a, b, c) ne fait pas la même chose que print(str(a) + str(b)). */
+function comparable(texte) {
+  return normaliser(texte)
+    .toLowerCase()
+    .replace(/[ \t]+/g, " ")
+    .replace(/ ?([^\p{L}\p{N} \n]) ?/gu, "$1");
+}
+
+/* …sauf quand l'espacement EST l'exercice. Une sortie attendue qui indente une
+   ligne ou aligne des colonnes dessine une figure ou dresse un tableau : sapin,
+   losange, cadre, table de vérité, histogramme. Là, un espace de trop est une
+   faute, et la comparaison redevient exacte. Onze étapes sont dans ce cas ;
+   `sortieStricte` permet de le forcer pour les autres. */
+const SORTIE_MISE_EN_FORME = /^[ \t]|[ \t]{2,}/m;
+
 function pluriel(n, singulier, plur) {
   return `${n} ${n > 1 ? (plur || singulier + "s") : singulier}`;
 }
@@ -305,18 +326,29 @@ async function validerCode(etape, code, executerAvecSaisies) {
   if (v.sortieNonVide && !sortie) {
     echecs.push("Ton programme n'affiche rien. Utilise print() pour montrer un résultat.");
   }
-  if (v.sortie != null && sortie !== normaliser(v.sortie)) {
-    return {
-      reussi: false,
-      echecs: ["La sortie de ton programme n'est pas celle attendue."],
-      comparaison: { attendu: normaliser(v.sortie), obtenu: sortie || "(rien)" },
-      brut: r,
-    };
+  if (v.sortie != null) {
+    const attendu = normaliser(v.sortie);
+    const strict = v.sortieStricte ?? SORTIE_MISE_EN_FORME.test(attendu);
+    const juste = strict ? sortie === attendu : comparable(sortie) === comparable(attendu);
+    if (!juste) {
+      return {
+        reussi: false,
+        echecs: ["La sortie de ton programme n'est pas celle attendue."],
+        // La comparaison montre les deux textes tels quels : c'est la différence
+        // réelle qu'il faut lire, pas celle que le jugement a bien voulu ignorer.
+        comparaison: { attendu, obtenu: sortie || "(rien)" },
+        brut: r,
+      };
+    }
   }
   for (const fragment of v.sortieContient || []) {
-    if (!sortie.includes(fragment)) echecs.push(`Il manque « ${fragment} » dans ce que ton programme affiche.`);
+    if (!comparable(sortie).includes(comparable(fragment))) {
+      echecs.push(`Il manque « ${fragment} » dans ce que ton programme affiche.`);
+    }
   }
-  if (v.sortieRegex && !new RegExp(v.sortieRegex, v.sortieRegexOptions || "").test(sortie)) {
+  // Le motif est écrit par l'enseignant : lui seul sait si un espace y compte,
+  // et plusieurs motifs disent déjà \s+. La casse, elle, ne compte jamais.
+  if (v.sortieRegex && !new RegExp(v.sortieRegex, v.sortieRegexOptions ?? "i").test(sortie)) {
     echecs.push(v.sortieRegexMessage || "Ce que ton programme affiche ne correspond pas à ce qui est demandé.");
   }
 
