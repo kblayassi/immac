@@ -253,28 +253,36 @@ la forme du code, puis l'exécution, puis la sortie, puis les assertions.
 |:--|:--|
 | `codeContient` | liste de `{ motif, message, options }` : le motif **doit** être présent |
 | `codeAbsent` | idem, mais le motif est **interdit** |
-| `sortie` | sortie attendue, comparée **sans tenir compte de la casse ni de l'espacement** |
+| `sortie` | sortie attendue, comparée **sans tenir compte de la casse, de l'espacement ni des accents** |
 | `sortieContient` | liste de fragments obligatoires, cherchés avec la même indulgence |
-| `sortieRegex` (+ `sortieRegexMessage`, `sortieRegexOptions`) | motif sur la sortie, insensible à la casse par défaut |
+| `sortieRegex` (+ `sortieRegexMessage`, `sortieRegexOptions`) | motif sur la sortie : casse, accents et espacement autour de la ponctuation sont détendus |
 | `sortieNonVide` | le programme doit afficher quelque chose |
-| `sortieStricte` | force la comparaison exacte, espacement compris |
+| `sortieStricte` | force (`true`) ou interdit (`false`) la comparaison exacte, espacement compris |
 | `tests` | assertions Python jouées **dans l'espace de noms de l'élève** |
 
 - `motif` est une **chaîne** d'expression régulière JavaScript : les antislashs se doublent
   (`"\\bnom\\b"`). `options` accepte les drapeaux, en pratique `"m"` pour le mode multiligne.
 - La **normalisation** de la sortie retire les espaces en fin de ligne et les lignes vides
   du début et de la fin.
-- La **comparaison** ne juge pas une frappe mais une réponse : `Total :30`, `total : 30` et
-  `TOTAL:  30` sont acceptés indifféremment. Un espace reste exigé **entre deux caractères
-  alphanumériques**, sinon `1 2 3` et `123` deviendraient la même réponse — et là, le
-  programme n'est plus le même.
+- La **comparaison** ne juge pas une frappe mais une réponse : `Total :30`, `total : 30`,
+  `TOTAL:  30` et `Total : 30` sans accents sont acceptés indifféremment. Un espace reste
+  exigé **entre deux caractères alphanumériques**, sinon `1 2 3` et `123` deviendraient la
+  même réponse — et là, le programme n'est plus le même.
 - **Sauf quand l'espacement est l'exercice.** Si la sortie attendue indente une ligne ou
-  aligne des colonnes — sapin, losange, cadre, table de vérité, histogramme — la comparaison
-  redevient exacte, automatiquement. Onze étapes sont dans ce cas. `sortieStricte: true`
-  permet de l'imposer ailleurs.
+  aligne des colonnes — sapin, losange, cadre, bannière, histogramme — la comparaison
+  redevient exacte, automatiquement. Neuf étapes sont dans ce cas. `sortieStricte: true`
+  permet de l'imposer ailleurs ; `sortieStricte: false` de le refuser quand des colonnes
+  alignées ne sont qu'un confort de lecture — c'est le cas des deux tables de vérité.
+- `sortieRegex` reçoit **la même indulgence** : les espaces littéraux du motif deviennent
+  facultatifs au contact d'une ponctuation, et restent exigés entre deux mots. Un motif
+  écrit `Rendu : \\d+ euros` accepte donc `Rendu: 3 euros`, ce qu'écrit une f-string. Un
+  saut de ligne, lui, n'est jamais toléré à la place d'un espace.
 - Ce que la sortie ne dit plus, les règles sur le **code** continuent de le dire :
   `codeContient` et `codeAbsent` sont inchangés, et restent le bon endroit pour exiger un
-  `print(a, b)` plutôt qu'une concaténation.
+  `print(a, b)` plutôt qu'une concaténation. Attention alors à ne pas exiger une **écriture**
+  quand on veut exiger un **résultat** : en NSI, la f-string est connue depuis la séance 3,
+  donc un motif qui réclame une virgule (`",\\s*True\\s+or\\s+True"`) refuse une solution
+  juste. Écrire `"[,{]\\s*True\\s+or\\s+True"` accepte les deux écritures.
 - Le message de chaque `assert` s'affiche à l'élève : **le rédiger comme une explication**
   du comportement attendu, jamais comme un code d'erreur.
 

@@ -75,26 +75,73 @@ function normaliser(texte) {
     .replace(/^\n+/, "");
 }
 
-/* Comparaison indulgente, pour juger une réponse et non une frappe : ni la casse
-   ni l'espacement ne sont l'objet des exercices. « Total :30 », « total : 30 » et
-   « TOTAL:  30 » sont la même réponse.
+/* Les accents ne sont pas davantage l'objet des exercices : « Frequence » tapé
+   au clavier vaut « Fréquence ». On les retire des deux côtés de la comparaison. */
+function sansAccents(texte) {
+  return String(texte).normalize("NFD").replace(/\p{M}/gu, "");
+}
+
+/* Comparaison indulgente, pour juger une réponse et non une frappe : ni la casse,
+   ni l'espacement, ni les accents ne sont l'objet des exercices. « Total :30 »,
+   « total : 30 » et « TOTAL:  30 » sont la même réponse.
 
    Un espace reste exigé entre deux caractères alphanumériques : sans cela
    « 1 2 3 » et « 123 » deviendraient identiques, et là c'est bien la réponse qui
    change — print(a, b, c) ne fait pas la même chose que print(str(a) + str(b)). */
 function comparable(texte) {
-  return normaliser(texte)
-    .toLowerCase()
+  return sansAccents(normaliser(texte).toLowerCase())
     .replace(/[ \t]+/g, " ")
     .replace(/ ?([^\p{L}\p{N} \n]) ?/gu, "$1");
 }
 
 /* …sauf quand l'espacement EST l'exercice. Une sortie attendue qui indente une
-   ligne ou aligne des colonnes dessine une figure ou dresse un tableau : sapin,
-   losange, cadre, table de vérité, histogramme. Là, un espace de trop est une
-   faute, et la comparaison redevient exacte. Onze étapes sont dans ce cas ;
-   `sortieStricte` permet de le forcer pour les autres. */
+   ligne ou aligne des colonnes dessine une figure : sapin, losange, cadre,
+   bannière, histogramme. Là, un espace de trop est une faute, et la comparaison
+   redevient exacte. Neuf étapes sont dans ce cas ; `sortieStricte` permet de le
+   forcer ailleurs — ou de le refuser, quand des colonnes alignées ne sont qu'une
+   mise en page suggérée (les deux tables de vérité). */
 const SORTIE_MISE_EN_FORME = /^[ \t]|[ \t]{2,}/m;
+
+/* Même indulgence pour `sortieRegex`. Le motif est écrit par l'enseignant, avec
+   l'espacement de la solution : « Rendu : 3 euros ». L'élève qui écrit
+   « Rendu: 3 euros » — ou une f-string sans espace avant les deux-points — donne
+   la même réponse. On relâche donc les espaces littéraux du motif, selon la règle
+   de comparable() : facultatifs au contact d'une ponctuation, toujours exigés
+   entre deux mots (« 1 2 3 » ≠ « 123 »). Jamais un saut de ligne à la place, et
+   ni les classes [ \t] ni les échappements \d \s ne sont touchés. */
+function motifIndulgent(motif) {
+  // Le littéral que représente le motif à l'indice i, ou null si c'est un
+  // métacaractère ou une classe abrégée (\d, \S…) — donc rien de ponctuel.
+  const litteral = (i) => {
+    const c = motif[i];
+    if (c === undefined) return null;
+    if (c === "\\") {
+      const d = motif[i + 1];
+      return d === undefined || /[A-Za-z0-9]/.test(d) ? null : d;
+    }
+    return "()[]{}*+?^$|.".includes(c) ? null : c;
+  };
+  const ponctuation = (c) => c != null && !/[\p{L}\p{N} \t]/u.test(c);
+
+  let sortie = "";
+  let classe = false;
+  let precedent = null;                       // dernier littéral émis
+  for (let i = 0; i < motif.length; i++) {
+    const c = motif[i];
+    if (c === "\\") { sortie += motif.slice(i, i + 2); precedent = litteral(i); i++; continue; }
+    if (classe)      { sortie += c; if (c === "]") classe = false; continue; }
+    if (c === "[")   { sortie += c; classe = true; precedent = null; continue; }
+    if (c !== " ")   { sortie += c; precedent = litteral(i); continue; }
+
+    let fin = i;
+    while (motif[fin + 1] === " ") fin++;     // une suite d'espaces = un espace
+    const souple = ponctuation(precedent) || ponctuation(litteral(fin + 1));
+    sortie += souple ? "[ \t]*" : "[ \t]+";
+    precedent = " ";
+    i = fin;
+  }
+  return sortie;
+}
 
 function pluriel(n, singulier, plur) {
   return `${n} ${n > 1 ? (plur || singulier + "s") : singulier}`;
@@ -346,9 +393,12 @@ async function validerCode(etape, code, executerAvecSaisies) {
       echecs.push(`Il manque « ${fragment} » dans ce que ton programme affiche.`);
     }
   }
-  // Le motif est écrit par l'enseignant : lui seul sait si un espace y compte,
-  // et plusieurs motifs disent déjà \s+. La casse, elle, ne compte jamais.
-  if (v.sortieRegex && !new RegExp(v.sortieRegex, v.sortieRegexOptions ?? "i").test(sortie)) {
+  // Ni la casse, ni les accents, ni l'espacement autour de la ponctuation ne
+  // sont jugés : le motif et la sortie sont détendus de la même façon. Le « i »
+  // s'ajoute aux drapeaux demandés — la casse n'est jamais l'exercice.
+  const drapeaux = [...new Set("i" + (v.sortieRegexOptions ?? ""))].join("");
+  if (v.sortieRegex && !new RegExp(motifIndulgent(sansAccents(v.sortieRegex)), drapeaux)
+                              .test(sansAccents(sortie))) {
     echecs.push(v.sortieRegexMessage || "Ce que ton programme affiche ne correspond pas à ce qui est demandé.");
   }
 

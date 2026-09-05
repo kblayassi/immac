@@ -475,18 +475,25 @@ A le droit d'entrer : True</code></pre>
 True  or False : True
 False or True  : True
 False or False : False</code></pre>
-            <p>Les résultats de droite doivent être <strong>calculés</strong> par Python.</p>`,
+            <p>Les résultats de droite doivent être <strong>calculés</strong> par Python.
+            L'alignement, lui, est un confort de lecture : un espace de plus ou de
+            moins ne sera pas compté comme une faute.</p>`,
           depart: `\n`,
           validation: {
             codeContient: [
-              { motif: ",\\s*True\\s+or\\s+True", message: "Le résultat doit être calculé : print(\"…\", True or True)." },
+              // Virgule ou accolade : print("…", True or True) et f"… {True or True}"
+              // font tous deux calculer le résultat par Python — ce qui est l'exigence.
+              { motif: "[,{]\\s*True\\s+or\\s+True", message: "Le résultat doit être calculé : print(\"…\", True or True)." },
             ],
             sortie: "True  or True  : True\nTrue  or False : True\nFalse or True  : True\nFalse or False : False",
+            // L'alignement des colonnes est proposé, pas exigé : l'exercice porte
+            // sur le « ou », pas sur le comptage des espaces.
+            sortieStricte: false,
           },
           felicitation: "Trois vrais sur quatre : le « ou » de Python est bien inclusif. 🧮",
           indices: [
             "Quatre lignes, sur le modèle <code>print(\"True  or True  :\", True or True)</code>.",
-            "Aligne en ajoutant des espaces dans le texte : <code>True</code> fait 4 lettres, <code>False</code> en fait 5.",
+            "Pour aligner la colonne de droite, ajoute des espaces dans le texte : <code>True</code> fait 4 lettres, <code>False</code> en fait 5.",
           ],
           solution: `print("True  or True  :", True or True)\nprint("True  or False :", True or False)\nprint("False or True  :", False or True)\nprint("False or False :", False or False)\n`,
         },

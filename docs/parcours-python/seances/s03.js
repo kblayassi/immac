@@ -745,7 +745,8 @@ Acces autorise : True</code></pre>
           contenu: `
             <p>Ici, et seulement ici, tu as le droit d'écrire <code>True</code> et
             <code>False</code> : il s'agit d'explorer le comportement de <code>and</code>.</p>
-            <p>Affiche exactement (attention aux espaces d'alignement) :</p>
+            <p>Affiche la table suivante — l'alignement est un confort de lecture,
+            un espace de plus ou de moins ne sera pas compté comme une faute :</p>
             <pre class="bloc-code"><code>True  and True  : True
 True  and False : False
 False and True  : False
@@ -755,14 +756,19 @@ False and False : False</code></pre>
           depart: `\n`,
           validation: {
             codeContient: [
-              { motif: ",\\s*True\\s+and\\s+True", message: "Le résultat doit être calculé : print(\"…\", True and True)." },
+              // Virgule ou accolade : print("…", True and True) et f"… {True and True}"
+              // font tous deux calculer le résultat par Python — ce qui est l'exigence.
+              { motif: "[,{]\\s*True\\s+and\\s+True", message: "Le résultat doit être calculé : print(\"…\", True and True)." },
             ],
             sortie: "True  and True  : True\nTrue  and False : False\nFalse and True  : False\nFalse and False : False",
+            // L'alignement des colonnes est proposé, pas exigé : l'exercice porte
+            // sur le « et », pas sur le comptage des espaces.
+            sortieStricte: false,
           },
           felicitation: "Une vraie table de vérité, produite par la machine. 🧮",
           indices: [
             "Quatre lignes : <code>print(\"True  and True  :\", True and True)</code>.",
-            "Aligne en ajoutant des espaces dans le texte : <code>True</code> fait 4 lettres, <code>False</code> en fait 5.",
+            "Pour aligner la colonne de droite, ajoute des espaces dans le texte : <code>True</code> fait 4 lettres, <code>False</code> en fait 5.",
           ],
           solution: `print("True  and True  :", True and True)\nprint("True  and False :", True and False)\nprint("False and True  :", False and True)\nprint("False and False :", False and False)\n`,
         },
