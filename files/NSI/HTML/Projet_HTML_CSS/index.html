@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<!-- Sur une idée originale de Jean-Manuel Meny et Ludovic Fasquelle -->
+
+<head>
+	<meta charset="utf-8">
+	<title>NSI Immac</title>
+	<link rel="stylesheet" href="css/styles.css">
+</head>
+
+
+<body>
+    
+    
+	<header>
+		<h1>TITRE </h1>
+        
+		<p id="eleve">Nom Prénom</p>
+	</header>
+
+
+	<section>
+        <h2>Objectifs</h2>
+        
+		<p>
+            Vous devez modifier ce mini site web. 
+            Vous avez le droit de modifier le code html et le code css, laissez parler votre imagination !
+        </p>
+        
+        <p>Il vous faudra toutefois respecter les contraintes imposées. </p>
+        <p>Vous serez évalué sur les critères suivants : </p>
+        
+        <ul>
+            <li> Respect des contraintes imposées ci-dessous.</li>
+            <li> Contenu des pages.</li>
+            <li> Travail sur le code html, css. </li>        
+        </ul>
+	</section>
+    
+    
+    <section>
+        <h2>Rendre le projet</h2>
+        
+        
+        
+        <p> Vous déposerez sur EcoleDirecte, selon la date indiquée par votre enseignant, le dossier contenant l'ensemble des fichiers. Ce dossier  
+        sera nommé <code>nom_prenom_projet1</code> puis sera zippé avant d'être déposé dans le cahier EcoleDirecte.</p>
+        <p>Il s'agit d'un <strong>travail personnel</strong> !</p>
+        
+        
+    
+    </section>
+    
+    
+
+	<section>
+		<h2>Les fichiers et dossiers présents</h2>
+            
+        <p>Votre site contiendra au moins les pages suivantes :</p>
+        
+        <ul>
+            <li>la page index.html</li>
+            <li>la page histoire.html</li>
+            <li>la page favoris.html (celle qui a été réalisée durant les activités en classe)</li>
+            <li>la page consignes.html</li>
+            <li>la page sources.html</li>
+             
+        </ul>
+        
+        <p>Les noms de ces pages ne doivent pas être modifiés.</p>
+        
+        <p> Par ailleurs, une page styles.css est déjà présente dans le dossier css/, ainsi qu'un dossier images/. </p>
+    </section>
+        
+        
+        
+        
+    <section>
+        <h2> Le css </h2>
+        
+        <p>
+            Le css de vos pages est à déclarer dans le fichier styles.css.
+            On ne devra trouver aucun style css dans les pages html.
+            Les pages html sont liées à cette feuille de style css 
+            par la présence dans la partie head du code 
+            <code>&lt;link rel="stylesheet" href="css/styles.css"&gt;</code>.
+        </p>
+        
+        <p>
+            Le css actuellement présent n'est là que pour vous donner des exemples.
+            Si vous ne le comprenez pas en première lecture, faites des recherches sur le web
+            à partir des noms de propriété utilisés.  
+            
+            Vous pouvez modifier ce css à votre guise.
+        </p>
+        
+        <p>
+            Ce css devra contenir au moins un élément html avec la règle
+            <code>display: grid;</code>.  Il y a en effet une contrainte de structure à respecter
+            (cf ci-dessous).
+            
+            Pour cette partie sur grid, vous vous appuierez bien sûr sur les exemples et exercices
+             du cours.
+        </p>
+        
+        <p>
+            &Eacute;vitez de surcharger vos pages par des couleurs ou des images en excès.
+            Il est préférable de rester sobre: couleurs et images doivent être informatives.
+        </p>
+    </section>
+        
+        
+    <section>
+        <h2>Votre code.</h2>
+        
+        <p>
+            Le code html de chaque page doit être indenté proprement de façon à ce que le 
+            début et la fin de chaque élément apparaisse clairement.
+        </p>
+        
+        <p> 
+            Le code html devra être vérifié en chargeant vos pages sur 
+            le <a href="https://validator.w3.org/#validate_by_upload">w3 validator</a>.
+            Il ne devra rester aucune erreur.
+        </p>
+        <p>
+            Le code css est à contrôler également. Attention la page de validation n'est pas la même :
+            <a href="https://jigsaw.w3.org/css-validator/#validate_by_upload">w3 css validator</a>.
+        </p>
+    </section>
+        
+        
+        
+    <section>
+        <h2> Structure des pages</h2>
+            
+        <p>Chaque page devra contenir :</p>
+        
+        <ul>
+            <li> Un header</li>
+            <li> Une partie principale </li>
+            <li> Un footer </li>
+        </ul>
+        
+        <article> 
+            <h3>Partie header</h3>
+            
+            La partie header contiendra (au moins) le titre de la page et une image de fond (à vous
+            de modifier celle qui est actuellement présente). Le header de la page index.html
+            contiendra également votre nom et prénom.
+        </article>
+        
+        <article>
+            <h3>La partie principale</h3>
+        
+            <p>La partie principale sera découpée en deux colonnes (réalisées à l'aide de <code>grid</code>):</p>
+            <ul>
+                <li>la colonne la plus large contiendra les informations proprement dites.</li>
+                <li>la colonne la plus étroite (à situer à gauche ou à droite comme vous le voulez)
+                contiendra un menu.</li>
+            </ul>
+            
+            <p>Le menu devra contenir pour chaque page : </p>
+            
+                <ul>
+                    <li>Un lien vers chacune des autres pages de votre site.</li>
+                    <li>Un lien vers l'ENT</li>
+                    <li>Un lien vers le site de cours <a href="https://immacespalion.github.io/blayassi/NSI/"> https://immacespalion.github.io/blayassi/NSI/ </a></li>
+                </ul>
+                
+            
+        </article>
+        
+            
+            
+            
+        <article>
+            <h3>Le footer</h3>
+        
+            <p>Le footer contiendra un lien vers le site du lycée, et une licence d'utilisation de type <a href="https://creativecommons.org/choose/">Creative Commons</a> (compétence PIX).</p>
+            <p>Pour vous aider, vous pouvez utiliser l'infographie suivante : </p>
+            <div align="center"><img src="images/Choose_Licence_CC_fr-1024x767.png" /></div>
+        </article>
+        
+    </section>
+        
+        
+         
+	<section>
+        <h2>Contenu des pages</h2>
+        
+        
+        <article>
+            <h3>La page index.html</h3>
+            
+            <p>Le contenu de cette présente page sera remplacé par votre présentation :</p>
+            
+            <ul>
+                <li>Nom, prénom. Votre photo.</li>
+                <li>Classe.</li>
+                <li>Vos trois spécialités.</li>
+                <li>Orientation post-bac</li>
+                <li>Vos centres d'intérêt (sport, musique, etc...)</li>
+            </ul>
+            
+            <p> 
+                Vos nom  et prénom sont à indiquer dans la partie header. Le reste occupera
+                la partie principale de la page. N'oubliez pas de soigner le css.
+            </p>
+            
+            <p>
+                L'image de votre photographie devra bien sûr se trouver dans le dossier prévu
+				<code>images/</code></p>
+        
+        </article>
+        
+        
+        <article>
+            <h3>La page histoire.html</h3>
+        
+            <p> 
+                Il s'agit d'une page sur l'histoire de l'informatique. 
+                Vous choisirez un <strong>thème de l'histoire de l'informatique</strong> en lien avec le programme de NSI :
+            </p>
+            
+            <img src="images/Histoire_Info.png">
+            
+            <p>
+                Il sera possible de créer plusieurs pages si vous en ressentez la nécessité 
+                pour un exposé clair.
+            </p>
+            
+            
+            
+            
+            <p> 
+                Vous présenterez également une <strong>frise historique</strong> (la forme peut être un simple tableau par
+                exemple, à vous de décider). 
+                Dans cette frise, vous présenterez en priorité les dates en lien avec le thème que vous aurez choisi.
+            </p>
+        </article>
+        
+        
+        
+        
+        <article>
+            <h3>La page sources.html</h3>
+            
+            <p> 
+                Cette page contiendra des liens sur les sources utilisées.
+                
+            </p>
+            
+            <ul>
+            
+                <li>    
+                    Les sources pour les points d'histoire. Attention, il n'est pas question de se contenter de copier-coller l'une de ces références.
+                    Croisez les informations et réécrivez avec vos mots.
+                </li>
+                <li>
+                    Les sources utilisées pour le code html, css. 
+                </li>
+            </ul>
+            
+            
+            <p> 
+                Les  sources ne doivent pas être uniquement un lien. Pour chaque source,
+                décrivez brièvement ce qu'elle vous a apporté.
+            </p>
+            
+        </article>
+    
+    </section>	 
+    
+    <section>Ces consignes sont à retrouver sur la page <a href="pages/consignes.html">consignes.html</a></section>
+    
+    
+    
+
+	 
+	
+
+
+	<footer>
+        <a href="https://immacespalion.github.io/blayassi/NSI/">NSI</a>
+	</footer>
+
+
+	 
+
+</body>
+</html>

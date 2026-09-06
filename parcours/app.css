@@ -1,0 +1,901 @@
+/* Parcours Python — Seconde
+   Application autonome servie par MkDocs à /parcours-python/.
+   Pas de framework : l'ossature est dans index.html, tout le reste vient de app.js. */
+
+/* ------------------------------------------------------------------ Palette
+   Reprise des couleurs du site (--md-primary-fg-color #573D91, accent #FF5722)
+   pour que le parcours ne semble pas venir d'ailleurs. */
+:root {
+  color-scheme: light dark;
+
+  --violet:        #573D91;
+  --violet-vif:    #6f4fc0;
+  --violet-pale:   #efeaf9;
+  --orange:        #ff5722;
+  --orange-pale:   #ffe9e2;
+  --vert:          #12855c;
+  --vert-pale:     #e3f6ee;
+  --rouge:         #c62828;
+  --rouge-pale:    #fdeaea;
+  --or:            #b8860b;
+
+  --fond:          #f6f5fa;
+  --surface:       #ffffff;
+  --surface-2:     #f0eef7;
+  --bordure:       #e0dced;
+  --texte:         #1d1a26;
+  --texte-doux:    #625d73;
+
+  --ombre:         0 1px 2px rgba(29, 26, 38, .06), 0 8px 24px rgba(29, 26, 38, .06);
+  --ombre-forte:   0 2px 6px rgba(29, 26, 38, .10), 0 18px 44px rgba(29, 26, 38, .14);
+
+  --rayon:         14px;
+  --rayon-petit:   9px;
+  --colonne:       880px;
+
+  --police: "Quicksand", ui-rounded, "Segoe UI", system-ui, sans-serif;
+  --mono:   "Red Hat Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --violet-pale: #2a2340;
+    --orange-pale: #3a2118;
+    --vert-pale:   #102a22;
+    --rouge-pale:  #331a1a;
+    --violet-vif:  #a58ae8;
+    --vert:        #4ad9a0;
+    --rouge:       #ff8a80;
+    --or:          #e8b84b;
+
+    --fond:        #141414;
+    --surface:     #1d1b23;
+    --surface-2:   #26232f;
+    --bordure:     #35313f;
+    --texte:       #ece9f3;
+    --texte-doux:  #a49dba;
+
+    --ombre:       0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .35);
+    --ombre-forte: 0 2px 6px rgba(0, 0, 0, .4), 0 18px 44px rgba(0, 0, 0, .5);
+  }
+}
+
+:root[data-theme="dark"] {
+  --violet-pale: #2a2340; --orange-pale: #3a2118; --vert-pale: #102a22;
+  --rouge-pale: #331a1a; --violet-vif: #a58ae8; --vert: #4ad9a0;
+  --rouge: #ff8a80; --or: #e8b84b;
+  --fond: #141414; --surface: #1d1b23; --surface-2: #26232f; --bordure: #35313f;
+  --texte: #ece9f3; --texte-doux: #a49dba;
+  --ombre: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  --ombre-forte: 0 2px 6px rgba(0,0,0,.4), 0 18px 44px rgba(0,0,0,.5);
+}
+
+/* ------------------------------------------------------------------- Socle */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--police);
+  font-size: 16.5px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1, h2, h3 { line-height: 1.25; font-weight: 700; margin: 0 0 .5em; }
+p { margin: 0 0 .9em; }
+p:last-child { margin-bottom: 0; }
+a { color: var(--violet-vif); }
+
+code {
+  font-family: var(--mono);
+  font-size: .88em;
+  background: var(--surface-2);
+  border: 1px solid var(--bordure);
+  border-radius: 5px;
+  padding: .08em .38em;
+  white-space: nowrap;
+}
+
+/* Un bloc de code d'illustration : ni éditable, ni exécutable. */
+pre.bloc-code {
+  font-family: var(--mono);
+  font-size: .88em;
+  line-height: 1.6;
+  background: var(--surface-2);
+  border: 1px solid var(--bordure);
+  border-left: 3px solid var(--violet-vif);
+  border-radius: var(--rayon-petit);
+  padding: .8em 1em;
+  margin: 0 0 1em;
+  overflow-x: auto;
+}
+pre.bloc-code code { background: none; border: 0; padding: 0; white-space: pre; }
+
+/* Figure à reproduire : la sélection est coupée pour que l'élève la retape au
+   lieu de la coller dans l'éditeur. Le repère « à recopier » évite qu'un texte
+   simplement insélectionnable passe pour un bug. */
+pre.bloc-code.sans-copie {
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  padding-top: 1.9em;
+}
+pre.bloc-code.sans-copie::after {
+  content: "à recopier";
+  position: absolute;
+  top: .45em; right: .8em;
+  font-family: var(--police);
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--texte-doux);
+  opacity: .75;
+  user-select: none;
+}
+
+kbd {
+  font-family: var(--mono);
+  font-size: .8em;
+  padding: .08em .42em;
+  border: 1px solid var(--bordure);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  white-space: nowrap;
+}
+
+ul, ol { margin: 0 0 .9em; padding-left: 1.35em; }
+li { margin-bottom: .3em; }
+
+.cache { display: none !important; }
+
+/* ------------------------------------------------------------------ Boutons */
+.bouton {
+  font: inherit;
+  font-weight: 600;
+  font-size: .93rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .5em;
+  padding: .5em 1.05em;
+  border: 1px solid transparent;
+  border-radius: 100px;
+  background: var(--violet);
+  color: #fff;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease, opacity .12s;
+}
+.bouton:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--ombre); }
+.bouton:active:not(:disabled) { transform: translateY(0); }
+.bouton:disabled { opacity: .45; cursor: not-allowed; }
+.bouton:focus-visible { outline: 3px solid var(--violet-vif); outline-offset: 2px; }
+
+.bouton.fantome {
+  background: transparent;
+  color: var(--texte-doux);
+  border-color: var(--bordure);
+}
+.bouton.fantome:hover:not(:disabled) { color: var(--texte); border-color: var(--violet-vif); }
+
+.bouton.vert   { background: var(--vert); color: #fff; }
+.bouton.orange { background: var(--orange); }
+
+.bouton.icone { padding: .5em; width: 2.3em; height: 2.3em; justify-content: center; }
+
+/* ------------------------------------------------------------------- Entête */
+.barre {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: saturate(160%) blur(12px);
+  border-bottom: 1px solid var(--bordure);
+}
+
+.barre-interieur {
+  max-width: var(--colonne);
+  margin: 0 auto;
+  padding: .6rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+}
+
+.marque {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.marque .logo {
+  width: 1.9rem; height: 1.9rem;
+  display: grid; place-items: center;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--violet), var(--violet-vif));
+  color: #fff; font-size: .95rem;
+}
+
+/* Le libellé du retour disparaît sur petit écran ; la flèche suffit. */
+@media (max-width: 720px) { .libelle-retour { display: none; } }
+.bouton.retour { white-space: nowrap; }
+
+.barre-titre { font-weight: 700; font-size: .98rem; }
+.barre-titre small { display: block; font-weight: 500; font-size: .78rem; color: var(--texte-doux); }
+
+.barre-espace { flex: 1; }
+
+/* Jauge d'avancement : la même forme sur le hub et dans une séance. */
+.jauge {
+  height: 7px;
+  border-radius: 100px;
+  background: var(--surface-2);
+  overflow: hidden;
+  border: 1px solid var(--bordure);
+}
+.jauge > i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--violet), var(--violet-vif));
+  transition: width .45s cubic-bezier(.2, .8, .3, 1);
+}
+.barre .jauge { width: min(230px, 26vw); }
+.barre .compteur { font-size: .8rem; color: var(--texte-doux); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ---------------------------------------------------------------- Structure */
+.page { max-width: var(--colonne); margin: 0 auto; padding: 2.2rem 1.1rem 6rem; }
+
+.chapeau { margin-bottom: 2.4rem; }
+.chapeau .sur-titre {
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--violet-vif);
+  margin-bottom: .5rem;
+}
+.chapeau h1 { font-size: clamp(1.7rem, 4.6vw, 2.5rem); }
+.chapeau .accroche { color: var(--texte-doux); font-size: 1.05rem; max-width: 62ch; }
+
+/* ------------------------------------------------------------- Hub, séances */
+.grille-seances { display: grid; gap: .9rem; }
+
+.carte-seance {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  color: inherit;
+  text-decoration: none;
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+.carte-seance:hover { transform: translateY(-2px); box-shadow: var(--ombre-forte); border-color: var(--violet-vif); }
+.carte-seance[aria-disabled="true"] { opacity: .55; pointer-events: none; }
+
+.carte-seance .numero {
+  width: 2.7rem; height: 2.7rem;
+  display: grid; place-items: center;
+  border-radius: 11px;
+  background: var(--violet-pale);
+  color: var(--violet-vif);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.carte-seance[data-etat="termine"] .numero { background: var(--vert-pale); color: var(--vert); }
+.carte-seance[data-etat="encours"] .numero { background: var(--orange-pale); color: var(--orange); }
+
+.carte-seance .titre { font-weight: 700; }
+.carte-seance .detail { font-size: .85rem; color: var(--texte-doux); }
+.carte-seance .jauge { width: 100%; margin-top: .45rem; }
+.carte-seance .etat { font-size: .78rem; color: var(--texte-doux); white-space: nowrap; }
+
+.titre-palier {
+  margin: 2.2rem 0 .8rem;
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--texte-doux);
+  display: flex; align-items: center; gap: .8rem;
+}
+.titre-palier::after { content: ""; flex: 1; height: 1px; background: var(--bordure); }
+.titre-palier:first-of-type { margin-top: 1rem; }
+
+/* --------------------------------------------------------- Parties (séance) */
+.partie-entete {
+  margin: 2.8rem 0 1.2rem;
+  padding: 1rem 1.2rem;
+  border-radius: var(--rayon);
+  background: var(--violet-pale);
+  border: 1px solid var(--bordure);
+  display: flex; align-items: center; gap: .9rem; flex-wrap: wrap;
+}
+.partie-entete h2 { margin: 0; font-size: 1.15rem; }
+.partie-entete .meta { font-size: .82rem; color: var(--texte-doux); }
+.partie-entete[data-partie="application"] { background: var(--orange-pale); }
+.partie-entete[data-partie="defis"]       { background: var(--vert-pale); }
+
+.etoiles { color: var(--or); letter-spacing: .08em; }
+
+/* ------------------------------------------------------------------- Étapes */
+.etape {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+/* Le rail à gauche relie visuellement les étapes : on voit le chemin parcouru. */
+.etape-rail { display: flex; flex-direction: column; align-items: center; }
+.etape-pastille {
+  width: 2.1rem; height: 2.1rem;
+  flex: 0 0 auto;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--bordure);
+  color: var(--texte-doux);
+  font-size: .82rem; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  transition: background .25s, border-color .25s, color .25s, transform .25s;
+}
+.etape-trait { flex: 1; width: 2px; background: var(--bordure); margin-top: .3rem; border-radius: 2px; }
+.etape:last-child .etape-trait { display: none; }
+
+.etape-corps {
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  padding: 1.25rem 1.35rem;
+  min-width: 0;
+}
+
+.etape[data-etat="actif"]   .etape-pastille { border-color: var(--violet-vif); color: var(--violet-vif); transform: scale(1.08); }
+.etape[data-etat="actif"]   .etape-corps    { border-color: var(--violet-vif); }
+.etape[data-etat="reussi"]  .etape-pastille { background: var(--vert); border-color: var(--vert); color: #fff; }
+.etape[data-etat="reussi"]  .etape-trait    { background: var(--vert); opacity: .5; }
+
+/* Une étape verrouillée reste visible — on sait qu'il reste du chemin — mais
+   son contenu n'est pas lisible : pas de saut d'étape par curiosité. */
+.etape[data-etat="verrouille"] .etape-corps {
+  filter: blur(4px);
+  opacity: .5;
+  pointer-events: none;
+  user-select: none;
+  max-height: 8rem;
+  overflow: hidden;
+}
+.etape[data-etat="verrouille"]::after {
+  content: "🔒 Termine ce qui précède";
+  position: absolute;
+  left: 3.5rem; top: 50%;
+  transform: translateY(-50%);
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--texte-doux);
+}
+
+.etape-titre {
+  display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap;
+  margin-bottom: .7rem;
+}
+.etape-titre h3 { margin: 0; font-size: 1.06rem; }
+
+.pastille-type {
+  font-size: .68rem; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: .18em .6em;
+  border-radius: 100px;
+  background: var(--surface-2);
+  color: var(--texte-doux);
+  border: 1px solid var(--bordure);
+  white-space: nowrap;
+}
+.pastille-type[data-type="cours"]      { background: var(--violet-pale); color: var(--violet-vif); }
+.pastille-type[data-type="code"]       { background: var(--orange-pale); color: var(--orange); }
+.pastille-type[data-type="qcm"]        { background: var(--vert-pale);   color: var(--vert); }
+.pastille-type[data-type="prediction"] { background: var(--vert-pale);   color: var(--vert); }
+
+.etape-contenu > :last-child { margin-bottom: 0; }
+
+/* --------------------------------------------------------------- Encadrés */
+.encadre {
+  border-radius: var(--rayon-petit);
+  padding: .8rem 1rem;
+  margin: 0 0 1em;
+  border: 1px solid var(--bordure);
+  border-left: 3px solid var(--violet-vif);
+  background: var(--surface-2);
+  font-size: .95rem;
+}
+.encadre .chapo { font-weight: 700; display: block; margin-bottom: .2em; }
+.encadre[data-ton="attention"] { border-left-color: var(--orange); background: var(--orange-pale); }
+.encadre[data-ton="astuce"]    { border-left-color: var(--vert);   background: var(--vert-pale); }
+.encadre[data-ton="scratch"]   { border-left-color: #f6a41f;       background: color-mix(in srgb, #f6a41f 12%, transparent); }
+
+/* Table de correspondance Scratch → Python. */
+.table-simple { width: 100%; border-collapse: collapse; margin: 0 0 1em; font-size: .93rem; }
+.table-simple th, .table-simple td {
+  text-align: left; padding: .5em .7em; border-bottom: 1px solid var(--bordure); vertical-align: top;
+}
+.table-simple th { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--texte-doux); }
+.enveloppe-table { overflow-x: auto; }
+
+/* ------------------------------------------------------------------ Éditeur */
+.atelier {
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-petit);
+  overflow: hidden;
+  background: var(--surface-2);
+  margin-top: 1rem;
+}
+
+.atelier-onglet {
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  color: var(--texte-doux);
+  padding: .45em .9em;
+  border-bottom: 1px solid var(--bordure);
+  display: flex; align-items: center; gap: .5em;
+}
+
+.hote-editeur { background: var(--surface); }
+.hote-editeur .cm-editor { max-height: 60vh; }
+.hote-editeur .cm-editor.cm-focused { outline: none; }
+.hote-editeur .cm-scroller { font-family: var(--mono); font-size: 14px; line-height: 1.6; }
+.hote-editeur .cm-gutters { background: var(--surface-2); border-right: 1px solid var(--bordure); }
+
+.atelier-actions {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  padding: .6rem .8rem;
+  border-top: 1px solid var(--bordure);
+}
+.atelier-actions .espace { flex: 1; }
+
+.console {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  padding: .8em 1em;
+  min-height: 3.2em;
+  max-height: 22em;
+  overflow: auto;
+  background: #17151d;
+  color: #dfe7ef;
+  border-top: 1px solid var(--bordure);
+}
+.console[data-etat="vide"]    { color: #7d8794; font-style: italic; }
+.console[data-etat="attente"] { color: #d7b56a; }
+.console[data-etat="erreur"]  { color: #ff9a8f; }
+.console .saisie {
+  font: inherit; color: #9fe0a0;
+  background: transparent; border: 0; border-bottom: 1px dashed #4b5563;
+  outline: none; min-width: 8ch;
+}
+
+/* --------------------------------------------------------------- Verdicts */
+.verdict {
+  margin-top: .9rem;
+  border-radius: var(--rayon-petit);
+  padding: .8rem 1rem;
+  font-size: .93rem;
+  border: 1px solid;
+  animation: apparait .25s ease both;
+}
+.verdict[data-issue="reussi"] { background: var(--vert-pale);  border-color: color-mix(in srgb, var(--vert) 35%, transparent); }
+.verdict[data-issue="rate"]   { background: var(--rouge-pale); border-color: color-mix(in srgb, var(--rouge) 35%, transparent); }
+.verdict .entete { font-weight: 700; display: flex; align-items: center; gap: .5em; margin-bottom: .3em; }
+.verdict[data-issue="reussi"] .entete { color: var(--vert); }
+.verdict[data-issue="rate"]   .entete { color: var(--rouge); }
+.verdict ul { margin: .4em 0 0; padding-left: 1.2em; }
+.verdict .comparaison { display: grid; gap: .5rem; margin-top: .6rem; }
+@media (min-width: 620px) { .verdict .comparaison { grid-template-columns: 1fr 1fr; } }
+.verdict .comparaison div { background: var(--surface); border: 1px solid var(--bordure); border-radius: 7px; padding: .5em .7em; }
+.verdict .comparaison .libelle { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--texte-doux); margin-bottom: .2em; }
+.verdict .comparaison pre { font-family: var(--mono); font-size: .85em; margin: 0; white-space: pre-wrap; }
+
+@keyframes apparait { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* ------------------------------------------------------------------ Indices */
+.indices { margin-top: .9rem; }
+.indice {
+  background: var(--surface-2);
+  border: 1px solid var(--bordure);
+  border-left: 3px solid var(--or);
+  border-radius: var(--rayon-petit);
+  padding: .65em .9em;
+  margin-bottom: .5rem;
+  font-size: .93rem;
+  animation: apparait .25s ease both;
+}
+.indice .rang { font-weight: 700; color: var(--or); margin-right: .4em; }
+
+/* ---------------------------------------------------------------------- QCM */
+.qcm { display: grid; gap: .55rem; margin: 1rem 0 0; }
+.qcm-option {
+  display: flex; align-items: flex-start; gap: .7rem;
+  padding: .7em .9em;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-petit);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: border-color .14s, background .14s, transform .14s;
+}
+.qcm-option:hover:not(:disabled) { border-color: var(--violet-vif); transform: translateX(2px); }
+.qcm-option .puce {
+  flex: 0 0 auto;
+  width: 1.5rem; height: 1.5rem;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 2px solid var(--bordure);
+  font-size: .75rem; font-weight: 700;
+  color: var(--texte-doux);
+}
+.qcm-option[data-issue="juste"] { border-color: var(--vert); background: var(--vert-pale); }
+.qcm-option[data-issue="juste"] .puce { border-color: var(--vert); background: var(--vert); color: #fff; }
+.qcm-option[data-issue="faux"]  { border-color: var(--rouge); background: var(--rouge-pale); }
+.qcm-option[data-issue="faux"] .puce { border-color: var(--rouge); background: var(--rouge); color: #fff; }
+.qcm-option .explication { display: block; font-size: .87rem; color: var(--texte-doux); margin-top: .25em; }
+.qcm-option:disabled { cursor: default; }
+
+/* ------------------------------------------------------------------- Fin de */
+.final {
+  margin-top: 2.5rem;
+  padding: 2rem 1.6rem;
+  text-align: center;
+  border-radius: var(--rayon);
+  background: linear-gradient(135deg, var(--violet), var(--violet-vif));
+  color: #fff;
+  box-shadow: var(--ombre-forte);
+}
+.final h2 { color: #fff; }
+.final p { color: rgba(255, 255, 255, .88); }
+.final .bouton { background: #fff; color: var(--violet); }
+
+/* ------------------------------------------------------------------ Dialogue */
+dialog.panneau {
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  background: var(--surface);
+  color: var(--texte);
+  padding: 0;
+  max-width: 560px;
+  width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 2rem);
+  box-shadow: var(--ombre-forte);
+}
+/* `display` ne peut se régler que sur le dialogue ouvert : posé plus haut, il
+   rendrait le panneau visible en permanence. */
+dialog.panneau[open] { display: flex; flex-direction: column; }
+dialog.panneau::backdrop { background: rgba(20, 18, 26, .55); backdrop-filter: blur(3px); }
+dialog.panneau .corps { padding: 1.4rem 1.5rem; overflow-y: auto; min-height: 0; }
+dialog.panneau h2 { font-size: 1.15rem; }
+dialog.panneau .pied { display: flex; gap: .5rem; justify-content: flex-end; flex-wrap: wrap; padding: 0 1.5rem 1.4rem; flex: 0 0 auto; }
+dialog.panneau textarea {
+  width: 100%; min-height: 8rem;
+  font-family: var(--mono); font-size: .8rem;
+  padding: .6em .7em;
+  border-radius: var(--rayon-petit);
+  border: 1px solid var(--bordure);
+  background: var(--surface-2);
+  color: var(--texte);
+  resize: vertical;
+}
+dialog.panneau input[type="text"] {
+  width: 100%; font: inherit; padding: .5em .7em;
+  border-radius: var(--rayon-petit); border: 1px solid var(--bordure);
+  background: var(--surface-2); color: var(--texte);
+}
+.champ { margin-bottom: .9rem; }
+.champ label:not(.depot),
+.champ .etiquette { display: block; font-size: .82rem; font-weight: 600; color: var(--texte-doux); margin-bottom: .3em; }
+
+/* ----------------------------------------------------- Zone de dépôt (.json)
+   Le champ `input[type=file]` natif est une cible de deux lignes de haut, sans
+   indication de ce qu'on attend. On le sort de la vue — sans le retirer du flux
+   du clavier — et on met une vraie surface à sa place. */
+.hors-vue {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.depot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem;
+  text-align: center;
+  min-height: 9.5rem;
+  padding: 1.4rem 1rem;
+  border: 2px dashed var(--bordure);
+  border-radius: var(--rayon);
+  background: var(--surface-2);
+  color: var(--texte-doux);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.depot:hover { border-color: var(--violet-vif); color: var(--texte); }
+.depot .depot-icone { font-size: 1.7rem; line-height: 1; color: var(--violet-vif); }
+.depot .depot-titre { font-weight: 700; font-size: .98rem; color: var(--texte); }
+.depot .depot-sous  { font-size: .85rem; }
+.depot .depot-sous u { text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+/* Le survol d'un fichier glissé : la zone doit devenir évidemment « ouverte ». */
+.depot[data-survol="1"] {
+  border-color: var(--violet-vif);
+  border-style: solid;
+  background: var(--violet-pale);
+  color: var(--violet-vif);
+}
+.depot[data-survol="1"] .depot-titre { color: var(--violet-vif); }
+
+#champ-fichier:focus-visible + .depot { outline: 3px solid var(--violet-vif); outline-offset: 2px; }
+
+/* Sans souris, « déposer » ne veut rien dire : c'est l'autre libellé qui sert. */
+.depot .sur-tactile { display: none; }
+@media (hover: none) {
+  .depot .sur-pointeur { display: none; }
+  .depot .sur-tactile  { display: block; }
+}
+
+/* -------------------------------------------------------------------- Toast */
+.toast {
+  position: fixed;
+  left: 50%; bottom: 1.5rem;
+  transform: translate(-50%, 1rem);
+  background: var(--texte);
+  color: var(--fond);
+  padding: .6em 1.1em;
+  border-radius: 100px;
+  font-size: .9rem; font-weight: 600;
+  box-shadow: var(--ombre-forte);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  z-index: 100;
+}
+.toast[data-visible="1"] { opacity: 1; transform: translate(-50%, 0); }
+
+/* ------------------------------------------------------------- Responsivité */
+@media (max-width: 620px) {
+  body { font-size: 16px; }
+  .etape { grid-template-columns: 1.7rem 1fr; gap: .7rem; }
+  .etape-pastille { width: 1.7rem; height: 1.7rem; font-size: .72rem; }
+  .etape-corps { padding: 1rem .95rem; }
+  .barre .jauge { display: none; }
+  .carte-seance { grid-template-columns: auto 1fr; }
+  .carte-seance .etat { display: none; }
+
+  /* Le rail passe de 2,5 rem à 1,7 rem : l'étiquette du cadenas, calée en dur
+     sur l'ancienne largeur, flottait au milieu du cadre flouté. */
+  .etape[data-etat="verrouille"]::after { left: 2.4rem; right: .8rem; }
+
+  /* Le titre de séance tient sur une ligne. Sans cela il s'enroule sur trois,
+     et l'entête collante mange le tiers de l'écran à chaque défilement. */
+  .barre-interieur { gap: .5rem; padding: .5rem .85rem; }
+  .barre-titre { min-width: 0; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .barre-titre small { display: none; }
+
+  .page    { padding: 1.5rem .85rem 5rem; }
+  .chapeau { margin-bottom: 1.6rem; }
+  .partie-entete { margin: 1.8rem 0 1rem; padding: .85rem 1rem; gap: .6rem; }
+
+  /* Les boutons de l'atelier s'enroulent déjà d'eux-mêmes : l'espace élastique
+     n'y ajoute qu'un trou en fin de ligne. */
+  .atelier-actions { gap: .45rem; padding: .55rem .6rem; }
+  .atelier-actions .espace { display: none; }
+
+  dialog.panneau .corps { padding: 1.1rem 1.1rem; }
+  dialog.panneau .pied  { padding: 0 1.1rem 1.1rem; }
+  dialog.panneau .pied .bouton { flex: 1 1 auto; justify-content: center; }
+}
+
+/* Écran encoché : en paysage, la barre et la colonne passaient sous l'encoche. */
+@supports (padding: max(0px)) {
+  @media (max-width: 620px) {
+    .barre-interieur,
+    .page {
+      padding-left:  max(.85rem, env(safe-area-inset-left));
+      padding-right: max(.85rem, env(safe-area-inset-right));
+    }
+  }
+}
+
+/* ------------------------------------------------------------ Doigt, pas souris
+   Deux corrections que seule la taille de l'écran ne donne pas :
+   — une cible tactile descend ici jusqu'à 33 px, contre 44 px recommandés ;
+   — iOS agrandit la page dès qu'on met le curseur dans un champ écrit en
+     dessous de 16 px, et ne revient jamais à l'échelle de départ. C'est le
+     défaut le plus pénible du parcours sur téléphone : chaque passage dans
+     l'éditeur laissait la page zoomée. */
+@media (pointer: coarse) {
+  .bouton { min-height: 44px; }
+  .bouton.icone { width: 44px; height: 44px; padding: 0; }
+  .qcm-option { padding: .85em 1em; }
+  .qcm-option .puce { width: 1.7rem; height: 1.7rem; }
+
+  .hote-editeur .cm-scroller { font-size: 16px; }
+  .hote-editeur .cm-editor { max-height: 55dvh; }
+  .console { font-size: 15px; }
+  .console .saisie { font-size: 16px; }
+  dialog.panneau input[type="text"] { font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* ------------------------------------------------- CodeMirror en thème sombre
+   Le bundle du site n'embarque pas de thème sombre : sans ces règles, l'éditeur
+   resterait un rectangle blanc au milieu d'une page sombre. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hote-editeur .cm-editor { background: var(--surface); color: var(--texte); }
+  :root:not([data-theme="light"]) .hote-editeur .cm-content { caret-color: var(--texte); }
+  :root:not([data-theme="light"]) .hote-editeur .cm-cursor { border-left-color: var(--texte); }
+  :root:not([data-theme="light"]) .hote-editeur .cm-gutters { color: var(--texte-doux); }
+  :root:not([data-theme="light"]) .hote-editeur .cm-activeLine,
+  :root:not([data-theme="light"]) .hote-editeur .cm-activeLineGutter { background: rgba(255, 255, 255, .04); }
+  :root:not([data-theme="light"]) .hote-editeur .cm-selectionBackground,
+  :root:not([data-theme="light"]) .hote-editeur .cm-content ::selection { background: #3a3357 !important; }
+  :root:not([data-theme="light"]) .hote-editeur .cm-tooltip { background: var(--surface-2); border-color: var(--bordure); color: var(--texte); }
+  :root:not([data-theme="light"]) .hote-editeur .ͼ1 .cm-matchingBracket { background: rgba(165, 138, 232, .28); outline: none; }
+}
+
+:root[data-theme="dark"] .hote-editeur .cm-editor { background: var(--surface); color: var(--texte); }
+:root[data-theme="dark"] .hote-editeur .cm-content { caret-color: var(--texte); }
+:root[data-theme="dark"] .hote-editeur .cm-cursor { border-left-color: var(--texte); }
+:root[data-theme="dark"] .hote-editeur .cm-gutters { color: var(--texte-doux); }
+:root[data-theme="dark"] .hote-editeur .cm-activeLine,
+:root[data-theme="dark"] .hote-editeur .cm-activeLineGutter { background: rgba(255, 255, 255, .04); }
+:root[data-theme="dark"] .hote-editeur .cm-selectionBackground,
+:root[data-theme="dark"] .hote-editeur .cm-content ::selection { background: #3a3357 !important; }
+:root[data-theme="dark"] .hote-editeur .cm-tooltip { background: var(--surface-2); border-color: var(--bordure); color: var(--texte); }
+
+/* ==================================================== Atelier web (HTML/CSS)
+
+   L'élève voit son code et son résultat en même temps : c'est ce qui rend la
+   notion de balise concrète. En dessous de 900 px, les deux colonnes s'empilent. */
+
+.atelier-onglets {
+  display: flex; gap: .2rem;
+  padding: .35rem .5rem 0;
+  border-bottom: 1px solid var(--bordure);
+  overflow-x: auto;
+}
+.atelier-onglets .onglet {
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--texte-doux);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 7px 7px 0 0;
+  padding: .4em .8em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.atelier-onglets .onglet:hover { color: var(--texte); }
+.atelier-onglets .onglet[data-actif="1"] {
+  color: var(--violet-vif);
+  font-weight: 600;
+  background: var(--surface);
+  border-color: var(--bordure);
+}
+
+.atelier-double { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 900px) {
+  .atelier-double { grid-template-columns: 1fr 1fr; }
+  .atelier-double .colonne-apercu { border-left: 1px solid var(--bordure); }
+}
+
+/* En dessous de 900 px les deux colonnes s'empilaient : près de deux hauteurs
+   d'écran de téléphone, et l'aperçu hors de vue pendant qu'on écrit — c'est
+   pourtant le lien entre les deux qui rend la balise concrète. Une bascule les
+   superpose, l'élève passe de l'un à l'autre d'un doigt. */
+.atelier-bascule { display: none; }
+@media (max-width: 899px) {
+  .atelier-bascule {
+    display: flex;
+    gap: .3rem;
+    padding: .5rem;
+    border-bottom: 1px solid var(--bordure);
+    background: var(--surface-2);
+  }
+  .atelier-bascule .volet {
+    flex: 1;
+    font: inherit;
+    font-size: .85rem;
+    font-weight: 600;
+    padding: .5em .8em;
+    min-height: 40px;
+    border: 1px solid var(--bordure);
+    border-radius: 100px;
+    background: transparent;
+    color: var(--texte-doux);
+    cursor: pointer;
+  }
+  .atelier-bascule .volet[data-actif="1"] {
+    background: var(--surface);
+    border-color: var(--violet-vif);
+    color: var(--violet-vif);
+  }
+  .atelier-bascule .volet:focus-visible { outline: 3px solid var(--violet-vif); outline-offset: 2px; }
+
+  .atelier-double[data-volet="code"]   .colonne-apercu { display: none; }
+  .atelier-double[data-volet="apercu"] .colonne-code   { display: none; }
+}
+.atelier-double .colonne-code { min-width: 0; background: var(--surface); }
+.atelier-double .colonne-apercu { min-width: 0; display: flex; flex-direction: column; }
+.atelier-web .hote-editeur .cm-editor { height: 22em; max-height: 60vh; }
+
+.apercu-barre {
+  display: flex; align-items: center; gap: .5em;
+  padding: .45em .9em;
+  border-bottom: 1px solid var(--bordure);
+  background: var(--surface-2);
+}
+.apercu-barre .apercu-libelle {
+  font-size: .68rem; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  color: var(--texte-doux);
+}
+.apercu-barre .apercu-page { font-family: var(--mono); font-size: .78rem; color: var(--violet-vif); }
+
+/* Fond blanc imposé : une page d'élève sans CSS doit ressembler à ce qu'elle
+   sera dans un navigateur, y compris quand le parcours est en thème sombre. */
+.apercu-cadre {
+  flex: 1;
+  width: 100%;
+  min-height: 22em;
+  border: 0;
+  background: #fff;
+  color-scheme: light;
+}
+
+/* ------------------------------------------------ Bandeau d'accompagnement */
+.bandeau-aide {
+  margin: 1.2rem 0 .4rem;
+  padding: .8rem 1rem;
+  border-radius: var(--rayon-petit);
+  border: 1px solid var(--bordure);
+  border-left: 3px solid var(--violet-vif);
+  background: var(--surface);
+}
+.bandeau-aide .etiquette {
+  display: inline-block;
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--violet-vif);
+  margin-bottom: .3em;
+}
+.bandeau-aide p { margin: 0; font-size: .92rem; color: var(--texte-doux); }
+.bandeau-aide[data-niveau="autonome"] { border-left-color: var(--vert); }
+.bandeau-aide[data-niveau="autonome"] .etiquette { color: var(--vert); }
+.bandeau-aide[data-niveau="pas-a-pas"] { border-left-color: var(--or); }
+.bandeau-aide[data-niveau="pas-a-pas"] .etiquette { color: var(--or); }
