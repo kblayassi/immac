@@ -81,6 +81,7 @@ body {
   font-size: 16.5px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
 }
 
 h1, h2, h3 { line-height: 1.25; font-weight: 700; margin: 0 0 .5em; }
@@ -224,18 +225,6 @@ li { margin-bottom: .3em; }
 /* Le libellé du retour disparaît sur petit écran ; la flèche suffit. */
 @media (max-width: 720px) { .libelle-retour { display: none; } }
 .bouton.retour { white-space: nowrap; }
-
-dialog.panneau input[type="file"] {
-  width: 100%;
-  font: inherit;
-  font-size: .9rem;
-  padding: .5em .7em;
-  border-radius: var(--rayon-petit);
-  border: 1px dashed var(--bordure);
-  background: var(--surface-2);
-  color: var(--texte);
-  cursor: pointer;
-}
 
 .barre-titre { font-weight: 700; font-size: .98rem; }
 .barre-titre small { display: block; font-weight: 500; font-size: .78rem; color: var(--texte-doux); }
@@ -593,12 +582,16 @@ dialog.panneau {
   padding: 0;
   max-width: 560px;
   width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 2rem);
   box-shadow: var(--ombre-forte);
 }
+/* `display` ne peut se régler que sur le dialogue ouvert : posé plus haut, il
+   rendrait le panneau visible en permanence. */
+dialog.panneau[open] { display: flex; flex-direction: column; }
 dialog.panneau::backdrop { background: rgba(20, 18, 26, .55); backdrop-filter: blur(3px); }
-dialog.panneau .corps { padding: 1.4rem 1.5rem; }
+dialog.panneau .corps { padding: 1.4rem 1.5rem; overflow-y: auto; min-height: 0; }
 dialog.panneau h2 { font-size: 1.15rem; }
-dialog.panneau .pied { display: flex; gap: .5rem; justify-content: flex-end; flex-wrap: wrap; padding: 0 1.5rem 1.4rem; }
+dialog.panneau .pied { display: flex; gap: .5rem; justify-content: flex-end; flex-wrap: wrap; padding: 0 1.5rem 1.4rem; flex: 0 0 auto; }
 dialog.panneau textarea {
   width: 100%; min-height: 8rem;
   font-family: var(--mono); font-size: .8rem;
@@ -615,7 +608,61 @@ dialog.panneau input[type="text"] {
   background: var(--surface-2); color: var(--texte);
 }
 .champ { margin-bottom: .9rem; }
-.champ label { display: block; font-size: .82rem; font-weight: 600; color: var(--texte-doux); margin-bottom: .3em; }
+.champ label:not(.depot),
+.champ .etiquette { display: block; font-size: .82rem; font-weight: 600; color: var(--texte-doux); margin-bottom: .3em; }
+
+/* ----------------------------------------------------- Zone de dépôt (.json)
+   Le champ `input[type=file]` natif est une cible de deux lignes de haut, sans
+   indication de ce qu'on attend. On le sort de la vue — sans le retirer du flux
+   du clavier — et on met une vraie surface à sa place. */
+.hors-vue {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.depot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem;
+  text-align: center;
+  min-height: 9.5rem;
+  padding: 1.4rem 1rem;
+  border: 2px dashed var(--bordure);
+  border-radius: var(--rayon);
+  background: var(--surface-2);
+  color: var(--texte-doux);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.depot:hover { border-color: var(--violet-vif); color: var(--texte); }
+.depot .depot-icone { font-size: 1.7rem; line-height: 1; color: var(--violet-vif); }
+.depot .depot-titre { font-weight: 700; font-size: .98rem; color: var(--texte); }
+.depot .depot-sous  { font-size: .85rem; }
+.depot .depot-sous u { text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+/* Le survol d'un fichier glissé : la zone doit devenir évidemment « ouverte ». */
+.depot[data-survol="1"] {
+  border-color: var(--violet-vif);
+  border-style: solid;
+  background: var(--violet-pale);
+  color: var(--violet-vif);
+}
+.depot[data-survol="1"] .depot-titre { color: var(--violet-vif); }
+
+#champ-fichier:focus-visible + .depot { outline: 3px solid var(--violet-vif); outline-offset: 2px; }
+
+/* Sans souris, « déposer » ne veut rien dire : c'est l'autre libellé qui sert. */
+.depot .sur-tactile { display: none; }
+@media (hover: none) {
+  .depot .sur-pointeur { display: none; }
+  .depot .sur-tactile  { display: block; }
+}
 
 /* -------------------------------------------------------------------- Toast */
 .toast {
@@ -644,6 +691,60 @@ dialog.panneau input[type="text"] {
   .barre .jauge { display: none; }
   .carte-seance { grid-template-columns: auto 1fr; }
   .carte-seance .etat { display: none; }
+
+  /* Le rail passe de 2,5 rem à 1,7 rem : l'étiquette du cadenas, calée en dur
+     sur l'ancienne largeur, flottait au milieu du cadre flouté. */
+  .etape[data-etat="verrouille"]::after { left: 2.4rem; right: .8rem; }
+
+  /* Le titre de séance tient sur une ligne. Sans cela il s'enroule sur trois,
+     et l'entête collante mange le tiers de l'écran à chaque défilement. */
+  .barre-interieur { gap: .5rem; padding: .5rem .85rem; }
+  .barre-titre { min-width: 0; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .barre-titre small { display: none; }
+
+  .page    { padding: 1.5rem .85rem 5rem; }
+  .chapeau { margin-bottom: 1.6rem; }
+  .partie-entete { margin: 1.8rem 0 1rem; padding: .85rem 1rem; gap: .6rem; }
+
+  /* Les boutons de l'atelier s'enroulent déjà d'eux-mêmes : l'espace élastique
+     n'y ajoute qu'un trou en fin de ligne. */
+  .atelier-actions { gap: .45rem; padding: .55rem .6rem; }
+  .atelier-actions .espace { display: none; }
+
+  dialog.panneau .corps { padding: 1.1rem 1.1rem; }
+  dialog.panneau .pied  { padding: 0 1.1rem 1.1rem; }
+  dialog.panneau .pied .bouton { flex: 1 1 auto; justify-content: center; }
+}
+
+/* Écran encoché : en paysage, la barre et la colonne passaient sous l'encoche. */
+@supports (padding: max(0px)) {
+  @media (max-width: 620px) {
+    .barre-interieur,
+    .page {
+      padding-left:  max(.85rem, env(safe-area-inset-left));
+      padding-right: max(.85rem, env(safe-area-inset-right));
+    }
+  }
+}
+
+/* ------------------------------------------------------------ Doigt, pas souris
+   Deux corrections que seule la taille de l'écran ne donne pas :
+   — une cible tactile descend ici jusqu'à 33 px, contre 44 px recommandés ;
+   — iOS agrandit la page dès qu'on met le curseur dans un champ écrit en
+     dessous de 16 px, et ne revient jamais à l'échelle de départ. C'est le
+     défaut le plus pénible du parcours sur téléphone : chaque passage dans
+     l'éditeur laissait la page zoomée. */
+@media (pointer: coarse) {
+  .bouton { min-height: 44px; }
+  .bouton.icone { width: 44px; height: 44px; padding: 0; }
+  .qcm-option { padding: .85em 1em; }
+  .qcm-option .puce { width: 1.7rem; height: 1.7rem; }
+
+  .hote-editeur .cm-scroller { font-size: 16px; }
+  .hote-editeur .cm-editor { max-height: 55dvh; }
+  .console { font-size: 15px; }
+  .console .saisie { font-size: 16px; }
+  dialog.panneau input[type="text"] { font-size: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -711,6 +812,43 @@ dialog.panneau input[type="text"] {
 @media (min-width: 900px) {
   .atelier-double { grid-template-columns: 1fr 1fr; }
   .atelier-double .colonne-apercu { border-left: 1px solid var(--bordure); }
+}
+
+/* En dessous de 900 px les deux colonnes s'empilaient : près de deux hauteurs
+   d'écran de téléphone, et l'aperçu hors de vue pendant qu'on écrit — c'est
+   pourtant le lien entre les deux qui rend la balise concrète. Une bascule les
+   superpose, l'élève passe de l'un à l'autre d'un doigt. */
+.atelier-bascule { display: none; }
+@media (max-width: 899px) {
+  .atelier-bascule {
+    display: flex;
+    gap: .3rem;
+    padding: .5rem;
+    border-bottom: 1px solid var(--bordure);
+    background: var(--surface-2);
+  }
+  .atelier-bascule .volet {
+    flex: 1;
+    font: inherit;
+    font-size: .85rem;
+    font-weight: 600;
+    padding: .5em .8em;
+    min-height: 40px;
+    border: 1px solid var(--bordure);
+    border-radius: 100px;
+    background: transparent;
+    color: var(--texte-doux);
+    cursor: pointer;
+  }
+  .atelier-bascule .volet[data-actif="1"] {
+    background: var(--surface);
+    border-color: var(--violet-vif);
+    color: var(--violet-vif);
+  }
+  .atelier-bascule .volet:focus-visible { outline: 3px solid var(--violet-vif); outline-offset: 2px; }
+
+  .atelier-double[data-volet="code"]   .colonne-apercu { display: none; }
+  .atelier-double[data-volet="apercu"] .colonne-code   { display: none; }
 }
 .atelier-double .colonne-code { min-width: 0; background: var(--surface); }
 .atelier-double .colonne-apercu { min-width: 0; display: flex; flex-direction: column; }

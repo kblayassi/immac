@@ -593,6 +593,40 @@ la commande habituelle sans argument couvre les trois parcours.
 
 ---
 
+## 9 ter · Sur téléphone et tablette
+
+Rien à écrire dans une séance : tout est dans `app.css` et `app.js`, valable pour
+les trois parcours. Ce que le moteur fait de lui-même quand l'écran est étroit ou
+le pointeur grossier :
+
+| Réglage | Déclencheur | Effet |
+|---|---|---|
+| Champs à 16 px | `(pointer: coarse)` | iOS agrandit la page dès qu'on entre dans un champ écrit plus petit, et n'en revient pas. Concerne l'éditeur, la ligne de saisie de `input()` et les champs du panneau ☰. |
+| Cibles à 44 px | `(pointer: coarse)` | Hauteur minimale des boutons, y compris les ronds ◐ et ☰ de l'entête. |
+| Repli des lignes | `max-width: 620px`, à la création de l'éditeur | `EditorView.lineWrapping` : une ligne longue se replie au lieu de sortir du cadre par la droite. Décidé une fois, à l'ouverture de la page. |
+| Titre sur une ligne | `max-width: 620px` | Le titre de séance est coupé, son sous-titre masqué : l'entête collante garde une seule hauteur. |
+| Bascule Code / Aperçu | `max-width: 899px`, atelier web | Les deux colonnes se superposent au lieu de s'empiler, l'élève passe de l'une à l'autre. `data-volet` sur `.atelier-double`. |
+
+### La zone de dépôt du panneau ☰
+
+Le champ de fichier natif est remplacé par une surface haute (`.depot`), qui accepte
+le glisser-déposer **et** le clic. L'`input[type=file]` reste dans la page, hors de vue
+mais focalisable (`.hors-vue`), pour le clavier et les lecteurs d'écran.
+
+Trois points à connaître avant d'y toucher :
+
+* Le dépôt est capté sur `document` **en phase de capture**. Sans cela, CodeMirror
+  traiterait le fichier avant nous et collerait le JSON dans le programme de l'élève.
+* Le panneau entier est une cible visuelle, pas seulement le cadre en pointillés :
+  un fichier lâché à côté ne doit pas faire quitter la séance.
+* Sans souris, « déposer » ne veut rien dire : les libellés `.sur-pointeur` et
+  `.sur-tactile` s'échangent sous `(hover: none)`.
+
+La confirmation avant remplacement (`confirm`) est le seul garde-fou, et les deux
+entrées — sélecteur et dépôt — passent par la même fonction `charger()`.
+
+---
+
 ## 10 · Vérifier : le banc de test
 
 ```bash

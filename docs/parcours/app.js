@@ -332,6 +332,10 @@ async function creerEditeur(hote, depart, onChange, langage = "python") {
   const coloration = { python, html, css }[langage];
   if (coloration) extensions.splice(4, 0, coloration());
 
+  // Sur un écran de téléphone, une ligne un peu longue sort du cadre par la
+  // droite : l'élève ne voit plus la fin de ce qu'il écrit. On la replie.
+  if (window.matchMedia("(max-width: 620px)").matches) extensions.push(EditorView.lineWrapping);
+
   const vue = new EditorView({ parent: hote, state: EditorState.create({ doc: depart, extensions }) });
 
   return {
@@ -1217,7 +1221,26 @@ function monterCodeWeb(def, etape, corps) {
   const colonneCode = elem("div", "colonne-code");
   const colonneVue = elem("div", "colonne-apercu");
   double.append(colonneCode, colonneVue);
-  atelier.appendChild(double);
+
+  /* Bascule Code / Aperçu. La feuille de style ne la montre qu'en dessous de
+     900 px, là où les deux colonnes s'empilent : au-delà, tout tient côte à
+     côte et l'attribut `data-volet` ne sert à rien. */
+  const bascule = elem("div", "atelier-bascule");
+  const voletCode = elem("button", "volet", "Code");
+  const voletVue  = elem("button", "volet", "Aperçu");
+  bascule.append(voletCode, voletVue);
+  function choisirVolet(nom) {
+    double.dataset.volet = nom;
+    for (const [b, n] of [[voletCode, "code"], [voletVue, "apercu"]]) {
+      b.dataset.actif = n === nom ? "1" : "";
+      b.setAttribute("aria-pressed", String(n === nom));
+    }
+  }
+  voletCode.addEventListener("click", () => choisirVolet("code"));
+  voletVue.addEventListener("click", () => choisirVolet("apercu"));
+  choisirVolet("code");
+
+  atelier.append(bascule, double);
 
   const barreApercu = elem("div", "apercu-barre");
   const titreApercu = elem("span", "apercu-page", pageCourante);
@@ -1507,15 +1530,17 @@ function monterCodeWeb(def, etape, corps) {
 function initPanneau() {
   const dlg = $("#panneau-progression");
 
-  $("#btn-progression").addEventListener("click", () => {
+  function ouvrirPanneau() {
     const total = Object.keys(CATALOGUE).reduce((s, id) => s + totalEtapes(id), 0);
     const faites = Object.keys(CATALOGUE).reduce((s, id) => s + Math.min(nbReussies(id), totalEtapes(id)), 0);
     $("#resume-progression").textContent =
       `${pluriel(faites, "étape validée", "étapes validées")} sur ${total}.`;
     $("#champ-prenom").value = etat.eleve?.prenom || "";
     if ($("#champ-nom")) $("#champ-nom").value = etat.eleve?.nom || "";
-    dlg.showModal();
-  });
+    if (!dlg.open) dlg.showModal();
+  }
+
+  $("#btn-progression").addEventListener("click", ouvrirPanneau);
 
   $("#champ-prenom").addEventListener("input", (ev) => {
     etat.eleve = { ...etat.eleve, prenom: ev.target.value.slice(0, 40) };
@@ -1539,10 +1564,15 @@ function initPanneau() {
     toast("Fichier téléchargé");
   });
 
-  $("#champ-fichier").addEventListener("change", async (ev) => {
-    const fichier = ev.target.files && ev.target.files[0];
+  /* Un seul chemin de chargement, que le fichier vienne du sélecteur ou d'un
+     glisser-déposer : la confirmation est le garde-fou, elle ne se contourne
+     par aucune des deux entrées. */
+  async function charger(fichier) {
     if (!fichier) return;
-    ev.target.value = "";                       // permet de redéposer le même fichier
+    if (!/\.json$/i.test(fichier.name)) {
+      toast("Ce n'est pas un fichier de progression (.json)");
+      return;
+    }
     if (!confirm("Remplacer la progression enregistrée sur cet ordinateur par celle du fichier ?")) return;
     try {
       restaurer(await fichier.text());
@@ -1552,7 +1582,46 @@ function initPanneau() {
     } catch (e) {
       toast(e.message || "Fichier illisible");
     }
+  }
+
+  $("#champ-fichier").addEventListener("change", (ev) => {
+    const fichier = ev.target.files && ev.target.files[0];
+    ev.target.value = "";                       // permet de redéposer le même fichier
+    charger(fichier);
   });
+
+  /* Glisser-déposer. Le panneau entier est la cible, pas seulement le cadre en
+     pointillés : un fichier lâché à côté serait perdu, et le navigateur l'aurait
+     ouvert à la place du parcours. Même chose sur le reste de la page, où le
+     dépôt ouvre le panneau au lieu de quitter la séance en cours. */
+  const zone = $("#zone-depot");
+  const porteUnFichier = (ev) => Array.from(ev.dataTransfer?.types || []).includes("Files");
+
+  dlg.addEventListener("dragover", (ev) => {
+    if (porteUnFichier(ev)) zone.dataset.survol = "1";
+  });
+  dlg.addEventListener("dragleave", (ev) => {
+    if (!dlg.contains(ev.relatedTarget)) zone.dataset.survol = "";
+  });
+  /* En capture, et lui seul : CodeMirror traite les dépôts sur l'éditeur avant
+     que l'événement ne remonte jusqu'ici, et collerait le JSON dans le programme
+     de l'élève. On le coupe donc à la descente, où qu'ait eu lieu le dépôt. */
+  document.addEventListener("dragover", (ev) => {
+    if (!porteUnFichier(ev)) return;
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = "copy";
+  }, true);
+  document.addEventListener("drop", (ev) => {
+    if (!porteUnFichier(ev)) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    zone.dataset.survol = "";
+    const fichier = ev.dataTransfer.files[0];
+    // Ouvrir le panneau sur un fichier qui n'est pas une progression n'aiderait
+    // personne : le message suffit.
+    if (fichier && /\.json$/i.test(fichier.name)) ouvrirPanneau();
+    charger(fichier);
+  }, true);
 
   $("#btn-fermer-progression").addEventListener("click", (ev) => { ev.preventDefault(); dlg.close(); });
 }
