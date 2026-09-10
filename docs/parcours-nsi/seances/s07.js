@@ -445,7 +445,6 @@ Admis mention bien</code></pre>`,
           validation: {
             codeContient: [
               { motif: "elif[\\s\\S]*elif[\\s\\S]*elif[\\s\\S]*elif", message: "Six cas : il faut quatre elif." },
-              { motif: "58", message: "La somme des coefficients vaut 58." },
               { motif: "\\bmaths\\b[\\s\\S]*\\bmaths\\b", message: "Sers-toi des variables de notes." },
             ],
             codeAbsent: [
