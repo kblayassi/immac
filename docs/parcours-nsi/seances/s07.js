@@ -327,27 +327,43 @@ else:
         {
           id: "a1",
           type: "code",
-          titre: "Les quatre niveaux de scolarité",
+          titre: "De l'âge à la classe",
           contenu: `
-            <p>Reprends la cascade du cours. Avec <code>age = 16</code>, affiche
-            exactement :</p>
-            <pre class="bloc-code"><code>Tu es au lycée</code></pre>
-            <p>Moins de 11 ans : <code>Tu es à l'école primaire</code>. Moins de 15 ans :
-            <code>Tu es au collège</code>. Moins de 18 ans : <code>Tu es au lycée</code>.
-            Sinon : <code>Tu es adulte</code>.</p>`,
+            <p>Dans une scolarité sans redoublement ni saut de classe, l'âge à la rentrée
+            suffit à déterminer la classe :</p>
+            <div class="enveloppe-table">
+            <table class="table-simple">
+              <tr><th>Âge à la rentrée</th><th>Message à afficher</th></tr>
+              <tr><td>moins de 15 ans</td><td><code>tu es encore au collège.</code></td></tr>
+              <tr><td>15 ans</td><td><code>tu entres en Seconde.</code></td></tr>
+              <tr><td>16 ans</td><td><code>tu entres en Première.</code></td></tr>
+              <tr><td>17 ans</td><td><code>tu entres en Terminale.</code></td></tr>
+              <tr><td>18 ans et plus</td><td><code>tu as dépassé l'âge du lycée.</code></td></tr>
+            </table>
+            </div>
+            <p>Chaque message est précédé de l'âge. Avec <code>age = 16</code>, le programme
+            affiche exactement :</p>
+            <pre class="bloc-code"><code>À 16 ans, tu entres en Première.</code></pre>
+            <p>Le nombre affiché doit venir de la variable : si on change <code>age</code>,
+            la phrase doit suivre.</p>`,
           depart: `age = 16\n\n`,
           validation: {
             codeContient: [
-              { motif: "elif[\\s\\S]*elif", message: "Quatre cas : au moins deux elif." },
-              { motif: "\\bage\\b[\\s\\S]*\\bage\\b", message: "La cascade doit porter sur la variable age." },
+              { motif: "elif[\\s\\S]*elif[\\s\\S]*elif", message: "Cinq cas : il te faut au moins trois elif." },
+              { motif: "print[\\s\\S]*\\bage\\b", message: "L'âge affiché doit venir de la variable age." },
             ],
-            sortie: "Tu es au lycée",
+            codeAbsent: [
+              { motif: "16\\s*,?\\s*[\"']?\\s*ans", message: "N'écris pas 16 à la main dans le message : sers-toi de la variable age." },
+            ],
+            sortie: "À 16 ans, tu entres en Première.",
           },
+          felicitation: "Deux bornes et trois classes au milieu : une cascade qui ne compare pas toujours de la même façon. 🎒",
           indices: [
-            "Va du plus jeune au plus âgé : chaque test n'a besoin que d'une comparaison.",
-            "Le dernier cas n'a pas de condition.",
+            "Cinq cas : une borne en bas, trois classes au milieu, une borne en haut.",
+            "La borne du bas se teste avec &lt; ; les trois classes du milieu se reconnaissent à une égalité (<code>elif age == 16</code>) ; celle du haut tombe dans le <code>else</code>.",
+            "Pour la phrase : <code>print(\"À\", age, \"ans, tu entres en Première.\")</code>, ou une f-string.",
           ],
-          solution: `age = 16\n\nif age < 11:\n    print("Tu es à l'école primaire")\nelif age < 15:\n    print("Tu es au collège")\nelif age < 18:\n    print("Tu es au lycée")\nelse:\n    print("Tu es adulte")\n`,
+          solution: `age = 16\n\nif age < 15:\n    print("À", age, "ans, tu es encore au collège.")\nelif age == 15:\n    print("À", age, "ans, tu entres en Seconde.")\nelif age == 16:\n    print("À", age, "ans, tu entres en Première.")\nelif age == 17:\n    print("À", age, "ans, tu entres en Terminale.")\nelse:\n    print("À", age, "ans, tu as dépassé l'âge du lycée.")\n`,
         },
 
         {
