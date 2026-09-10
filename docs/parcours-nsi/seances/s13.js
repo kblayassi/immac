@@ -81,7 +81,7 @@ print(carre(a))</code></pre>
         {
           id: "d2",
           type: "qcm",
-          titre: "Exercice 35 — Locale ou globale ?",
+          titre: "Locale ou globale ?",
           contenu: `<p>On considère le programme suivant.</p>
             <pre class="bloc-code"><code>def euro_vers_dollar(euros):
     return euros * 1.19
@@ -298,7 +298,7 @@ def exemple(parametre):      # parametre : LOCALE
         {
           id: "a1",
           type: "code",
-          titre: "Exercice 37 — Compter les voyelles",
+          titre: "Compter les voyelles",
           contenu: `
             <p>Deux nouveautés de Python, données ici :</p>
             <ul>
@@ -330,7 +330,7 @@ def exemple(parametre):      # parametre : LOCALE
         {
           id: "a2",
           type: "code",
-          titre: "Exercice 38 — La suite de Syracuse",
+          titre: "La suite de Syracuse",
           contenu: `
             <p>La <strong>conjecture de Syracuse</strong>. Partons d'un entier <em>n</em> :
             s'il est pair, on le divise par 2 ; sinon, on le multiplie par 3 puis on ajoute 1.
@@ -372,7 +372,7 @@ def exemple(parametre):      # parametre : LOCALE
         {
           id: "a3",
           type: "code",
-          titre: "Exercice 38 (suite) — Le temps de vol",
+          titre: "Le temps de vol",
           contenu: `
             <p>Écris <code>temps_de_vol(n)</code>, qui renvoie le <strong>nombre
             d'étapes</strong> nécessaires pour arriver à 1 en partant de <code>n</code>.</p>
@@ -397,7 +397,7 @@ def exemple(parametre):      # parametre : LOCALE
         {
           id: "a4",
           type: "code",
-          titre: "Exercice 39 — La parfumerie",
+          titre: "La parfumerie",
           contenu: `
             <p>Dans une parfumerie, deux promotions sont proposées pour l'achat de deux
             articles :</p>
@@ -435,7 +435,7 @@ def exemple(parametre):      # parametre : LOCALE
         {
           id: "a5",
           type: "code",
-          titre: "Exercice 39 (fin) — Le programme principal",
+          titre: "Le programme principal",
           contenu: `
             <p>Muni d'un billet de <strong>50 €</strong>, Nicolas souhaite offrir deux parfums
             à sa mère. Ajoute le programme principal : il demande le prix des deux parfums,
@@ -482,7 +482,7 @@ Nicolas peut offrir les deux parfums à sa mère.</code></pre>
         {
           id: "x1",
           type: "code",
-          titre: "Exercice 38 (fin) — Le record de Syracuse",
+          titre: "Le record de Syracuse",
           contenu: `
             <p>Écris <code>temps_max(n)</code>, qui renvoie le plus grand temps de vol obtenu
             pour un nombre de départ inférieur ou égal à <code>n</code>, ainsi que le nombre

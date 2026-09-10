@@ -126,7 +126,7 @@ carre(5)      # vaut 25</code></pre>
         {
           id: "d4",
           type: "code",
-          titre: "Exercice 31 — Le parc d'attraction",
+          titre: "Le parc d'attraction",
           contenu: `
             <p>Le droit d'entrée journalier dans un parc est de <strong>37 €</strong> pour un
             adulte et de <strong>28 €</strong> pour un enfant. Alice et Bob font payer les
@@ -156,7 +156,7 @@ carre(5)      # vaut 25</code></pre>
         {
           id: "d5",
           type: "qcm",
-          titre: "Exercice 31 (suite) — Pourquoi le résultat change",
+          titre: "Pourquoi le résultat change",
           contenu: `<p><code>prix(3, 2)</code> renvoie 167 et <code>prix(2, 3)</code>
             renvoie 158, alors que les deux groupes comptent cinq personnes.</p>`,
           question: "Pourquoi ?",
@@ -179,7 +179,7 @@ carre(5)      # vaut 25</code></pre>
         {
           id: "d6",
           type: "code",
-          titre: "Exercice 31 (fin) — Le vrai programme d'Alice et Bob",
+          titre: "Le vrai programme d'Alice et Bob",
           contenu: `
             <p>Alice et Bob veulent aller plus vite : saisir simplement les nombres, sans
             avoir à écrire <code>prix(3, 2)</code>. Complète leur programme.</p>
@@ -207,7 +207,7 @@ Nombre d'enfants ? 2
         {
           id: "d7",
           type: "code",
-          titre: "Exercice 32 — Le tarif étudiant",
+          titre: "Le tarif étudiant",
           contenu: `
             <p>Un nouveau tarif entre en vigueur : le tarif <strong>étudiant</strong>, à
             30 €.</p>
@@ -239,7 +239,7 @@ Nombre d'enfants ? 2
         {
           id: "d8",
           type: "prediction",
-          titre: "Exercice 33 — Le piège du return",
+          titre: "Le piège du return",
           contenu: `<p>Bob veut afficher les dix premiers résultats de la table de 9. Il écrit
             ceci.</p>`,
           code: `def table_mult(nbre):\n    for i in range(1, 11):\n        return i * nbre\n\nprint(table_mult(9))`,
@@ -264,7 +264,7 @@ Nombre d'enfants ? 2
         {
           id: "d9",
           type: "code",
-          titre: "Exercice 33 (suite) — La procédure",
+          titre: "La procédure",
           contenu: `
             <p>Corrige la fonction de Bob pour qu'elle affiche bien les dix résultats :</p>
             <pre class="bloc-code"><code>9
@@ -354,7 +354,7 @@ afficher_table(9)   # pas de print autour : elle affiche elle-même</code></pre>
         {
           id: "a1",
           type: "code",
-          titre: "Exercice 34 — Afficher le calcul complet",
+          titre: "Afficher le calcul complet",
           contenu: `
             <p>Modifie la fonction pour qu'elle affiche également le calcul.
             <code>table_multiplication(9)</code> doit afficher :</p>
@@ -405,7 +405,7 @@ afficher_table(9)   # pas de print autour : elle affiche elle-même</code></pre>
         {
           id: "a3",
           type: "code",
-          titre: "Exercice 36 — Le plus grand",
+          titre: "Le plus grand",
           contenu: `
             <ol>
               <li>Écris <code>maxi_2(n1, n2)</code>, qui renvoie le plus grand des deux
@@ -441,7 +441,7 @@ afficher_table(9)   # pas de print autour : elle affiche elle-même</code></pre>
         {
           id: "a4",
           type: "code",
-          titre: "Exercice 40 — La distance d'arrêt",
+          titre: "La distance d'arrêt",
           contenu: `
             <p>Pour déterminer la distance d'arrêt d'un véhicule, on additionne la distance
             parcourue pendant le <strong>temps de réaction</strong> et la <strong>distance
@@ -547,7 +547,7 @@ Distance d'arrêt : 26.38888888888889 m</code></pre>`,
           type: "code",
           titre: "La chaîne de conversions",
           contenu: `
-            <p>Trois fonctions qui s'enchaînent, comme dans l'exercice 35 du chapitre :</p>
+            <p>Trois fonctions qui s'enchaînent :</p>
             <ul>
               <li><code>euro_vers_dollar(euros)</code> : un euro vaut 1,19 dollar ;</li>
               <li><code>dollar_vers_yuan(dollars)</code> : un dollar vaut 6,93 yuans ;</li>

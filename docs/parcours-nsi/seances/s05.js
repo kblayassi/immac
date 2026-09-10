@@ -126,7 +126,7 @@ print("Fin du programme")</code></pre>
         {
           id: "d4",
           type: "code",
-          titre: "Exercice 10 — Triangle rectangle en B ?",
+          titre: "Triangle rectangle en B ?",
           contenu: `
             <p>On considère un triangle <em>ABC</em> tel que <em>BC</em> = 3,
             <em>AC</em> = 5 et <em>AB</em> = 4. On cherche à déterminer s'il est rectangle
@@ -157,7 +157,7 @@ print("Fin du programme")</code></pre>
         {
           id: "d5",
           type: "qcm",
-          titre: "Exercice 10 (suite) — Et si ce n'était pas le cas ?",
+          titre: "Et si ce n'était pas le cas ?",
           contenu: `<p>Reprends le programme précédent, mais avec <code>AC = 6</code> :
             le triangle n'est alors plus rectangle.</p>
             <pre class="bloc-code"><code>BC = 3

@@ -86,7 +86,7 @@ for _ in range(100):       # 100 fois, sans se servir du compteur
         {
           id: "d2",
           type: "code",
-          titre: "Exercice 22 — Premiers for",
+          titre: "Premiers for",
           contenu: `
             <p>Écris un programme qui affiche <strong>7 fois</strong> la phrase
             <code>Je dois respecter le Grand Sorcier.</code></p>
@@ -113,7 +113,7 @@ for _ in range(100):       # 100 fois, sans se servir du compteur
         {
           id: "d3",
           type: "code",
-          titre: "Exercice 22 (suite) — Deux erreurs à corriger",
+          titre: "Deux erreurs à corriger",
           contenu: `
             <p>Teste ce script, puis corrige la ou les erreurs pour que la phrase s'affiche
             <strong>10 fois</strong>.</p>`,
@@ -135,7 +135,7 @@ for _ in range(100):       # 100 fois, sans se servir du compteur
         {
           id: "d4",
           type: "prediction",
-          titre: "Exercice 24 — Les trois visages de range()",
+          titre: "Les trois visages de range()",
           contenu: `<p>Trois boucles, trois écritures de <code>range</code>.</p>`,
           code: `for i in range(10):\n    print(i)\n\nfor i in range(1, 10):\n    print(i)\n\nfor i in range(5, 55, 5):\n    print(i)`,
           question: "Combien de tours effectue chacune des trois boucles ?",
@@ -162,7 +162,7 @@ for _ in range(100):       # 100 fois, sans se servir du compteur
         {
           id: "d5",
           type: "code",
-          titre: "Exercice 23 — Bob et les fraises",
+          titre: "Bob et les fraises",
           contenu: `
             <p>Bob découvre un fraisier. Il cueille une fraise et la mange. Y prenant goût,
             il y retourne et en prend 2, puis 3 — et ainsi de suite jusqu'à 10.</p>
@@ -191,7 +191,7 @@ Bob mange 10 fraises</code></pre>`,
         {
           id: "d6",
           type: "code",
-          titre: "Exercice 23 (suite) — La variable était inutile",
+          titre: "La variable était inutile",
           contenu: `
             <p>En réalité, la variable <code>nombre</code> ne servait à rien : la variable de
             boucle <code>i</code> suffit !</p>
@@ -243,7 +243,7 @@ print(somme)             # 3. APRÈS la boucle → 15</code></pre>
         {
           id: "d8",
           type: "prediction",
-          titre: "Exercice 28 — Dérouler une boucle",
+          titre: "Dérouler une boucle",
           contenu: `<p>Sans exécuter, déroule ce programme tour par tour.</p>`,
           code: `somme = 0\n\nfor i in range(1, 6):\n    somme = somme + i\n\nprint(somme)`,
           question: "Qu'affiche-t-il ?",
@@ -265,7 +265,7 @@ print(somme)             # 3. APRÈS la boucle → 15</code></pre>
         {
           id: "d9",
           type: "code",
-          titre: "Exercice 29 — Accumuler dans une variable",
+          titre: "Trois accumulateurs à écrire",
           contenu: `
             <p>Complète le programme pour qu'à la fin :</p>
             <ol>
@@ -343,7 +343,7 @@ print(resultat)                 # après</code></pre>
         {
           id: "a1",
           type: "code",
-          titre: "Exercice 25 — Compter jusqu'à 50",
+          titre: "Compter jusqu'à 50",
           contenu: `
             <p>Écris un programme qui affiche exactement :</p>
             <pre class="bloc-code"><code>i = 0
@@ -370,7 +370,7 @@ i = 50</code></pre>
         {
           id: "a2",
           type: "code",
-          titre: "Exercice 26 — Le même affichage, un argument",
+          titre: "Le même affichage, un argument",
           contenu: `
             <p>Affiche cette suite avec une boucle <code>for i in range(...)</code> à
             <strong>un seul</strong> argument :</p>
@@ -399,7 +399,7 @@ i = 50</code></pre>
         {
           id: "a3",
           type: "code",
-          titre: "Exercice 26 (suite) — Deux, puis trois arguments",
+          titre: "Deux, puis trois arguments",
           contenu: `
             <p>Le même affichage, deux fois de plus : d'abord avec une boucle à
             <strong>deux</strong> arguments, puis avec une boucle à
@@ -437,7 +437,7 @@ i = 50</code></pre>
         {
           id: "a4",
           type: "code",
-          titre: "Exercice 27 — Quatre boucles à écrire",
+          titre: "Quatre boucles à écrire",
           contenu: `
             <p>Cet exercice se faisait sur le papier ; ici, tu l'écris directement.
             Quatre boucles, dans cet ordre :</p>
@@ -472,7 +472,7 @@ i = 50</code></pre>
         {
           id: "a5",
           type: "code",
-          titre: "Exercice 30 — Le triangle de dièses",
+          titre: "Le triangle de dièses",
           contenu: `
             <p>Écris un programme qui affiche 20 lignes, la <em>n</em>-ième contenant
             <em>n</em> symboles <code>#</code> :</p>

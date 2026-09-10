@@ -99,7 +99,7 @@ type(True)      # &lt;class 'bool'&gt;</code></pre>
         {
           id: "d3",
           type: "qcm",
-          titre: "Exercice 2 — Le piège du .0",
+          titre: "Le piège du .0",
           contenu: `<p>Voici deux affectations qui se ressemblent beaucoup.</p>
             <pre class="bloc-code"><code>c = 3.14
 d = 1.0</code></pre>`,
@@ -121,7 +121,7 @@ d = 1.0</code></pre>`,
         {
           id: "d4",
           type: "qcm",
-          titre: "Exercice 2 (suite) — Le type d'un résultat",
+          titre: "Le type d'un résultat",
           contenu: `<p>Le type d'une variable dépend aussi du <strong>calcul</strong> qui la
             remplit.</p>
             <pre class="bloc-code"><code>f = "Bonjour, " + "ça va ?"
@@ -183,7 +183,7 @@ h = 4.2 + 1</code></pre>`,
         {
           id: "d6",
           type: "prediction",
-          titre: "Exercice 5 — Prévoir le type d'un calcul",
+          titre: "Prévoir le type d'un calcul",
           contenu: `<p>Sept calculs. L'un d'eux ne fonctionne pas du tout.</p>`,
           code: `a = 3 + 2.0\nb = 6 / 2\nc = 6 // 2\nd = 1.5 ** 3\ne = "py" + "thon"\nf = 3 * "miaou"\ng = 2 + "a"`,
           question: "Quelle ligne provoque une erreur ?",
@@ -239,7 +239,7 @@ miaoumiaoumiaou &lt;class 'str'&gt;</code></pre>
         {
           id: "d8",
           type: "code",
-          titre: "Exercice 6 — Trouver la ligne fautive",
+          titre: "Trouver la ligne fautive",
           contenu: `
             <p>L'exécution de ce code provoque une erreur.</p>
             <p><strong>1.</strong> Sans exécuter, devine quelle instruction est fautive.
@@ -301,7 +301,7 @@ miaoumiaoumiaou &lt;class 'str'&gt;</code></pre>
         {
           id: "d10",
           type: "code",
-          titre: "Exercice 7 — Dialoguer avec l'utilisateur",
+          titre: "Dialoguer avec l'utilisateur",
           contenu: `
             <p>Écris un programme qui demande <strong>deux nombres</strong> à l'utilisateur,
             puis affiche leur somme. Exemple avec 2 et 3 :</p>
@@ -519,7 +519,7 @@ Tu as vécu environ 6205 jours</code></pre>`,
           type: "code",
           titre: "Additionner un nombre et une lettre",
           contenu: `
-            <p>La ligne <code>2 + "a"</code> de l'exercice 5 provoquait une
+            <p>La ligne <code>2 + "a"</code> de « Prévoir le type d'un calcul » provoquait une
             <code>TypeError</code>. Fais-la fonctionner de <strong>deux façons
             différentes</strong> :</p>
             <pre class="bloc-code"><code>2a

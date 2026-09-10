@@ -573,7 +573,7 @@ Rectangle quelque part : True</code></pre>
             ],
             sortie: "Rectangle en A : False\nRectangle en B : True\nRectangle en C : False\nRectangle quelque part : True",
           },
-          felicitation: "Pythagore en booléens. Tu es prêt pour l'exercice 10. 📐",
+          felicitation: "Pythagore en booléens. Tu es prêt pour le triangle de la séance suivante. 📐",
           indices: [
             "Le carré d'une longueur s'écrit <code>AB ** 2</code> ou <code>AB * AB</code>.",
             "Rectangle en A : l'hypoténuse est [BC], donc <code>BC ** 2 == AB ** 2 + AC ** 2</code>.",

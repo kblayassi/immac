@@ -97,7 +97,7 @@ else:
         {
           id: "d3",
           type: "code",
-          titre: "Exercice 11 — Pile ou face, version deux if",
+          titre: "Pile ou face, version deux if",
           contenu: `
             <p>On simule le lancer de deux pièces :</p>
             <ul>
@@ -136,7 +136,7 @@ else:
         {
           id: "d4",
           type: "code",
-          titre: "Exercice 11 (suite) — La version avec else",
+          titre: "La version avec else",
           contenu: `
             <p>Recommence, cette fois avec un <strong>seul test</strong> suivi d'un
             <code>else</code>. Le comportement doit être identique.</p>`,
@@ -162,7 +162,7 @@ else:
         {
           id: "d5",
           type: "qcm",
-          titre: "Exercice 11 (fin) — Quelle version préférer ?",
+          titre: "Quelle version préférer ?",
           contenu: `<p>Les deux versions font la même chose. Imagine maintenant qu'on se
             trompe dans la seconde condition de la première version, en écrivant
             <code>if lancer_1 == lancer_2</code> deux fois.</p>`,
@@ -331,7 +331,7 @@ Tu es majeur.</code></pre>`,
           type: "code",
           titre: "Le triangle, enfin bavard",
           contenu: `
-            <p>Reprends l'exercice 10 de la séance précédente, mais cette fois avec un
+            <p>Reprends le triangle rectangle de la séance précédente, mais cette fois avec un
             message dans <strong>les deux cas</strong>. Avec <code>AC = 6</code>, le triangle
             n'est pas rectangle :</p>
             <pre class="bloc-code"><code>ABC n'est pas rectangle en B</code></pre>

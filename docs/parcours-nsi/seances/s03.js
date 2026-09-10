@@ -233,7 +233,7 @@ print(f"{nom} a {age} ans.")</code></pre>
         {
           id: "d8",
           type: "code",
-          titre: "Exercice 7 — La phrase de présentation",
+          titre: "La phrase de présentation",
           contenu: `
             <p>Demande son prénom puis son âge à l'utilisateur, et affiche la phrase
             <em>« Bonjour, je m'appelle ___ et j'ai ___ ans. »</em> avec <strong>un
@@ -265,7 +265,7 @@ Bonjour, je m'appelle Ali et j'ai 17 ans.</code></pre>`,
         {
           id: "d9",
           type: "code",
-          titre: "Exercice 8 — Le cercle",
+          titre: "Le cercle",
           contenu: `
             <p>Demande à l'utilisateur le <strong>rayon</strong> d'un cercle, puis affiche sa
             circonférence et son aire avec un seul appel à <code>print()</code>.</p>
@@ -503,7 +503,7 @@ Il fait 18 °C, soit 64.4 °F</code></pre>
           type: "code",
           titre: "Le cadre décoratif",
           contenu: `
-            <p>Souviens-toi de l'exercice 5 : multiplier une chaîne par un entier la répète.
+            <p>Souviens-toi : multiplier une chaîne par un entier la répète.
             Sers-t'en pour encadrer un titre :</p>
             <pre class="bloc-code sans-copie"><code>******************
 *     PYTHON     *

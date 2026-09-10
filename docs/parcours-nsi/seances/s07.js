@@ -108,7 +108,7 @@ else:
         {
           id: "d3",
           type: "prediction",
-          titre: "Exercice 9 — Une cascade de mentions",
+          titre: "Une cascade de mentions",
           contenu: `<p>Ce programme demande une note et affiche une mention. L'utilisateur
             saisit <strong>18</strong>.</p>`,
           code: `note = float(input("Saisir votre note : "))\n\nif note >= 16:\n    print("TB")\nelif note >= 14:\n    print("B")\nelif note >= 12:\n    print("AB")\nelif note >= 10:\n    print("reçu")\nelse:\n    print("refusé")`,
@@ -132,7 +132,7 @@ else:
         {
           id: "d4",
           type: "prediction",
-          titre: "Exercice 9 (suite) — Deux if indépendants",
+          titre: "Deux if indépendants",
           contenu: `<p>Ce second programme n'a pas de <code>elif</code>. L'utilisateur
             saisit <strong>20</strong>.</p>`,
           code: `note = float(input("Saisir votre note : "))\n\nif note == 20:\n    print("Parfait !")\nif note != 0:\n    print("Ce n'est pas nul !")`,
@@ -159,7 +159,7 @@ else:
         {
           id: "d5",
           type: "code",
-          titre: "Exercice 12 — Où est l'angle droit ?",
+          titre: "Où est l'angle droit ?",
           contenu: `
             <p>Détermine si le triangle <em>ABC</em> est rectangle, et si oui
             <strong>en quel sommet</strong>. Avec <em>AB</em> = 5, <em>AC</em> = 3 et
@@ -190,7 +190,7 @@ ABC est un triangle rectangle en C</code></pre>
         {
           id: "d6",
           type: "code",
-          titre: "Exercice 13 — Les fléchettes de Bob",
+          titre: "Les fléchettes de Bob",
           contenu: `
             <p>Bob lance une fléchette sur un plateau de 5 cases sur 5, et gagne si elle
             atteint la <strong>croix rouge</strong> : la ligne du milieu ou la colonne du
@@ -223,7 +223,7 @@ ABC est un triangle rectangle en C</code></pre>
         {
           id: "d7",
           type: "qcm",
-          titre: "Exercice 13 (suite) — La case centrale",
+          titre: "La case centrale",
           contenu: `<p>Reprends le programme précédent. La fléchette tombe sur la case
             centrale : <code>numero_ligne</code> vaut 2 <strong>et</strong>
             <code>numero_colonne</code> vaut 2.</p>`,
@@ -249,7 +249,7 @@ ABC est un triangle rectangle en C</code></pre>
         {
           id: "d8",
           type: "code",
-          titre: "Exercice 13 (fin) — Le nouveau barème",
+          titre: "Le nouveau barème",
           contenu: `
             <p>Bob change les règles : la <strong>case rouge centrale</strong> rapporte
             désormais 100 points, les cases <strong>oranges</strong> de la croix 50 points,
@@ -402,7 +402,7 @@ else:
         {
           id: "a4",
           type: "code",
-          titre: "Exercice 14 — Le simulateur de bac",
+          titre: "Le simulateur de bac",
           contenu: `
             <p>On simule le résultat du baccalauréat, en ne tenant compte que des épreuves
             terminales :</p>

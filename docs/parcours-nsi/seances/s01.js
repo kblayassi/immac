@@ -166,7 +166,7 @@ nom = "Ali"</code></pre>
         {
           id: "d5",
           type: "prediction",
-          titre: "Exercice 1 — Anticiper les affectations",
+          titre: "Anticiper les affectations",
           contenu: `<p>Avant d'exécuter quoi que ce soit, lis ce programme ligne à ligne et
             anticipe ce qu'il affiche.</p>`,
           code: `a = 2\nb = a + 1\na = 5\nc = 3 * a\n\nprint(a, b, c)`,
@@ -190,7 +190,7 @@ nom = "Ali"</code></pre>
         {
           id: "d6",
           type: "prediction",
-          titre: "Exercice 1 (suite) — Une variable qui grandit",
+          titre: "Une variable qui grandit",
           contenu: `<p>Même exercice avec ce second programme. Attention, la ligne
             <code>a = a + 1</code> n'est pas une équation mathématique.</p>`,
           code: `a = 2\na = a + 1\na = a + 1\na = a + 1\n\nprint(a)`,
@@ -213,7 +213,7 @@ nom = "Ali"</code></pre>
         {
           id: "d7",
           type: "code",
-          titre: "Exercice 3 — Traduire une phrase en code",
+          titre: "Traduire une phrase en code",
           contenu: `
             <p>Il ne s'agit plus d'anticiper des valeurs, mais d'<strong>écrire</strong> le
             code correspondant aux instructions.</p>
@@ -306,7 +306,7 @@ nom = "Ali"</code></pre>
         {
           id: "d10",
           type: "code",
-          titre: "Exercice 4 — Échanger deux variables",
+          titre: "Échanger deux variables",
           contenu: `
             <p>Le programme ci-dessous <strong>est censé</strong> échanger les contenus de
             <code>a</code> et <code>b</code>… mais il n'y arrive pas. Corrige-le,

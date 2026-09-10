@@ -81,7 +81,7 @@ print(x)</code></pre>
         {
           id: "d2",
           type: "prediction",
-          titre: "Exercice 15 — Une boucle à observer",
+          titre: "Une boucle à observer",
           contenu: `<p>Lis attentivement avant d'exécuter.</p>`,
           code: `nombre = 3\n\nwhile nombre < 20:\n    nombre = 2 * nombre\n    print(nombre)`,
           question: "Combien de tours de boucle ce programme effectue-t-il, et que vaut le dernier nombre affiché ?",
@@ -104,7 +104,7 @@ print(x)</code></pre>
         {
           id: "d3",
           type: "code",
-          titre: "Exercice 15 (suite) — Le dé têtu",
+          titre: "Le dé têtu",
           contenu: `
             <p>Ce second programme relance un dé tant qu'il n'obtient pas 6.
             <strong>Exécute-le plusieurs fois</strong> : le nombre de lignes change à chaque
@@ -171,7 +171,7 @@ while n &lt; 10:     # 2. CONDITION D'ARRÊT
         {
           id: "d5",
           type: "code",
-          titre: "Exercice 17 — La boucle qui ne s'arrête jamais",
+          titre: "La boucle qui ne s'arrête jamais",
           contenu: `
             <p><strong>1.</strong> Exécute le code ci-dessous et observe ce qui se passe.
             <strong>2.</strong> Pourquoi cette boucle est-elle infinie ? Corrige-la pour
@@ -199,7 +199,7 @@ fin de la boucle, n = 10</code></pre>`,
         {
           id: "d6",
           type: "code",
-          titre: "Exercice 16 — Contrôler une saisie",
+          titre: "Contrôler une saisie",
           contenu: `
             <p>Complète le programme : tant que l'utilisateur n'entre pas le bon mot de passe
             (<code>123456</code>), la question est reposée.</p>
@@ -230,7 +230,7 @@ Vous pouvez entrer !</code></pre>`,
         {
           id: "d7",
           type: "code",
-          titre: "Exercice 16 (suite) — Une saisie dans un intervalle",
+          titre: "Une saisie dans un intervalle",
           contenu: `
             <p>Sur le même principe, écris un programme qui demande un nombre décimal entre
             1 et 100. Tant que la saisie n'est pas dans l'intervalle, une nouvelle saisie est
@@ -260,7 +260,7 @@ On peut continuer !</code></pre>`,
         {
           id: "d8",
           type: "code",
-          titre: "Exercice 18 — Le drapeau",
+          titre: "Le drapeau",
           contenu: `
             <p>Un <strong>drapeau</strong> (<em>flag</em>) est une variable booléenne qui
             marque une situation. Ici, <code>continuer</code> vaut <code>True</code> tant que
@@ -367,7 +367,7 @@ Décollage !</code></pre>`,
         {
           id: "a2",
           type: "code",
-          titre: "Exercice 19 — Le bilan des dépenses",
+          titre: "Le bilan des dépenses",
           contenu: `
             <p>L'administration de l'université doit faire le bilan annuel de ses dépenses.
             Toutes ont été enregistrées, mais <strong>personne ne sait combien il y en
@@ -404,7 +404,7 @@ Dépense totale : 340</code></pre>
         {
           id: "a3",
           type: "code",
-          titre: "Exercice 20 — Le capital d'Alice",
+          titre: "Le capital d'Alice",
           contenu: `
             <p>Alice a déposé <strong>1000 €</strong> sur un compte rémunéré à
             <strong>5 % par an</strong>. Chaque année, son capital est multiplié par
@@ -435,7 +435,7 @@ Dépense totale : 340</code></pre>
         {
           id: "a4",
           type: "code",
-          titre: "Exercice 21 — Combien de lancers pour un 6 ?",
+          titre: "Combien de lancers pour un 6 ?",
           contenu: `
             <p>Écris un programme qui lance un dé jusqu'à obtenir un 6, puis affiche le
             nombre de lancers qu'il a fallu. Ce nombre doit être stocké dans une variable
