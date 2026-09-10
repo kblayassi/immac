@@ -255,7 +255,7 @@ miaoumiaoumiaou &lt;class 'str'&gt;</code></pre>
           depart: `lisa = 2\nmarge = 5\nbart = lisa + 2 * marge\nmaggie = bart / (10 - 2 * marge)\nhomer = bart * "D'oh!"\n\nprint(bart, maggie, homer)\n`,
           validation: {
             codeContient: [
-              { motif: "^\\s*#\\s*maggie", options: "m", message: "La ligne fautive doit être commentée, pas supprimée." },
+              { motif: "^\\s*#\\s*maggie", options: "m", avecCommentaires: true, message: "La ligne fautive doit être commentée, pas supprimée." },
               { motif: "\\bhomer\\b[\\s\\S]*\\bhomer\\b", message: "Garde l'affichage de bart et homer." },
             ],
             sortie: "12 D'oh!D'oh!D'oh!D'oh!D'oh!D'oh!D'oh!D'oh!D'oh!D'oh!D'oh!D'oh!",

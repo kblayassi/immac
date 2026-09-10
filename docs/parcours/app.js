@@ -350,6 +350,37 @@ async function creerEditeur(hote, depart, onChange, langage = "python") {
 
 /* ================================================================= Validation */
 
+/* Les motifs jugent le programme, pas ce qu'on en dit. Un énoncé de départ écrit
+   « pas de else ici » et l'élève, poli, garde le commentaire : sans ce nettoyage,
+   la validation lui reproche un else qu'il n'a pas écrit. On retire donc les
+   commentaires avant de chercher les motifs — en respectant les chaînes, où un
+   dièse reste un caractère ordinaire (`print("###")`). */
+function sansCommentaires(code) {
+  let net = "", i = 0;
+  while (i < code.length) {
+    const c = code[i];
+    if (c === '"' || c === "'") {                        // on traverse la chaîne
+      const delimiteur = code.slice(i, i + 3) === c + c + c ? c + c + c : c;
+      net += delimiteur;
+      i += delimiteur.length;
+      while (i < code.length) {
+        if (code[i] === "\\") { net += code.slice(i, i + 2); i += 2; continue; }
+        if (code.slice(i, i + delimiteur.length) === delimiteur) {
+          net += delimiteur;
+          i += delimiteur.length;
+          break;
+        }
+        if (delimiteur.length === 1 && code[i] === "\n") break;   // chaîne non fermée
+        net += code[i++];
+      }
+      continue;
+    }
+    if (c === "#") { while (i < code.length && code[i] !== "\n") i++; continue; }
+    net += code[i++];
+  }
+  return net;
+}
+
 /* Une étape de code déclare ses attentes ; l'ordre des contrôles est pensé pour
    que le message le plus utile arrive en premier :
    forme du code → exécution sans erreur → sortie produite → assertions. */
@@ -359,11 +390,16 @@ async function validerCode(etape, code, executerAvecSaisies) {
 
   if (!code.trim()) return { reussi: false, echecs: ["Ton éditeur est vide : écris d'abord un programme."] };
 
+  // `avecCommentaires` est pour les rares exercices dont la consigne est
+  // justement de commenter une ligne : là, le dièse fait partie de la réponse.
+  const nu = sansCommentaires(code);
+  const relire = (regle) => (regle.avecCommentaires ? code : nu);
+
   for (const regle of v.codeContient || []) {
-    if (!new RegExp(regle.motif, regle.options || "").test(code)) echecs.push(regle.message);
+    if (!new RegExp(regle.motif, regle.options || "").test(relire(regle))) echecs.push(regle.message);
   }
   for (const regle of v.codeAbsent || []) {
-    if (new RegExp(regle.motif, regle.options || "").test(code)) echecs.push(regle.message);
+    if (new RegExp(regle.motif, regle.options || "").test(relire(regle))) echecs.push(regle.message);
   }
   if (echecs.length) return { reussi: false, echecs };
 

@@ -53,16 +53,52 @@ def executer(code, saisies=None):
         signal.signal(signal.SIGALRM, ancien)
     return normaliser(tampon.getvalue()), None, espace
 
+def sansCommentaires(code):
+    """Jumeau de la fonction du même nom dans app.js : retire les commentaires
+    Python sans toucher aux dièses qui vivent dans une chaîne."""
+    net, i = [], 0
+    while i < len(code):
+        c = code[i]
+        if c in "\"'":
+            delim = c * 3 if code[i:i + 3] == c * 3 else c
+            net.append(delim)
+            i += len(delim)
+            while i < len(code):
+                if code[i] == "\\":
+                    net.append(code[i:i + 2]); i += 2; continue
+                if code[i:i + len(delim)] == delim:
+                    net.append(delim); i += len(delim); break
+                if len(delim) == 1 and code[i] == "\n":
+                    break
+                net.append(code[i]); i += 1
+            continue
+        if c == "#":
+            while i < len(code) and code[i] != "\n":
+                i += 1
+            continue
+        net.append(c); i += 1
+    return "".join(net)
+
+def commentaires_de(code):
+    """Les lignes de commentaire d'un code, telles que l'élève les laissera en
+    place s'il se contente de compléter l'énoncé."""
+    nu = sansCommentaires(code).split("\n")
+    gardees = [l for i, l in enumerate(code.split("\n"))
+               if l.strip().startswith("#") and (i >= len(nu) or not nu[i].strip())]
+    return "\n".join(gardees)
+
 def valider(code, v, saisies=None):
-    """Rejoue la logique de validерCode de app.js. Renvoie la liste des échecs."""
+    """Rejoue la logique de validerCode de app.js. Renvoie la liste des échecs."""
     echecs = []
     if not code.strip():
         return ["éditeur vide"]
+    nu = sansCommentaires(code)
+    relire = lambda r: code if r.get("avecCommentaires") else nu
     for r in v.get("codeContient", []):
-        if not re.search(r["motif"], code, drapeaux(r.get("options"))):
+        if not re.search(r["motif"], relire(r), drapeaux(r.get("options"))):
             echecs.append("codeContient /%s/" % r["motif"])
     for r in v.get("codeAbsent", []):
-        if re.search(r["motif"], code, drapeaux(r.get("options"))):
+        if re.search(r["motif"], relire(r), drapeaux(r.get("options"))):
             echecs.append("codeAbsent /%s/" % r["motif"])
     if echecs:
         return echecs
@@ -158,6 +194,16 @@ def main(seance, parcours="parcours-python"):
             souci.append(f"{e['id']} : le code de départ passe déjà la validation")
             print(f"  ✗ {nom} le départ passe déjà !")
             continue
+
+        # L'élève garde souvent les commentaires de l'énoncé : ils ne doivent
+        # ni faire échouer un programme juste, ni offrir la validation.
+        commentes = commentaires_de(e["depart"] or "")
+        if commentes:
+            echecs = valider(e["solution"] + "\n" + commentes, v, e.get("saisiesTest"))
+            if echecs:
+                souci.append(f"{e['id']} : les commentaires du départ font échouer la solution — {', '.join(echecs)}")
+                print(f"  ✗ {nom} commentaires du départ pénalisants : {', '.join(echecs)}")
+                continue
 
         print(f"  ✓ {nom} {e['indices']} indice(s)")
 
