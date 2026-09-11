@@ -18,3 +18,9 @@ Nous savons désormais :
 Ces compétences sont essentielles pour structurer notre pensée, développer des **algorithmes** efficaces et écrire des **programmes clairs et réutilisables**.
 
 Et ce n’est que le début ! Très bientôt, nous apprendrons à **manipuler des données complexes**, à **chercher des solutions efficaces à des problèmes**… et à écrire nos premiers **projets complets** en Python. 🐍🚀
+
+!!! tip "Le mémo du chapitre"
+
+    Toutes les notions de ce chapitre tiennent sur une fiche : variables, opérateurs, conditionnelles, boucles, fonctions et premières bibliothèques.
+
+    [Télécharger le mémo :fontawesome-solid-file-pdf:](../../files/NSI/Python1/memo_python_chapitre1.pdf)
