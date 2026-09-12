@@ -1,6 +1,7 @@
 ---
-title: Présentation
+title: NSI Première
 weight: 0
+retitled: true
 hide: 
     - toc
 ---
