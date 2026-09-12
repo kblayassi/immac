@@ -9,6 +9,12 @@
  * rien des notions enseignées, il sait dérouler des étapes et les valider.
  */
 
+/* Ce que « juste » veut dire — partagé avec la correction des évaluations. */
+import { normaliser, sansAccents, comparable, motifIndulgent, sansCommentaires,
+         SORTIE_MISE_EN_FORME } from "./comparaison.js";
+/* L'interpréteur et l'éditeur, partagés eux aussi. */
+import { creerPython, creerEditeur, executerAvecSaisies } from "./atelier.js";
+
 /* Le moteur est partagé par plusieurs parcours (SNT, NSI). Il ne se repère donc
    pas à sa propre adresse mais à celle de la PAGE qui le charge : les séances et
    la configuration se trouvent toujours à côté de l'index.html, jamais à côté
@@ -61,86 +67,6 @@ function echapper(texte) {
   return String(texte).replace(/[&<>"']/g, (c) => (
     { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
   ));
-}
-
-/* Comparaison de sorties : on ne veut pas qu'une espace en fin de ligne ou une
-   ligne vide finale fasse échouer un élève dont le programme est juste. */
-function normaliser(texte) {
-  return String(texte ?? "")
-    .replace(/\r\n?/g, "\n")
-    .split("\n")
-    .map((l) => l.replace(/[ \t]+$/, ""))
-    .join("\n")
-    .replace(/\n+$/, "")
-    .replace(/^\n+/, "");
-}
-
-/* Les accents ne sont pas davantage l'objet des exercices : « Frequence » tapé
-   au clavier vaut « Fréquence ». On les retire des deux côtés de la comparaison. */
-function sansAccents(texte) {
-  return String(texte).normalize("NFD").replace(/\p{M}/gu, "");
-}
-
-/* Comparaison indulgente, pour juger une réponse et non une frappe : ni la casse,
-   ni l'espacement, ni les accents ne sont l'objet des exercices. « Total :30 »,
-   « total : 30 » et « TOTAL:  30 » sont la même réponse.
-
-   Un espace reste exigé entre deux caractères alphanumériques : sans cela
-   « 1 2 3 » et « 123 » deviendraient identiques, et là c'est bien la réponse qui
-   change — print(a, b, c) ne fait pas la même chose que print(str(a) + str(b)). */
-function comparable(texte) {
-  return sansAccents(normaliser(texte).toLowerCase())
-    .replace(/[ \t]+/g, " ")
-    .replace(/ ?([^\p{L}\p{N} \n]) ?/gu, "$1");
-}
-
-/* …sauf quand l'espacement EST l'exercice. Une sortie attendue qui indente une
-   ligne ou aligne des colonnes dessine une figure : sapin, losange, cadre,
-   bannière, histogramme. Là, un espace de trop est une faute, et la comparaison
-   redevient exacte. Neuf étapes sont dans ce cas ; `sortieStricte` permet de le
-   forcer ailleurs — ou de le refuser, quand des colonnes alignées ne sont qu'une
-   mise en page suggérée (les deux tables de vérité). */
-const SORTIE_MISE_EN_FORME = /^[ \t]|[ \t]{2,}/m;
-
-/* Même indulgence pour `sortieRegex`. Le motif est écrit par l'enseignant, avec
-   l'espacement de la solution : « Rendu : 3 euros ». L'élève qui écrit
-   « Rendu: 3 euros » — ou une f-string sans espace avant les deux-points — donne
-   la même réponse. On relâche donc les espaces littéraux du motif, selon la règle
-   de comparable() : facultatifs au contact d'une ponctuation, toujours exigés
-   entre deux mots (« 1 2 3 » ≠ « 123 »). Jamais un saut de ligne à la place, et
-   ni les classes [ \t] ni les échappements \d \s ne sont touchés. */
-function motifIndulgent(motif) {
-  // Le littéral que représente le motif à l'indice i, ou null si c'est un
-  // métacaractère ou une classe abrégée (\d, \S…) — donc rien de ponctuel.
-  const litteral = (i) => {
-    const c = motif[i];
-    if (c === undefined) return null;
-    if (c === "\\") {
-      const d = motif[i + 1];
-      return d === undefined || /[A-Za-z0-9]/.test(d) ? null : d;
-    }
-    return "()[]{}*+?^$|.".includes(c) ? null : c;
-  };
-  const ponctuation = (c) => c != null && !/[\p{L}\p{N} \t]/u.test(c);
-
-  let sortie = "";
-  let classe = false;
-  let precedent = null;                       // dernier littéral émis
-  for (let i = 0; i < motif.length; i++) {
-    const c = motif[i];
-    if (c === "\\") { sortie += motif.slice(i, i + 2); precedent = litteral(i); i++; continue; }
-    if (classe)      { sortie += c; if (c === "]") classe = false; continue; }
-    if (c === "[")   { sortie += c; classe = true; precedent = null; continue; }
-    if (c !== " ")   { sortie += c; precedent = litteral(i); continue; }
-
-    let fin = i;
-    while (motif[fin + 1] === " ") fin++;     // une suite d'espaces = un espace
-    const souple = ponctuation(precedent) || ponctuation(litteral(fin + 1));
-    sortie += souple ? "[ \t]*" : "[ \t]+";
-    precedent = " ";
-    i = fin;
-  }
-  return sortie;
 }
 
 function pluriel(n, singulier, plur) {
@@ -249,142 +175,17 @@ function initTheme() {
 
 /* Un seul interpréteur pour toute l'application : Pyodide pèse ~10 Mo. Chaque
    exécution repart d'un espace de noms neuf, les étapes restent indépendantes. */
-const Python = (() => {
-  let worker = null;
-  let compteur = 0;
-  const enAttente = new Map();
-
-  function creer() {
-    worker = new Worker(URL_WORKER);
-    worker.onmessage = (ev) => {
-      const resoudre = enAttente.get(ev.data?.id);
-      if (!resoudre) return;
-      enAttente.delete(ev.data.id);
-      resoudre(ev.data);
-    };
-    worker.onerror = () => {
-      for (const [id, resoudre] of enAttente) {
-        resoudre({ id, ok: false, erreur: "Interpréteur Python indisponible." });
-      }
-      enAttente.clear();
-    };
-  }
-
-  function redemarrer() {
-    if (worker) worker.terminate();
-    for (const [id, resoudre] of enAttente) resoudre({ id, ok: false, erreur: "Exécution interrompue." });
-    enAttente.clear();
-    worker = null;
-  }
-
-  function demander(charge, delaiMs = 15000) {
-    if (!worker) creer();
-    const id = ++compteur;
-    return new Promise((resolve) => {
-      let fini = false;
-      const terminer = (r) => { if (!fini) { fini = true; clearTimeout(m); resolve(r); } };
-      const m = setTimeout(() => {
-        // Seul terminate() libère un worker bloqué dans une boucle infinie.
-        redemarrer();
-        terminer({
-          ok: false,
-          erreur: `Temps dépassé (${Math.round(delaiMs / 1000)} s).\n` +
-                  "Ton programme tourne-t-il sans fin ? Vérifie la condition d'arrêt de tes boucles.",
-        });
-      }, delaiMs);
-      enAttente.set(id, terminer);
-      worker.postMessage({ id, ...charge });
-    });
-  }
-
-  return {
-    prechauffer: () => demander({ action: "prechauffer" }, 120000),
-    executer: (code, reponses) => demander({ action: "run", code, reponses }, 15000),
-    valider: (code, tests, reponses) => demander({ action: "check", code, tests, reponses }, 15000),
-  };
-})();
-
-/* =================================================================== Éditeur */
-
-let CM = null;
-async function chargerCodeMirror() {
-  if (!CM) CM = await import(URL_BUNDLE);
-  return CM;
-}
-
-async function creerEditeur(hote, depart, onChange, langage = "python") {
-  const { EditorView, EditorState, basicSetup, indentUnit, keymap, indentMore, indentLess,
-          python, html, css } = await chargerCodeMirror();
-
-  // Deux espaces en HTML/CSS, quatre en Python : ce sont les usages de chaque langage.
-  const tabulation = langage === "python" ? "    " : "  ";
-
-  const extensions = [
-    basicSetup,
-    EditorState.tabSize.of(tabulation.length),
-    indentUnit.of(tabulation),
-    keymap.of([
-      { key: "Tab", run: indentMore, preventDefault: true },
-      { key: "Shift-Tab", run: indentLess, preventDefault: true },
-    ]),
-    EditorView.updateListener.of((u) => { if (u.docChanged) onChange(u.state.doc.toString()); }),
-  ];
-  const coloration = { python, html, css }[langage];
-  if (coloration) extensions.splice(4, 0, coloration());
-
-  // Sur un écran de téléphone, une ligne un peu longue sort du cadre par la
-  // droite : l'élève ne voit plus la fin de ce qu'il écrit. On la replie.
-  if (window.matchMedia("(max-width: 620px)").matches) extensions.push(EditorView.lineWrapping);
-
-  const vue = new EditorView({ parent: hote, state: EditorState.create({ doc: depart, extensions }) });
-
-  return {
-    vue,
-    lire: () => vue.state.doc.toString(),
-    ecrire: (texte) => {
-      vue.dispatch({ changes: { from: 0, to: vue.state.doc.length, insert: texte } });
-      onChange(texte);
-    },
-  };
-}
+const Python = creerPython(URL_WORKER);
 
 /* ================================================================= Validation */
 
-/* Les motifs jugent le programme, pas ce qu'on en dit. Un énoncé de départ écrit
-   « pas de else ici » et l'élève, poli, garde le commentaire : sans ce nettoyage,
-   la validation lui reproche un else qu'il n'a pas écrit. On retire donc les
-   commentaires avant de chercher les motifs — en respectant les chaînes, où un
-   dièse reste un caractère ordinaire (`print("###")`). */
-function sansCommentaires(code) {
-  let net = "", i = 0;
-  while (i < code.length) {
-    const c = code[i];
-    if (c === '"' || c === "'") {                        // on traverse la chaîne
-      const delimiteur = code.slice(i, i + 3) === c + c + c ? c + c + c : c;
-      net += delimiteur;
-      i += delimiteur.length;
-      while (i < code.length) {
-        if (code[i] === "\\") { net += code.slice(i, i + 2); i += 2; continue; }
-        if (code.slice(i, i + delimiteur.length) === delimiteur) {
-          net += delimiteur;
-          i += delimiteur.length;
-          break;
-        }
-        if (delimiteur.length === 1 && code[i] === "\n") break;   // chaîne non fermée
-        net += code[i++];
-      }
-      continue;
-    }
-    if (c === "#") { while (i < code.length && code[i] !== "\n") i++; continue; }
-    net += code[i++];
-  }
-  return net;
-}
-
 /* Une étape de code déclare ses attentes ; l'ordre des contrôles est pensé pour
    que le message le plus utile arrive en premier :
-   forme du code → exécution sans erreur → sortie produite → assertions. */
-async function validerCode(etape, code, executerAvecSaisies) {
+   forme du code → exécution sans erreur → sortie produite → assertions.
+
+   `lancerLeCode` est l'atelier de l'appelant : il reçoit les tests et rend le
+   verdict du worker. */
+async function validerCode(etape, code, lancerLeCode) {
   const v = etape.validation || {};
   const echecs = [];
 
@@ -403,7 +204,7 @@ async function validerCode(etape, code, executerAvecSaisies) {
   }
   if (echecs.length) return { reussi: false, echecs };
 
-  const r = await executerAvecSaisies(v.tests || null);
+  const r = await lancerLeCode(v.tests || null);
   if (!r) return null;                                   // saisie abandonnée
   if (!r.ok)    return { reussi: false, echecs: [r.erreur], brut: r };
   if (r.erreur) return { reussi: false, echecs: ["Ton programme s'est arrêté sur une erreur — le détail est dans la console."], brut: r };
@@ -920,7 +721,7 @@ function monterCode(def, etape, corps) {
     editeur = await creerEditeur(hote, depart, (texte) => {
       dossier.codes[etape.id] = texte;
       ecrireEtat();
-    });
+    }, URL_BUNDLE);
   }, { rootMargin: "600px 0px" });
   observateur.observe(atelier);
 
@@ -930,7 +731,7 @@ function monterCode(def, etape, corps) {
       editeur = await creerEditeur(hote, depart, (texte) => {
         dossier.codes[etape.id] = texte;
         ecrireEtat();
-      });
+      }, URL_BUNDLE);
     }
     return editeur;
   };
@@ -966,29 +767,12 @@ function monterCode(def, etape, corps) {
     });
   }
 
-  const MAX_SAISIES = 60;
-
-  /* Lance le programme, en redemandant le worker à chaque saisie réclamée.
-     `tests` non nul → validation par assertions dans le même espace de noms. */
-  async function lancer(code, tests) {
-    const reponses = [];
-    for (;;) {
-      const r = tests ? await Python.valider(code, tests, reponses)
-                      : await Python.executer(code, reponses);
-      if (!r.ok) return r;
-
-      if (r.besoin_entree) {
-        if (reponses.length >= MAX_SAISIES) {
-          return { ok: false, erreur: `Trop de saisies demandées (${MAX_SAISIES}). ` +
-                                      "input() serait-il dans une boucle sans fin ?" };
-        }
-        ecrire(r.stdout || "", "saisie");
-        reponses.push(await reclamerSaisie());
-        continue;
-      }
-      return r;
-    }
-  }
+  /* Lance le programme, en redemandant le worker à chaque saisie réclamée. */
+  const lancer = (code, tests) => executerAvecSaisies(Python, code, {
+    tests,
+    reclamerSaisie,
+    afficher: (sortie) => ecrire(sortie, "saisie"),
+  });
 
   function verrouiller(actif) {
     [btnExec, btnValider, btnReset].forEach((b) => { b.disabled = actif; });
@@ -1378,7 +1162,7 @@ function monterCodeWeb(def, etape, corps) {
         dossier.codes[etape.id] = { ...source };
         ecrireEtat();
         programmerApercu();
-      }, /\.css$/i.test(f.nom) ? "css" : "html");
+      }, URL_BUNDLE, /\.css$/i.test(f.nom) ? "css" : "html");
     }
   }
 

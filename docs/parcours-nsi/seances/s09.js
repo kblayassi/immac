@@ -437,10 +437,9 @@ i = 50</code></pre>
         {
           id: "a4",
           type: "code",
-          titre: "Quatre boucles à écrire",
+          titre: "Deux boucles à écrire",
           contenu: `
-            <p>Cet exercice se faisait sur le papier ; ici, tu l'écris directement.
-            Quatre boucles, dans cet ordre :</p>
+            <p>Deux boucles à écrire, dans cet ordre :</p>
             <ol>
               <li>les carrés des entiers de 1 à 10 inclus ;</li>
               <li>les multiples de 5 de 5 à 100 inclus.</li>
