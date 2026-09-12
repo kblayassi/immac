@@ -38,6 +38,11 @@ theme:
         icon: octicons/moon-16
         name: Switch to system preference
 
+# Fichiers présents dans docs/ mais qui n'ont rien à faire sur le site.
+# docs/package.json ne sert qu'à Node, pour les bancs d'essai de tools/.
+exclude_docs: |
+  package.json
+
 markdown_extensions: #for the emojis
   - attr_list
   - pymdownx.emoji:

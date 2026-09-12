@@ -1,0 +1,41 @@
+{
+  "format": "bareme/v1",
+  "evaluation": "eval-blanc",
+  "titre": "Évaluation à blanc",
+  "noteSur": 20,
+  "arrondi": 0.25,
+
+  "questions": {
+
+    "q1": {
+      "titre": "Afficher un message",
+      "criteres": [
+        { "points": 1, "libelle": "Le programme s'exécute sans erreur", "sansErreur": true },
+        { "points": 2, "libelle": "Affiche Bonjour", "sortie": "Bonjour" },
+        { "points": 1, "libelle": "Emploie print()", "codeContient": "print\\s*\\(" }
+      ]
+    },
+
+    "q2": {
+      "titre": "La somme des dix premiers entiers",
+      "criteres": [
+        { "points": 1, "libelle": "Le programme s'exécute sans erreur", "sansErreur": true },
+        { "points": 2, "libelle": "Affiche 55", "sortie": "55" },
+        { "points": 2, "libelle": "Emploie une boucle", "codeContient": "\\b(for|while)\\b" },
+        { "points": 1, "libelle": "N'écrit pas 55 en dur", "codeAbsent": "\\b55\\b" }
+      ]
+    },
+
+    "q3": {
+      "titre": "Le type d'une valeur",
+      "points": 2,
+      "correct": 2
+    },
+
+    "q4": {
+      "titre": "Expliquer l'indentation",
+      "points": 3
+    }
+
+  }
+}

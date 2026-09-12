@@ -1,0 +1,4 @@
+{
+  "_comment": "Les fichiers .js de docs/ sont des modules ES, chargés par <script type=module>. Ce fichier le dit à Node, pour que les bancs d'essai de tools/ puissent les importer directement — le package.json de la racine déclare commonjs. Il est retiré du site par `exclude_docs` (mkdocs.yml) : il n'est jamais publié.",
+  "type": "module"
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ma copie corrigée</title>
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../parcours/app.css">
+<link rel="stylesheet" href="eval.css">
+</head>
+<body>
+
+<header class="barre">
+  <div class="barre-interieur">
+    <span class="marque" aria-hidden="true"><span class="logo">&gt;_</span></span>
+    <div class="barre-titre">Ma copie corrigée</div>
+    <span class="barre-espace"></span>
+  </div>
+</header>
+
+<main id="vue" class="page" tabindex="-1">
+
+  <!-- Tant qu'aucun fichier n'est déposé, la page ne montre que ceci. Elle est
+       remplacée entièrement par la copie dès qu'un fichier valide arrive. -->
+  <div class="accueil">
+    <h1>Consulter ma copie</h1>
+    <p>Dépose ici le fichier que ton professeur t'a rendu — celui dont le nom
+       commence par <code>copie-</code>. Tu y verras tes réponses, le détail de
+       tes points et son appréciation.</p>
+    <p class="discret">Ce fichier ne quitte pas ton navigateur : il est lu ici,
+       et rien n'est envoyé nulle part.</p>
+
+    <input type="file" id="champ-fichier" class="hors-vue" accept="application/json,.json">
+    <label class="depot" id="zone-depot" for="champ-fichier">
+      <span class="depot-icone" aria-hidden="true">&#11015;</span>
+      <span class="depot-titre sur-pointeur">Dépose ici ta copie <code>.json</code></span>
+      <span class="depot-titre sur-tactile">Ta copie corrigée</span>
+      <span class="depot-sous sur-pointeur">ou <u>clique pour parcourir</u> tes fichiers</span>
+      <span class="depot-sous sur-tactile"><u>Touche ici pour la choisir</u></span>
+    </label>
+  </div>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="copie.js"></script>
+</body>
+</html>
