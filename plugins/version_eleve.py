@@ -175,10 +175,15 @@ def _retirer_div(html, ouverture):
         html = html[:debut] + html[fin:]
 
 
+# Les deux niveaux de NSI. Une page de terminale doit être épurée comme une page
+# de première : ajouter un niveau au site ne doit pas rouvrir les corrections.
+SECTIONS_NSI = ('NSI/', 'NSI_Terminale/')
+
+
 def on_page_markdown(markdown, page, config, files):
     if config.get('extra', {}).get('version') != 'eleve':
         return markdown
-    if not page.file.src_uri.startswith('NSI/'):
+    if not page.file.src_uri.startswith(SECTIONS_NSI):
         return markdown
     epure, _ = _epurer(markdown)
     return epure
@@ -187,7 +192,7 @@ def on_page_markdown(markdown, page, config, files):
 def on_post_page(output, page, config):
     if config.get('extra', {}).get('version') != 'eleve':
         return output
-    if not page.file.src_uri.startswith('NSI/'):
+    if not page.file.src_uri.startswith(SECTIONS_NSI):
         return output
     output = SOLUTION_B64.sub('', output)
     output = _retirer_div(output, OUVERTURE_PANNEAU)

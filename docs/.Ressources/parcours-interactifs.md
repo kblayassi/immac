@@ -64,6 +64,7 @@ docs/parcours-python/           un parcours (SNT)
 
 docs/parcours-nsi/              l'autre (NSI chapitre 1), même structure
 docs/parcours-web/              le troisième (SNT, Le Web) — langage: "web"
+docs/parcours-nsi-term/         le quatrième (NSI Terminale, chapitre 1)
 ```
 
 !!! info "Le moteur ne sait rien du cours"
@@ -81,6 +82,7 @@ docs/parcours-web/              le troisième (SNT, Le Web) — langage: "web"
 | SNT — Python | `…/immac/parcours-python/` | `…/immac/prof/parcours-python/` | 11 séances, 266 étapes |
 | NSI — chapitre 1 | `…/immac/parcours-nsi/` | `…/immac/prof/parcours-nsi/` | 13 séances, 225 étapes |
 | SNT — Le Web | `…/immac/parcours-web/` | `…/immac/prof/parcours-web/` | 4 séances, 84 étapes |
+| NSI Terminale — chapitre 1 | `…/immac/parcours-nsi-term/` | `…/immac/prof/parcours-nsi-term/` | 8 séances prévues, 4 écrites (90 étapes) |
 
 L'adresse `prof/` n'est pas listée mais **n'est pas protégée** : qui la connaît y accède.
 
@@ -678,6 +680,7 @@ mkdocs build -f mkdocs-prof.yml   # version prof : corrections conservées
 | SNT — Python | 11 | 266 | ✅ complet, vérifié |
 | NSI — chapitre 1 | 13 | 225 | ✅ complet, vérifié |
 | SNT — Le Web | 4 | 84 | ✅ complet, vérifié |
+| NSI Terminale — chapitre 1 | 4 / 8 | 90 | 🚧 séances 1 à 4 écrites et vérifiées |
 
 ### Décisions arrêtées, à ne pas re-proposer
 
@@ -689,12 +692,39 @@ mkdocs build -f mkdocs-prof.yml   # version prof : corrections conservées
   bonus, pour la fin d'année.
 - **Pas de backend.** Progression en `localStorage`, échangée par fichier `.json`.
 - Boutons du site vers un parcours : `{ .md-button }`, sans fond.
+- **Règles de rédaction arrêtées le 12/09/2026**, après relecture de la séance 1 de Terminale
+  (elles valent pour tous les parcours) :
+    - une explication qui doit être comprise ne vit **jamais** dans un coup de pouce seul :
+      elle va dans le `apres`, que tout le monde lit en réussissant ;
+    - les amorces de fonction sont des **`pass`**, jamais un `return` déjà écrit — décider si
+      une opération renvoie ou modifie fait partie du travail ;
+    - **aucune étape ne livre le code qu'une étape suivante demande d'écrire** ; une
+      `prediction` placée avant un exercice doit porter sur autre chose que sa solution ;
+    - les implémentations portent un **nom**, et on y renvoie par ce nom, jamais par
+      « l'étape d'avant » ;
+    - une méthode que les élèves ne connaissent pas (`remove`, `insert`, `pop(0)`) se donne
+      **dans la consigne**, pas dans un indice ;
+    - pas d'étape `cours` en ouverture d'une partie *Application* ;
+    - **pas de cas-piège dans les tests** : un cas limite qui n'est pas un point de cours fait
+      échouer des solutions justes.
+- **NSI Terminale, chapitre 1 : tout en fonctions, pas de classes.** Le programme range le
+  vocabulaire objet dans la même rubrique que les structures de données, mais les deux sont
+  séparés ici : le chapitre suivant reprendra les mêmes piles et files pour les réécrire en
+  objet. Décision prise avec Kévin le 12/09/2026.
+- **Le parcours de Terminale *est* le chapitre**, il n'y a pas de pages de cours en double
+  comme pour le chapitre 1 de Première : seulement une introduction, la page du parcours et
+  une conclusion.
 
 ### Pistes non tranchées
 
-- **Les autres chapitres de NSI** pourraient recevoir le même traitement. Le chapitre 4
-  (listes et chaînes) et le chapitre 5 (spécifier et tester) s'y prêtent bien : beaucoup
-  d'exercices déjà auto-corrigés à convertir.
+- **Les autres chapitres de NSI de Première** pourraient recevoir le même traitement. Le
+  chapitre 4 (listes et chaînes) et le chapitre 5 (spécifier et tester) s'y prêtent bien :
+  beaucoup d'exercices déjà auto-corrigés à convertir.
+- **Les séances 5 à 8 du parcours de Terminale** restent à écrire : les trois
+  implémentations de la file (tableau, tableau circulaire, deux piles), les listes chaînées,
+  le choix d'une structure (liste ou dictionnaire), et les applications (notation polonaise
+  inverse, tri crêpes, simulation). Réservées à la séance 5 et à ne pas traiter avant : la
+  file circulaire et la file par deux piles.
 - **Une séance 12 pour SNT** rassemblant les projets, si l'année le permet.
 - **Un tableau de bord enseignant** supposerait un backend : écarté pour l'instant, mais
   la question se reposera si les élèves perdent leur progression en changeant de poste.
