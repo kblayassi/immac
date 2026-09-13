@@ -43,16 +43,11 @@ petites étapes qui se valident **une par une**, avec correction automatique et 
 | 3 | Les piles : dernier arrivé, premier servi | LIFO, `empiler`, `depiler`, parenthésage, Ctrl+Z, trois implémentations |
 | 4 | Les files : premier arrivé, premier servi | FIFO, `enfiler`, `defiler`, files de priorité, et le coût du défilement |
 | | **Partie 3 — Plusieurs implémentations** | |
-| 5 | La même file, trois fois | par tableau, par tableau circulaire, par deux piles |
-| 6 | Les listes chaînées | maillons, chaînage, et ce qu'il rend gratuit |
+| 5 | La même file, trois fois | mesurer un coût, tableau circulaire, file par deux piles |
+| 6 | Les listes chaînées | maillons, mutabilité, pile et file chaînées, insertion en temps constant |
 | | **Partie 4 — Choisir et appliquer** | |
-| 7 | Choisir la bonne structure | liste ou dictionnaire, tableau ou chaînage, coût des opérations |
-| 8 | Piles et files au travail | parenthésage, notation polonaise inverse, tri crêpes, file d'attente |
-
-!!! note "Où en est le parcours"
-    Les **quatre premières séances** sont écrites et vérifiées — environ 6 h de travail,
-    90 étapes. Les séances 5 à 8 apparaissent grisées sur la page d'accueil du parcours :
-    elles arrivent.
+| 7 | Choisir la bonne structure | recherche séquentielle, table de hachage, index, coût des opérations |
+| 8 | Piles et files au travail | notation polonaise inverse, tri crêpes, labyrinthe en profondeur et en largeur |
 
 !!! info "Ce que le parcours couvre du programme officiel"
     La rubrique **Structures de données** du programme de terminale, à l'exception du
@@ -66,4 +61,6 @@ petites étapes qui se valident **une par une**, avec correction automatique et 
 
 !!! note "Les exercices de type bac"
     La séance 8 reprend le sujet zéro de l'épreuve écrite — `hauteur_pile`, `max_pile`,
-    `retourner` et le **tri crêpes** — en autant d'étapes guidées.
+    `retourner` et le **tri crêpes** — en autant d'étapes guidées. Ses défis écrivent les
+    parcours **en profondeur** et **en largeur** d'un labyrinthe : ce sont, mot pour mot,
+    les deux algorithmes de parcours de graphe exigés par le programme.

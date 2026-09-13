@@ -82,7 +82,7 @@ docs/parcours-nsi-term/         le quatrième (NSI Terminale, chapitre 1)
 | SNT — Python | `…/immac/parcours-python/` | `…/immac/prof/parcours-python/` | 11 séances, 266 étapes |
 | NSI — chapitre 1 | `…/immac/parcours-nsi/` | `…/immac/prof/parcours-nsi/` | 13 séances, 225 étapes |
 | SNT — Le Web | `…/immac/parcours-web/` | `…/immac/prof/parcours-web/` | 4 séances, 84 étapes |
-| NSI Terminale — chapitre 1 | `…/immac/parcours-nsi-term/` | `…/immac/prof/parcours-nsi-term/` | 8 séances prévues, 4 écrites (90 étapes) |
+| NSI Terminale — chapitre 1 | `…/immac/parcours-nsi-term/` | `…/immac/prof/parcours-nsi-term/` | 8 séances, 182 étapes |
 
 L'adresse `prof/` n'est pas listée mais **n'est pas protégée** : qui la connaît y accède.
 
@@ -436,6 +436,13 @@ qui vient d'être acquis, pas « bravo ». Un emoji par message, au plus.
     qui clique sur ▶ avant d'écrire quoi que ce soit reçoit une erreur incompréhensible.
     Mettre une instruction bidon à remplacer (`print("À remplacer")`, `base = base`, `0`).
 
+!!! danger "Un `codeAbsent` frappe aussi le code FOURNI dans le départ"
+    Interdire `\bf\s*\[` pour forcer un client à passer par l'interface refuse aussi
+    l'implémentation donnée en haut du même fichier, si elle indexe `f`. Deux parades :
+    **renommer le paramètre** de l'implémentation (`file` au lieu de `f`), ou **compter les
+    occurrences** — `\bwhile\b[\s\S]*\bwhile\b` autorise la seule boucle de l'aide
+    fournie et refuse la deuxième. Le banc attrape le cas : la solution est refusée.
+
 !!! warning "Les guillemets français ne sont pas des guillemets"
     Dans un énoncé, `« … »` est du texte ; dans du code, seuls les guillemets droits
     fonctionnent. Le préciser une fois par parcours, dans un indice.
@@ -680,7 +687,7 @@ mkdocs build -f mkdocs-prof.yml   # version prof : corrections conservées
 | SNT — Python | 11 | 266 | ✅ complet, vérifié |
 | NSI — chapitre 1 | 13 | 225 | ✅ complet, vérifié |
 | SNT — Le Web | 4 | 84 | ✅ complet, vérifié |
-| NSI Terminale — chapitre 1 | 4 / 8 | 90 | 🚧 séances 1 à 4 écrites et vérifiées |
+| NSI Terminale — chapitre 1 | 8 | 182 | ✅ complet, vérifié |
 
 ### Décisions arrêtées, à ne pas re-proposer
 
@@ -720,11 +727,9 @@ mkdocs build -f mkdocs-prof.yml   # version prof : corrections conservées
 - **Les autres chapitres de NSI de Première** pourraient recevoir le même traitement. Le
   chapitre 4 (listes et chaînes) et le chapitre 5 (spécifier et tester) s'y prêtent bien :
   beaucoup d'exercices déjà auto-corrigés à convertir.
-- **Les séances 5 à 8 du parcours de Terminale** restent à écrire : les trois
-  implémentations de la file (tableau, tableau circulaire, deux piles), les listes chaînées,
-  le choix d'une structure (liste ou dictionnaire), et les applications (notation polonaise
-  inverse, tri crêpes, simulation). Réservées à la séance 5 et à ne pas traiter avant : la
-  file circulaire et la file par deux piles.
+- **Le chapitre 2 de Terminale, la programmation objet**, reprendra les piles et les files
+  de ce chapitre pour les réécrire en classes. La conclusion du chapitre 1 l'annonce déjà.
+  Les séances 3 à 6 fournissent les implémentations à convertir telles quelles.
 - **Une séance 12 pour SNT** rassemblant les projets, si l'année le permet.
 - **Un tableau de bord enseignant** supposerait un backend : écarté pour l'instant, mais
   la question se reposera si les élèves perdent leur progression en changeant de poste.
