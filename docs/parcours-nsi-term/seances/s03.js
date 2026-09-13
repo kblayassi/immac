@@ -60,13 +60,13 @@ export default {
             <strong>sur le dessus</strong>, et c'est celle-là que tu reprendras en premier.
             Celle du fond attendra longtemps.</p>
 
-            <pre class="bloc-code"><code>           ┌────┐
-  empiler ─▶│ 32 │─▶ depiler     le sommet : la seule case accessible
-           ├────┤
-           │  5 │
-           ├────┤
-           │ 12 │                 le fond : inatteignable directement
-           └────┘</code></pre>
+            <pre class="bloc-code"><code>             ┌────┐
+  empiler ──▶│ 32 │──▶ depiler    le sommet : la seule case accessible
+             ├────┤
+             │  5 │
+             ├────┤
+             │ 12 │               le fond : inatteignable directement
+             └────┘</code></pre>
 
             <div class="encadre">
               <span class="chapo">Définition</span>
@@ -246,8 +246,7 @@ assiette 1</code></pre>
             "Contrairement aux listes de la séance 2, il n'y a pas de ligne « passer au suivant » : c'est <code>depiler</code> qui fait avancer la boucle, puisqu'il retire l'élément.",
           ],
           solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- À toi. ----\n\ndef tout_afficher(p):\n    """Affiche les elements de p, du sommet vers le fond, un par ligne."""\n    while not est_vide(p):\n        print(depiler(p))\n\n\n# ---- Le programme d'essai. Ne le modifie pas. ----\nassiettes = pile_vide()\nempiler(assiettes, "assiette 1")\nempiler(assiettes, "assiette 2")\nempiler(assiettes, "assiette 3")\ntout_afficher(assiettes)\n`,
-          apres: `<div class="encadre" data-ton="attention">
-              <span class="chapo">Une boucle de pile n'a que deux lignes</span>
+          apres: `<span class="chapo">Une boucle de pile n'a que deux lignes</span>
               <pre class="bloc-code"><code>while not est_vide(p):
     x = depiler(p)
     ...   # travailler avec x</code></pre>
@@ -258,8 +257,7 @@ assiette 1</code></pre>
               <br><br>
               La contrepartie est sévère : <strong>parcourir une pile, c'est la
               détruire</strong>. C'est le problème central de la structure, et les deux
-              étapes qui suivent lui sont entièrement consacrées.
-            </div>`,
+              étapes qui suivent lui sont entièrement consacrées.`,
         },
 
         {
@@ -328,8 +326,7 @@ assiette 1</code></pre>
             "Trois lignes en tout : retirer, remettre, renvoyer. L'ordre des deux dernières n'a aucune importance.",
           ],
           solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- À toi. ----\n\ndef sommet(p):\n    """Renvoie l'element du sommet de p, sans le retirer.\n\n    Precondition : p n'est pas vide.\n    Effet : p est inchangee apres l'appel.\n    """\n    x = depiler(p)\n    empiler(p, x)\n    return x\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Le geste fondamental des piles : rendre ce qu'on a pris</span>
+          apres: `<span class="chapo">Le geste fondamental des piles : rendre ce qu'on a pris</span>
               Tu viens d'écrire, en trois lignes, le motif sur lequel repose <em>tout</em> le
               reste de la séance : <strong>dépiler pour regarder, ré-empiler pour
               réparer</strong>.
@@ -338,7 +335,6 @@ assiette 1</code></pre>
               retirer plusieurs, remettre les valeurs dans l'ordre où on les a prises les
               remettrait <em>à l'envers</em> — et il faudra une pile auxiliaire. C'est
               exactement le problème de l'étape 8.
-            </div>
             <p>Note enfin que <code>sommet</code> ne fait <strong>pas</strong> partie de
             l'interface : c'est une fonction cliente, écrite au-dessus des quatre opérations.
             Ajouter un service sans toucher à l'implémentation, c'est précisément ce que la
@@ -413,8 +409,7 @@ assiette 1</code></pre>
             "C'est le double renversement : en passant deux fois d'une pile à l'autre, les éléments retrouvent leur ordre initial. Le compteur, lui, n'a besoin d'être augmenté que pendant le premier temps.",
           ],
           solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- À toi. ----\n\ndef hauteur(p):\n    """Renvoie le nombre d'elements de la pile p.\n\n    Effet : p est inchangee apres l'appel.\n    """\n    reserve = pile_vide()\n    n = 0\n    while not est_vide(p):\n        empiler(reserve, depiler(p))\n        n = n + 1\n    while not est_vide(reserve):\n        empiler(p, depiler(reserve))\n    return n\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Le double transfert, à connaître par cœur</span>
+          apres: `<span class="chapo">Le double transfert, à connaître par cœur</span>
               <pre class="bloc-code"><code>reserve = pile_vide()
 while not est_vide(p):          # 1er transfert : p se vide,
     x = depiler(p)              #    la réserve se remplit
@@ -430,7 +425,6 @@ while not est_vide(reserve):    # 2e transfert : on remet tout
               contient cette pile ? » : compter, chercher un maximum, vérifier qu'une valeur
               s'y trouve, la recopier. Seule change la ligne du milieu — exactement comme le
               patron « construire à l'envers puis renverser » de la séance 2.
-            </div>
             <p>Il a un prix, et il faut le connaître : une pile de <em>n</em> éléments est
             parcourue <strong>deux fois</strong> entièrement. Demander la hauteur d'une pile
             dans la condition d'une boucle qui, elle-même, la parcourt, revient donc à faire
@@ -624,21 +618,19 @@ def empiler(p, element):     def empiler(p, element):
             "Dans <code>depiler</code>, relis la colonne « Effet » de la spécification : la fonction doit-elle seulement lire le sommet, ou aussi faire quelque chose ?",
           ],
           solution: `def pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n`,
-          apres: `<div class="encadre" data-ton="attention">
-              <span class="chapo">Le troisième bug n'est pas une faute de code</span>
+          apres: `<span class="chapo">Le troisième bug n'est pas une faute de code</span>
               <code>return p[-1]</code> est du Python irréprochable : il rend bien le sommet.
               Ce qu'il ne fait pas, c'est le <strong>retirer</strong> — et la spécification,
               elle, l'exige.
               <br><br>
               Une fonction écrite ainsi produit exactement la fonction <code>sommet</code> de
-              l'étape 6, sous le nom de <code>depiler</code>. Tous les clients qui font
+              l'étape 6 de la découverte, sous le nom de <code>depiler</code>. Tous les clients qui font
               confiance à son nom tourneront alors indéfiniment : leur boucle
               <code>while not est_vide(p)</code> ne verra jamais la pile se vider.
               <br><br>
               Retiens-en la leçon générale : <strong>une implémentation ne se juge pas à ce
               qu'elle fait, mais à l'écart entre ce qu'elle fait et ce qu'elle avait
-              promis.</strong> C'est pour cela qu'on écrit les spécifications avant le code.
-            </div>`,
+              promis.</strong> C'est pour cela qu'on écrit les spécifications avant le code.`,
         },
 
         {
@@ -673,8 +665,7 @@ def empiler(p, element):     def empiler(p, element):
             "Reste à choisir pendant lequel des deux transferts remplir le tableau. Les éléments sortent de la réserve du fond vers le sommet : c'est exactement l'ordre demandé.",
           ],
           solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- À toi. ----\n\ndef depuis_tableau(t):\n    """Renvoie une pile contenant les elements de t, le premier au fond."""\n    p = pile_vide()\n    for x in t:\n        empiler(p, x)\n    return p\n\ndef vers_tableau(p):\n    """Renvoie le tableau des elements de p, du fond vers le sommet.\n\n    Effet : p est inchangee apres l'appel.\n    """\n    reserve = pile_vide()\n    while not est_vide(p):\n        empiler(reserve, depiler(p))\n    t = []\n    while not est_vide(reserve):\n        x = depiler(reserve)\n        t.append(x)\n        empiler(p, x)\n    return t\n`,
-          apres: `<div class="encadre" data-ton="astuce">
-              <span class="chapo">Le travail se fait pendant le second transfert</span>
+          apres: `<span class="chapo">Le travail se fait pendant le second transfert</span>
               C'est la seule subtilité de <code>vers_tableau</code>, et elle mérite qu'on
               s'y arrête. Pendant le premier transfert, les éléments sortent de <code>p</code>
               <em>du sommet vers le fond</em> : les recueillir là donnerait le tableau à
@@ -685,7 +676,6 @@ def empiler(p, element):     def empiler(p, element):
               travail, et ils ne donnent pas le même ordre. Se demander « dans quel sens les
               éléments défilent-ils à cet endroit ? » est le réflexe qui évite la moitié des
               erreurs sur les piles.
-            </div>
             <p>Garde <code>vers_tableau</code> sous la main : dans tous les exercices qui
             suivent, si un résultat te surprend, la recopier et afficher
             <code>vers_tableau(p)</code> vaut mieux que dix minutes de raisonnement.</p>`,
@@ -729,8 +719,7 @@ def empiler(p, element):     def empiler(p, element):
             "Pour reconstruire la chaîne, pars d'une chaîne vide et allonge-la à chaque dépilement. Deux chaînes se collent avec l'opérateur <code>+</code>.",
           ],
           solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- À toi. ----\n\ndef renverser_texte(mot):\n    """Renvoie la chaine mot ecrite a l'envers, en se servant d'une pile."""\n    p = pile_vide()\n    for lettre in mot:\n        empiler(p, lettre)\n    resultat = ""\n    while not est_vide(p):\n        resultat = resultat + depiler(p)\n    return resultat\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">La propriété qu'il faut savoir citer</span>
+          apres: `<span class="chapo">La propriété qu'il faut savoir citer</span>
               <strong>Une pile inverse l'ordre.</strong> C'est sa caractéristique la plus
               utile, et elle se démontre en une phrase : le premier entré est le dernier
               sorti, donc l'ordre de sortie est exactement l'ordre d'entrée à l'envers.
@@ -739,8 +728,7 @@ def empiler(p, element):     def empiler(p, element):
               fois qu'un problème demande de traiter des choses dans l'ordre inverse de leur
               arrivée, une pile est la réponse.</em> Renverser un mot, revenir sur ses pas
               dans un labyrinthe, annuler des actions, remonter la liste des fonctions
-              appelées quand un programme plante — c'est à chaque fois le même mécanisme.
-            </div>`,
+              appelées quand un programme plante — c'est à chaque fois le même mécanisme.`,
         },
 
         {
@@ -788,8 +776,7 @@ def empiler(p, element):     def empiler(p, element):
             "Attention au cas où une fermante arrive sur une pile vide : la précondition de <code>depiler</code> t'interdit de l'appeler, et la réponse est connue d'avance. Et à la fin du texte, demande-toi ce que signifie une pile qui n'est pas vide.",
           ],
           solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- À toi. ----\n\ndef bien_parenthesee(texte):\n    """Renvoie True si les parentheses de texte sont correctement appariees."""\n    p = pile_vide()\n    for caractere in texte:\n        if caractere == "(":\n            empiler(p, caractere)\n        elif caractere == ")":\n            if est_vide(p):\n                return False\n            depiler(p)\n    return est_vide(p)\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Pourquoi une pile, et pas un compteur</span>
+          apres: `<span class="chapo">Pourquoi une pile, et pas un compteur</span>
               On pourrait croire qu'il suffit de compter : +1 par ouvrante, −1 par fermante,
               et vérifier qu'on finit à zéro. Le texte <code>)(</code> suffit à ruiner cette
               idée — le compte revient bien à zéro, et le texte est pourtant faux.
@@ -799,7 +786,6 @@ def empiler(p, element):     def empiler(p, element):
               faute immédiate. Voilà ce qui distingue une structure d'un simple nombre —
               elle retient non seulement <em>combien</em>, mais <em>quoi</em> et
               <em>dans quel ordre</em>.
-            </div>
             <p>Les deux <code>return</code> méritent aussi qu'on les distingue : celui de
             l'intérieur signale une fermante orpheline, celui de la fin vérifie qu'aucune
             ouvrante n'est restée en attente. Deux fautes différentes, deux endroits
@@ -850,8 +836,7 @@ executer(["bon", "ANNULER", "ANNULER"])       →  ""</code></pre>
             "Pour <code>\"ANNULER\"</code> : si l'historique n'est pas vide, le texte courant redevient ce que l'on dépile. Sinon, ne rien faire — la précondition de <code>depiler</code> l'impose.",
           ],
           solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- À toi. ----\n\ndef executer(commandes):\n    """Renvoie le texte obtenu apres avoir joue la liste de commandes.\n\n    Une commande est soit un mot a ajouter a la fin du texte,\n    soit la chaine "ANNULER" qui revient a l'etat precedent.\n    """\n    historique = pile_vide()\n    texte = ""\n    for commande in commandes:\n        if commande == "ANNULER":\n            if not est_vide(historique):\n                texte = depiler(historique)\n        else:\n            empiler(historique, texte)\n            texte = texte + commande\n    return texte\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Pourquoi une pile, et pourquoi les états</span>
+          apres: `<span class="chapo">Pourquoi une pile, et pourquoi les états</span>
               L'annulation est LIFO par nature : on défait toujours l'action la plus récente.
               Aucune autre structure ne convient — une file rendrait les actions dans
               l'ordre où elles ont été faites, ce qui n'a aucun sens ici.
@@ -862,7 +847,6 @@ executer(["bon", "ANNULER", "ANNULER"])       →  ""</code></pre>
               Le prix à payer est la mémoire — chaque état est conservé en entier. Les vrais
               logiciels empilent plutôt le <em>moyen de revenir en arrière</em>, ce qui prend
               beaucoup moins de place et coûte beaucoup plus de code.
-            </div>
             <p>Un mot sur l'ordre des deux lignes du <code>else</code> : si l'on ajoutait le
             mot <em>avant</em> de mettre de côté, l'historique retiendrait l'état
             <em>après</em> modification, et annuler ne changerait rien. Une inversion de deux
@@ -977,7 +961,7 @@ def empiler_tout(p, elements):
           type: "code",
           titre: "Trois sortes de parenthèses",
           contenu: `
-            <p>On reprend le vérificateur de l'exercice 6, en plus sérieux :
+            <p>On reprend le vérificateur de parenthèses écrit plus haut, en plus sérieux :
             <code>bien_formee(texte)</code> doit gérer les <strong>trois</strong> sortes de
             délimiteurs — <code>( )</code>, <code>[ ]</code> et <code>{ }</code> — et
             vérifier qu'ils s'apparient correctement.</p>
@@ -1016,8 +1000,7 @@ def empiler_tout(p, elements):
             "Quand une fermante arrive, deux choses peuvent clocher : la pile est vide, ou bien ce qu'elle rend ne correspond pas à ce que <code>PAIRES</code> annonce pour cette fermante.",
           ],
           solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# À chaque fermante, l'ouvrante qui doit lui correspondre.\nPAIRES = {")": "(", "]": "[", "}": "{"}\n\n\n# ---- À toi. ----\n\ndef bien_formee(texte):\n    """Renvoie True si les delimiteurs de texte sont correctement apparies."""\n    p = pile_vide()\n    for caractere in texte:\n        if caractere in "([{":\n            empiler(p, caractere)\n        elif caractere in PAIRES:\n            if est_vide(p):\n                return False\n            if depiler(p) != PAIRES[caractere]:\n                return False\n    return est_vide(p)\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Pourquoi seule une pile peut répondre</span>
+          apres: `<span class="chapo">Pourquoi seule une pile peut répondre</span>
               Regarde <code>([)]</code>. Les délimiteurs sont en nombre correct, chacun a son
               partenaire quelque part, et pourtant le texte est faux : ils se
               <em>croisent</em> au lieu de s'imbriquer.
@@ -1027,7 +1010,6 @@ def empiler_tout(p, elements):
               ouvrante encore en attente, donc celle que la prochaine fermante doit
               satisfaire. Trois compteurs indépendants — un par sorte — accepteraient
               <code>([)]</code> sans broncher.
-            </div>
             <p>Cet algorithme n'est pas un exercice d'école : c'est, à peu de chose près, la
             première étape de tout <strong>analyseur syntaxique</strong>. Quand Python te
             signale <code>unexpected EOF while parsing</code>, c'est une pile de ce genre qui
@@ -1061,10 +1043,10 @@ p vaut désormais :                [1, 2, 5, 4, 3]</code></pre>
               faut-il donc, et combien de piles auxiliaires cela suppose-t-il ?
             </div>
 
-            <p><code>vers_tableau</code>, écrite à l'exercice 4, t'est fournie pour tes
+            <p><code>vers_tableau</code>, que tu as écrite plus haut, t'est fournie pour tes
             essais.</p>`,
           nomFichier: "retourner.py",
-          depart: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- Déjà écrite à l'exercice 4, pour tes essais. ----\n\ndef vers_tableau(p):\n    """Renvoie le tableau des elements de p, du fond vers le sommet."""\n    reserve = pile_vide()\n    while not est_vide(p):\n        empiler(reserve, depiler(p))\n    t = []\n    while not est_vide(reserve):\n        x = depiler(reserve)\n        t.append(x)\n        empiler(p, x)\n    return t\n\n\n# ---- À toi. ----\n\ndef retourner(p, j):\n    """Inverse l'ordre des j elements du sommet de p.\n\n    Precondition : p contient au moins j elements.\n    Effet : p est modifiee. La fonction ne renvoie rien.\n    """\n    pass\n`,
+          depart: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- Déjà écrite plus haut, pour tes essais. ----\n\ndef vers_tableau(p):\n    """Renvoie le tableau des elements de p, du fond vers le sommet."""\n    reserve = pile_vide()\n    while not est_vide(p):\n        empiler(reserve, depiler(p))\n    t = []\n    while not est_vide(reserve):\n        x = depiler(reserve)\n        t.append(x)\n        empiler(p, x)\n    return t\n\n\n# ---- À toi. ----\n\ndef retourner(p, j):\n    """Inverse l'ordre des j elements du sommet de p.\n\n    Precondition : p contient au moins j elements.\n    Effet : p est modifiee. La fonction ne renvoie rien.\n    """\n    pass\n`,
           validation: {
             codeAbsent: [
               { motif: "\\bp\\s*\\[", message: "Passe par l'interface de la pile." },
@@ -1078,10 +1060,9 @@ p vaut désormais :                [1, 2, 5, 4, 3]</code></pre>
             "Le premier transfert sort les <code>j</code> éléments du sommet ; il les renverse. Le deuxième les renverse à nouveau ; le troisième les remet sur <code>p</code> en les renversant une troisième fois.",
             "Trois renversements, c'est un renversement — et c'est exactement ce qu'on veut. Attention à ne pas toucher au reste de la pile : les boucles ne doivent tourner que <code>j</code> fois.",
           ],
-          solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- Déjà écrite à l'exercice 4, pour tes essais. ----\n\ndef vers_tableau(p):\n    """Renvoie le tableau des elements de p, du fond vers le sommet."""\n    reserve = pile_vide()\n    while not est_vide(p):\n        empiler(reserve, depiler(p))\n    t = []\n    while not est_vide(reserve):\n        x = depiler(reserve)\n        t.append(x)\n        empiler(p, x)\n    return t\n\n\n# ---- À toi. ----\n\ndef retourner(p, j):\n    """Inverse l'ordre des j elements du sommet de p.\n\n    Precondition : p contient au moins j elements.\n    Effet : p est modifiee. La fonction ne renvoie rien.\n    """\n    q = pile_vide()\n    r = pile_vide()\n    for _ in range(j):\n        empiler(q, depiler(p))\n    for _ in range(j):\n        empiler(r, depiler(q))\n    for _ in range(j):\n        empiler(p, depiler(r))\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Compter les renversements</span>
-              <pre class="bloc-code"><code>départ    : 1 2 3 | 4 5   (le | marque les j du sommet, ici j = 3)
+          solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- Déjà écrite plus haut, pour tes essais. ----\n\ndef vers_tableau(p):\n    """Renvoie le tableau des elements de p, du fond vers le sommet."""\n    reserve = pile_vide()\n    while not est_vide(p):\n        empiler(reserve, depiler(p))\n    t = []\n    while not est_vide(reserve):\n        x = depiler(reserve)\n        t.append(x)\n        empiler(p, x)\n    return t\n\n\n# ---- À toi. ----\n\ndef retourner(p, j):\n    """Inverse l'ordre des j elements du sommet de p.\n\n    Precondition : p contient au moins j elements.\n    Effet : p est modifiee. La fonction ne renvoie rien.\n    """\n    q = pile_vide()\n    r = pile_vide()\n    for _ in range(j):\n        empiler(q, depiler(p))\n    for _ in range(j):\n        empiler(r, depiler(q))\n    for _ in range(j):\n        empiler(p, depiler(r))\n`,
+          apres: `<span class="chapo">Compter les renversements</span>
+              <pre class="bloc-code"><code>départ    : 1 2 3 | 4 5    (le | marque les j du sommet, ici j = 3)
 q reçoit  : 5 4 3          1er renversement
 r reçoit  : 3 4 5          2e  — retour à l'ordre initial
 p reçoit  : 5 4 3          3e  — l'ordre voulu</code></pre>
@@ -1090,7 +1071,6 @@ p reçoit  : 5 4 3          3e  — l'ordre voulu</code></pre>
               de concevoir ce genre d'algorithme sans tâtonner : on décide d'abord si l'on
               veut renverser ou conserver, on en déduit la parité, et on sait combien de
               piles auxiliaires prévoir.
-            </div>
             <p>Le <code>for</code> plutôt que le <code>while</code> n'est pas un détail non
             plus : on connaît le nombre exact d'éléments à déplacer, et surtout il ne faut
             <strong>pas</strong> vider la pile. Un <code>while not est_vide(p)</code>
@@ -1144,8 +1124,7 @@ nav[2]  la pile des pages quittées par un retour (pour avancer)</code></pre>
             "Pour <code>visiter</code> : la page courante rejoint l'historique arrière, la nouvelle page devient courante, et <code>nav[2]</code> doit être remplacé par une pile neuve.",
           ],
           solution: `# ---- L'implémentation « sommet en fin ». N'y touche pas. ----\n\ndef pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- Fournies. ----\n\ndef navigateur(page):\n    """Cree un navigateur ouvert sur page, sans aucun historique."""\n    return [page, pile_vide(), pile_vide()]\n\ndef courante(nav):\n    """Renvoie la page actuellement affichee."""\n    return nav[0]\n\n\n# ---- À toi. ----\n\ndef visiter(nav, page):\n    """Affiche page. L'historique « suivant » est efface."""\n    empiler(nav[1], nav[0])\n    nav[0] = page\n    nav[2] = pile_vide()\n\ndef precedent(nav):\n    """Revient a la page precedente.\n\n    Precondition : nav[1] n'est pas vide.\n    """\n    empiler(nav[2], nav[0])\n    nav[0] = depiler(nav[1])\n\ndef suivant(nav):\n    """Repart vers la page quittee par un retour en arriere.\n\n    Precondition : nav[2] n'est pas vide.\n    """\n    empiler(nav[1], nav[0])\n    nav[0] = depiler(nav[2])\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Pourquoi deux piles, et pourquoi des piles</span>
+          apres: `<span class="chapo">Pourquoi deux piles, et pourquoi des piles</span>
               L'historique arrière est LIFO : on revient d'abord sur la page la plus
               récemment quittée. L'historique avant l'est tout autant, dans l'autre sens.
               Chacun des deux boutons dépile d'un côté et empile de l'autre — la page
@@ -1156,7 +1135,6 @@ nav[2]  la pile des pages quittées par un retour (pour avancer)</code></pre>
               n'y mène plus. C'est ce qui explique le comportement, souvent jugé agaçant, de
               tous les navigateurs du monde — et qui n'est pas un défaut, mais la conséquence
               logique de la structure.
-            </div>
             <p>Tu remarqueras que <code>nav</code> est un tableau que le client indexe
             librement : c'est <em>sa</em> structure, pas une pile. Les crochets sur
             <code>nav[1]</code> et <code>nav[2]</code> ne sont donc pas de la triche — ce
@@ -1212,8 +1190,7 @@ depiler(p)  rend 8        →  [[5, 8, None], 1]</code></pre>
             "<code>depiler</code> fait l'inverse, et dans l'ordre inverse : il diminue d'abord le compteur, ce qui le fait désigner le sommet, puis renvoie la case correspondante.",
           ],
           solution: `# Troisième implémentation : un tableau de taille fixe, et un compteur.\n#\n# Une pile est [tableau, nombre d'elements].\n\ndef pile_vide(capacite):\n    """Renvoie une pile vide pouvant contenir au plus capacite elements."""\n    return [[None] * capacite, 0]\n\ndef est_vide(p):\n    return p[1] == 0\n\ndef est_pleine(p):\n    return p[1] == len(p[0])\n\ndef empiler(p, element):\n    """Precondition : la pile n'est pas pleine."""\n    p[0][p[1]] = element\n    p[1] = p[1] + 1\n\ndef depiler(p):\n    """Precondition : la pile n'est pas vide."""\n    p[1] = p[1] - 1\n    return p[0][p[1]]\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Ce que cette implémentation a de remarquable</span>
+          apres: `<span class="chapo">Ce que cette implémentation a de remarquable</span>
               <strong>Aucune case n'est jamais déplacée.</strong> Empiler et dépiler ne font
               qu'écrire une case et bouger un compteur d'une unité — quel que soit le nombre
               d'éléments déjà présents. C'est aussi rapide que l'implémentation « sommet en
@@ -1224,7 +1201,6 @@ depiler(p)  rend 8        →  [[5, 8, None], 1]</code></pre>
               précondition supplémentaire sur <code>empiler</code>. C'est un vrai changement
               de contrat, pas seulement d'implémentation : un client écrit pour les versions
               précédentes ne saurait pas qu'il doit vérifier avant d'empiler.
-            </div>
             <p>C'est exactement ainsi que fonctionne la <strong>pile d'exécution</strong> d'un
             programme, celle où s'empilent les appels de fonctions. Sa capacité est fixée au
             lancement — et quand un programme récursif l'épuise, Python lève une

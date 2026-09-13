@@ -171,8 +171,7 @@ La file est vide : False</code></pre>
             "Pour afficher une valeur défilée, passe directement l'appel à <code>defiler</code> à <code>print</code>, à côté du texte.",
           ],
           solution: `# ---- L'implémentation « entrée en fin ». Tu peux l'ignorer : c'est le but. ----\n\ndef file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\n\n# ---- À toi : le programme qui se sert de la file. ----\nma_file = file_vide()\nenfiler(ma_file, 3)\nenfiler(ma_file, 7)\nenfiler(ma_file, 12)\nprint("Je défile :", defiler(ma_file))\nprint("Je défile :", defiler(ma_file))\nprint("La file est vide :", est_vide(ma_file))\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Le même programme, deux structures, deux résultats</span>
+          apres: `<span class="chapo">Le même programme, deux structures, deux résultats</span>
               <pre class="bloc-code"><code>on entre    3, 7, 12       3, 7, 12
 structure   pile           file
 on sort     12, puis 7     3, puis 7
@@ -186,8 +185,7 @@ il reste    3              12</code></pre>
               Deux structures distinctes ne se reconnaissent donc pas au nombre de leurs
               opérations, mais à ce que ces opérations promettent. C'est ce que le programme
               officiel appelle « distinguer des structures par le jeu des méthodes qui les
-              caractérisent ».
-            </div>`,
+              caractérisent ».`,
         },
 
         {
@@ -317,14 +315,12 @@ client 3</code></pre>
             { texte: "<code>a</code> puis <code>['b', 'c']</code>",
               explication: "Le <code>a</code> a bien été remis dans la file par <code>enfiler</code> : il n'est pas perdu, il a seulement changé de place." },
           ],
-          apres: `<div class="encadre" data-ton="attention">
-              <span class="chapo">Ce que la pile permettait et que la file interdit</span>
+          apres: `<span class="chapo">Ce que la pile permettait et que la file interdit</span>
               <pre class="bloc-code"><code>PILE :  depiler puis empiler  →  identique
 FILE :  defiler puis enfiler  →  la file a TOURNÉ d'un cran</code></pre>
               La différence tient en une phrase : dans une pile, l'entrée et la sortie sont la
               <strong>même</strong> extrémité ; dans une file, ce sont deux extrémités
               opposées. Remettre un élément par où il n'est pas sorti le place à l'autre bout.
-            </div>
             <p>Ce n'est pas seulement une gêne, c'est aussi une possibilité : tu viens de
             découvrir qu'une file peut <strong>tourner</strong>, à très bas prix. On s'en
             servira à l'étape 8, puis dans un jeu entier en défi.</p>
@@ -369,8 +365,7 @@ FILE :  defiler puis enfiler  →  la file a TOURNÉ d'un cran</code></pre>
             "Une seconde boucle vide l'auxiliaire dans <code>f</code>. Puisqu'un transfert conserve l'ordre, <code>f</code> se retrouve exactement comme avant.",
           ],
           solution: `# ---- L'implémentation « entrée en fin ». N'y touche pas. ----\n\ndef file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\n\n# ---- À toi. ----\n\ndef premier(f):\n    """Renvoie le premier element de f, celui qui sera servi, sans le retirer.\n\n    Precondition : f n'est pas vide.\n    Effet : f est inchangee apres l'appel.\n    """\n    resultat = defiler(f)\n    auxiliaire = file_vide()\n    enfiler(auxiliaire, resultat)\n    while not est_vide(f):\n        enfiler(auxiliaire, defiler(f))\n    while not est_vide(auxiliaire):\n        enfiler(f, defiler(auxiliaire))\n    return resultat\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Le transfert, et pourquoi il se compte différemment</span>
+          apres: `<span class="chapo">Le transfert, et pourquoi il se compte différemment</span>
               <pre class="bloc-code"><code>PILE   p → q  : l'ordre est INVERSÉ
               il faut DEUX transferts pour restaurer
 
@@ -383,7 +378,6 @@ FILE   f → g  : l'ordre est CONSERVÉ
               Une file est donc, à ce jeu-là, <em>plus</em> commode qu'une pile : deux boucles
               au lieu de deux boucles, mais sans avoir à réfléchir à la parité des
               renversements.
-            </div>
             <p>Le prix reste le même, en revanche, et il faut le connaître : lire un seul
             élément a coûté un parcours complet de la file, deux fois. Une structure qui
             n'expose qu'une extrémité fait payer très cher tout ce qui n'est pas cette
@@ -425,8 +419,7 @@ faire_tourner(f, 2)   →  [3, 4, 1, 2]   (depuis [1, 2, 3, 4])</code></pre>
             "Les deux opérations peuvent s'écrire sur une seule ligne, l'une à l'intérieur de l'autre. La variable de boucle ne sert à rien : <code>_</code> convient.",
           ],
           solution: `# ---- L'implémentation « entrée en fin ». N'y touche pas. ----\n\ndef file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\n\n# ---- À toi. ----\n\ndef faire_tourner(f, k):\n    """Envoie les k premiers elements de f a la fin, un par un.\n\n    Precondition : f n'est pas vide des que k est non nul.\n    Effet : f est modifiee. La fonction ne renvoie rien.\n    """\n    for _ in range(k):\n        enfiler(f, defiler(f))\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Une file se prête à la ronde, une pile non</span>
+          apres: `<span class="chapo">Une file se prête à la ronde, une pile non</span>
               Faire tourner une file coûte <code>k</code> opérations élémentaires, et rien de
               plus : aucune structure auxiliaire, aucun parcours complet. C'est le seul geste
               de la séance qui soit réellement bon marché.
@@ -434,7 +427,6 @@ faire_tourner(f, 2)   →  [3, 4, 1, 2]   (depuis [1, 2, 3, 4])</code></pre>
               Essaie de faire tourner une pile pour voir : mettre le sommet au fond suppose
               de vider entièrement la pile, deux fois. Là où la file est naturellement
               circulaire, la pile est irrémédiablement linéaire.
-            </div>
             <p>Retiens cette fonction : c'est elle qui porte tous les problèmes de
             <strong>rondes</strong> et d'<strong>éliminations en cercle</strong> — les enfants
             qui se passent un objet en chantant, les tours de parole, les tournois. Tu en
@@ -638,8 +630,7 @@ def defiler(f):                def defiler(f):
             "Dans <code>deux_premiers</code>, relis la docstring : dans quel ordre les deux valeurs doivent-elles figurer dans le tableau renvoyé ?",
           ],
           solution: `def file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\n\ndef deux_premiers(f):\n    """Renvoie le tableau des deux premiers elements servis, dans l'ordre."""\n    a = defiler(f)\n    b = defiler(f)\n    return [a, b]\n`,
-          apres: `<div class="encadre" data-ton="attention">
-              <span class="chapo">Le deuxième bug est le plus grave de tout le chapitre</span>
+          apres: `<span class="chapo">Le deuxième bug est le plus grave de tout le chapitre</span>
               <code>f.pop()</code> au lieu de <code>f.pop(0)</code> : un seul caractère. Le
               programme continue de tourner, aucune erreur n'est levée, toutes les fonctions
               clientes s'exécutent — et la structure n'est plus une file. C'est une
@@ -653,7 +644,6 @@ def defiler(f):                def defiler(f):
               Retiens-en la règle : <strong>c'est la spécification qui définit la structure,
               pas le nom des fonctions.</strong> Écrire <code>file_vide</code> en haut d'un
               fichier ne garantit rien du tout — seuls les tests le garantissent.
-            </div>
             <p>Note au passage que <code>deux_premiers</code> est correcte dans la solution :
             <code>a</code> est servi en premier, <code>b</code> ensuite, et le tableau doit
             donc contenir <code>[a, b]</code>. Si tu as écrit <code>[b, a]</code>, relis la
@@ -692,8 +682,7 @@ def defiler(f):                def defiler(f):
             "Reste à choisir pendant lequel des deux transferts remplir le tableau. Comme un transfert conserve l'ordre, les deux conviennent ici — contrairement à ce qui se passait avec les piles.",
           ],
           solution: `# ---- L'implémentation « entrée en fin ». N'y touche pas. ----\n\ndef file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\n\n# ---- À toi. ----\n\ndef depuis_tableau(t):\n    """Renvoie une file ou les elements de t sont arrives dans l'ordre."""\n    f = file_vide()\n    for x in t:\n        enfiler(f, x)\n    return f\n\ndef vers_tableau(f):\n    """Renvoie le tableau des elements de f, dans l'ordre de service.\n\n    Effet : f est inchangee apres l'appel.\n    """\n    auxiliaire = file_vide()\n    t = []\n    while not est_vide(f):\n        x = defiler(f)\n        t.append(x)\n        enfiler(auxiliaire, x)\n    while not est_vide(auxiliaire):\n        enfiler(f, defiler(auxiliaire))\n    return t\n`,
-          apres: `<div class="encadre" data-ton="astuce">
-              <span class="chapo">Une différence avec la version « pile », et elle est instructive</span>
+          apres: `<span class="chapo">Une différence avec la version « pile », et elle est instructive</span>
               Dans <code>vers_tableau</code> pour les piles, la ligne de travail devait
               impérativement se trouver dans le <strong>second</strong> transfert : c'était le
               seul endroit où les éléments défilaient du fond vers le sommet.
@@ -702,7 +691,6 @@ def defiler(f):                def defiler(f):
               l'un ou dans l'autre indifféremment. Une contrainte de moins — et c'est la
               conséquence directe de la ligne « effet d'un transfert » du tableau
               comparatif.
-            </div>
             <p>Garde <code>vers_tableau</code> sous la main : dans tous les exercices qui
             suivent, si un résultat te surprend, la recopier et afficher
             <code>vers_tableau(f)</code> vaut mieux que dix minutes de raisonnement.</p>`,
@@ -787,8 +775,7 @@ def defiler(f):                def defiler(f):
             "La précondition de <code>defiler</code> t'impose ce test : <code>est_vide</code> d'abord, et l'on ne fait rien si la file est vide.",
           ],
           solution: `# ---- L'implémentation « entrée en fin ». N'y touche pas. ----\n\ndef file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\n\n# ---- À toi. ----\n\ndef journee(evenements):\n    """Renvoie le tableau des clients servis, dans l'ordre.\n\n    Un evenement est soit le nom d'un client qui arrive,\n    soit la chaine "SERVIR" qui appelle le premier de la file.\n    Servir alors que la file est vide ne fait rien.\n    """\n    attente = file_vide()\n    servis = []\n    for evenement in evenements:\n        if evenement == "SERVIR":\n            if not est_vide(attente):\n                servis.append(defiler(attente))\n        else:\n            enfiler(attente, evenement)\n    return servis\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Le même programme, l'autre structure</span>
+          apres: `<span class="chapo">Le même programme, l'autre structure</span>
               Mets cette fonction et l'éditeur Ctrl+Z de la séance 3 côte à côte : même
               boucle, même test sur une commande particulière, même précaution avant de
               retirer. Deux problèmes qui n'ont rien à voir, un seul patron.
@@ -798,7 +785,6 @@ def defiler(f):                def defiler(f):
               comportement du logiciel entier sans toucher à sa charpente. C'est ce qui rend
               le choix de la structure si décisif — et c'est pourquoi on le fait <em>avant</em>
               d'écrire le code.
-            </div>
             <p>Remarque enfin que <code>servis</code> est un tableau Python ordinaire, et non
             une file : c'est un résultat, pas une file d'attente. Toutes les collections d'un
             programme n'ont pas à être des structures abstraites — seules celles dont
@@ -954,8 +940,7 @@ f vaut désormais :               [3, 2, 1]</code></pre>
             "Attention à utiliser <code>pile_est_vide</code> pour la boucle sur la pile, et <code>est_vide</code> pour celle sur la file : ce sont deux fonctions différentes.",
           ],
           solution: `# ---- La file, implémentation « entrée en fin ». N'y touche pas. ----\n\ndef file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\n\n# ---- Une pile, pour t'aider. N'y touche pas non plus. ----\n\ndef pile_vide():\n    return []\n\ndef pile_est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- À toi. ----\n\ndef renverser_file(f):\n    """Inverse l'ordre des elements de la file f.\n\n    Effet : f est modifiee. La fonction ne renvoie rien.\n    """\n    p = pile_vide()\n    while not est_vide(f):\n        empiler(p, defiler(f))\n    while not pile_est_vide(p):\n        enfiler(f, depiler(p))\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Chaque structure sait faire ce que l'autre ne sait pas</span>
+          apres: `<span class="chapo">Chaque structure sait faire ce que l'autre ne sait pas</span>
               <pre class="bloc-code"><code>file → file   conserve l'ordre   (donc : restaurer)
 file → pile   INVERSE l'ordre    (donc : renverser)
 pile → pile   inverse l'ordre    (donc : deux transferts pour restaurer)</code></pre>
@@ -964,7 +949,6 @@ pile → pile   inverse l'ordre    (donc : deux transferts pour restaurer)</code
               chapitre que deux structures coopèrent, et ce ne sera pas la dernière : à la
               séance 5, on construira une file entière à partir de <strong>deux
               piles</strong>, et c'est le même mécanisme, poussé un cran plus loin.
-            </div>
             <p>Retiens aussi la précaution de nommage : quand deux structures cohabitent dans
             un fichier, leurs opérations doivent porter des noms distincts. Deux fonctions
             <code>est_vide</code> se seraient écrasées l'une l'autre, et la seconde aurait
@@ -1019,8 +1003,7 @@ pile → pile   inverse l'ordre    (donc : deux transferts pour restaurer)</code
             "Un tour de jeu : faire tourner la file de <code>k</code> crans, puis défiler une fois — cette valeur-là est éliminée, on ne la remet pas. À la fin, le dernier défilement rend le gagnant.",
           ],
           solution: `# ---- L'implémentation « entrée en fin ». N'y touche pas. ----\n\ndef file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\n\n# ---- À toi. ----\n\ndef patate_chaude(noms, k):\n    """Renvoie le nom du dernier joueur restant.\n\n    Les joueurs sont en cercle, dans l'ordre de noms. A chaque tour, l'objet\n    passe k fois de main en main, et celui qui le tient alors est elimine.\n\n    Precondition : noms contient au moins un nom, et k >= 0.\n    """\n    cercle = file_vide()\n    for nom in noms:\n        enfiler(cercle, nom)\n    restants = len(noms)\n    while restants > 1:\n        for _ in range(k):\n            enfiler(cercle, defiler(cercle))\n        defiler(cercle)\n        restants = restants - 1\n    return defiler(cercle)\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Un problème vieux de deux mille ans</span>
+          apres: `<span class="chapo">Un problème vieux de deux mille ans</span>
               Ce jeu porte un nom : le <strong>problème de Josèphe</strong>, d'après
               l'historien Flavius Josèphe, qui aurait survécu au siège de Yodfat en 67 de
               notre ère en calculant la bonne place dans un cercle de ce genre. On le retrouve
@@ -1031,7 +1014,6 @@ pile → pile   inverse l'ordre    (donc : deux transferts pour restaurer)</code
               structure particulière, c'est une file dont on recycle le premier élément. La
               bonne question n'était pas « comment programmer un cercle ? » mais « quelle
               structure rend ce mouvement gratuit ? ».
-            </div>
             <p>Note enfin qu'on a dû tenir le compte des restants à la main : l'interface de
             la file n'offre pas de longueur, et la calculer à chaque tour aurait coûté un
             parcours complet par élimination. Compter soi-même, ici, n'est pas de la
@@ -1079,8 +1061,7 @@ fp[1]  la file des cas ordinaires</code></pre>
             "<code>fp_servir</code> regarde d'abord si la file des urgences a quelqu'un : si oui, elle la sert ; sinon, elle sert l'autre. La précondition garantit qu'au moins l'une des deux n'est pas vide.",
           ],
           solution: `# ---- L'implémentation « entrée en fin ». N'y touche pas. ----\n\ndef file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\n\n# ---- À toi. ----\n\ndef fp_vide():\n    """Renvoie une file de priorite ou personne n'attend."""\n    return [file_vide(), file_vide()]\n\ndef fp_est_vide(fp):\n    """Renvoie True si aucun patient n'attend, ni urgent ni ordinaire."""\n    return est_vide(fp[0]) and est_vide(fp[1])\n\ndef fp_ajouter(fp, patient, urgent):\n    """Ajoute patient dans la file correspondant a sa categorie."""\n    if urgent:\n        enfiler(fp[0], patient)\n    else:\n        enfiler(fp[1], patient)\n\ndef fp_servir(fp):\n    """Renvoie le prochain patient a voir, et le retire.\n\n    Precondition : fp n'est pas vide.\n    """\n    if not est_vide(fp[0]):\n        return defiler(fp[0])\n    return defiler(fp[1])\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Une structure bâtie sur une autre</span>
+          apres: `<span class="chapo">Une structure bâtie sur une autre</span>
               Tu viens de faire ce que fait un bibliothécaire : construire un
               <strong>nouveau type abstrait</strong> — la file de priorité, avec sa propre
               interface — en <em>utilisant</em> un type abstrait existant, sans jamais
@@ -1091,16 +1072,13 @@ fp[1]  la file des cas ordinaires</code></pre>
               fonctionner sans une retouche. Et le jour où tu voudras trois niveaux de
               priorité au lieu de deux, seul ce fichier-ci changera — pas les programmes qui
               s'en servent.
-            </div>
-            <div class="encadre" data-ton="attention">
-              <span class="chapo">Le défaut de cette file de priorité, et il est réel</span>
+            <span class="chapo">Le défaut de cette file de priorité, et il est réel</span>
               Tant qu'il arrive des urgences, les patients ordinaires ne sont
               <strong>jamais</strong> servis. On appelle cela la <em>famine</em>, et c'est un
               vrai problème dans les systèmes d'exploitation, qui répartissent ainsi le temps
               du processeur. La parade consiste à faire monter la priorité de ceux qui
               attendent depuis longtemps — mais cela demande de connaître leur temps
-              d'attente, donc une structure plus riche que deux files.
-            </div>`,
+              d'attente, donc une structure plus riche que deux files.`,
         },
 
         {
@@ -1146,8 +1124,7 @@ fp[1]  la file des cas ordinaires</code></pre>
             "Les deux structures contiennent le même nombre de lettres : tester l'une des deux dans la condition de la boucle suffit. Et si la boucle se termine sans désaccord, c'est un palindrome.",
           ],
           solution: `# ---- La file, implémentation « entrée en fin ». N'y touche pas. ----\n\ndef file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\n\n# ---- La pile. N'y touche pas non plus. ----\n\ndef pile_vide():\n    return []\n\ndef pile_est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\n\n# ---- À toi. ----\n\ndef est_palindrome(mot):\n    """Renvoie True si mot se lit de la meme facon dans les deux sens.\n\n    La comparaison est exacte : les accents, les espaces et la casse comptent.\n    """\n    p = pile_vide()\n    f = file_vide()\n    for lettre in mot:\n        empiler(p, lettre)\n        enfiler(f, lettre)\n    while not pile_est_vide(p):\n        if depiler(p) != defiler(f):\n            return False\n    return True\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Ce que cet algorithme dit des deux structures</span>
+          apres: `<span class="chapo">Ce que cet algorithme dit des deux structures</span>
               Le mot est versé une seule fois, dans deux réceptacles qui ne diffèrent que par
               l'extrémité de sortie. L'un restitue l'ordre, l'autre son contraire — et c'est
               exactement ce qu'on voulait comparer.
@@ -1155,7 +1132,6 @@ fp[1]  la file des cas ordinaires</code></pre>
               Aucune des deux structures ne pourrait répondre seule : deux files diraient
               toujours la même chose, deux piles aussi. C'est leur <strong>opposition</strong>
               qui porte l'information, et c'est pour cela que l'algorithme est joli.
-            </div>
             <p>Un mot sur l'efficacité, pour être honnête : comparer <code>mot</code> à son
             renversé, ou remonter depuis les deux bouts avec deux indices, ferait le même
             travail plus vite et avec moins de mémoire. L'intérêt de cette version-ci est
@@ -1204,8 +1180,7 @@ repartir(f)  →  [ [1, 3, 5] , [2, 4] ]</code></pre>
             de lignes dans un tableau, deux joueurs dans un jeu, deux destinations dans une
             répartition. Il vaut mieux que <code>i % 2</code>, parce qu'il ne suppose pas
             qu'on compte les tours.</p>
-            <div class="encadre" data-ton="attention">
-              <span class="chapo">Ce que cette répartition n'est pas</span>
+            <span class="chapo">Ce que cette répartition n'est pas</span>
               Distribuer un client sur deux ignore complètement la <em>durée</em> de chaque
               service. Si tous les clients impairs ont une opération longue, le guichet A
               croulera pendant que B s'ennuiera. Les vrais répartiteurs de charge envoient
@@ -1213,8 +1188,7 @@ repartir(f)  →  [ [1, 3, 5] , [2, 4] ]</code></pre>
               suppose de connaître la longueur de chaque file, donc un parcours complet à
               chaque arrivée, ou bien une structure qui retient sa taille.
               <br><br>
-              C'est exactement la limite que la séance 5 va lever.
-            </div>`,
+              C'est exactement la limite que la séance 5 va lever.`,
         },
 
         {

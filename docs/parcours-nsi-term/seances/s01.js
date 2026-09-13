@@ -637,8 +637,7 @@ def solde(t):             def solde(t):
             "Le troisième est dans <code>ajouter</code>, et tu l'as déjà rencontré dans la découverte, avec la tirelire qui restait à zéro. Relis la règle : pour modifier, il faut agir sur l'objet lui-même.",
           ],
           solution: `def sac_vide():\n    return []\n\ndef ajouter(s, jeton):\n    s.append(jeton)\n\ndef taille(s):\n    return len(s)\n\ndef nombre(s, jeton):\n    total = 0\n    for j in s:\n        if j == jeton:\n            total = total + 1\n    return total\n`,
-          apres: `<div class="encadre" data-ton="attention">
-              <span class="chapo">Le troisième bug mérite qu'on s'y arrête</span>
+          apres: `<span class="chapo">Le troisième bug mérite qu'on s'y arrête</span>
               Les deux premiers, Python te les a signalés. Le troisième, non :
               <code>s = s + [jeton]</code> est du Python parfaitement correct, et il ne
               provoquera jamais la moindre erreur.
@@ -653,8 +652,7 @@ def solde(t):             def solde(t):
               <strong>La règle à retenir :</strong> pour qu'une fonction modifie ce qu'on lui
               donne, elle doit agir sur l'<strong>objet</strong>, et non sur la
               <strong>variable</strong> qui le désigne. <code>s.append(jeton)</code> agit sur
-              la liste ; <code>s = …</code> ne fait que déplacer une étiquette.
-            </div>`,
+              la liste ; <code>s = …</code> ne fait que déplacer une étiquette.`,
         },
 
         {
@@ -769,6 +767,9 @@ def solde(t):             def solde(t):
           nomFichier: "client.py",
           depart: `# ---- L'implémentation « liste ». N'y touche pas. ----\n\ndef sac_vide():\n    return []\n\ndef ajouter(s, jeton):\n    s.append(jeton)\n\ndef taille(s):\n    return len(s)\n\ndef nombre(s, jeton):\n    return s.count(jeton)\n\n\n# ---- À toi. ----\n\ndef couleur_dominante(s, couleurs):\n    """Renvoie la couleur de la liste couleurs la plus presente dans le sac s.\n\n    Precondition : couleurs n'est pas vide.\n    En cas d'egalite, la premiere couleur de la liste l'emporte.\n    """\n    pass\n`,
           validation: {
+            codeAbsent: [
+              { motif: "\\bs\\s*\\[", message: "Écrire s[...] suppose de savoir comment le sac est fait. Passe par nombre() et taille()." },
+            ],
             tests: `s = sac_vide()\nfor c in ["rouge", "bleu", "rouge", "vert", "bleu", "rouge"]:\n    ajouter(s, c)\nassert couleur_dominante(s, ["rouge", "bleu", "vert"]) == "rouge", "Trois rouges contre deux bleus et un vert : le rouge domine."\nassert couleur_dominante(s, ["bleu", "vert"]) == "bleu", "Parmi les seules couleurs proposées, le bleu (2) devance le vert (1)."\nassert couleur_dominante(s, ["vert", "jaune"]) == "vert", "Le jaune est absent du sac, il compte donc pour 0 : le vert l'emporte."\ne = sac_vide()\nfor c in ["or", "argent", "or", "argent"]:\n    ajouter(e, c)\nassert couleur_dominante(e, ["or", "argent"]) == "or", "Deux ors et deux argents : à égalité, c'est la première couleur de la liste qui l'emporte."\nassert couleur_dominante(e, ["argent", "or"]) == "argent", "Même sac, liste inversée : c'est donc l'argent qui doit gagner cette fois."\ndef sac_vide():\n    return {}\ndef ajouter(s, jeton):\n    if jeton in s:\n        s[jeton] = s[jeton] + 1\n    else:\n        s[jeton] = 1\ndef taille(s):\n    return sum(s.values())\ndef nombre(s, jeton):\n    if jeton in s:\n        return s[jeton]\n    return 0\nt = sac_vide()\nfor c in ["rouge", "bleu", "rouge", "vert", "bleu", "rouge"]:\n    ajouter(t, c)\nassert couleur_dominante(t, ["rouge", "bleu", "vert"]) == "rouge", "Ta fonction doit continuer à marcher quand on change l'intérieur du sac : n'utilise que nombre() et taille()."\nassert couleur_dominante(t, ["bleu", "vert"]) == "bleu", "Même exigence avec l'implémentation cachée."`,
           },
           felicitation: "Ta fonction a survécu au changement d'implémentation. C'est la compétence de la séance. 🏅",
@@ -869,6 +870,10 @@ def doubler(s, jeton):
           nomFichier: "fusion.py",
           depart: `# ---- L'implémentation « liste ». N'y touche pas. ----\n\ndef sac_vide():\n    return []\n\ndef ajouter(s, jeton):\n    s.append(jeton)\n\ndef taille(s):\n    return len(s)\n\ndef nombre(s, jeton):\n    return s.count(jeton)\n\n\n# ---- À toi. ----\n\ndef fusion(s1, s2, couleurs):\n    """Renvoie un nouveau sac reunissant les jetons de s1 et ceux de s2.\n\n    Precondition : toute couleur presente dans s1 ou s2 figure dans couleurs.\n    Effet : s1 et s2 ne sont pas modifies.\n    """\n    pass\n`,
           validation: {
+            codeAbsent: [
+              { motif: "\\bs1\\s*\\[", message: "Écrire s1[...] suppose de savoir comment le sac est fait. Passe par l'interface." },
+              { motif: "\\bs2\\s*\\[", message: "Écrire s2[...] suppose de savoir comment le sac est fait. Passe par l'interface." },
+            ],
             tests: `a = sac_vide()\nfor c in ["rouge", "rouge", "bleu"]:\n    ajouter(a, c)\nb = sac_vide()\nfor c in ["bleu", "vert"]:\n    ajouter(b, c)\nf = fusion(a, b, ["rouge", "bleu", "vert"])\nassert taille(f) == 5, "Trois jetons plus deux jetons font cinq jetons."\nassert nombre(f, "rouge") == 2, "Les deux rouges de a doivent se retrouver dans la fusion."\nassert nombre(f, "bleu") == 2, "Un bleu dans a, un bleu dans b : deux bleus au total."\nassert nombre(f, "vert") == 1, "Le vert de b ne doit pas se perdre."\nassert taille(a) == 3 and taille(b) == 2, "fusion() doit laisser ses deux sacs d'origine intacts."\nvide = fusion(sac_vide(), sac_vide(), ["rouge"])\nassert taille(vide) == 0, "La fusion de deux sacs vides est un sac vide."\ndef sac_vide():\n    return {}\ndef ajouter(s, jeton):\n    if jeton in s:\n        s[jeton] = s[jeton] + 1\n    else:\n        s[jeton] = 1\ndef taille(s):\n    return sum(s.values())\ndef nombre(s, jeton):\n    if jeton in s:\n        return s[jeton]\n    return 0\nc1 = sac_vide()\nfor c in ["rouge", "rouge", "bleu"]:\n    ajouter(c1, c)\nc2 = sac_vide()\nfor c in ["bleu", "vert"]:\n    ajouter(c2, c)\ng = fusion(c1, c2, ["rouge", "bleu", "vert"])\nassert taille(g) == 5, "Ta fusion doit donner le même résultat sur l'implémentation cachée : n'utilise que l'interface."\nassert nombre(g, "bleu") == 2, "Même exigence, couleur par couleur."\nassert taille(c1) == 3 and taille(c2) == 2, "Les sacs d'origine doivent rester intacts, quelle que soit l'implémentation."`,
           },
           felicitation: "Un client parfaitement neutre : il ignore jusqu'au type de ce qu'il manipule. 🔗",
@@ -997,8 +1002,7 @@ def doubler(s, jeton):
             "Pour l'effacement, la méthode des listes qui retire le dernier élément fait le travail en une ligne. Elle renvoie aussi cet élément — mais rien ne t'oblige à en faire quelque chose.",
           ],
           solution: `# Le journal de bord : des notes, dans l'ordre où elles ont été écrites.\n\ndef journal_vide():\n    return []\n\ndef noter(j, message):\n    j.append(message)\n\ndef combien(j):\n    return len(j)\n\ndef derniere(j):\n    return j[-1]\n\ndef effacer_derniere(j):\n    j.pop()\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Tu viens d'écrire une pile</span>
+          apres: `<span class="chapo">Tu viens d'écrire une pile</span>
               Regarde les trois opérations qui manipulent les notes : on ajoute à la fin, on
               lit la fin, on enlève la fin. Jamais autre chose. Cette structure a un nom —
               c'est une <strong>pile</strong>, et c'est le sujet de la séance 3.
@@ -1006,8 +1010,7 @@ def doubler(s, jeton):
               Retiens surtout la façon dont tu es tombé dessus : tu n'as fait que respecter
               une spécification, sans chercher de structure particulière. C'est exactement
               ainsi qu'on reconnaît une pile ou une file dans un problème — en regardant
-              quels gestes il autorise, et lesquels il n'autorise pas.
-            </div>`,
+              quels gestes il autorise, et lesquels il n'autorise pas.`,
         },
 
         {

@@ -82,8 +82,8 @@ export default {
             <p>La tête et la queue de cette liste, ce sont donc :</p>
 
             <pre class="bloc-code"><code>tête ─▶ 12        queue ─▶ ┌───┬───┐   ┌────┬───┐
-                          │ 5 │ ──┼──▶│ 32 │ ──┼──▶ nil
-                          └───┴───┘   └────┴───┘</code></pre>
+                           │ 5 │ ──┼──▶│ 32 │ ──┼──▶ nil
+                           └───┴───┘   └────┴───┘</code></pre>
 
             <p>Remarque bien que la queue n'est pas « le reste des éléments » en vrac :
             c'est une <strong>liste</strong>, avec sa propre tête et sa propre queue. C'est
@@ -191,6 +191,13 @@ export default {
                 message: "Trois éléments, donc trois appels à cons()." },
               { motif: "(\\bvide\\s*\\(\\s*\\)[\\s\\S]*?){2}",
                 message: "Toute liste se construit à partir de vide()." },
+              { motif: "(\\bcar\\s*\\([\\s\\S]*?){2}",
+                message: "La tête doit être obtenue par car(), pas en allant lire dans le p-uplet." },
+              { motif: "(\\bcdr\\s*\\([\\s\\S]*?){2}",
+                message: "La queue doit être obtenue par cdr(), pas en allant lire dans le p-uplet." },
+            ],
+            codeAbsent: [
+              { motif: "\\bL\\s*\\[", message: "Écrire L[0] ou L[1], c'est se servir de l'implémentation. Passe par car() et cdr()." },
             ],
             sortie: "(12, (5, (32, None)))\n12\n(5, (32, None))",
           },
@@ -325,7 +332,8 @@ Liste   L ─▶ ┌────┬───┐   ┌───┬───┐   
               <span class="chapo">Uniquement l'interface</span>
               Interdiction d'écrire <code>L[0]</code> ou <code>L[1]</code>, et interdiction
               d'appeler <code>len</code>. Les cinq opérations suffisent — et elles sont les
-              seules qui survivront au changement d'implémentation du défi x4.
+              seules qui survivront au changement d'implémentation, nécessaire dans les
+              défis en fin de séance.
             </div>`,
           nomFichier: "longueur.py",
           depart: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- À toi. ----\n\ndef longueur(L):\n    """Renvoie le nombre d'elements de la liste L."""\n    pass\n`,
@@ -343,8 +351,7 @@ Liste   L ─▶ ┌────┬───┐   ┌───┬───┐   
             "À chaque tour, deux choses doivent se produire : le compteur augmente, et <code>L</code> doit désigner un maillon plus loin.",
           ],
           solution: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- À toi. ----\n\ndef longueur(L):\n    """Renvoie le nombre d'elements de la liste L."""\n    n = 0\n    while not est_vide(L):\n        n = n + 1\n        L = cdr(L)\n    return n\n`,
-          apres: `<div class="encadre" data-ton="attention">
-              <span class="chapo">Les deux points sur lesquels tout repose</span>
+          apres: `<span class="chapo">Ce qu'il faut retenir de cet exercice</span>
               <strong>1. La ligne <code>L = cdr(L)</code> n'est pas optionnelle.</strong>
               C'est elle qui fait avancer le parcours. Si tu l'oublies, la liste testée reste
               la même à chaque tour, la condition reste vraie, et la boucle ne s'arrête
@@ -356,7 +363,6 @@ Liste   L ─▶ ┌────┬───┐   ┌───┬───┐   
               fait glisser de maillon en maillon, sans jamais toucher aux maillons
               eux-mêmes. C'est pourquoi le dernier test passe : après l'appel, la liste de
               l'appelant est intacte.
-            </div>
             <p>C'est aussi la différence avec la tirelire de la séance 1 : là-bas, on voulait
             modifier l'objet, et il fallait donc <code>t.append(…)</code>. Ici, on veut
             seulement se déplacer, et l'affectation est exactement le bon outil.</p>`,
@@ -418,8 +424,7 @@ Liste   L ─▶ ┌────┬───┐   ┌───┬───┐   
             "Et si la boucle se termine sans avoir rien trouvé, c'est que la liste a été parcourue en entier. Il ne reste qu'à renvoyer la réponse négative, <em>après</em> la boucle.",
           ],
           solution: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- À toi. ----\n\ndef appartient(L, x):\n    """Renvoie True si x figure dans la liste L, False sinon."""\n    while not est_vide(L):\n        if car(L) == x:\n            return True\n        L = cdr(L)\n    return False\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Deux <code>return</code>, et ce n'est pas un défaut</span>
+          apres: `<span class="chapo">Deux <code>return</code>, et ce n'est pas un défaut</span>
               Celui de l'intérieur dit « j'ai trouvé, je n'ai plus rien à faire » ; celui de
               la fin dit « j'ai tout regardé, ce n'était pas là ». Le second ne peut être
               atteint que si la boucle s'est terminée d'elle-même, donc si la liste est
@@ -429,7 +434,6 @@ Liste   L ─▶ ┌────┬───┐   ┌───┬───┐   
               <strong>arrêt anticipé</strong>. Ce n'est pas seulement plus rapide : c'est
               aussi plus lisible, parce que chaque <code>return</code> dit une chose et une
               seule.
-            </div>
             <p>Attention en revanche à ne pas écrire <code>return False</code>
             <em>dans</em> la boucle : la fonction s'arrêterait au premier élément qui n'est
             pas le bon, sans jamais regarder les suivants. Tu verras cette erreur exacte, en
@@ -575,8 +579,7 @@ while ... :
             "Il faut parcourir le tableau en commençant par la fin. Sers-toi du <code>range</code> à trois arguments rappelé dans l'énoncé.",
           ],
           solution: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- À toi. ----\n\ndef depuis_python(t):\n    """Renvoie la liste des elements du tableau t, dans le meme ordre."""\n    L = vide()\n    for i in range(len(t) - 1, -1, -1):\n        L = cons(t[i], L)\n    return L\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Le renversement, premier épisode</span>
+          apres: `<span class="chapo">Le renversement, premier épisode</span>
               Tu viens de rencontrer la difficulté qui va revenir dans tout le reste de la
               séance : <strong>on ne peut construire qu'en tête, donc le dernier élément
               traité est le premier de la liste obtenue.</strong>
@@ -590,8 +593,7 @@ while ... :
               </ul>
               Sur une liste chaînée, on ne peut pas remonter : c'est donc la seconde méthode
               qui s'imposera, et tu écriras l'outil qui la rend possible dans quelques
-              étapes.
-            </div>`,
+              étapes.`,
         },
 
         {
@@ -611,6 +613,9 @@ while ... :
           nomFichier: "casse.py",
           depart: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- Les trois fonctions à réparer. ----\n\ndef longueur(L):\n    n = 0\n    while not est_vide(L)\n        n = n + 1\n        L = cdr(L)\n    return n\n\ndef appartient(L, x):\n    while not est_vide(L):\n        if car(L) == x:\n            return True\n        L = car(L)\n    return False\n\ndef somme(L):\n    total = 0\n    while not est_vide(L):\n        total = total + car(L)\n        L = cdr(L)\n        return total\n`,
           validation: {
+            codeAbsent: [
+              { motif: "\\bL\\s*\\[", message: "Répare avec car() et cdr() : un client ne connaît pas la forme des maillons." },
+            ],
             tests: `L = cons(12, cons(5, cons(32, vide())))\nassert longueur(vide()) == 0, "La liste vide a une longueur de 0."\nassert longueur(L) == 3, "Cette liste contient trois éléments."\nassert appartient(L, 32) == True, "32 est le dernier élément : la recherche doit aller jusqu'au bout."\nassert appartient(L, 7) == False, "7 ne figure pas dans la liste."\nassert somme(vide()) == 0, "La somme d'une liste vide vaut 0."\nassert somme(L) == 49, "12 + 5 + 32 font 49 — la fonction doit parcourir toute la liste, pas seulement sa tête."\nassert somme(cons(4, vide())) == 4, "Une liste d'un seul élément : la somme est cet élément."`,
           },
           felicitation: "Trois bugs, trois natures. Le deuxième est celui qui coûte le plus de temps en devoir. 🐛",
@@ -620,8 +625,7 @@ while ... :
             "Dans <code>somme</code>, compare l'indentation de la dernière ligne avec celle du reste : elle est au même niveau que le corps de la boucle. À quel moment s'exécute-t-elle donc ?",
           ],
           solution: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- Les trois fonctions à réparer. ----\n\ndef longueur(L):\n    n = 0\n    while not est_vide(L):\n        n = n + 1\n        L = cdr(L)\n    return n\n\ndef appartient(L, x):\n    while not est_vide(L):\n        if car(L) == x:\n            return True\n        L = cdr(L)\n    return False\n\ndef somme(L):\n    total = 0\n    while not est_vide(L):\n        total = total + car(L)\n        L = cdr(L)\n    return total\n`,
-          apres: `<div class="encadre" data-ton="attention">
-              <span class="chapo">Les trois bugs, et ce qu'ils t'apprennent</span>
+          apres: `<span class="chapo">Les trois bugs, et ce qu'ils t'apprennent</span>
               <strong>Le deux-points oublié.</strong> Python ne comprend pas le fichier et
               refuse de l'exécuter, même les parties saines. C'est le bug le plus facile :
               le message donne le numéro de la ligne.
@@ -641,8 +645,7 @@ while ... :
               <em>fonction</em>, immédiatement. C'est l'exacte contrepartie de l'arrêt
               anticipé que tu as utilisé, à bon escient cette fois, dans
               <code>appartient</code> : le même geste est une qualité ou un bug selon
-              l'endroit où on le pose.
-            </div>`,
+              l'endroit où on le pose.`,
         },
 
         {
@@ -784,8 +787,7 @@ while ... :
             "Deux lignes suffisent dans la boucle : l'une fait grandir le résultat, l'autre fait descendre <code>L</code>. Aucune des deux n'est facultative.",
           ],
           solution: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- À toi. ----\n\ndef renverser(L):\n    """Renvoie une nouvelle liste contenant les elements de L en ordre inverse.\n\n    Effet : L n'est pas modifiee.\n    """\n    resultat = vide()\n    while not est_vide(L):\n        resultat = cons(car(L), resultat)\n        L = cdr(L)\n    return resultat\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Pourquoi il n'y a rien de plus à faire</span>
+          apres: `<span class="chapo">Pourquoi il n'y a rien de plus à faire</span>
               Regarde ce que devient le résultat, tour après tour, pour la liste 12, 5, 32 :
               <pre class="bloc-code"><code>départ  : nil
 tour 1  : (12, nil)             on a consé 12
@@ -795,7 +797,6 @@ tour 3  : (32, (5, (12, nil)))  et 32 devant tout le monde</code></pre>
               renversement n'est pas un traitement supplémentaire : c'est la
               <strong>conséquence automatique</strong> du fait que <code>cons</code> ajoute
               en tête.
-            </div>
             <p>Retiens cette fonction, elle va te servir sans arrêt. Chaque fois qu'un
             exercice demandera une liste <em>dans l'ordre</em> alors que tu ne peux la
             construire qu'en tête, la recette sera la même : <strong>construire à l'envers,
@@ -847,13 +848,11 @@ tour 3  : (32, (5, (12, nil)))  et 32 devant tout le monde</code></pre>
             "Renverse <code>L1</code>, puis descends ce renversé en consant chaque tête sur le résultat.",
           ],
           solution: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- Déjà écrite à l'exercice précédent. ----\n\ndef renverser(L):\n    """Renvoie une nouvelle liste contenant les elements de L en ordre inverse."""\n    resultat = vide()\n    while not est_vide(L):\n        resultat = cons(car(L), resultat)\n        L = cdr(L)\n    return resultat\n\n\n# ---- À toi. ----\n\ndef concatener(L1, L2):\n    """Renvoie une nouvelle liste : les elements de L1, puis ceux de L2.\n\n    Effet : ni L1 ni L2 ne sont modifiees.\n    """\n    resultat = L2\n    envers = renverser(L1)\n    while not est_vide(envers):\n        resultat = cons(car(envers), resultat)\n        envers = cdr(envers)\n    return resultat\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Deux renversements qui s'annulent</span>
+          apres: `<span class="chapo">Deux renversements qui s'annulent</span>
               <code>renverser(L1)</code> met le dernier élément de L1 en tête ; la boucle le
               consomme donc en premier et le pose au plus près de L2. Puis l'avant-dernier
               vient devant lui, et ainsi de suite : le second renversement, celui que fait la
               boucle, défait le premier. L1 se retrouve à l'endroit, devant L2.
-            </div>
             <p>Remarque au passage que <code>L2</code> n'est pas recopiée : le résultat
             <strong>partage</strong> ses maillons avec elle. C'est sans danger, puisque
             personne ne peut les modifier — et c'est ce qui rend cette concaténation bien
@@ -886,8 +885,7 @@ tour 3  : (32, (5, (12, nil)))  et 32 devant tout le monde</code></pre>
             "D'où la toute dernière ligne de la fonction : il reste un geste à faire avant de renvoyer.",
           ],
           solution: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\ndef renverser(L):\n    """Renvoie une nouvelle liste contenant les elements de L en ordre inverse."""\n    resultat = vide()\n    while not est_vide(L):\n        resultat = cons(car(L), resultat)\n        L = cdr(L)\n    return resultat\n\n\n# ---- À toi. ----\n\ndef filtrer(L, seuil):\n    """Renvoie la liste des elements de L strictement superieurs a seuil.\n\n    L'ordre d'origine est conserve. L n'est pas modifiee.\n    """\n    envers = vide()\n    while not est_vide(L):\n        if car(L) > seuil:\n            envers = cons(car(L), envers)\n        L = cdr(L)\n    return renverser(envers)\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Le patron « construire à l'envers puis renverser »</span>
+          apres: `<span class="chapo">Le patron « construire à l'envers puis renverser »</span>
               <pre class="bloc-code"><code>envers = vide()
 while not est_vide(L):
     si la tête m'intéresse :
@@ -898,7 +896,6 @@ return renverser(envers)</code></pre>
               nouvelle liste à partir de celle-ci, dans le même ordre » : filtrer, doubler
               chaque valeur, ne garder que les nombres pairs, remplacer les négatifs par
               zéro… Seule change la ligne du milieu.
-            </div>
             <p>Cela fait bien deux parcours complets de la liste au lieu d'un. On aurait pu
             les éviter en descendant <code>L</code> à l'envers — mais c'est impossible : un
             maillon connaît son successeur, jamais son prédécesseur. Le renversement est le
@@ -994,8 +991,7 @@ def doubler_tete(L):
             "<code>car</code> lit la case d'indice 0. <code>cdr</code> renvoie une tranche qui commence à l'indice 1 et va jusqu'au bout.",
           ],
           solution: `# Deuxième implémentation du type abstrait liste : « par tableau ».\n\ndef vide():\n    return []\n\ndef est_vide(liste):\n    return liste == []\n\ndef cons(element, liste):\n    return [element] + liste\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1:]\n`,
-          apres: `<div class="encadre" data-ton="attention">
-              <span class="chapo">Le contrat est tenu ; le prix, lui, a changé</span>
+          apres: `<span class="chapo">Le contrat est tenu ; le prix, lui, a changé</span>
               <code>cdr</code> fabrique ici une <strong>copie</strong> de tout le reste du
               tableau. Descendre une liste de 1 000 éléments recopie donc 999 cases, puis
               998, puis 997… soit près de <strong>500 000 recopies</strong> pour un seul
@@ -1006,7 +1002,6 @@ def doubler_tete(L):
               séance 1, vérifiée sur pièces : <strong>deux implémentations d'une même
               interface sont interchangeables du point de vue du résultat, jamais du point de
               vue du temps.</strong>
-            </div>
             <p>Et c'est aussi pourquoi la remarque de l'étape précédente compte : un client
             qui écrivait <code>L[0]</code> marchait par accident sur cette implémentation-ci
             — puisqu'un tableau s'indexe — tout en étant faux sur l'autre. Les erreurs les
@@ -1055,8 +1050,7 @@ def doubler_tete(L):
             "Et après la boucle ? Elle s'est arrêtée parce qu'au moins une liste est vide. Les listes ne sont égales que si elles le sont <strong>toutes les deux</strong> : c'est cette condition qu'il faut renvoyer.",
           ],
           solution: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- À toi. ----\n\ndef egales(L1, L2):\n    """Renvoie True si L1 et L2 ont les memes elements dans le meme ordre."""\n    while not est_vide(L1) and not est_vide(L2):\n        if car(L1) != car(L2):\n            return False\n        L1 = cdr(L1)\n        L2 = cdr(L2)\n    return est_vide(L1) and est_vide(L2)\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">La dernière ligne fait tout le travail</span>
+          apres: `<span class="chapo">La dernière ligne fait tout le travail</span>
               Beaucoup écrivent <code>return True</code> après la boucle, et la fonction
               déclare alors égales une liste et son propre début — l'erreur que les deux
               tests du milieu attrapent.
@@ -1069,8 +1063,7 @@ def doubler_tete(L):
               <br><br>
               C'est un réflexe qui sert bien au-delà de cet exercice : <strong>après une
               boucle <code>while</code>, se demander systématiquement quelle condition l'a
-              fait sortir</strong>, et écrire la suite en fonction.
-            </div>`,
+              fait sortir</strong>, et écrire la suite en fonction.`,
         },
 
         {
@@ -1107,8 +1100,7 @@ def doubler_tete(L):
             "Une fois arrêté, construis le résultat en consant <code>x</code> sur ce qui reste de <code>L</code>. Puis la seconde boucle vide la réserve sur ce résultat.",
           ],
           solution: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- À toi. ----\n\ndef inserer_trie(L, x):\n    """Renvoie une nouvelle liste triee contenant les elements de L et x.\n\n    Precondition : L est triee par ordre croissant.\n    Effet : L n'est pas modifiee.\n    """\n    de_cote = vide()\n    while not est_vide(L) and car(L) < x:\n        de_cote = cons(car(L), de_cote)\n        L = cdr(L)\n    resultat = cons(x, L)\n    while not est_vide(de_cote):\n        resultat = cons(car(de_cote), resultat)\n        de_cote = cdr(de_cote)\n    return resultat\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Deux choses à retenir de cet exercice</span>
+          apres: `<span class="chapo">Deux choses à retenir de cet exercice</span>
               <strong>1. L'ordre des conditions n'est pas décoratif.</strong>
               <code>not est_vide(L) and car(L) &lt; x</code> : si la liste est vide, Python
               n'évalue même pas la seconde condition, et <code>car</code> n'est jamais appelé
@@ -1121,15 +1113,12 @@ def doubler_tete(L):
               <code>de_cote</code> a été remplie en partant du début de la liste, donc ses
               éléments y sont à l'envers. En les reconsant un à un sur le résultat, on les
               remet à l'endroit. Aucun renversement explicite n'a été nécessaire.
-            </div>
-            <div class="encadre" data-ton="astuce">
-              <span class="chapo">Tu viens d'utiliser une pile sans le savoir</span>
+            <span class="chapo">Tu viens d'utiliser une pile sans le savoir</span>
               Regarde <code>de_cote</code> : elle se remplit par la tête, et se vide par la
               tête — donc dans l'ordre inverse de l'entrée. C'est une <strong>pile</strong>,
               et c'est le sujet de la séance 3. Tu la reconnaîtras désormais partout : dès
               qu'un algorithme met des choses de côté pour les reprendre en sens inverse, il
-              y a une pile dedans.
-            </div>`,
+              y a une pile dedans.`,
         },
 
         {
@@ -1172,8 +1161,7 @@ def doubler_tete(L):
             "Une fois la liste décroissante obtenue, garder ses trois premiers éléments demande trois descentes — et un dernier renversement, puisque tu les auras accumulés en tête.",
           ],
           solution: `# ---- L'implémentation « par p-uplets ». N'y touche pas. ----\n\ndef vide():\n    return None\n\ndef est_vide(liste):\n    return liste is None\n\ndef cons(element, liste):\n    return (element, liste)\n\ndef car(liste):\n    return liste[0]\n\ndef cdr(liste):\n    return liste[1]\n\n\n# ---- Déjà écrite au défi précédent. ----\n\ndef inserer_trie(L, x):\n    """Renvoie une nouvelle liste triee croissante contenant les elements de L et x."""\n    de_cote = vide()\n    while not est_vide(L) and car(L) < x:\n        de_cote = cons(car(L), de_cote)\n        L = cdr(L)\n    resultat = cons(x, L)\n    while not est_vide(de_cote):\n        resultat = cons(car(de_cote), resultat)\n        de_cote = cdr(de_cote)\n    return resultat\n\n\n# ---- À toi. ----\n\ndef podium(L):\n    """Renvoie la liste des trois plus grands elements de L, du plus grand au plus petit.\n\n    Precondition : L contient au moins trois elements.\n    Effet : L n'est pas modifiee.\n    """\n    triee = vide()\n    while not est_vide(L):\n        triee = inserer_trie(triee, car(L))\n        L = cdr(L)\n\n    decroissante = vide()\n    while not est_vide(triee):\n        decroissante = cons(car(triee), decroissante)\n        triee = cdr(triee)\n\n    envers = vide()\n    for _ in range(3):\n        envers = cons(car(decroissante), envers)\n        decroissante = cdr(decroissante)\n\n    resultat = vide()\n    while not est_vide(envers):\n        resultat = cons(car(envers), resultat)\n        envers = cdr(envers)\n    return resultat\n`,
-          apres: `<div class="encadre">
-              <span class="chapo">Quatre étapes, et chacune est un schéma que tu connais</span>
+          apres: `<span class="chapo">Quatre étapes, et chacune est un schéma que tu connais</span>
               <ol>
                 <li><strong>Trier</strong> : descendre <code>L</code> en insérant chaque tête
                 dans une liste triée — c'est le tri par insertion, et il tient en trois
@@ -1187,7 +1175,6 @@ def doubler_tete(L):
               Aucune de ces étapes n'est nouvelle. Un exercice de synthèse ne demande presque
               jamais une idée neuve : il demande de reconnaître, dans un énoncé, des gestes
               déjà pratiqués — et de les mettre dans le bon ordre.
-            </div>
             <p>Ce n'est évidemment pas la façon la plus économique de trouver trois maximums :
             on trie mille scores pour n'en garder que trois. À la séance 7, on saura dire
             précisément ce que cela coûte, et pourquoi ce n'est pas toujours grave.</p>`,
