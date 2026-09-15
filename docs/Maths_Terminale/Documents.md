@@ -16,11 +16,11 @@ Vous pouvez télécharger le livret de cours complet en cliquant [ici :fontaweso
 
 ### TD et correction 
 
-Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà aborder en classe ainsi que leur correction. 
+Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà abordés en classe ainsi que leur correction. 
 
 - TD1 - Logique mathématique
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td1.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td1-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td1.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td1-correction.pdf)
 
 - TD2 - Suites et raisonnement par récurrence
     
@@ -73,7 +73,7 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà aborder en clas
 
 - TD A - Vecteurs de l'espace
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdA.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdA-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdA.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdA-correction.pdf)
 
 - TD B - Dénombrement 1
     
