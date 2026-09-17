@@ -18,6 +18,14 @@ travail est téléchargé sous la forme d'un fichier que tu remets à ton profes
 [Corriger les copies :material-arrow-right:](../eval/correction.html){ .md-button }
 {% endif %}
 
+!!! example "Pour t'entraîner : l'évaluation à blanc"
+    Avant un vrai devoir, essaie le dispositif avec l'évaluation à blanc. Elle
+    n'est pas notée. Clique sur **Passer une évaluation** et entre ce code :
+
+    ```
+    ESSAI-BLANC-2026
+    ```
+
 ## Comment ça se passe
 
 1. **Tu entres le code de l'évaluation**, celui que ton professeur écrit au
