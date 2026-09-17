@@ -70,9 +70,21 @@ export default {
           type: "code",
           titre: "Toutes les cases d'un tableau",
           contenu: `
-            <p>Écris les deux boucles imbriquées qui parcourent un tableau de
-            <strong>3 lignes</strong> et <strong>2 colonnes</strong> et affichent les
-            coordonnées de chaque case :</p>
+            <p>Voici un tableau de <strong>3 lignes</strong> et <strong>2 colonnes</strong>.
+            Chaque case est repérée par ses <strong>coordonnées</strong> : son numéro de
+            ligne, puis son numéro de colonne — tous deux comptés à partir de 0, comme
+            avec <code>range</code>.</p>
+
+            <table class="table-grille">
+              <tr><th></th><th>colonne 0</th><th>colonne 1</th></tr>
+              <tr><th>ligne 0</th><td>0 0</td><td>0 1</td></tr>
+              <tr><th>ligne 1</th><td>1 0</td><td>1 1</td></tr>
+              <tr><th>ligne 2</th><td>2 0</td><td>2 1</td></tr>
+            </table>
+
+            <p>Écris les deux boucles imbriquées qui parcourent ce tableau, ligne par
+            ligne, et affichent les <strong>coordonnées de chaque case</strong> : le
+            numéro de ligne et le numéro de colonne, séparés par une espace.</p>
             <pre class="bloc-code"><code>0 0
 0 1
 1 0
@@ -288,29 +300,42 @@ for i in range(...):
           type: "code",
           titre: "Le triangle, version double boucle",
           contenu: `
-            <p>Reprends le triangle de dièses de la séance 9, mais <strong>sans utiliser la
-            répétition de texte</strong> : la boucle intérieure doit construire la ligne
-            caractère par caractère.</p>
+            <p>Reprends le triangle de dièses de la séance 9, avec cette fois
+            <strong>deux boucles imbriquées</strong> :</p>
             <pre class="bloc-code sans-copie"><code>#
 ##
 ###
 ####
-#####</code></pre>`,
+#####</code></pre>
+            <div class="encadre" data-ton="attention">
+              <span class="chapo">Interdit : <code>i * "#"</code></span>
+              À la séance 9, <code>i * "#"</code> fabriquait toute la ligne d'un coup.
+              Ici, la multiplication d'une chaîne est <strong>interdite</strong>. On ne
+              peut qu'<strong>ajouter</strong> un dièse à la fois au bout d'une chaîne,
+              avec <code>+</code>.
+            </div>
+            <ul>
+              <li>la boucle <strong>extérieure</strong> choisit le numéro de la ligne,
+                de 1 à 5 ;</li>
+              <li>la boucle <strong>intérieure</strong> construit cette ligne, dièse
+                après dièse ;</li>
+              <li>une fois la ligne terminée, on l'affiche.</li>
+            </ul>`,
           depart: `\n`,
           validation: {
             codeContient: [
               { motif: "for[\\s\\S]*\\n {4,}for", message: "Il faut deux boucles imbriquées." },
             ],
             codeAbsent: [
-              { motif: "\\*\\s*\"#\"|\"#\"\\s*\\*", message: "Pas de répétition de texte ici : c'est la boucle intérieure qui construit la ligne." },
+              { motif: "\\*\\s*[\"']#[\"']|[\"']#[\"']\\s*\\*", message: "Interdit ici : i * \"#\". C'est la boucle intérieure qui ajoute les dièses un par un." },
             ],
             sortie: "#\n##\n###\n####\n#####",
           },
           felicitation: "Un accumulateur de texte, remis à zéro à chaque ligne. 🔺",
           indices: [
-            "Avant la boucle intérieure, la ligne est une chaîne <strong>vide</strong>.",
-            "La boucle intérieure y ajoute un dièse à chaque tour.",
-            "Le <code>print</code> vient après la boucle intérieure, mais dans l'extérieure.",
+            "Dans la boucle extérieure, commence par créer une chaîne vide : <code>ligne = \"\"</code>. Elle repart à vide à chaque nouvelle ligne du triangle.",
+            "À la ligne numéro <code>i</code>, la boucle intérieure doit tourner <code>i</code> fois. À chaque tour, elle ajoute un <code>\"#\"</code> au bout de <code>ligne</code> avec <code>+</code>, comme la somme de la séance 9.",
+            "Quand la boucle intérieure est finie, la ligne est complète. Le <code>print(ligne)</code> se place donc après elle : décalé de 4 espaces, pas de 8.",
           ],
           solution: `for i in range(1, 6):\n    ligne = ""\n    for j in range(i):\n        ligne = ligne + "#"\n    print(ligne)\n`,
         },
@@ -320,13 +345,17 @@ for i in range(...):
           type: "code",
           titre: "Le premier multiple de 7",
           contenu: `
-            <p>Cherche le premier multiple de 7 strictement supérieur à 500, et affiche
-            exactement :</p>
+            <p>Avec une boucle <code>for</code>, parcours les entiers
+            <strong>de 500 à 599</strong>. Affiche <strong>uniquement le premier</strong>
+            multiple de 7 rencontré, sous cette forme :</p>
             <pre class="bloc-code"><code>Trouvé : 504</code></pre>
-            <p>La boucle doit s'arrêter dès qu'elle a trouvé, avec <code>break</code>.</p>`,
+            <p>Dès que ce multiple est trouvé, la boucle doit s'arrêter avec
+            <code>break</code> : inutile de tester les nombres suivants.</p>`,
           depart: `\n`,
           validation: {
             codeContient: [
+              { motif: "\\bfor\\b", message: "Parcours les entiers avec une boucle for." },
+              { motif: "range\\s*\\(\\s*500\\s*,\\s*600\\s*\\)", message: "Les entiers de 500 à 599 : attention à la borne de droite, qui est exclue." },
               { motif: "\\bbreak\\b", message: "La boucle doit s'arrêter dès la découverte." },
               { motif: "%", message: "La divisibilité se teste avec le reste." },
             ],
@@ -336,10 +365,19 @@ for i in range(...):
             sortie: "Trouvé : 504",
           },
           indices: [
-            "La boucle part de 501 et monte : <code>range(501, 600)</code> suffit largement.",
-            "Dès que le reste de la division par 7 est nul, on affiche et on sort.",
+            "De 500 à 599 inclus : la borne de droite de <code>range</code> est exclue.",
+            "Dans la boucle, teste si le reste de la division par 7 est nul. Si oui, affiche le nombre, puis sors de la boucle.",
           ],
-          solution: `for i in range(501, 600):\n    if i % 7 == 0:\n        print("Trouvé :", i)\n        break\n`,
+          solution: `for i in range(500, 600):\n    if i % 7 == 0:\n        print("Trouvé :", i)\n        break\n`,
+          apres: `<p>Sans limite fixée à l'avance, on n'utiliserait pas de <code>for</code> :
+            une boucle <code>while</code> avance jusqu'au premier multiple, et elle n'a
+            pas besoin de <code>break</code>.</p>
+            <pre class="bloc-code"><code>n = 500
+while n % 7 != 0:
+    n = n + 1
+print("Trouvé :", n)</code></pre>
+            <p>Ici, la consigne fixe la plage 500–599, d'où le <code>for</code>. Si cette
+            plage ne contenait aucun multiple de 7, rien ne s'afficherait.</p>`,
         },
 
         {

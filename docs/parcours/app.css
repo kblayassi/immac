@@ -436,6 +436,14 @@ li { margin-bottom: .3em; }
 .table-simple th { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--texte-doux); }
 .enveloppe-table { overflow-x: auto; }
 
+/* Un tableau dessiné comme une grille : cases encadrées, coordonnées au centre. */
+.table-grille { border-collapse: collapse; margin: .4em 0 1em; }
+.table-grille th { font-size: .78rem; font-weight: 600; color: var(--texte-doux); padding: .3em .7em; }
+.table-grille td {
+  border: 2px solid var(--bordure); min-width: 4.5em; padding: .7em;
+  text-align: center; font-family: var(--mono); background: var(--surface-2);
+}
+
 /* ------------------------------------------------------------------ Éditeur */
 .atelier {
   border: 1px solid var(--bordure);

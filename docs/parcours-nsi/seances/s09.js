@@ -486,7 +486,7 @@ i = 50</code></pre>
               Teste d'abord ces trois instructions : <code>print("#" + "#")</code>,
               <code>print(3 * "#")</code>, <code>print(1 * "#")</code>.
             </div>`,
-          depart: `# Rappel : 3 * "#" vaut "###"\n`,
+          depart: `# Rappel : 3 * "ab" vaut "ababab"\n`,
           validation: {
             codeContient: [
               { motif: "\\bfor\\b", message: "Il faut une boucle." },
