@@ -124,7 +124,7 @@ Vous trouverez sur cette page les sujets et les correction des divers DHC de typ
 
 - DHC1 - Métropole 2025 :  
     
-    *À venir* <!-- [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc1.pdf) -->
+    [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc1.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc1-correction.pdf) -->
 
 - DHC2 - Liban 2016 :  
     
@@ -152,7 +152,7 @@ Vous trouverez sur cette page les sujets et les correction des divers DHC de typ
 
 - DHC8 - ???
     
-    *À venir* <!-- [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc7.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc7-correction.pdf) -->
+    *À venir* <!-- [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc8.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc8-correction.pdf) -->
 
 - DHC9 - Asie 2025 : 
     

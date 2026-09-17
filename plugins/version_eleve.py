@@ -32,7 +32,8 @@ un masquage par CSS, il n'y a rien à révéler dans la page.
 En version prof, il fait l'inverse : il pose dans chaque `parcours-*/index.html`
 le drapeau `window.PARCOURS_PROF`. Le moteur le lit pour n'y verrouiller aucune
 étape et y offrir la correction d'emblée : on y prépare une séance, on ne la
-suit pas.
+suit pas. Et dans les pages « Documents », il publie tous les TD, sujets et
+corrections encore marqués « À venir », pourvu que leur fichier soit déposé.
 
 Le choix de la version se lit dans `extra.version` du fichier de configuration.
 """
@@ -180,8 +181,51 @@ def _retirer_div(html, ouverture):
 SECTIONS_NSI = ('NSI/', 'NSI_Terminale/')
 
 
+# ---------------------------------------------------------------------------
+# Pages « Documents », version prof : tout est distribué
+#
+# Côté élève, un document pas encore donné en classe s'écrit
+#     *À venir* <!-- [Fiche du TD …](../files/…) / [Correction …](../files/…) -->
+# Le commentaire garde les liens prêts ; on les publie en retirant le commentaire
+# et le « À venir ». La version élève n'en garde que « À venir ». La version prof
+# les publie tous d'emblée — mais seulement ceux dont le fichier existe :
+# un lien vers un PDF pas encore déposé serait une page d'erreur.
+
+A_VENIR = re.compile(r'\*À venir\*[ \t]*<!--(?P<liens>.*?)-->')
+LIEN = re.compile(r'\[(?P<texte>[^\]]*)\]\((?P<cible>[^)\s]+)\)')
+BALISE_HTML = re.compile(r'<[^>]+>')
+
+
+def _depose(cible, page, config):
+    chemin = (Path(config['docs_dir']) / page.file.src_uri).parent / cible
+    return chemin.resolve().is_file()
+
+
+def distribuer_documents(markdown, page, config):
+    def remplacer(m):
+        liens = list(LIEN.finditer(m.group('liens')))
+        presents = [l.group(0) for l in liens if _depose(l.group('cible'), page, config)]
+        absents = [BALISE_HTML.sub('', l.group('texte')).strip()
+                   for l in liens if not _depose(l.group('cible'), page, config)]
+        if not presents:
+            return '*À venir* — *aucun fichier déposé*'
+        texte = ' / '.join(presents)
+        if absents:
+            texte += ' · *pas encore déposé : ' + ', '.join(absents) + '*'
+        return texte
+    return A_VENIR.sub(remplacer, markdown)
+
+
 def on_page_markdown(markdown, page, config, files):
-    if config.get('extra', {}).get('version') != 'eleve':
+    version = config.get('extra', {}).get('version')
+    if Path(page.file.src_uri).name == 'Documents.md':
+        if version == 'prof':
+            return distribuer_documents(markdown, page, config)
+        # Côté élève, le commentaire disparaît avec ses liens. Laissé à Markdown,
+        # il les convertit tout de même (lisibles dans la source de la page), et il
+        # se casse — texte visible — quand un lien le précède sur la même ligne.
+        return A_VENIR.sub('*À venir*', markdown) if version == 'eleve' else markdown
+    if version != 'eleve':
         return markdown
     if not page.file.src_uri.startswith(SECTIONS_NSI):
         return markdown
