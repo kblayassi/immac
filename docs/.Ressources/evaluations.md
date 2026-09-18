@@ -44,8 +44,14 @@ docs/<cle>/                une évaluation, publiée
   sujet.js                 PRODUIT — questions chiffrées, ne pas modifier à la main
 
 tools/evaluations/         les outils
+  console.mjs              la console : une page locale pour tout gérer
+  console/                 sa page (HTML, CSS, JS, icône) — jamais publiée
+  creer_raccourci.sh       fabrique l'app qui l'ouvre d'un double-clic
+  publier.mjs              commit + push des seuls fichiers d'évaluation
+  evaluations.mjs          la même chose en ligne de commande
   sceller_sujet.mjs        chiffre une source vers le sujet publié
-  evaluations.mjs          lister, désactiver, réactiver, recoder
+  sceller.mjs              le scellage lui-même, partagé par les deux façades
+  inventaire.mjs           l'état des épreuves et les gestes qui le changent
   manifeste.mjs            lire et réécrire evaluations.js
   codes.mjs                le carnet des codes
   verifier_bareme.mjs      le banc
@@ -143,6 +149,49 @@ scellés et deux codes.
 
 ## Gérer les évaluations publiées
 
+La **console des évaluations** s'ouvre d'un double-clic sur l'app *Console des
+évaluations* (dans `~/Applications`, ou par Spotlight). Pour fabriquer l'app —
+une fois, ou après avoir déplacé le dépôt ou réinstallé Node :
+
+```
+zsh tools/evaluations/creer_raccourci.sh
+```
+
+Sans l'app : `node tools/evaluations/console.mjs`. Dans les deux cas, une seule
+console tourne à la fois — relancer rouvre simplement sa page.
+
+On y trouve les épreuves groupées par niveau, chacune avec son code, sa durée
+et ses points, un interrupteur pour l'activer ou la désactiver, un bouton pour
+changer son code, et un bouton **Barème (JSON)** qui télécharge le fichier à
+déposer dans la page de correction. Dès qu'un changement n'est pas en ligne, un bandeau
+propose **Publier** : un commit, puis un envoi vers GitHub. Le bouton
+**Arrêter**, en haut, ferme la console.
+
+Ce que fait **Publier**, et ce qu'il refuse de faire :
+
+- il ne committe que le manifeste et les sujets scellés — une retouche de
+  parcours en cours reste hors du commit, et le dialogue le rappelle ;
+- il propose un message (« Désactive « DHC 1 » »…), que l'on peut réécrire ;
+- il pousse aussi les commits déjà faits et pas encore envoyés, et les **montre
+  avant** : ils peuvent n'avoir rien à voir avec les évaluations ;
+- il ne publie que depuis `main`, suivie par `origin/main`, et pousse
+  explicitement `origin main` — jamais l'ancien remote `ancien-immacespalion` ;
+- git ne peut rien demander au clavier : un refus (identifiants, dépôt en
+  ligne en avance, pas de réseau) s'affiche en clair avec ce qu'il faut faire.
+  Si le commit est passé mais pas l'envoi, un second clic ne fait qu'envoyer.
+
+Journal de la console lancée par l'app : `~/Library/Logs/console-evaluations.log`.
+
+Les codes sont **masqués** tant qu'on ne clique pas sur « Afficher » : un écran
+de professeur est souvent projeté.
+
+C'est un petit serveur, pas une page du site : il n'écoute que `127.0.0.1`, et
+chaque appel porte un jeton tiré au lancement, qui n'existe que dans l'adresse
+ouverte (retenue dans `prive/.console.json` le temps que la console tourne).
+Rien de `tools/` n'est déployé.
+
+La même chose en ligne de commande :
+
 ```
 node tools/evaluations/evaluations.mjs                    toutes, par niveau
 node tools/evaluations/evaluations.mjs nsi-premiere       un seul niveau
@@ -160,8 +209,8 @@ ferme l'épreuve sans toucher au sujet scellé, qui reste en ligne. Recoder, en
 revanche, rescelle — le code n'est pas un mot de passe rangé quelque part, c'est
 la clé qui chiffre le sujet — et exige donc la source en clair.
 
-Ces commandes réécrivent des fichiers du site : **rien n'est effectif tant que
-le commit n'est pas poussé et le site reconstruit.**
+Ces gestes réécrivent des fichiers du site : **rien n'est effectif tant que ce
+n'est pas publié et le site reconstruit** — deux ou trois minutes après l'envoi.
 
 ## Écrire un barème
 
@@ -257,23 +306,50 @@ la version prof), ou directement `/immac/eval/correction.html`. On y dépose
 le barème et les copies, ensemble ou par paquets, par glisser-déposer. Rien ne
 part sur un réseau : il n'y a pas de serveur.
 
-La table donne une ligne par élève, une colonne par question, le total et la note.
-Un clic sur **Voir** déplie la copie, et c'est là que tout se corrige :
+La table donne une ligne par élève : ce qui reste **à corriger**, le total et la
+note. Le détail par exercice se lit en dépliant la copie — **Voir** — et c'est là
+que tout se corrige :
 
-* le code tel qu'il a été écrit, et chaque critère avec son verdict ;
-* **les points de chaque exercice**, dans un champ qui prend le pas sur le barème ;
+* le code de l'élève **dans un éditeur**, avec **Exécuter** — les `input()` se
+  tapent dans la console. On peut le modifier pour tester une hypothèse (« et
+  avec `<=` ? ») : c'est un bac à sable, la copie et la note n'en sont pas
+  touchées, et **Rétablir** rend le code tel qu'il a été remis ;
+* **chaque critère, cliquable** : un clic renverse le verdict du barème (vert ↔
+  rouge), un second le lui rend. Les points de l'exercice, le total et la note
+  suivent aussitôt. Un critère renversé porte un trait violet, et la copie de
+  l'élève indique « revu par ton professeur » ;
+* **les points de chaque exercice**, dans un champ qui prend le pas sur les
+  critères. Renverser un critère efface ce nombre : on laisse alors les
+  critères décider ;
 * **une annotation par exercice** — c'est elle qui fait la différence entre une
   note et une correction : l'élève doit lire *pourquoi* il a perdu ces points-là ;
 * **la note finale**, elle aussi retouchable : additionner des points ne fait pas
   toujours une note ;
 * **l'appréciation générale**.
 
-**Ce qui est saisi à la main l'emporte toujours**, aux trois étages —
-l'auto-correction propose. Les retouches restent dans le navigateur, par
+**Ce qui est saisi à la main l'emporte toujours**, à chaque étage — critère,
+exercice, note — et l'étage le plus large l'emporte sur ceux qu'il recouvre.
+L'auto-correction propose. Les retouches restent dans le navigateur, par
 évaluation et par élève ; fermer l'onglet au milieu d'un paquet ne perd rien.
 
-En orange, les cases qu'aucun barème ne peut trancher seul (réponses rédigées).
-En violet, celles qu'on a retouchées.
+**Pas de note tant qu'une réponse rédigée attend ses points** : la colonne
+« À corriger » le dit en orange, et la note reste « — ». Le total, lui, s'affiche
+en italique, provisoire. Une réponse laissée **vide** n'attend rien : elle vaut 0.
+Une note finale tapée à la main vaut décision et suffit. Les exports suivent la
+même règle : le CSV laisse la note vide, et une copie incomplète ne part pas dans
+le ZIP — aucun élève ne reçoit une note provisoire.
+
+En violet, ce qu'on a retouché.
+
+!!! warning "Une copie faite sur une autre version du sujet"
+    Les réponses sont rangées par identifiant (`q1`, `q2`…). Si le sujet a changé
+    entre l'épreuve et la correction — un exercice inséré, et tout se décale —,
+    une réponse serait jugée par les critères d'un autre exercice. Chaque copie
+    enregistre l'intitulé de ses questions : la page les compare au barème, et
+    signale en rouge, en tête de copie et sur chaque exercice touché, celles qui
+    ne concordent pas. **Moralité : une fois un sujet passé par des élèves, on
+    n'en renumérote plus les questions** — un exercice ajouté prend un nouvel
+    identifiant, à la fin.
 
 Deux exports : le **CSV** des notes, prêt pour un tableur français, et les
 **copies corrigées** en une archive ZIP — un fichier par élève, à déposer sur

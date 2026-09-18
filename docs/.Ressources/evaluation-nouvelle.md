@@ -178,6 +178,21 @@ sinon le premier groupe donne le code au second.
 
 ## 5 bis. Gérer les évaluations publiées
 
+Double-clic sur l'app **Console des évaluations** (Spotlight la trouve). La
+première fois, fabrique-la :
+
+```
+zsh tools/evaluations/creer_raccourci.sh
+```
+
+La console s'ouvre dans le navigateur : chaque épreuve, son code (masqué tant
+qu'on ne clique pas sur « Afficher »), un interrupteur pour l'activer ou la
+désactiver, un bouton pour changer son code. Dès qu'un changement n'est pas en
+ligne, un bandeau propose **Publier** — commit et envoi, sans passer par le
+terminal. **Arrêter**, en haut, ferme la console.
+
+Ou en ligne de commande :
+
 ```
 node tools/evaluations/evaluations.mjs                    toutes, par niveau
 node tools/evaluations/evaluations.mjs nsi-premiere       un seul niveau
@@ -195,10 +210,12 @@ d'entrée cesse d'essayer son code, qui n'ouvre donc plus rien. C'est réversibl
 et c'est le geste qui convient une fois l'épreuve passée. **Recoder** rescelle
 le sujet avec un nouveau code, donc exige la source en clair.
 
-!!! warning "Rien n'est effectif avant le déploiement"
-    Ces commandes réécrivent des fichiers du site, pas un réglage en ligne.
-    Tant que le commit n'est pas poussé et le site reconstruit, l'ancien code
-    ouvre encore l'épreuve et une épreuve désactivée reste ouverte.
+!!! warning "Rien n'est effectif avant la publication"
+    Ces gestes réécrivent des fichiers du site, pas un réglage en ligne. Tant
+    que ce n'est pas publié et le site reconstruit (deux ou trois minutes),
+    l'ancien code ouvre encore l'épreuve et une épreuve désactivée reste
+    ouverte. Un élève qui a **déjà** ouvert l'épreuve la garde de toute façon :
+    le sujet est dans son navigateur.
 
 ## 6. Relire le sujet comme un élève
 
@@ -265,6 +282,8 @@ pas redemandé, le temps restant est le bon. **Le même ordinateur**, en revanch
 ```
 node tools/evaluations/verifier_bareme.mjs [cle]     vérifier
 node tools/evaluations/sceller_sujet.mjs cle [code]  sceller
+zsh tools/evaluations/creer_raccourci.sh            fabriquer l'app de la console
+node tools/evaluations/console.mjs                   la console, sans l'app
 node tools/evaluations/evaluations.mjs [niveau]      lister, activer, recoder
 mkdocs serve                                         relire côté élève
 mkdocs serve -f mkdocs-prof.yml                      la page de correction
