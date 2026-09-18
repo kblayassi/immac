@@ -21,6 +21,8 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { sceller, ouvrir, fabriquerCode, normaliserCode } from "../../docs/eval/scelle.js";
+import { lireManifeste, ecrireManifeste } from "./manifeste.mjs";
+import { noterCode, CARNET } from "./codes.mjs";
 
 const ICI = dirname(fileURLToPath(import.meta.url));
 const RACINE = join(ICI, "..", "..");
@@ -97,31 +99,20 @@ export const SCELLE = ${JSON.stringify(scelle, null, 2)};
 writeFileSync(join(dossier, "sujet.js"), fichier);
 
 /* --- le manifeste : la page d'entrée doit savoir que cette évaluation existe.
-       On le réécrit plutôt que de demander à l'enseignant d'y penser. */
-const manifeste = join(RACINE, "docs", "eval", "evaluations.js");
-const { EVALUATIONS } = await import(manifeste);
-const liste = EVALUATIONS.filter((e) => (
-  /* On en profite pour oublier les évaluations dont le sujet a été supprimé :
-     le manifeste ne doit pas envoyer la page d'entrée chercher un fichier qui
-     n'existe plus. */
-  e.cle !== cle && existsSync(join(RACINE, "docs", e.cle, "sujet.js"))
-));
-liste.push({ cle, titre: EVALUATION.titre });
-liste.sort((a, b) => a.cle.localeCompare(b.cle, "fr"));
+       On le réécrit plutôt que de demander à l'enseignant d'y penser. Resceller
+       une épreuve déjà publiée ne la réactive pas : celle qu'on avait fermée le
+       reste, c'est un geste séparé (evaluations.mjs --activer). */
+const EVALUATIONS = await lireManifeste();
+const ancienne = EVALUATIONS.find((e) => e.cle === cle);
+ecrireManifeste([
+  ...EVALUATIONS.filter((e) => e.cle !== cle),
+  { cle, titre: EVALUATION.titre, niveau: EVALUATION.niveau ?? null,
+    actif: ancienne ? ancienne.actif : true },
+]);
 
-writeFileSync(manifeste, `/* Les évaluations publiées.
- *
- * Tenu à jour par tools/evaluations/sceller_sujet.mjs — ne pas modifier à la
- * main. La page d'entrée (passer.html) essaie le code saisi sur chacune d'elles
- * jusqu'à ce que l'une s'ouvre : c'est le code qui désigne l'évaluation, l'élève
- * n'a rien à choisir.
- *
- * Rien ici n'est secret : ces clés ne disent que l'existence d'une épreuve, et
- * le sujet correspondant reste chiffré (docs/eval/scelle.js).
- */
-
-export const EVALUATIONS = ${JSON.stringify(liste, null, 2)};
-`);
+/* --- le carnet : le code est consigné hors dépôt, pour qu'on puisse le relire.
+       Sans cela, un code égaré fermerait l'épreuve même pour son auteur. */
+noterCode(cle, code);
 
 console.log(`
 ${VERT}✓${NEUTRE} ${EVALUATION.titre}
@@ -130,6 +121,8 @@ ${VERT}✓${NEUTRE} ${EVALUATION.titre}
 
   ${GRAS}CODE DE L'ÉVALUATION : ${code}${NEUTRE}
 
-  À écrire au tableau au début de l'épreuve. Note-le : il n'est enregistré
-  nulle part, et sans lui le sujet publié reste fermé pour tout le monde.
+  À écrire au tableau au début de l'épreuve. Il est consigné dans
+  ${GRIS}${CARNET.replace(RACINE + "/", "")}${NEUTRE}, hors dépôt :
+  ${GRIS}node tools/evaluations/evaluations.mjs${NEUTRE} le rappelle.
+  Ce carnet ouvre toutes les épreuves — il se sauvegarde comme les sujets.
 `);

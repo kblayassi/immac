@@ -45,12 +45,16 @@ docs/<cle>/                une évaluation, publiée
 
 tools/evaluations/         les outils
   sceller_sujet.mjs        chiffre une source vers le sujet publié
+  evaluations.mjs          lister, désactiver, réactiver, recoder
+  manifeste.mjs            lire et réécrire evaluations.js
+  codes.mjs                le carnet des codes
   verifier_bareme.mjs      le banc
   executeur.py             l'interpréteur du banc
   prive/                   HORS DÉPÔT (.gitignore) — tout ce qui est secret
     sujet-<cle>.mjs        le sujet en clair : la source
     bareme-<cle>.json      les critères et les points
     controle-<cle>.json    les copies de référence du banc
+    codes.json             les codes des épreuves publiées
 ```
 
 !!! danger "Le dépôt est public"
@@ -118,9 +122,13 @@ annoncer l'épreuve, rien pour la préparer. **Le sujet peut donc être mis en l
 des semaines à l'avance.**
 
 Sans code en argument, l'outil en fabrique un — trois mots et un nombre, qui se
-dictent à l'oral (`MARBRE-VIGIE-ARGILE-50`). Il l'affiche une fois et ne l'enregistre
-nulle part : **note-le**. Côté élève, ni la casse ni les tirets ni les espaces ne
-comptent.
+dictent à l'oral (`MARBRE-VIGIE-ARGILE-50`). Il le consigne dans
+`tools/evaluations/prive/codes.json`, hors dépôt, où `evaluations.mjs` le relit.
+Côté élève, ni la casse ni les tirets ni les espaces ne comptent.
+
+!!! danger "Le carnet vaut ce que valent les sujets"
+    `codes.json` ouvre toutes les épreuves publiées. Il vit dans `prive/` pour
+    cette raison, et se sauvegarde sur la clé USB avec les sources en clair.
 
 L'outil vérifie son propre travail avant d'écrire : il rouvre le scellé qu'il
 vient de produire, compare à la source, et s'assure qu'un code faux ne l'ouvre
@@ -132,6 +140,28 @@ d'essai refuse un scellé qui ne correspond plus à sa source.
 Ce que cela ne fait pas : empêcher un élève qui a le code de le donner à un autre
 qui compose plus tard. Pour deux groupes à deux heures différentes, il faut deux
 scellés et deux codes.
+
+## Gérer les évaluations publiées
+
+```
+node tools/evaluations/evaluations.mjs                    toutes, par niveau
+node tools/evaluations/evaluations.mjs nsi-premiere       un seul niveau
+node tools/evaluations/evaluations.mjs --desactiver cle
+node tools/evaluations/evaluations.mjs --activer cle
+node tools/evaluations/evaluations.mjs --recoder cle [CODE]
+```
+
+Le manifeste porte, pour chaque épreuve, `cle`, `titre`, `niveau` et `actif`.
+Le niveau est recopié du champ `niveau` de `EVALUATION` au scellage ; `actif`
+est vrai à la publication, et resceller une épreuve fermée ne la rouvre pas.
+
+`passer.html` n'essaie le code que sur les évaluations **actives** : désactiver
+ferme l'épreuve sans toucher au sujet scellé, qui reste en ligne. Recoder, en
+revanche, rescelle — le code n'est pas un mot de passe rangé quelque part, c'est
+la clé qui chiffre le sujet — et exige donc la source en clair.
+
+Ces commandes réécrivent des fichiers du site : **rien n'est effectif tant que
+le commit n'est pas poussé et le site reconstruit.**
 
 ## Écrire un barème
 

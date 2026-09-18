@@ -19,6 +19,7 @@ export const EVALUATION = {
   cle: "eval-blanc",
   titre: "Évaluation à blanc",
   surTitre: "Essai du dispositif",
+  niveau: "NSI Première",
   dureeMinutes: 5,
 
   consignes: `

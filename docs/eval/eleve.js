@@ -277,7 +277,9 @@ function rendreCode() {
    de seconde par essai : avec les quelques épreuves ouvertes d'une année, c'est
    imperceptible — et c'est le prix d'un code qui ne se casse pas. */
 async function chercherParCode(code) {
-  for (const { cle } of EVALUATIONS) {
+  // Une évaluation désactivée garde son sujet en ligne, scellé : on cesse
+  // simplement d'essayer son code, qui n'ouvre donc plus rien.
+  for (const { cle } of EVALUATIONS.filter((e) => e.actif !== false)) {
     let sujet;
     try { sujet = await import(new URL(`../${cle}/sujet.js`, PAGE).href); }
     catch { continue; }

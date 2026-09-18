@@ -159,9 +159,11 @@ L'outil affiche un code — trois mots et un nombre :
 CODE DE L'ÉVALUATION : MARBRE-VIGIE-ARGILE-50
 ```
 
-**Note-le tout de suite.** Il n'est enregistré nulle part, et sans lui le sujet
-publié reste fermé pour tout le monde, toi compris. Pour choisir le code
-toi-même :
+Il est consigné dans `tools/evaluations/prive/codes.json`, hors dépôt, et
+`node tools/evaluations/evaluations.mjs` te le rappellera. Ce carnet ouvre
+toutes les épreuves publiées : il se sauvegarde sur la clé USB comme les sujets
+en clair, et le perdre revient à fermer les épreuves pour tout le monde, toi
+compris. Pour choisir le code toi-même :
 
 ```
 node tools/evaluations/sceller_sujet.mjs eval-nsi-ch1 "CHENE-SOURCE-GIVRE-31"
@@ -173,6 +175,30 @@ node tools/evaluations/sceller_sujet.mjs eval-nsi-ch1 "CHENE-SOURCE-GIVRE-31"
 
 Deux groupes à deux heures différentes ? Deux clés, deux scellés, deux codes —
 sinon le premier groupe donne le code au second.
+
+## 5 bis. Gérer les évaluations publiées
+
+```
+node tools/evaluations/evaluations.mjs                    toutes, par niveau
+node tools/evaluations/evaluations.mjs nsi-premiere       un seul niveau
+node tools/evaluations/evaluations.mjs --desactiver cle
+node tools/evaluations/evaluations.mjs --activer cle
+node tools/evaluations/evaluations.mjs --recoder cle [CODE]
+```
+
+La liste donne, par niveau, chaque épreuve publiée avec son code, sa durée, ses
+points et son état. Le **niveau** vient du champ `niveau` de `EVALUATION` dans
+la source : sans lui, l'épreuve est rangée sous « Niveau non déclaré ».
+
+**Désactiver** ne touche pas au sujet scellé : il reste en ligne, mais la page
+d'entrée cesse d'essayer son code, qui n'ouvre donc plus rien. C'est réversible,
+et c'est le geste qui convient une fois l'épreuve passée. **Recoder** rescelle
+le sujet avec un nouveau code, donc exige la source en clair.
+
+!!! warning "Rien n'est effectif avant le déploiement"
+    Ces commandes réécrivent des fichiers du site, pas un réglage en ligne.
+    Tant que le commit n'est pas poussé et le site reconstruit, l'ancien code
+    ouvre encore l'épreuve et une épreuve désactivée reste ouverte.
 
 ## 6. Relire le sujet comme un élève
 
@@ -239,6 +265,7 @@ pas redemandé, le temps restant est le bon. **Le même ordinateur**, en revanch
 ```
 node tools/evaluations/verifier_bareme.mjs [cle]     vérifier
 node tools/evaluations/sceller_sujet.mjs cle [code]  sceller
+node tools/evaluations/evaluations.mjs [niveau]      lister, activer, recoder
 mkdocs serve                                         relire côté élève
 mkdocs serve -f mkdocs-prof.yml                      la page de correction
 ```
@@ -248,11 +275,13 @@ mkdocs serve -f mkdocs-prof.yml                      la page de correction
 | `sujet-<cle>.mjs` | `tools/evaluations/prive/` | **non** |
 | `bareme-<cle>.json` | `tools/evaluations/prive/` | **non** |
 | `controle-<cle>.json` | `tools/evaluations/prive/` | **non** |
+| `codes.json` | `tools/evaluations/prive/` | **non** |
 | `docs/<cle>/sujet.js` | produit par le scellage | oui (chiffré) |
 | `docs/eval/evaluations.js` | produit par le scellage | oui |
 
-Pour retirer une évaluation du site : supprimer `docs/<cle>/`, puis resceller
-n'importe quelle autre évaluation — le manifeste oublie les sujets disparus.
+Pour fermer une évaluation sans la retirer : `evaluations.mjs --desactiver`.
+Pour la retirer vraiment : supprimer `docs/<cle>/`, puis resceller n'importe
+quelle autre évaluation — le manifeste oublie les sujets disparus.
 
 **Sauvegarde `tools/evaluations/prive/` sur la clé USB.** Il n'existe nulle part
 ailleurs : ni sur GitHub, ni dans le site publié. Le perdre, c'est perdre les
