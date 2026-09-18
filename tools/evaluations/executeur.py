@@ -39,11 +39,40 @@ def _libelle(noeud, source):
     return source.strip() if source else "test"
 
 
+class _Clavier:
+    """sys.stdin alimenté par les saisies — et qui les affiche, comme le worker.
+
+    Dans le navigateur, la réponse donnée à input() apparaît en écho dans la
+    sortie, suivie d'un saut de ligne, comme dans un vrai terminal : l'invite
+    « Montant : » et le print suivant finissent donc sur deux lignes. Un simple
+    StringIO ne l'affiche pas, et les colle sur une seule. Le banc verrait alors
+    une autre sortie que la page de correction, et un critère sur la sortie d'un
+    programme qui lit une saisie n'y rendrait pas le même verdict.
+    """
+
+    def __init__(self, saisies, sortie):
+        self._file = list(saisies or [])
+        self._sortie = sortie
+
+    def readline(self, *args):
+        if not self._file:
+            return ""                                # fin de fichier : EOFError
+        ligne = self._file.pop(0)
+        self._sortie.write(ligne + "\n")
+        return ligne + "\n"
+
+    def read(self, *args):
+        return ""
+
+    def isatty(self):
+        return False
+
+
 def executer(code, tests, saisies):
     sortie = io.StringIO()
     espace = {"__name__": "__main__"}
     stdin_origine, stdout_origine = sys.stdin, sys.stdout
-    sys.stdin = io.StringIO("\n".join(saisies or []) + "\n")
+    sys.stdin = _Clavier(saisies, sortie)
     sys.stdout = sortie
 
     try:
