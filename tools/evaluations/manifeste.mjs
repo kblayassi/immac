@@ -9,8 +9,8 @@
  * ne disent que l'existence d'une épreuve, le sujet reste chiffré.
  */
 
-import { writeFileSync, existsSync } from "node:fs";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const ICI = dirname(fileURLToPath(import.meta.url));
@@ -21,7 +21,7 @@ const EN_TETE = `/* Les évaluations publiées.
  *
  * Tenu à jour par tools/evaluations/ — ne pas modifier à la main :
  *   sceller_sujet.mjs  y inscrit une épreuve quand il la publie ;
- *   evaluations.mjs    l'active ou la désactive.
+ *   console.mjs et evaluations.mjs  l'activent ou la désactivent.
  *
  * La page d'entrée (passer.html) essaie le code saisi sur chaque évaluation
  * ACTIVE jusqu'à ce que l'une s'ouvre : c'est le code qui désigne l'épreuve,
@@ -40,8 +40,31 @@ export function sujetPublie(cle) {
   return existsSync(join(RACINE, "docs", cle, "sujet.js"));
 }
 
+/* Lire la valeur d'un `export const NOM = …;` écrit par ces outils.
+
+   Pas d'import : Node garde en cache chaque module importé, et pour relire un
+   fichier modifié il faudrait changer son adresse à chaque fois — deux lectures
+   dans la même milliseconde rendraient l'ancienne version, et la console, qui
+   tourne longtemps, accumulerait une copie par lecture. Or ces valeurs sont
+   écrites par JSON.stringify : c'est du JSON, qui se relit comme tel. Le « ;
+   suivi d'un saut de ligne » ne peut pas apparaître dans une chaîne JSON, où
+   les sauts de ligne sont échappés : c'est donc bien la fin de l'instruction. */
+export function lireExport(fichier, nom) {
+  return extraireExport(readFileSync(fichier, "utf8"), nom);
+}
+
+/* La même lecture sur un texte déjà en main — celui d'une version commitée,
+   par exemple, pour savoir ce qui a changé depuis. */
+export function extraireExport(texte, nom) {
+  const marque = `export const ${nom} = `;
+  const debut = texte.indexOf(marque);
+  if (debut < 0) return undefined;
+  const fin = texte.indexOf(";\n", debut);
+  return JSON.parse(texte.slice(debut + marque.length, fin < 0 ? undefined : fin));
+}
+
 export async function lireManifeste() {
-  const { EVALUATIONS } = await import(pathToFileURL(MANIFESTE).href + `?t=${Date.now()}`);
+  const EVALUATIONS = lireExport(MANIFESTE, "EVALUATIONS") ?? [];
   // `actif` a été ajouté après coup : une entrée qui ne le porte pas est active.
   return EVALUATIONS.map((e) => ({ actif: true, ...e }));
 }

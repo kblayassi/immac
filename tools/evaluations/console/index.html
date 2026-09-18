@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Console des évaluations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Red+Hat+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="console.css">
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+</head>
+<body>
+
+<header class="entete">
+  <div class="entete-texte">
+    <p class="sur-titre">Console enseignant</p>
+    <h1>Évaluations</h1>
+    <p class="sous-titre">Servie par cet ordinateur seul — rien de ce que tu vois ici n'est publié.</p>
+  </div>
+  <div class="entete-actions">
+    <button class="bouton bouton-discret" id="rafraichir" type="button" title="Relire les fichiers">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>
+      <span>Relire</span>
+    </button>
+    <button class="bouton bouton-discret" id="arreter" type="button" title="Fermer la console">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
+      <span>Arrêter</span>
+    </button>
+  </div>
+</header>
+
+<nav class="filtres" id="filtres" aria-label="Niveaux"></nav>
+
+<main id="liste" aria-live="polite">
+  <p class="chargement">Lecture des évaluations…</p>
+</main>
+
+<aside class="attente" id="attente" hidden>
+  <div class="attente-tete">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5m0 3.5v.5M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+    <div class="attente-texte">
+      <strong id="attente-titre">Pas encore en ligne</strong>
+      <p id="attente-explication">Ces changements sont sur cet ordinateur, pas sur le site.
+      Tant qu'ils ne sont pas publiés, les élèves voient l'état précédent.</p>
+    </div>
+    <button class="bouton bouton-principal" type="button" id="ouvrir-publier">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-5 5m5-5 5 5M5 20h14"/></svg>
+      <span>Publier…</span>
+    </button>
+  </div>
+  <p class="attente-bloque" id="attente-bloque" hidden></p>
+</aside>
+
+<footer class="pied">
+  <span>Carnet des codes : <code id="chemin-carnet">…</code> — hors dépôt, à sauvegarder sur la clé USB.</span>
+</footer>
+
+<dialog id="dialogue-recoder" class="dialogue">
+  <form method="dialog" id="formulaire-recoder">
+    <h2>Changer le code</h2>
+    <p class="dialogue-titre" id="recoder-titre"></p>
+
+    <label for="nouveau-code">Nouveau code <span class="facultatif">facultatif</span></label>
+    <input id="nouveau-code" name="code" autocomplete="off" spellcheck="false"
+           placeholder="Laisser vide pour en générer un">
+    <p class="aide">Au moins 8 caractères, tirets et espaces non comptés. Sans rien saisir,
+    tu obtiens trois mots et un nombre, faciles à dicter.</p>
+
+    <div class="encadre">
+      <strong>Ce que cela change</strong>
+      <ul>
+        <li>Le sujet est rechiffré : l'ancien code n'ouvrira plus rien <em>une fois publié</em>.</li>
+        <li>Un élève qui a déjà ouvert l'épreuve la garde : le sujet est dans son navigateur.</li>
+      </ul>
+    </div>
+
+    <p class="erreur" id="recoder-erreur" hidden></p>
+
+    <div class="dialogue-actions">
+      <button class="bouton bouton-discret" value="annuler" formnovalidate>Annuler</button>
+      <button class="bouton bouton-principal" id="confirmer-recoder" value="recoder">Rechiffrer</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dialogue-nouveau-code" class="dialogue dialogue-code">
+  <form method="dialog">
+    <p class="sur-titre">Nouveau code</p>
+    <p class="titre-epreuve" id="nouveau-titre"></p>
+    <p class="code-geant" id="nouveau-code-affiche"></p>
+    <p class="aide">Consigné dans le carnet. À publier pour qu'il remplace l'ancien.</p>
+    <div class="dialogue-actions">
+      <button class="bouton bouton-discret" type="button" id="copier-nouveau-code">Copier</button>
+      <button class="bouton bouton-principal" value="ok">Compris</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dialogue-publier" class="dialogue dialogue-large">
+  <form method="dialog" id="formulaire-publier">
+    <h2>Publier sur le site</h2>
+    <p class="dialogue-titre">Un commit, puis un envoi vers GitHub. Le site se reconstruit
+    ensuite tout seul, en deux ou trois minutes.</p>
+
+    <div id="publier-commit">
+      <label for="message-commit">Message du commit</label>
+      <textarea id="message-commit" rows="4" spellcheck="true"></textarea>
+
+      <p class="liste-titre">Fichiers embarqués</p>
+      <ul class="liste-fichiers" id="publier-fichiers"></ul>
+      <p class="aide" id="publier-autres" hidden></p>
+    </div>
+
+    <div class="encadre encadre-attention" id="publier-envoyes" hidden>
+      <strong id="publier-envoyes-titre"></strong>
+      <ul id="publier-envoyes-liste"></ul>
+    </div>
+
+    <p class="erreur" id="publier-erreur" hidden></p>
+
+    <div class="dialogue-actions">
+      <button class="bouton bouton-discret" value="annuler" formnovalidate>Annuler</button>
+      <button class="bouton bouton-principal" id="confirmer-publier" value="publier">Publier</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dialogue-publie" class="dialogue dialogue-code">
+  <form method="dialog">
+    <p class="grande-coche" aria-hidden="true">✓</p>
+    <h2>Publié</h2>
+    <p class="aide" id="publie-detail"></p>
+    <p class="aide">Le site se reconstruit : compte deux ou trois minutes avant que les
+    élèves voient le changement.</p>
+    <div class="dialogue-actions">
+      <a class="bouton bouton-discret" id="publie-actions" target="_blank" rel="noopener" hidden>Suivre la reconstruction</a>
+      <button class="bouton bouton-principal" value="ok">Compris</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="arretee" id="arretee" hidden>
+  <p class="sur-titre">Console des évaluations</p>
+  <h1>Console arrêtée</h1>
+  <p>Tu peux fermer cet onglet. Pour la rouvrir, relance l'app
+  <strong>Console des évaluations</strong>.</p>
+</div>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<script type="module" src="console.js"></script>
+</body>
+</html>
