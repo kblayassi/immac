@@ -319,8 +319,8 @@ nom_de_la_fonction(valeur1, valeur2)   # l'appel, dans le MÊME ordre</code></pr
           depart: `\n`,
           validation: {
             codeContient: [
-              { motif: "def\\s+separateur\\s*\\(\\s*\\)", message: "La fonction separateur ne prend pas de paramètre." },
-              { motif: "separateur\\s*\\(\\s*\\)[\\s\\S]*separateur\\s*\\(\\s*\\)", message: "Appelle-la deux fois." },
+              { motif: "def\\s+s[eé]parateur\\s*\\(\\s*\\)", message: "Définis la fonction ainsi : def separateur() — parenthèses vides, car elle n'a rien à recevoir." },
+              { motif: "(?:^|\\n)\\s*s[eé]parateur\\s*\\([^)]*\\)[\\s\\S]*\\n\\s*s[eé]parateur\\s*\\([^)]*\\)", message: "Appelle-la deux fois, de part et d'autre du titre." },
             ],
             codeAbsent: [
               { motif: "-{6,}", message: "Ne tape pas les tirets à la main : fais-les répéter." },

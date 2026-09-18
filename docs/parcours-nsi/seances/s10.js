@@ -447,8 +447,10 @@ print("Trouvé :", n)</code></pre>
           type: "code",
           titre: "Toutes les paires de dés",
           contenu: `
-            <p>Affiche toutes les combinaisons de deux dés dont la somme vaut
-            <strong>7</strong> :</p>
+            <p>On lance deux dés à six faces. Ton programme doit <strong>passer en revue
+            les 36 combinaisons possibles</strong>, du couple 1-1 au couple 6-6, puis
+            n'afficher que celles dont la somme vaut <strong>7</strong> — et pour finir,
+            leur nombre :</p>
             <pre class="bloc-code"><code>1 + 6
 2 + 5
 3 + 4
@@ -456,7 +458,9 @@ print("Trouvé :", n)</code></pre>
 5 + 2
 6 + 1
 6 combinaisons</code></pre>
-            <p>Deux boucles imbriquées de 1 à 6, un test, et un compteur.</p>`,
+            <p>Aucune de ces lignes ne doit être tapée à la main : ce sont les dés
+            parcourus qui les produisent. Deux boucles imbriquées de 1 à 6 énumèrent les
+            36 couples, un test retient les bons, un compteur les dénombre.</p>`,
           depart: `compteur = 0\n\n`,
           validation: {
             codeContient: [
@@ -465,6 +469,7 @@ print("Trouvé :", n)</code></pre>
             ],
             codeAbsent: [
               { motif: "\\b6 combinaisons", message: "Le compte doit être calculé." },
+              { motif: "[\"']\\s*[1-6]\\s*\\+\\s*[1-6]", message: "Ne recopie pas l'affichage attendu : les couples doivent sortir du parcours des dés." },
             ],
             sortie: "1 + 6\n2 + 5\n3 + 4\n4 + 3\n5 + 2\n6 + 1\n6 combinaisons",
           },
