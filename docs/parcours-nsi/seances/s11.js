@@ -246,18 +246,19 @@ Bonjour Lucie !</code></pre>`,
           id: "d8",
           type: "prediction",
           titre: "L'ordre des arguments",
-          contenu: `<p>Une fonction qui calcule et affiche un pourcentage.</p>`,
-          code: `def afficher_pourcentage(taux, valeur):\n    print(valeur * taux / 100)\n\nafficher_pourcentage(200, 10)`,
+          contenu: `<p>Une fonction qui applique une remise à un prix. On voulait
+            une remise de 20 % sur un article à 100 €.</p>`,
+          code: `def afficher_prix_remise(prix, remise):\n    print(prix - prix * remise / 100)\n\nafficher_prix_remise(20, 100)`,
           question: "Qu'affiche ce programme ?",
           options: [
-            { texte: "<code>20.0</code>",
-              explication: "Ce serait 10 % de 200. Mais regarde l'ordre des paramètres dans la définition." },
-            { texte: "<code>2000.0</code>", correct: true,
-              explication: "Oui : <code>taux</code> reçoit 200 et <code>valeur</code> reçoit 10. Le calcul est 10 × 200 / 100." },
+            { texte: "<code>80.0</code>",
+              explication: "Ce serait le prix voulu : 20 % de remise sur 100 €. Mais regarde l'ordre des paramètres dans la définition." },
+            { texte: "<code>0.0</code>", correct: true,
+              explication: "Oui : <code>prix</code> reçoit 20 et <code>remise</code> reçoit 100. Une remise de 100 % sur 20 €, et l'article est gratuit." },
             { texte: "une <code>TypeError</code>",
               explication: "Non : il y a bien deux arguments pour deux paramètres, Python ne peut pas deviner l'intention." },
-            { texte: "<code>10.0</code>",
-              explication: "Refais le calcul avec l'ordre réel des paramètres." },
+            { texte: "<code>20.0</code>",
+              explication: "Ce serait le prix sans aucune remise. Refais le calcul avec l'ordre réel des paramètres." },
           ],
           apres: `<span class="chapo">Le bug le plus sournois</span>
             Python ne peut pas savoir que tu voulais dire autre chose. Le programme tourne,
@@ -311,16 +312,17 @@ nom_de_la_fonction(valeur1, valeur2)   # l'appel, dans le MÊME ordre</code></pr
           type: "code",
           titre: "La ligne de séparation",
           contenu: `
-            <p>Écris <code>separateur()</code>, sans paramètre, qui affiche une ligne de
-            30 tirets. Appelle-la deux fois, de part et d'autre d'un titre :</p>
+            <p>Écris une fonction nommée <strong>exactement</strong>
+            <code>separateur</code>, sans paramètre, qui affiche une ligne de 30 tirets.
+            Appelle-la deux fois, de part et d'autre d'un titre :</p>
             <pre class="bloc-code"><code>------------------------------
       BULLETIN DE NOTES
 ------------------------------</code></pre>`,
           depart: `\n`,
           validation: {
             codeContient: [
-              { motif: "def\\s+s[eé]parateur\\s*\\(\\s*\\)", message: "Définis la fonction ainsi : def separateur() — parenthèses vides, car elle n'a rien à recevoir." },
-              { motif: "(?:^|\\n)\\s*s[eé]parateur\\s*\\([^)]*\\)[\\s\\S]*\\n\\s*s[eé]parateur\\s*\\([^)]*\\)", message: "Appelle-la deux fois, de part et d'autre du titre." },
+              { motif: "def\\s+separateur\\s*\\(\\s*\\)", message: "La fonction doit s'appeler separateur, et ne prendre aucun paramètre : def separateur():" },
+              { motif: "(?:^|\\n)\\s*separateur\\s*\\([^)]*\\)[\\s\\S]*\\n\\s*separateur\\s*\\([^)]*\\)", message: "Appelle-la deux fois, de part et d'autre du titre." },
             ],
             codeAbsent: [
               { motif: "-{6,}", message: "Ne tape pas les tirets à la main : fais-les répéter." },

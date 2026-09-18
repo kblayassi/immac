@@ -38,6 +38,7 @@
  */
 
 import { normaliser, comparable, motifIndulgent, sansAccents, sansCommentaires,
+         codeCorrespond,
          SORTIE_MISE_EN_FORME } from "../parcours/comparaison.js";
 
 export const FORMAT_BAREME = "bareme/v1";
@@ -64,12 +65,12 @@ function jugerCritere(c, code, execution) {
   const nu = c.avecCommentaires ? code : sansCommentaires(code);
 
   if (c.codeContient != null) {
-    return new RegExp(c.codeContient, c.options || "").test(nu)
+    return codeCorrespond(c.codeContient, nu, c.options)
       ? { ok: true }
       : { ok: false, detail: "motif attendu absent du programme" };
   }
   if (c.codeAbsent != null) {
-    return new RegExp(c.codeAbsent, c.options || "").test(nu)
+    return codeCorrespond(c.codeAbsent, nu, c.options)
       ? { ok: false, detail: "motif interdit présent dans le programme" }
       : { ok: true };
   }

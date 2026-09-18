@@ -120,3 +120,13 @@ export function sansCommentaires(code) {
   return net;
 }
 
+
+/* Chercher un motif dans le code, avec les mêmes égards que pour la sortie.
+   Python accepte les identifiants accentués, et « prénom » vient naturellement
+   sous les doigts d'un élève ; or un motif écrit avec `\w` — qui ne connaît que
+   l'ASCII — le rejetterait, alors que le nom du paramètre n'est jamais l'objet
+   de l'exercice. On retire donc les accents des deux côtés, du code lu comme du
+   motif, comme le fait déjà `sortieRegex`. */
+export function codeCorrespond(motif, code, options) {
+  return new RegExp(sansAccents(motif), options || "").test(sansAccents(code));
+}

@@ -12,7 +12,7 @@ Pour chaque étape de code :
   4. le code de départ ne passe PAS déjà la validation (sinon l'exercice est offert).
 Pour chaque QCM : une bonne réponse et une seule.
 """
-import io, json, re, signal, subprocess, sys, contextlib, pathlib
+import io, json, re, signal, subprocess, sys, contextlib, pathlib, unicodedata
 
 RACINE = pathlib.Path(__file__).parent
 
@@ -21,6 +21,18 @@ def normaliser(t):
 
 def drapeaux(opts):
     return re.M if opts and "m" in opts else 0
+
+def sansAccents(t):
+    return "".join(c for c in unicodedata.normalize("NFD", str(t))
+                   if not unicodedata.combining(c))
+
+def codeCorrespond(motif, code, options=None):
+    """Comme codeCorrespond() de comparaison.js : accents retirés des deux côtés.
+
+    Sans cela le banc serait plus indulgent que le navigateur, et laisserait
+    passer ce qu'un élève verrait refusé — `re` connaît les accents dans `\\w`,
+    le moteur d'expressions de JavaScript non."""
+    return re.search(sansAccents(motif), sansAccents(code), drapeaux(options))
 
 def executer(code, saisies=None):
     """Renvoie (sortie, erreur). `saisies` alimente input() comme le fait le worker :
@@ -95,10 +107,10 @@ def valider(code, v, saisies=None):
     nu = sansCommentaires(code)
     relire = lambda r: code if r.get("avecCommentaires") else nu
     for r in v.get("codeContient", []):
-        if not re.search(r["motif"], relire(r), drapeaux(r.get("options"))):
+        if not codeCorrespond(r["motif"], relire(r), r.get("options")):
             echecs.append("codeContient /%s/" % r["motif"])
     for r in v.get("codeAbsent", []):
-        if re.search(r["motif"], relire(r), drapeaux(r.get("options"))):
+        if codeCorrespond(r["motif"], relire(r), r.get("options")):
             echecs.append("codeAbsent /%s/" % r["motif"])
     if echecs:
         return echecs

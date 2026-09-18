@@ -253,7 +253,7 @@ la forme du code, puis l'exécution, puis la sortie, puis les assertions.
 
 | Clé | Effet |
 |:--|:--|
-| `codeContient` | liste de `{ motif, message, options }` : le motif **doit** être présent |
+| `codeContient` | liste de `{ motif, message, options }` : le motif **doit** être présent, accents non jugés |
 | `codeAbsent` | idem, mais le motif est **interdit** |
 | `sortie` | sortie attendue, comparée **sans tenir compte de la casse, de l'espacement ni des accents** |
 | `sortieContient` | liste de fragments obligatoires, cherchés avec la même indulgence |
@@ -280,8 +280,12 @@ la forme du code, puis l'exécution, puis la sortie, puis les assertions.
   écrit `Rendu : \\d+ euros` accepte donc `Rendu: 3 euros`, ce qu'écrit une f-string. Un
   saut de ligne, lui, n'est jamais toléré à la place d'un espace.
 - Ce que la sortie ne dit plus, les règles sur le **code** continuent de le dire :
-  `codeContient` et `codeAbsent` sont inchangés, et restent le bon endroit pour exiger un
-  `print(a, b)` plutôt qu'une concaténation. Attention alors à ne pas exiger une **écriture**
+  `codeContient` et `codeAbsent` restent le bon endroit pour exiger un
+  `print(a, b)` plutôt qu'une concaténation. Un seul égard leur est fait : **les accents
+  sont retirés du code comme du motif** avant la recherche. Python accepte `prénom` comme
+  nom de paramètre, et un élève l'écrit spontanément ; sans cela, `"\\(\\s*\\w+\\s*\\)"` le
+  refuserait, car `\\w` ne connaît que l'ASCII en JavaScript — et le nom du paramètre n'est
+  jamais l'objet de l'exercice. Attention alors à ne pas exiger une **écriture**
   quand on veut exiger un **résultat** : en NSI, la f-string est connue depuis la séance 3,
   donc un motif qui réclame une virgule (`",\\s*True\\s+or\\s+True"`) refuse une solution
   juste. Écrire `"[,{]\\s*True\\s+or\\s+True"` accepte les deux écritures.

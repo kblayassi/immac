@@ -11,7 +11,7 @@
 
 /* Ce que « juste » veut dire — partagé avec la correction des évaluations. */
 import { normaliser, sansAccents, comparable, motifIndulgent, sansCommentaires,
-         SORTIE_MISE_EN_FORME } from "./comparaison.js";
+         codeCorrespond, SORTIE_MISE_EN_FORME } from "./comparaison.js";
 /* L'interpréteur et l'éditeur, partagés eux aussi. */
 import { creerPython, creerEditeur, executerAvecSaisies } from "./atelier.js";
 
@@ -197,10 +197,10 @@ async function validerCode(etape, code, lancerLeCode) {
   const relire = (regle) => (regle.avecCommentaires ? code : nu);
 
   for (const regle of v.codeContient || []) {
-    if (!new RegExp(regle.motif, regle.options || "").test(relire(regle))) echecs.push(regle.message);
+    if (!codeCorrespond(regle.motif, relire(regle), regle.options)) echecs.push(regle.message);
   }
   for (const regle of v.codeAbsent || []) {
-    if (new RegExp(regle.motif, regle.options || "").test(relire(regle))) echecs.push(regle.message);
+    if (codeCorrespond(regle.motif, relire(regle), regle.options)) echecs.push(regle.message);
   }
   if (echecs.length) return { reussi: false, echecs };
 
