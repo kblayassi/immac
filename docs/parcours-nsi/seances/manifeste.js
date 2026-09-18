@@ -79,7 +79,7 @@ export const CATALOGUE = {
   s12: { numero: 12, nbEtapes: 19, disponible: true,
          titre: "return, procédures et composition",
          resume: "Renvoyer plutôt qu'afficher, et faire coopérer des fonctions." },
-  s13: { numero: 13, nbEtapes: 16, disponible: true,
-         titre: "Variables locales, globales et docstring",
-         resume: "Où vit une variable, et comment documenter une fonction." },
+  s13: { numero: 13, nbEtapes: 14, disponible: true,
+         titre: "Variables locales et globales",
+         resume: "Où vit une variable, et pourquoi global est à éviter." },
 };

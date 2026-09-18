@@ -22,7 +22,7 @@ export default {
   ],
 
   motDeLaFin: `Tes fonctions produisent des résultats réutilisables. À la séance 13,
-    on regarde où vivent leurs variables — et comment les documenter.`,
+    on regarde où vivent leurs variables — et combien de temps.`,
 
   parties: [
 

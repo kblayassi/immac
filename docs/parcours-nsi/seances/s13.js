@@ -1,13 +1,17 @@
-/* NSI — chapitre 1, séance 13 : portée des variables et documentation.
+/* NSI — chapitre 1, séance 13 : portée des variables.
  * Reprend la section « Paramètres, variables locales et variables globales » du
- * cours, l'encadré docstring, et les exercices 35, 37, 38 et 39.
+ * cours, et les exercices 35, 37, 38 et 39.
+ *
+ * Le docstring n'est pas abordé ici : il appartient au chapitre 5. Les deux
+ * étapes qui lui étaient consacrées ont été retirées — d'où le saut de d5 à d8,
+ * les identifiants servant de clé à la progression déjà enregistrée.
  */
 
 export default {
   id: "s13",
   numero: 13,
-  titre: "Variables locales, globales et docstring",
-  sousTitre: "Où vit une variable, et comment expliquer une fonction",
+  titre: "Variables locales et globales",
+  sousTitre: "Où vit une variable, et combien de temps",
   palier: "Partie 4 — Structurer un programme",
 
   accroche: `Une variable créée dans une fonction disparaît quand la fonction se termine.
@@ -17,7 +21,6 @@ export default {
   objectifs: [
     "distinguer <strong>paramètre</strong>, variable <strong>locale</strong> et variable <strong>globale</strong>",
     "savoir qu'on peut lire une globale, mais pas la modifier sans <code>global</code>",
-    "documenter une fonction avec un <strong>docstring</strong>",
     "assembler plusieurs fonctions dans un programme complet",
   ],
 
@@ -30,7 +33,7 @@ export default {
     {
       id: "decouverte",
       titre: "Découverte",
-      minutes: 40,
+      minutes: 30,
       etoiles: 1,
       intention: "on avance ensemble, une idée à la fois",
       etapes: [
@@ -192,67 +195,6 @@ def incrementer():
         },
 
         {
-          id: "d6",
-          type: "cours",
-          titre: "Documenter : le docstring",
-          contenu: `
-            <p>Nous reviendrons plus tard dans l'année — au chapitre 5 — sur le
-            « <strong>docstring</strong> » d'une fonction. Pour le moment, nous l'utiliserons
-            pour expliquer le <strong>rôle</strong> d'une fonction.</p>
-
-            <p>Un docstring est composé de lignes de texte écrites entre
-            <code>"""</code> et <code>"""</code>, juste après la ligne du <code>def</code>.
-            Ces lignes ne sont pas exécutées : elles sont destinées à celui qui lit le
-            code.</p>
-
-            <pre class="bloc-code"><code>def euro_vers_dollar(montant):
-    """
-    Renvoie la valeur de montant euros convertie en dollars.
-    Par exemple euro_vers_dollar(2) doit renvoyer 2.38
-    """
-    return montant * 1.19</code></pre>
-
-            <div class="encadre" data-ton="astuce">
-              <span class="chapo">Que mettre dedans ?</span>
-              Ce que la fonction <strong>renvoie</strong>, pas comment elle s'y prend — le
-              code est déjà là pour ça. Un <strong>exemple</strong> chiffré vaut souvent
-              mieux qu'une longue phrase.
-            </div>
-
-            <div class="encadre" data-ton="attention">
-              <span class="chapo">Docstring ou commentaire ?</span>
-              Le <code>#</code> explique une ligne précise, à l'intérieur du code. Le
-              docstring décrit la fonction <strong>vue de l'extérieur</strong> : ce qu'elle
-              fait, sans qu'on ait besoin de lire son corps.
-            </div>`,
-        },
-
-        {
-          id: "d7",
-          type: "code",
-          titre: "Documenter une fonction",
-          contenu: `
-            <p>Ajoute un docstring à cette fonction, puis affiche-le grâce à
-            <code>__doc__</code> — l'attribut où Python le range :</p>
-            <pre class="bloc-code"><code>Renvoie le prix TTC à partir du prix hors taxes, avec 20 % de TVA.</code></pre>
-            <p>Écris exactement cette phrase, sur une seule ligne, entre triples
-            guillemets.</p>`,
-          depart: `def prix_ttc(ht):\n    return ht * 1.2\n\nprint(prix_ttc.__doc__)\n`,
-          validation: {
-            codeContient: [
-              { motif: "\"\"\"", message: "Le docstring s'écrit entre triples guillemets." },
-            ],
-            sortie: "Renvoie le prix TTC à partir du prix hors taxes, avec 20 % de TVA.",
-          },
-          felicitation: "Une fonction documentée se relit six mois plus tard sans effort. 📖",
-          indices: [
-            "Le docstring se place <strong>juste après</strong> la ligne du <code>def</code>, indenté comme le corps.",
-            "Sur une seule ligne : <code>\"\"\"…\"\"\"</code>, ouvrant et fermant sur la même ligne.",
-          ],
-          solution: `def prix_ttc(ht):\n    """Renvoie le prix TTC à partir du prix hors taxes, avec 20 % de TVA."""\n    return ht * 1.2\n\nprint(prix_ttc.__doc__)\n`,
-        },
-
-        {
           id: "d8",
           type: "cours",
           titre: "Le mémo de la séance",
@@ -261,7 +203,6 @@ def incrementer():
             <pre class="bloc-code"><code>compteur = 0                 # GLOBALE
 
 def exemple(parametre):      # parametre : LOCALE
-    """Ce que fait la fonction."""
     interne = parametre * 2  # interne : LOCALE
     print(compteur)          # on peut LIRE une globale
     return interne
@@ -538,21 +479,18 @@ Nicolas peut offrir les deux parfums à sa mère.</code></pre>
         {
           id: "x3",
           type: "code",
-          titre: "Une bibliothèque documentée",
+          titre: "Ta bibliothèque de fonctions",
           contenu: `
             <p>Défi final du parcours. Écris <strong>trois fonctions</strong> sur un même
-            thème, chacune munie d'un <strong>docstring</strong>, dont une qui en appelle une
-            autre — puis un programme qui les utilise et affiche
-            <strong>au moins trois lignes</strong>.</p>
+            thème, dont une qui en appelle une autre — puis un programme qui les utilise et
+            affiche <strong>au moins trois lignes</strong>.</p>
             <p>Des idées : une bibliothèque de géométrie, un convertisseur multi-devises, un
             calculateur de statistiques, un simulateur de prêt, un outil de mise en forme de
             texte…</p>`,
-          depart: `# Ta bibliothèque documentée\n`,
+          depart: `# Ta bibliothèque de fonctions\n`,
           validation: {
             codeContient: [
               { motif: "def[\\s\\S]*def[\\s\\S]*\\bdef\\b", message: "Il faut au moins trois fonctions." },
-              { motif: "\"\"\"[\\s\\S]*\"\"\"[\\s\\S]*\"\"\"[\\s\\S]*\"\"\"[\\s\\S]*\"\"\"[\\s\\S]*\"\"\"",
-                message: "Chacune des trois fonctions doit avoir son docstring." },
               { motif: "\\breturn\\b", message: "Tes fonctions doivent renvoyer leurs résultats." },
             ],
             sortieRegex: "^[^\\n]*\\n[^\\n]*\\n[^\\n]*",
@@ -560,10 +498,10 @@ Nicolas peut offrir les deux parfums à sa mère.</code></pre>
           },
           felicitation: "Parcours NSI terminé. Tout le chapitre 1, du premier print à la dernière fonction. 🏁🎓",
           indices: [
-            "Un docstring d'une ligne suffit : dis ce que la fonction <strong>renvoie</strong>, avec un exemple chiffré.",
+            "Commence par décider ce que chaque fonction <strong>renvoie</strong> : le corps vient ensuite tout seul.",
             "La fonction qui en appelle une autre est celle qui donne sa cohérence à l'ensemble.",
           ],
-          solution: `def aire_disque(rayon):\n    """Renvoie l'aire d'un disque. Par exemple aire_disque(1) renvoie environ 3.14."""\n    return 3.14159 * rayon * rayon\n\n\ndef volume_cylindre(rayon, hauteur):\n    """Renvoie le volume d'un cylindre, en appelant aire_disque."""\n    return aire_disque(rayon) * hauteur\n\n\ndef masse_eau(volume):\n    """Renvoie la masse en kg de volume litres d'eau. 1 litre pèse 1 kg."""\n    return volume\n\n\nv = volume_cylindre(0.5, 2)\n\nprint("Aire de la base :", aire_disque(0.5), "m2")\nprint("Volume du cylindre :", v, "m3")\nprint("Masse d'eau contenue :", masse_eau(v * 1000), "kg")\n`,
+          solution: `# L'aire d'un disque de rayon donné\ndef aire_disque(rayon):\n    return 3.14159 * rayon * rayon\n\n\n# Le volume d'un cylindre, en appelant aire_disque\ndef volume_cylindre(rayon, hauteur):\n    return aire_disque(rayon) * hauteur\n\n\n# La masse en kg de volume litres d'eau : 1 litre pèse 1 kg\ndef masse_eau(volume):\n    return volume\n\n\nv = volume_cylindre(0.5, 2)\n\nprint("Aire de la base :", aire_disque(0.5), "m2")\nprint("Volume du cylindre :", v, "m3")\nprint("Masse d'eau contenue :", masse_eau(v * 1000), "kg")\n`,
         },
       ],
     },

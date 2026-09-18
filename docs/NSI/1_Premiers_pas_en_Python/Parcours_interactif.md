@@ -51,7 +51,7 @@ valident une par une, avec le cours, les exercices et des défis supplémentaire
 | | **Partie 4 — Structurer un programme** | |
 | 11 | Les fonctions : définir et appeler | `def`, appel, paramètres |
 | 12 | `return`, procédures et composition | renvoyer plutôt qu'afficher |
-| 13 | Variables locales, globales et docstring | portée des variables, documentation |
+| 13 | Variables locales et globales | portée des variables, le mot-clé `global` |
 
 !!! info "Et les exercices du chapitre ?"
     Les **40 exercices** du chapitre sont tous repris dans le parcours, à leur place
