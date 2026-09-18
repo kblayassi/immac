@@ -2,7 +2,7 @@
  *
  * Tenu à jour par tools/evaluations/ — ne pas modifier à la main :
  *   sceller_sujet.mjs  y inscrit une épreuve quand il la publie ;
- *   evaluations.mjs    l'active ou la désactive.
+ *   console.mjs et evaluations.mjs  l'activent ou la désactivent.
  *
  * La page d'entrée (passer.html) essaie le code saisi sur chaque évaluation
  * ACTIVE jusqu'à ce que l'une s'ouvre : c'est le code qui désigne l'épreuve,
@@ -17,6 +17,12 @@ export const EVALUATIONS = [
   {
     "cle": "eval-blanc",
     "titre": "Évaluation à blanc",
+    "niveau": "NSI Première",
+    "actif": true
+  },
+  {
+    "cle": "eval-nsi-ch1",
+    "titre": "Chapitre 1 — Premiers pas en Python",
     "niveau": "NSI Première",
     "actif": true
   }
