@@ -143,6 +143,13 @@ def valider(code, tests, reponses=None, modules=None):
         _restaure()
         return json.dumps({"stdout": texte, "erreur": message, "resultats": []})
 
+    # La sortie jugee est celle du programme de l'eleve, arretee ici. Les tests
+    # qui suivent partagent le meme flux : un test qui appelle une fonction
+    # affichante ajouterait sinon ses propres lignes a ce que la cle « sortie »
+    # compare. C'est ce que fait deja le banc d'essai, qui met les tests sous
+    # redirect_stdout ; les deux jugements doivent rendre le meme verdict.
+    sortie_eleve = sortie.getvalue()
+
     resultats = []
     fatale = None
     try:
@@ -185,9 +192,8 @@ def valider(code, tests, reponses=None, modules=None):
             if fatale:
                 break
 
-    texte = sortie.getvalue()
     _restaure()
-    return json.dumps({"stdout": texte, "erreur": None,
+    return json.dumps({"stdout": sortie_eleve, "erreur": None,
                        "resultats": resultats, "interrompu": bool(fatale)})
 `;
 

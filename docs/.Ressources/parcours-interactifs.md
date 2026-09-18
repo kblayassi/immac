@@ -260,7 +260,7 @@ la forme du code, puis l'exécution, puis la sortie, puis les assertions.
 | `sortieRegex` (+ `sortieRegexMessage`, `sortieRegexOptions`) | motif sur la sortie : casse, accents et espacement autour de la ponctuation sont détendus |
 | `sortieNonVide` | le programme doit afficher quelque chose |
 | `sortieStricte` | force (`true`) ou interdit (`false`) la comparaison exacte, espacement compris |
-| `tests` | assertions Python jouées **dans l'espace de noms de l'élève** |
+| `tests` | assertions Python jouées **dans l'espace de noms de l'élève**, après le programme |
 
 - `motif` est une **chaîne** d'expression régulière JavaScript : les antislashs se doublent
   (`"\\bnom\\b"`). `options` accepte les drapeaux, en pratique `"m"` pour le mode multiligne.
@@ -287,6 +287,11 @@ la forme du code, puis l'exécution, puis la sortie, puis les assertions.
   juste. Écrire `"[,{]\\s*True\\s+or\\s+True"` accepte les deux écritures.
 - Le message de chaque `assert` s'affiche à l'élève : **le rédiger comme une explication**
   du comportement attendu, jamais comme un code d'erreur.
+- **La sortie jugée s'arrête à la fin du programme de l'élève.** Un test qui appelle une
+  fonction affichante (`tout_afficher(q)`) écrit lui aussi sur la console, mais ces lignes
+  ne sont comptées ni par `sortie`, ni par `sortieContient`, ni par `sortieRegex`, et
+  n'apparaissent pas dans la console. C'est déjà ce que fait le banc d'essai, qui joue les
+  tests sous `redirect_stdout` : les deux jugements rendent le même verdict.
 
 !!! example "Les trois motifs à connaître par cœur"
     ```js
