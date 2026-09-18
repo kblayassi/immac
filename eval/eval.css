@@ -1,0 +1,491 @@
+/* Évaluations — ce que la charte des parcours ne couvre pas.
+ *
+ * Chargée APRÈS ../parcours/app.css, dont elle hérite la palette, les boutons,
+ * la barre, l'atelier de code, la console et les encadrés. On n'y trouve donc
+ * que ce qui est propre à une épreuve : l'écran d'accueil, le chronomètre,
+ * le sommaire, la mise en page d'une question et la fenêtre de remise.
+ *
+ * Le ton est volontairement plus sobre que celui d'un parcours : pas de
+ * dégradés, pas de félicitations, aucune couleur qui puisse passer pour un
+ * jugement sur une réponse.
+ */
+
+/* ---------------------------------------------------------------- Accueil */
+
+.accueil {
+  max-width: 44rem;
+  margin: 2.5rem auto;
+  padding: 2rem 1.8rem;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+}
+.accueil h1 { margin-bottom: .3em; }
+.accueil .sur-titre {
+  margin: 0 0 .2em;
+  font-size: .82rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--violet-vif);
+}
+.accueil .duree-annoncee { color: var(--texte-doux); margin-bottom: 1.4em; }
+.accueil ul { margin: .4em 0 0; padding-left: 1.15em; }
+.accueil li { margin-bottom: .35em; }
+
+.identite {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: .9rem;
+  margin: 1.6rem 0 1.4rem;
+}
+
+.bouton.grand { font-size: 1.02rem; padding: .72em 1.6em; }
+
+.alerte {
+  margin-top: .8em;
+  color: var(--rouge);
+  font-weight: 600;
+  font-size: .93rem;
+}
+
+/* ---------------------------------------------------------------- Chrono */
+
+#cadre-chrono {
+  display: flex; align-items: center; gap: .45rem;
+  padding: .28em .75em;
+  border: 1px solid var(--bordure);
+  border-radius: 100px;
+  background: var(--surface);
+}
+#chrono {
+  font-family: var(--mono);
+  font-size: 1.02rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;   /* le cadran ne doit pas frémir à chaque seconde */
+  letter-spacing: .02em;
+}
+#chrono[data-urgence="1"] { color: var(--orange); }
+#chrono[data-urgence="2"] { color: var(--rouge); font-weight: 700; }
+/* Un seul battement, lent : il faut que la dernière minute se voie sans happer
+   le regard d'un élève en train d'écrire. */
+#chrono[data-urgence="2"] { animation: battement 1.8s ease-in-out infinite; }
+@keyframes battement { 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { #chrono[data-urgence="2"] { animation: none; } }
+
+#identite-barre {
+  font-size: .86rem;
+  color: var(--texte-doux);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 14rem;
+}
+@media (max-width: 700px) { #identite-barre { display: none; } }
+
+/* --------------------------------------------------------------- Sommaire */
+
+.sommaire {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; flex-wrap: wrap; gap: .4rem;
+  margin: 0 0 1.8rem;
+  padding: .7rem .9rem;
+  background: color-mix(in srgb, var(--fond) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--bordure);
+}
+.sommaire-titre {
+  font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--texte-doux);
+  margin-right: .5rem;
+}
+.puce-question {
+  width: 2rem; height: 2rem;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--bordure);
+  background: var(--surface);
+  color: var(--texte-doux);
+  font-size: .85rem; font-weight: 700;
+  text-decoration: none;
+}
+.puce-question:hover { border-color: var(--violet-vif); color: var(--violet-vif); }
+/* « Tu as écrit quelque chose », et rien de plus : ni vert, ni juste, ni faux. */
+.puce-question[data-remplie="1"] {
+  background: var(--violet-pale);
+  border-color: var(--violet-vif);
+  color: var(--violet-vif);
+}
+
+/* --------------------------------------------------------------- Question */
+
+.question {
+  max-width: var(--colonne);
+  margin: 0 auto 2.2rem;
+  padding: 1.4rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  scroll-margin-top: 5rem;              /* le sommaire collant ne masque pas le titre */
+}
+.question[data-document="1"] {
+  background: var(--surface-2);
+  border-style: dashed;
+}
+
+.question-entete { display: flex; align-items: flex-start; gap: .9rem; margin-bottom: 1rem; }
+.question-numero {
+  flex: 0 0 auto;
+  width: 2.1rem; height: 2.1rem;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--violet);
+  color: #fff;
+  font-weight: 700; font-size: .95rem;
+}
+.question-entete h2 { margin: 0; font-size: 1.16rem; }
+.question-meta { margin: .1em 0 0; font-size: .84rem; color: var(--texte-doux); }
+
+.enonce { margin-bottom: 1.1rem; }
+.enonce :last-child { margin-bottom: 0; }
+
+.qcm-consigne { font-size: .86rem; color: var(--texte-doux); margin: 0 0 .2em; }
+/* Choisi ≠ juste. Le violet dit « c'est ta réponse », il ne dit rien de plus. */
+.qcm-option[data-choisi="1"] { border-color: var(--violet-vif); background: var(--violet-pale); }
+.qcm-option[data-choisi="1"] .puce {
+  border-color: var(--violet-vif); background: var(--violet-vif); color: #fff;
+}
+
+.reponse-texte {
+  width: 100%;
+  padding: .8em .9em;
+  font: inherit;
+  font-size: .96rem;
+  line-height: 1.6;
+  color: inherit;
+  background: var(--surface-2);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-petit);
+  resize: vertical;
+}
+.reponse-texte:focus-visible { outline: 2px solid var(--violet-vif); outline-offset: 1px; }
+
+.pied-sujet {
+  max-width: var(--colonne);
+  margin: 2.5rem auto 4rem;
+  text-align: center;
+}
+
+/* ----------------------------------------------------------------- Remise */
+
+#panneau-remise { max-width: 34rem; }
+#panneau-remise::backdrop { background: rgba(20, 18, 28, .55); backdrop-filter: blur(3px); }
+#panneau-remise .discret { color: var(--texte-doux); font-size: .9rem; }
+
+/* Pendant la remise, le sujet reste visible derrière la fenêtre — l'élève voit
+   que son travail est là — mais il est inerte : showModal() s'en charge. */
+body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
+
+/* ============================================================== Correction
+
+   La page de l'enseignant. Elle est dense par nécessité — trente copies et huit
+   questions doivent tenir à l'écran — mais la couleur y reste rare : vert et
+   rouge ne disent que « le critère est rempli » ou non, et l'orange signale les
+   cases qu'il faut relire soi-même. */
+
+.page.large { max-width: 1200px; }
+
+.avancement, .compte { font-size: .86rem; color: var(--texte-doux); }
+
+.depot-double {
+  display: grid;
+  grid-template-columns: 1fr minmax(16rem, 22rem);
+  gap: 1.4rem;
+  align-items: center;
+  margin-bottom: 1.6rem;
+}
+@media (max-width: 800px) { .depot-double { grid-template-columns: 1fr; } }
+
+.etat-bareme {
+  font-weight: 600;
+  margin-bottom: .2em;
+  color: var(--texte-doux);
+}
+.etat-bareme[data-charge="1"] { color: var(--vert); }
+
+.discret { color: var(--texte-doux); font-size: .9rem; }
+.vide { margin: 3rem 0; text-align: center; }
+
+.barre-outils { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.bouton.petit { font-size: .82rem; padding: .35em .8em; }
+
+/* ------------------------------------------------------------ Table des notes */
+
+.table-notes {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+}
+.table-notes th, .table-notes td {
+  padding: .5em .6em;
+  border-bottom: 1px solid var(--bordure);
+  text-align: left;
+  vertical-align: middle;
+}
+.table-notes th {
+  font-size: .76rem; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--texte-doux);
+  position: sticky; top: 0; z-index: 2;
+  background: var(--fond);
+}
+.col-question { max-width: 7rem; }
+.ligne-eleve:hover { background: var(--surface-2); }
+.ligne-eleve[data-ouverte="1"] { background: var(--violet-pale); }
+.cellule-nom { white-space: nowrap; }
+.cellule-points { font-family: var(--mono); font-size: .84rem; white-space: nowrap; }
+/* Une question que le barème ne peut pas trancher seul. */
+.cellule-points[data-arelire="1"] { color: var(--orange); font-weight: 600; }
+/* Une note posée à la main : c'est elle qui compte. */
+.cellule-points[data-retouchee="1"] { color: var(--violet-vif); font-weight: 700; }
+.cellule-note { font-family: var(--mono); font-weight: 700; font-size: 1rem; }
+
+/* La table ne doit jamais élargir la page : si un écran étroit la serre, c'est
+   elle qui défile, pas la page entière. */
+.cadre-table { overflow-x: auto; }
+.cellule-etat { font-size: .84rem; white-space: nowrap; color: var(--vert); }
+/* Une copie dont une réponse rédigée attend ses points : pas encore de note. */
+.cellule-etat[data-arelire="1"] { color: var(--orange); font-weight: 600; }
+.cellule-points[data-provisoire="1"] { color: var(--texte-doux); font-style: italic; }
+.bilan-note .calculee[data-attente="1"] { color: var(--orange); font-weight: 600; }
+
+.alerte-puce {
+  display: inline-grid; place-items: center;
+  width: 1.05rem; height: 1.05rem;
+  margin-left: .35rem;
+  border-radius: 50%;
+  font-size: .7rem; font-weight: 700;
+  cursor: help;
+}
+.alerte-puce[data-gravite="haute"] { background: var(--rouge); color: #fff; }
+.alerte-puce[data-gravite="basse"] { background: var(--or); color: #fff; }
+
+/* --------------------------------------------------------- Détail d'une copie */
+
+.ligne-detail td { padding: 0; background: var(--surface-2); }
+.detail { padding: 1.2rem 1.4rem 1.6rem; }
+.detail-chapeau {
+  display: flex; flex-wrap: wrap; gap: 1.2rem;
+  font-size: .84rem; color: var(--texte-doux);
+  margin-bottom: 1rem;
+}
+
+.alertes { margin-bottom: 1rem; }
+.alerte-ligne {
+  margin: 0 0 .25em;
+  padding: .4em .7em;
+  border-radius: var(--rayon-petit);
+  font-size: .87rem;
+}
+.alerte-ligne[data-gravite="haute"] { background: var(--rouge-pale); color: var(--rouge); }
+.alerte-ligne[data-gravite="basse"] { background: var(--orange-pale); }
+
+.question-corrigee {
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-petit);
+  padding: .9rem 1.1rem;
+  margin-bottom: .9rem;
+}
+.question-corrigee header { display: flex; align-items: center; gap: 1rem; margin-bottom: .6rem; }
+.question-corrigee h3 { margin: 0; font-size: 1rem; flex: 1 1 auto; }
+
+.note-manuelle { display: flex; align-items: center; gap: .4rem; font-size: .82rem; }
+.note-manuelle label { color: var(--texte-doux); }
+.note-manuelle input {
+  width: 4.2rem;
+  font: inherit; font-family: var(--mono);
+  padding: .25em .4em;
+  border: 1px solid var(--bordure); border-radius: var(--rayon-petit);
+  background: var(--surface-2); color: var(--texte);
+}
+.note-manuelle .sur { color: var(--texte-doux); }
+
+.code-eleve {
+  font-family: var(--mono); font-size: .82rem;
+  background: var(--surface-2);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-petit);
+  padding: .7em .9em;
+  margin: 0 0 .7em;
+  overflow-x: auto;
+  white-space: pre;
+}
+.texte-eleve {
+  margin: 0 0 .7em;
+  padding: .5em .9em;
+  border-left: 3px solid var(--violet-vif);
+  color: var(--texte);
+  font-style: italic;
+}
+.choix-eleve { font-family: var(--mono); font-size: .86rem; }
+
+.criteres { list-style: none; margin: 0; padding: 0; font-size: .86rem; }
+.criteres li {
+  display: flex; gap: .6rem; align-items: baseline;
+  padding: .18em 0;
+}
+.criteres li[data-ok="1"] .critere-points { color: var(--vert); }
+.criteres li[data-ok="0"] .critere-points { color: var(--rouge); }
+.critere-points {
+  font-family: var(--mono); font-size: .8rem; font-weight: 600;
+  flex: 0 0 3.2rem;
+  color: var(--texte-doux);
+}
+.critere-detail { color: var(--texte-doux); }
+
+/* Dans la correction, chaque critère est un bouton : un clic renverse l'avis du
+   barème, un second le lui rend. Il doit se lire comme la liste, pas comme une
+   rangée de boutons — l'action se découvre au survol. */
+.criteres-bascules li { display: block; padding: 0; }
+.critere-bascule {
+  display: flex; gap: .6rem; align-items: baseline; width: 100%;
+  font: inherit; color: inherit; text-align: left;
+  background: none; border: 0; border-radius: 6px;
+  padding: .22em .35em; margin: 0 -.35em; cursor: pointer;
+}
+.critere-bascule:hover { background: var(--surface-2); }
+.critere-bascule:focus-visible { outline: 2px solid var(--violet-vif); outline-offset: 1px; }
+.criteres li[data-retouche="1"] .critere-bascule { box-shadow: inset 3px 0 0 var(--violet-vif); }
+.critere-retouche { color: var(--violet-vif); font-style: italic; }
+
+/* Une réponse donnée à un autre exercice que celui-ci (sujet changé entre-temps). */
+.ecart-version {
+  margin: 0 0 .7em; padding: .5em .8em;
+  border-radius: var(--rayon-petit);
+  background: var(--rouge-pale); color: var(--rouge);
+  font-size: .86rem; font-weight: 600;
+}
+
+/* L'éditeur de la correction : celui des élèves, avec l'onglet qui prévient
+   quand le code affiché n'est plus celui qui a été remis. */
+.atelier-correction { margin: 0 0 .8em; }
+.atelier-correction .atelier-onglet[data-modifie="1"] { color: var(--orange); }
+.atelier-correction .atelier-actions .discret { font-size: .78rem; }
+
+/* Ce que le barème ne juge pas, et qui attend donc une décision. */
+.a-noter {
+  margin: 0;
+  font-size: .86rem;
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.commentaire {
+  width: 100%;
+  font: inherit; font-size: .9rem;
+  padding: .5em .7em;
+  border: 1px solid var(--bordure); border-radius: var(--rayon-petit);
+  background: var(--surface); color: var(--texte);
+  resize: vertical;
+}
+
+/* ------------------------------------------- Bilan d'une copie (côté prof) */
+
+.annotation {
+  width: 100%;
+  margin-top: .7em;
+  font: inherit; font-size: .88rem;
+  padding: .4em .7em;
+  border: 1px dashed var(--bordure); border-radius: var(--rayon-petit);
+  background: var(--surface-2); color: var(--texte);
+}
+.annotation:focus-visible { outline: 2px solid var(--violet-vif); outline-offset: 1px; }
+
+.bilan {
+  margin-top: 1.2rem;
+  padding: 1rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--violet-vif);
+  border-radius: var(--rayon-petit);
+}
+.bilan-note { display: flex; align-items: center; gap: .6rem; margin-bottom: .9rem; }
+.bilan-note label { font-weight: 600; }
+.bilan-note input {
+  width: 5.5rem;
+  font: inherit; font-family: var(--mono); font-size: 1.05rem; font-weight: 700;
+  padding: .3em .5em;
+  border: 1px solid var(--bordure); border-radius: var(--rayon-petit);
+  background: var(--surface-2); color: var(--texte);
+}
+.bilan-note .sur { color: var(--texte-doux); }
+.bilan-note .calculee { margin-left: auto; font-size: .82rem; color: var(--texte-doux); }
+.bilan-actions { margin-top: .8rem; }
+.cellule-note[data-retouchee="1"] { color: var(--violet-vif); }
+
+/* ============================================= Copie corrigée (côté élève)
+
+   La page de retour. Elle reprend la mise en page d'une question du sujet, avec
+   les points en plus — et rien d'autre : ni éditeur, ni bouton, ni chronomètre. */
+
+.copie-entete {
+  display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+  max-width: var(--colonne);
+  margin: 0 auto 2rem;
+  padding: 1.5rem 1.6rem;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+}
+.copie-entete h1 { margin: 0 0 .1em; font-size: 1.5rem; }
+.copie-entete .sur-titre {
+  margin: 0 0 .2em;
+  font-size: .78rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--violet-vif);
+}
+.copie-entete .discret { margin: 0; }
+
+.grande-note {
+  margin-left: auto;
+  display: flex; align-items: baseline; gap: .25rem;
+  font-family: var(--mono);
+}
+.grande-note .valeur { font-size: 2.6rem; font-weight: 700; color: var(--violet); }
+.grande-note .sur { font-size: 1.1rem; color: var(--texte-doux); }
+
+.copie-question .question-entete { align-items: center; justify-content: space-between; }
+.points-question {
+  font-family: var(--mono); font-weight: 700; font-size: .95rem;
+  padding: .2em .7em;
+  border-radius: 100px;
+  background: var(--surface-2);
+  color: var(--texte-doux);
+  white-space: nowrap;
+}
+.points-question[data-part="tout"]   { background: var(--vert-pale);  color: var(--vert); }
+.points-question[data-part="partie"] { background: var(--orange-pale); color: var(--orange); }
+.points-question[data-part="rien"]   { background: var(--rouge-pale); color: var(--rouge); }
+
+/* Le mot du professeur : c'est ce que l'élève doit lire, pas le tableau de points. */
+.annotation-prof {
+  margin: .9em 0 0;
+  padding: .6em .9em;
+  border-left: 3px solid var(--violet-vif);
+  background: var(--violet-pale);
+  border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
+}
+
+.appreciation {
+  max-width: var(--colonne);
+  margin: 2rem auto 4rem;
+  padding: 1.4rem 1.6rem;
+  background: var(--violet-pale);
+  border-radius: var(--rayon);
+}
+.appreciation h2 { font-size: 1.05rem; margin-bottom: .4em; }
+.appreciation p { margin: 0; white-space: pre-wrap; }
+
+/* Le code de l'évaluation : un champ, et un seul, qu'on voit tout de suite. */
+.champ-code input {
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.champ-code label { color: var(--violet-vif); }

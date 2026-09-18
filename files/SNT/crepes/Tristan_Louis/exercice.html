@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Recette de crêpes</title>
+	<link rel = "stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+
+    <h1>Recette de crêpes</h1>
+   
+    <div class="curseur">
+        <label for="nbCrepes">Nombre de persone :</label>
+        <input type="range" id="nbCrepes" min="1" max="20" value="6">
+        <span id="affichage" class="nombre">6</span>
+    </div>
+
+    <h2>Ingrédients</h2>
+    <ul id="listeIngredients"></ul>
+
+    <h2>Préparation</h2>
+    <ol>
+        <li>Mélanger la farine, le sucre et le sel.</li>
+        <li>Ajouter les œufs et mélanger.</li>
+        <li>Verser le lait petit à petit.</li>
+        <li>Ajouter le beurre fondu.</li>
+        <li>Faire cuire les crêpes dans une poêle.</li>
+    </ol>
+
+    <script>
+        // Quantités pour 6 crêpes
+        const baseIngredients = {
+            "Farine (g)": 375,
+            "Œufs": 6,
+            "Lait (ml)": 1000,
+            "Beurre fondu (g)": 90,
+            "Sucre (g)": 75,
+            "Sel (g)": 1
+        };
+
+        const slider = document.getElementById("nbCrepes");
+        const affichage = document.getElementById("affichage");
+        const liste = document.getElementById("listeIngredients");
+
+        function mettreAJour() {
+            const nb = slider.value;
+            affichage.textContent = nb;
+            liste.innerHTML = "";
+
+            for (let ingredient in baseIngredients) {
+                let quantite = (baseIngredients[ingredient] / 6) * nb;
+
+                if (ingredient === "Œufs") {
+                    quantite = Math.ceil(quantite);
+                } else {
+                    quantite = Math.round(quantite);
+                }
+
+                let li = document.createElement("li");
+                li.textContent = ingredient + " : " + quantite;
+                liste.appendChild(li);
+            }
+        }
+
+        slider.addEventListener("input", mettreAJour);
+        mettreAJour();
+    </script>
+<h2> Astuce du chef </h2>
+Ajoute un peu de vanille, de fleur d’oranger ou de zeste de citron.</br>
+Pour des crêpes moelleuses : une cuillère à soupe de beurre fondu dans la pâte.</br>
+
+</body>
+</html>
+<img src="bon appétit.png"/> 
