@@ -31,7 +31,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { noter } from "../../docs/eval/bareme.js";
-import { construireCopie, estUneCopie, noteRetenue }
+import { construireCopie, estUneCopie, noteRetenue, totalRetenu }
   from "../../docs/eval/copie-corrigee.js";
 import { ouvrir } from "../../docs/eval/scelle.js";
 
@@ -148,10 +148,28 @@ async function verifier(cle) {
        porter exactement la note du barème, et être relisible par copie.html. */
     const copie = construireCopie({ rendu, note, retouches: {}, bareme });
     const attendueSurVingt = noteRetenue({}, note, bareme);
+    /* …et avec des verdicts retouchés : l'enseignant renverse chaque critère.
+       La copie rendue doit alors porter, question par question, les points
+       que la table affiche — c'est le contrat de copie-corrigee.js. */
+    const renverses = { criteres: {} };
+    for (const q of note.questions) {
+      if (q.criteres?.length) {
+        renverses.criteres[q.id] = Object.fromEntries(q.criteres.map((c, i) => [i, c.ok !== true]));
+      }
+    }
+    const copieRetouchee = construireCopie({ rendu, note, retouches: renverses, bareme });
+    const totalRenverse = totalRetenu(renverses, note);
+    const retoucheJuste =
+      copieRetouchee.note.total === totalRenverse &&
+      copieRetouchee.note.valeur === noteRetenue(renverses, note, bareme) &&
+      copieRetouchee.questions.every((q) =>
+        q.points === q.criteres.reduce((s, c) => s + c.points, 0) || !q.criteres.length);
+
     const copieJuste = estUneCopie(copie) &&
       copie.note.valeur === attendueSurVingt &&
       copie.note.total === obtenu &&
-      copie.questions.length === note.questions.length;
+      copie.questions.length === note.questions.length &&
+      retoucheJuste;
 
     if (obtenu === cas.attendu && copieJuste) {
       console.log(`  ${VERT}✓${NEUTRE} ${cas.nom.padEnd(34)} ${obtenu} / ${note.max}` +

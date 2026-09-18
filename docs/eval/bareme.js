@@ -287,6 +287,34 @@ function surVingt(total, max, bareme) {
    regarder de plus près. Un élève qui ouvre sa messagerie et un élève qui
    cherche la réponse produisent le même événement. */
 
+/* Une copie faite sur une autre version du sujet que celle du barème.
+
+   Les réponses sont rangées par identifiant de question (q1, q2…). Si le sujet
+   a changé entre la copie et le barème — un exercice ajouté, et tout se décale —
+   la réponse à la « Chasse au bug » serait jugée par les critères du « Tableau
+   des températures ». Le rendu se décrit lui-même (evaluation.questions : id,
+   type, titre) : on le confronte au barème, intitulé par intitulé.
+
+   Rend la liste des écarts ; vide quand tout concorde, ou quand la copie est
+   trop ancienne pour se décrire. */
+export function ecartsDeVersion(rendu, bareme) {
+  const vues = rendu?.evaluation?.questions;
+  if (!Array.isArray(vues) || !bareme?.questions) return [];
+  const norme = (t) => String(t ?? "").trim().toLowerCase();
+  const ecarts = [];
+  for (const [id, regle] of Object.entries(bareme.questions)) {
+    const vue = vues.find((q) => q.id === id);
+    if (!vue) ecarts.push({ id, bareme: regle.titre || id, copie: null });
+    else if (regle.titre && vue.titre && norme(regle.titre) !== norme(vue.titre)) {
+      ecarts.push({ id, bareme: regle.titre, copie: vue.titre });
+    }
+  }
+  for (const vue of vues) {
+    if (!(vue.id in bareme.questions)) ecarts.push({ id: vue.id, bareme: null, copie: vue.titre || vue.id });
+  }
+  return ecarts;
+}
+
 export function alertes(rendu, intact) {
   const liste = [];
 

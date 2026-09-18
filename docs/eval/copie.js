@@ -122,7 +122,11 @@ function question(q) {
       const li = elem("li");
       li.dataset.ok = c.ok === true ? "1" : c.ok === false ? "0" : "";
       li.appendChild(elem("span", "critere-points", `${nombre(c.points)}/${nombre(c.max)}`));
-      li.appendChild(elem("span", null, c.libelle));
+      const libelle = elem("span", null, c.libelle);
+      // Le professeur a renversé l'avis automatique : l'élève doit savoir que ce
+      // verdict-là est le sien, pas celui de la machine.
+      if (c.retouche) libelle.appendChild(elem("span", "critere-retouche", " — revu par ton professeur"));
+      li.appendChild(libelle);
       liste.appendChild(li);
     }
     corps.appendChild(liste);

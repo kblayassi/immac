@@ -11,14 +11,16 @@
  * et par élève : fermer l'onglet au milieu d'un paquet de copies ne perd rien.
  */
 
-import { creerPython, executerAvecSaisies } from "../parcours/atelier.js";
+import { creerPython, creerEditeur, executerAvecSaisies } from "../parcours/atelier.js";
 import { telecharger, creerZip, nomDeRendu } from "../parcours/archive.js";
 import { estUnRendu, nomAffiche, scelleIntact, duree } from "./rendu.js";
-import { construireCopie, pointsRetenus, totalRetenu, noteCalculee, noteRetenue }
+import { construireCopie, pointsRetenus, pointsProposes, criteresRetenus,
+         totalRetenu, noteCalculee, noteRetenue, questionsANoter, noteComplete }
   from "./copie-corrigee.js";
-import { estUnBareme, noter, alertes } from "./bareme.js";
+import { estUnBareme, noter, alertes, ecartsDeVersion } from "./bareme.js";
 
 const URL_WORKER = new URL("../javascripts/pyodide-worker.js", document.baseURI).href;
+const URL_BUNDLE = new URL("../javascripts/codemirror-bundle.js", document.baseURI).href;
 const Python = creerPython(URL_WORKER);
 
 const $ = (sel, racine = document) => racine.querySelector(sel);
@@ -76,6 +78,12 @@ const points = (copie, q) => pointsRetenus(copie.retouches, q);
 const total = (copie) => totalRetenu(copie.retouches, copie.note);
 const calculee = (copie) => noteCalculee(copie.retouches, copie.note, bareme);
 const finale = (copie) => noteRetenue(copie.retouches, copie.note, bareme);
+const aNoter = (copie) => questionsANoter(copie.retouches, copie.note);
+const complete = (copie) => noteComplete(copie.retouches, copie.note);
+const enAttente = (copie) => {
+  const n = aNoter(copie).length;
+  return `${n} question${n > 1 ? "s" : ""} à noter à la main`;
+};
 
 /* ================================================================= Interpréteur
 
@@ -157,11 +165,25 @@ async function recorrigerTout() {
   for (const copie of copies) {
     barre.textContent = `Correction… ${++faites} / ${copies.length}`;
     copie.note = await noter(copie.rendu, bareme, executer);
-    copie.alertes = alertes(copie.rendu, copie.intact);
+    copie.ecarts = ecartsDeVersion(copie.rendu, bareme);
+    copie.alertes = [...alerteDeVersion(copie.ecarts), ...alertes(copie.rendu, copie.intact)];
     copie.retouches = retouchesDe(copie.rendu);
     rendre();                      // la table se remplit au fil de l'eau
   }
   barre.hidden = true;
+}
+
+/* Une copie faite sur une autre version du sujet : ses réponses sont rangées sous
+   des numéros qui ne désignent plus les mêmes exercices. On le dit en tête de
+   copie, et sur chaque exercice touché — ses points automatiques ne valent rien. */
+function alerteDeVersion(ecarts) {
+  if (!ecarts.length) return [];
+  return [{
+    gravite: "haute",
+    texte: `Copie faite sur une autre version du sujet : ${ecarts.length} question(s) ne ` +
+           `correspondent pas au barème (${ecarts.map((e) => e.id).join(", ")}). ` +
+           `Leurs points automatiques ne valent rien — corrige-les à la main.`,
+  }];
 }
 
 /* ===================================================================== Table */
@@ -179,26 +201,28 @@ function rendre() {
   $("#barre-outils").hidden = false;
   $("#compte").textContent = `${copies.length} copie${copies.length > 1 ? "s" : ""}`;
 
+  /* Une colonne par question débordait de la page dès dix exercices, pour un
+     détail qu'on lit mieux en dépliant la copie. La table dit l'essentiel : ce
+     qui reste à corriger, le total, la note. */
   const table = elem("table", "table-notes");
   const entete = elem("tr");
-  entete.append(elem("th", null, "Élève"), elem("th", null, "Classe"));
-  const questions = copies.find((c) => c.note)?.note.questions || [];
-  for (const q of questions) {
-    const th = elem("th", "col-question", q.titre || q.id);
-    th.title = `${q.max} points`;
-    entete.appendChild(th);
-  }
-  entete.append(elem("th", null, "Total"), elem("th", null, "Note"), elem("th", null, ""));
+  entete.append(elem("th", null, "Élève"), elem("th", null, "Classe"),
+                elem("th", null, "À corriger"), elem("th", null, "Total"),
+                elem("th", null, "Note"), elem("th", null, ""));
   table.appendChild(entete);
 
   for (const copie of copies) {
-    table.appendChild(ligne(copie, questions));
+    table.appendChild(ligne(copie));
     if (ouverte === copie) table.appendChild(detail(copie));
   }
-  hote.appendChild(table);
+  const cadre = elem("div", "cadre-table");
+  cadre.appendChild(table);
+  hote.appendChild(cadre);
 }
 
-function ligne(copie, questions) {
+const COLONNES = 6;
+
+function ligne(copie) {
   const tr = elem("tr", "ligne-eleve");
   if (ouverte === copie) tr.dataset.ouverte = "1";
 
@@ -215,25 +239,39 @@ function ligne(copie, questions) {
 
   if (!copie.note) {
     const attente = elem("td", null, "…");
-    attente.colSpan = questions.length + 3;
+    attente.colSpan = COLONNES - 2;
     tr.appendChild(attente);
     return tr;
   }
 
-  for (const q of copie.note.questions) {
-    const td = elem("td", "cellule-points");
-    const retouchee = copie.retouches.questions?.[q.id] != null &&
-                      copie.retouches.questions[q.id] !== "";
-    td.textContent = `${arrondi(points(copie, q))} / ${q.max}`;
-    if (q.manuel && !retouchee) td.dataset.arelire = "1";
-    if (retouchee) td.dataset.retouchee = "1";
-    tr.appendChild(td);
+  // Ce qui reste à faire avant qu'une note existe : les réponses rédigées.
+  const restantes = aNoter(copie);
+  const etat = elem("td", "cellule-etat");
+  if (restantes.length) {
+    etat.textContent = enAttente(copie);
+    etat.dataset.arelire = "1";
+    etat.title = restantes.map((q) => q.titre || q.id).join(" · ");
+  } else {
+    etat.textContent = "✓ corrigée";
   }
+  tr.appendChild(etat);
 
-  tr.appendChild(elem("td", "cellule-points", `${arrondi(total(copie))} / ${copie.note.max}`));
-  const note = elem("td", "cellule-note", `${arrondi(finale(copie))}`);
-  note.title = `sur ${bareme.noteSur ?? copie.note.max}`;
-  if (copie.retouches.note != null && copie.retouches.note !== "") note.dataset.retouchee = "1";
+  const tot = elem("td", "cellule-points", `${arrondi(total(copie))} / ${copie.note.max}`);
+  if (!complete(copie)) {
+    tot.dataset.provisoire = "1";
+    tot.title = "Provisoire : les réponses rédigées y comptent encore pour zéro.";
+  }
+  tr.appendChild(tot);
+
+  const note = elem("td", "cellule-note");
+  if (complete(copie)) {
+    note.textContent = arrondi(finale(copie));
+    note.title = `sur ${bareme.noteSur ?? copie.note.max}`;
+    if (copie.retouches.note != null && copie.retouches.note !== "") note.dataset.retouchee = "1";
+  } else {
+    note.textContent = "—";
+    note.title = `Pas de note tant qu'il reste ${enAttente(copie)}.`;
+  }
   tr.appendChild(note);
 
   const actions = elem("td");
@@ -253,7 +291,7 @@ const arrondi = (n) => (Math.round(n * 100) / 100).toString().replace(".", ",");
 function detail(copie) {
   const tr = elem("tr", "ligne-detail");
   const td = elem("td");
-  td.colSpan = (copie.note?.questions.length || 0) + 5;
+  td.colSpan = COLONNES;
 
   const boite = elem("div", "detail");
 
@@ -310,12 +348,20 @@ function bilan(copie) {
   /* Le champ de la note finale montre en filigrane ce que propose le barème :
      il doit donc suivre les points qu'on vient de changer plus haut. */
   boite.rafraichir = () => {
-    const propose = arrondi(calculee(copie));
-    champ.placeholder = propose;
-    rappel.textContent = `barème : ${propose} / ${bareme.noteSur ?? copie.note.max}`;
+    const restantes = aNoter(copie);
+    if (restantes.length && !complete(copie)) {
+      champ.placeholder = "—";
+      rappel.textContent = `en attente : ${enAttente(copie)} (${restantes.map((q) => q.titre || q.id).join(", ")})`;
+      rappel.dataset.attente = "1";
+    } else {
+      const propose = arrondi(calculee(copie));
+      champ.placeholder = propose;
+      rappel.textContent = `barème : ${propose} / ${bareme.noteSur ?? copie.note.max}`;
+      rappel.dataset.attente = "";
+    }
+    btn.disabled = !complete(copie);
+    btn.title = complete(copie) ? "" : `Pas encore : il reste ${enAttente(copie)}.`;
   };
-  boite.rafraichir();
-
   const mot = elem("div", "champ");
   mot.appendChild(elem("span", "etiquette", "Appréciation générale"));
   const zone = elem("textarea", "commentaire");
@@ -340,6 +386,7 @@ function bilan(copie) {
   actions.appendChild(btn);
   boite.appendChild(actions);
 
+  boite.rafraichir();
   return boite;
 }
 
@@ -355,8 +402,11 @@ function bloc(copie, q) {
   input.min = "0";
   input.max = String(q.max);
   input.step = "0.25";
-  input.placeholder = String(arrondi(q.points));
   input.value = copie.retouches.questions?.[q.id] ?? "";
+  /* En filigrane, ce que proposent les critères — verdicts retouchés compris.
+     Un nombre tapé ici l'emporte sur eux. */
+  const proposer = () => { input.placeholder = String(arrondi(pointsProposes(copie.retouches, q))); };
+  proposer();
   input.addEventListener("input", () => {
     copie.retouches.questions ||= {};
     copie.retouches.questions[q.id] = input.value;
@@ -367,13 +417,21 @@ function bloc(copie, q) {
   entete.appendChild(champ);
   boite.appendChild(entete);
 
+  /* La réponse a été donnée à un autre exercice que celui-ci : le dire avant
+     tout, les critères qui suivent ne la concernent pas. */
+  const ecart = copie.ecarts?.find((e) => e.id === q.id);
+  if (ecart) {
+    boite.appendChild(elem("p", "ecart-version", ecart.copie
+      ? `Dans la version passée par l'élève, cette question était « ${ecart.copie} » : ` +
+        `sa réponse ne correspond pas aux critères ci-dessous.`
+      : `Cette question n'existait pas dans la version passée par l'élève.`));
+  }
+
   /* La réponse de l'élève, telle quelle. C'est elle qu'on corrige — les critères
      ne sont qu'un avis. */
   const reponse = q.reponse || {};
   if (q.type === "code") {
-    const pre = elem("pre", "code-eleve");
-    pre.appendChild(elem("code", null, reponse.code || "(rien)"));
-    boite.appendChild(pre);
+    boite.appendChild(atelierDeCorrection(reponse.code || ""));
   } else if (q.type === "texte") {
     boite.appendChild(elem("blockquote", "texte-eleve", reponse.texte || "(rien)"));
   } else if (q.type === "qcm") {
@@ -387,22 +445,57 @@ function bloc(copie, q) {
      Plutôt qu'une liste vide, on dit ce qu'on attend de l'enseignant. */
   if (!q.criteres?.length) {
     const consigne = elem("p", "a-noter",
-      q.vide ? "Pas de réponse — à noter à la main."
+      q.vide ? "Pas de réponse : 0 point, sauf si tu en décides autrement."
              : "Réponse rédigée : à noter à la main.");
     boite.appendChild(consigne);
   }
 
-  const liste = elem("ul", "criteres");
-  for (const critere of q.criteres || []) {
-    const li = elem("li");
-    li.dataset.ok = critere.ok === true ? "1" : critere.ok === false ? "0" : "";
-    li.appendChild(elem("span", "critere-points", `${arrondi(critere.points)}/${critere.max}`));
-    const texte = elem("span");
-    texte.textContent = critere.libelle;
-    if (critere.detail) texte.appendChild(elem("span", "critere-detail", ` — ${critere.detail}`));
-    li.appendChild(texte);
-    liste.appendChild(li);
-  }
+  /* Les critères : l'avis du barème, que l'enseignant peut renverser d'un clic.
+     Un critère renversé change les points de l'exercice, donc le total et la
+     note ; un second clic le rend au barème. */
+  const liste = elem("ul", "criteres criteres-bascules");
+  const peindre = () => {
+    liste.replaceChildren();
+    criteresRetenus(copie.retouches, q).forEach((critere, rang) => {
+      const li = elem("li");
+      li.dataset.ok = critere.ok === true ? "1" : critere.ok === false ? "0" : "";
+      if (critere.retouche) li.dataset.retouche = "1";
+      const bouton = elem("button", "critere-bascule");
+      bouton.type = "button";
+      bouton.title = critere.retouche
+        ? `Ton verdict — le barème disait : ${q.criteres[rang].ok ? "rempli" : "manqué"}. Clique pour le lui rendre.`
+        : `Clique pour déclarer ce critère ${critere.ok ? "manqué" : "rempli"}.`;
+      bouton.appendChild(elem("span", "critere-points", `${arrondi(critere.points)}/${critere.max}`));
+      const texte = elem("span");
+      texte.textContent = critere.libelle;
+      if (critere.retouche) texte.appendChild(elem("span", "critere-retouche", " — modifié par toi"));
+      else if (critere.detail) texte.appendChild(elem("span", "critere-detail", ` — ${critere.detail}`));
+      bouton.appendChild(texte);
+      bouton.addEventListener("click", () => basculer(rang));
+      li.appendChild(bouton);
+      liste.appendChild(li);
+    });
+  };
+  const basculer = (rang) => {
+    const auto = q.criteres[rang].ok === true;
+    const voulu = !(criteresRetenus(copie.retouches, q)[rang].ok === true);
+    copie.retouches.criteres ||= {};
+    const verdicts = (copie.retouches.criteres[q.id] ||= {});
+    if (voulu === auto) delete verdicts[rang]; else verdicts[rang] = voulu;
+    if (!Object.keys(verdicts).length) delete copie.retouches.criteres[q.id];
+    /* Toucher un critère, c'est laisser les critères décider des points : un
+       nombre tapé plus tôt dans « Points » les masquerait, on le retire. */
+    if (copie.retouches.questions?.[q.id] != null && copie.retouches.questions[q.id] !== "") {
+      delete copie.retouches.questions[q.id];
+      input.value = "";
+      toast("Points de l'exercice recalculés d'après les critères");
+    }
+    enregistrerRetouches(copie.rendu, copie.retouches);
+    peindre();
+    proposer();
+    rafraichirTotaux(copie);
+  };
+  peindre();
   boite.appendChild(liste);
 
   /* L'annotation de l'exercice. C'est elle qui fait la différence entre une note
@@ -421,13 +514,90 @@ function bloc(copie, q) {
   return boite;
 }
 
+/* Le programme de l'élève dans un vrai éditeur, qu'on peut exécuter — et
+   modifier pour tester une hypothèse (« et s'il avait écrit <= ? »). Ces
+   modifications ne touchent ni la copie ni la note : c'est un bac à sable, et
+   « Rétablir » rend le code tel que l'élève l'a remis. */
+function atelierDeCorrection(code) {
+  const atelier = elem("div", "atelier atelier-correction");
+  const onglet = elem("div", "atelier-onglet", code ? "Programme de l'élève" : "Aucune réponse");
+  atelier.appendChild(onglet);
+  const hote = elem("div", "hote-editeur");
+  atelier.appendChild(hote);
+
+  const actions = elem("div", "atelier-actions");
+  const btnExec = elem("button", "bouton fantome", "▶ Exécuter");
+  btnExec.type = "button";
+  const btnRetablir = elem("button", "bouton fantome", "Rétablir le code de l'élève");
+  btnRetablir.type = "button";
+  btnRetablir.hidden = true;
+  actions.append(btnExec, btnRetablir, elem("span", "espace"),
+                 elem("span", "discret", "Modifier sert à tester : la copie et la note ne changent pas."));
+  atelier.appendChild(actions);
+
+  const console_ = elem("pre", "console");
+  console_.dataset.etat = "vide";
+  console_.textContent = "Clique sur « Exécuter » pour lancer le programme.";
+  atelier.appendChild(console_);
+
+  const editeur = creerEditeur(hote, code, (texte) => {
+    const modifie = texte !== code;
+    btnRetablir.hidden = !modifie;
+    onglet.textContent = modifie ? "Programme de l'élève — modifié pour essai"
+                                 : (code ? "Programme de l'élève" : "Aucune réponse");
+    onglet.dataset.modifie = modifie ? "1" : "";
+  }, URL_BUNDLE);
+
+  const ecrire = (texte, etat) => {
+    console_.textContent = texte;
+    console_.dataset.etat = etat || "";
+    console_.scrollTop = console_.scrollHeight;
+  };
+
+  // Un input() de l'élève attend une réponse : c'est l'enseignant qui la tape.
+  const reclamerSaisie = () => new Promise((resolve) => {
+    const champ = document.createElement("input");
+    champ.type = "text";
+    champ.className = "saisie";
+    champ.autocomplete = "off";
+    champ.spellcheck = false;
+    champ.setAttribute("aria-label", "Réponse attendue par le programme");
+    console_.appendChild(champ);
+    champ.focus();
+    champ.addEventListener("keydown", (ev) => {
+      if (ev.key !== "Enter") return;
+      ev.preventDefault();
+      champ.replaceWith(document.createTextNode(champ.value + "\n"));
+      resolve(champ.value);
+    });
+  });
+
+  btnExec.addEventListener("click", async () => {
+    const ed = await editeur;
+    btnExec.disabled = true;
+    ecrire("Exécution…", "attente");
+    const res = await executerAvecSaisies(Python, ed.lire(), {
+      reclamerSaisie,
+      afficher: (sortie) => ecrire(sortie, "saisie"),
+    });
+    btnExec.disabled = false;
+    if (!res.ok) { ecrire(res.erreur || "Exécution impossible.", "erreur"); return; }
+    if (res.erreur) { ecrire((res.stdout || "") + "\n" + res.erreur, "erreur"); return; }
+    ecrire(res.stdout || "(le programme n'affiche rien)", res.stdout ? "" : "vide");
+  });
+
+  btnRetablir.addEventListener("click", async () => (await editeur).ecrire(code));
+
+  return atelier;
+}
+
 /* Changer les points d'un exercice change le total, la note, et le filigrane du
    champ de note finale. Rien de tout cela ne doit replier la copie ouverte : on
    redessine la ligne de l'élève et le pied de sa copie, pas la table. */
 function rafraichirTotaux(copie) {
   const tr = $(`.ligne-eleve[data-ouverte="1"]`);
   if (tr) {
-    const neuve = ligne(copie, copie.note.questions);
+    const neuve = ligne(copie);
     neuve.dataset.ouverte = "1";
     tr.replaceWith(neuve);
   }
@@ -453,14 +623,19 @@ function nomFichierCopie(copie) {
    Une archive, et le paquet part d'un bloc — prête à être déposée sur l'ENT. */
 function exporterCopies() {
   if (!bareme) { toast("Dépose d'abord le barème"); return; }
+  /* Une copie dont une réponse rédigée attend encore ses points porterait une
+     note fausse : elle reste ici, tant qu'elle n'est pas finie. */
   const fichiers = {};
+  let incompletes = 0;
   for (const copie of copies) {
     if (!copie.note) continue;
+    if (!complete(copie)) { incompletes++; continue; }
     fichiers[nomFichierCopie(copie)] = JSON.stringify(copieDe(copie), null, 2);
   }
-  if (!Object.keys(fichiers).length) { toast("Aucune copie corrigée à exporter"); return; }
+  const reste = incompletes ? ` — ${incompletes} non exportée${incompletes > 1 ? "s" : ""} : réponse rédigée à noter` : "";
+  if (!Object.keys(fichiers).length) { toast(`Aucune copie complète à exporter${reste}`); return; }
   telecharger(creerZip(fichiers), `copies-corrigees-${bareme.evaluation || "evaluation"}.zip`);
-  toast(`${Object.keys(fichiers).length} copies exportées`);
+  toast(`${Object.keys(fichiers).length} copies exportées${reste}`);
 }
 
 /* ==================================================================== Export */
@@ -482,7 +657,9 @@ function exporterCsv() {
       copie.rendu.eleve?.classe || "",
       ...copie.note.questions.map((q) => arrondi(points(copie, q))),
       arrondi(total(copie)),
-      arrondi(finale(copie)),
+      // Pas de note tant qu'une réponse rédigée attend : une case vide ne se
+      // recopie pas par erreur dans un bulletin, un chiffre faux si.
+      complete(copie) ? arrondi(finale(copie)) : "",
       (copie.retouches.commentaire || "").replace(/\s+/g, " "),
     ]);
   }
@@ -495,7 +672,9 @@ function exporterCsv() {
 
   telecharger(new Blob([csv], { type: "text/csv;charset=utf-8" }),
               `notes-${bareme.evaluation || "evaluation"}.csv`);
-  toast("Notes exportées");
+  const sansNote = copies.filter((c) => c.note && !complete(c)).length;
+  toast(sansNote ? `Notes exportées — ${sansNote} sans note : réponse rédigée à noter`
+                 : "Notes exportées");
 }
 
 /* ====================================================================== Boot */
