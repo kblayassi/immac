@@ -25,5 +25,11 @@ export const EVALUATIONS = [
     "titre": "Chapitre 1 — Premiers pas en Python",
     "niveau": "NSI Première",
     "actif": false
+  },
+  {
+    "cle": "eval-nsi-term-ch1",
+    "titre": "Chapitre 1 — Listes, piles et files",
+    "niveau": "NSI Terminale",
+    "actif": true
   }
 ];
