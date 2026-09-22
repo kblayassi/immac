@@ -75,12 +75,14 @@ def executer(code, tests, saisies):
     sys.stdin = _Clavier(saisies, sortie)
     sys.stdout = sortie
 
+    # Comme le worker : une erreur du programme n'empêche pas de jouer les tests
+    # sur les fonctions définies avant elle. `erreur` reste renseignée.
+    erreur_programme = None
     try:
         exec(compile(code, FICHIER_ELEVE, "exec"), espace)
     except BaseException as exc:                     # noqa: BLE001
-        sys.stdin, sys.stdout = stdin_origine, stdout_origine
-        return {"ok": True, "stdout": sortie.getvalue(),
-                "erreur": _trace(exc), "resultats": []}
+        erreur_programme = _trace(exc)
+    stdout_programme = sortie.getvalue()
 
     resultats = []
     if tests:
@@ -88,8 +90,9 @@ def executer(code, tests, saisies):
             arbre = ast.parse(tests, FICHIER_TESTS)
         except SyntaxError as exc:
             sys.stdin, sys.stdout = stdin_origine, stdout_origine
-            return {"ok": True, "stdout": sortie.getvalue(),
-                    "erreur": "Tests invalides : " + _trace(exc), "resultats": []}
+            return {"ok": True, "stdout": stdout_programme,
+                    "erreur": erreur_programme or "Tests invalides : " + _trace(exc),
+                    "resultats": []}
 
         for noeud in arbre.body:
             source = ast.get_source_segment(tests, noeud)
@@ -110,8 +113,10 @@ def executer(code, tests, saisies):
                 if not est_assertion:
                     break
 
+    # La sortie rendue est celle du programme, pas celle des tests joués ensuite :
+    # c'est déjà ce que fait le worker.
     sys.stdin, sys.stdout = stdin_origine, stdout_origine
-    return {"ok": True, "stdout": sortie.getvalue(), "erreur": None,
+    return {"ok": True, "stdout": stdout_programme, "erreur": erreur_programme,
             "resultats": resultats}
 
 

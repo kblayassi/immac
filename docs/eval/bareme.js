@@ -84,6 +84,21 @@ function jugerCritere(c, code, execution) {
       ? { ok: false, detail: premiereLigne(execution.erreur) }
       : { ok: true };
   }
+  /* Les tests interrogent les fonctions, pas le programme : ils sont joués même
+     quand une ligne plus bas — un essai laissé sous les fonctions — a planté.
+     Sans aucun résultat, c'est que rien n'a pu être testé : l'erreur l'explique. */
+  if (c.tests != null) {
+    const resultats = execution.resultats || [];
+    const rates = resultats.filter((t) => !t.ok);
+    if (!resultats.length) {
+      return { ok: false, detail: execution.erreur ? premiereLigne(execution.erreur)
+                                                   : "aucun test n'a pu être joué" };
+    }
+    return rates.length
+      ? { ok: false, detail: rates.map((t) => t.libelle).join(" · ") }
+      : { ok: true };
+  }
+
   // Une erreur d'exécution fait tomber tout ce qui juge la sortie : ce qui a été
   // affiché avant l'erreur ne vaut pas une réponse.
   if (execution.erreur) return { ok: false, detail: premiereLigne(execution.erreur) };
@@ -107,15 +122,6 @@ function jugerCritere(c, code, execution) {
       ? { ok: true }
       : { ok: false, detail: `obtenu : ${apercu(sortie)}` };
   }
-  if (c.tests != null) {
-    const resultats = execution.resultats || [];
-    const rates = resultats.filter((t) => !t.ok);
-    if (!resultats.length) return { ok: false, detail: "aucun test n'a pu être joué" };
-    return rates.length
-      ? { ok: false, detail: rates.map((t) => t.libelle).join(" · ") }
-      : { ok: true };
-  }
-
   return { ok: false, detail: "critère vide" };
 }
 

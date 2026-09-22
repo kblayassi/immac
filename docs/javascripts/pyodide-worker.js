@@ -130,6 +130,12 @@ def valider(code, tests, reponses=None, modules=None):
     sortie = _prepare(reponses)
     espace = {"__name__": "__main__"}
 
+    # Une erreur du programme n'empêche pas de jouer les tests : les fonctions
+    # définies avant elle existent, et c'est elles que les tests interrogent. Les
+    # essais qu'un élève laisse sous ses fonctions ne doivent pas lui coûter les
+    # points de celles-ci. Qui veut qu'une erreur fasse échouer — un parcours, un
+    # critère « sans erreur » — lit le champ erreur, qui reste renseigné.
+    erreur_programme = None
     try:
         exec(compile(code, FICHIER_ELEVE, "exec"), espace)
     except _BesoinEntree:
@@ -138,10 +144,7 @@ def valider(code, tests, reponses=None, modules=None):
         return json.dumps({"stdout": texte, "erreur": None, "resultats": [],
                            "besoin_entree": True})
     except BaseException as exc:
-        message = _trace(exc)
-        texte = sortie.getvalue()
-        _restaure()
-        return json.dumps({"stdout": texte, "erreur": message, "resultats": []})
+        erreur_programme = _trace(exc)
 
     # La sortie jugee est celle du programme de l'eleve, arretee ici. Les tests
     # qui suivent partagent le meme flux : un test qui appelle une fonction
@@ -156,8 +159,8 @@ def valider(code, tests, reponses=None, modules=None):
         arbre = ast.parse(tests, FICHIER_TESTS)
     except SyntaxError as exc:
         _restaure()
-        return json.dumps({"stdout": sortie.getvalue(),
-                           "erreur": "Tests invalides : " + _trace(exc),
+        return json.dumps({"stdout": sortie_eleve,
+                           "erreur": erreur_programme or "Tests invalides : " + _trace(exc),
                            "resultats": []})
 
     for noeud in arbre.body:
@@ -193,7 +196,7 @@ def valider(code, tests, reponses=None, modules=None):
                 break
 
     _restaure()
-    return json.dumps({"stdout": sortie_eleve, "erreur": None,
+    return json.dumps({"stdout": sortie_eleve, "erreur": erreur_programme,
                        "resultats": resultats, "interrompu": bool(fatale)})
 `;
 
