@@ -20,7 +20,7 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà aborder en clas
 
 - TD1 - Second degré (partie 1)
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td1.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td1-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td1.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td1-correction.pdf)
 
 - TD2 - Dérivation locale
     

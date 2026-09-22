@@ -790,3 +790,13 @@ img.image {
   min-height: 120px;
 }
 
+
+/* =========================
+   Bouton centré (page Automatismes)
+   ========================= */
+
+.md-typeset .md-button.bouton-centre{
+  display: block;
+  width: fit-content;
+  margin: 1em auto;
+}
