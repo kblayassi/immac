@@ -252,6 +252,18 @@ personne n'est là pour taper) et `sortieStricte` (espacement exact, pour les fi
 `saisies` se déclare **sur la question**, à côté de `criteres` : tous les critères
 en héritent. Un critère peut la redéfinir pour un second jeu de valeurs.
 
+**Les `tests` sont joués même si le programme plante plus bas.** Un élève laisse
+souvent des essais sous ses fonctions ; si l'un d'eux lève une erreur, les
+fonctions définies au-dessus existent quand même, et ce sont elles que les tests
+interrogent. Seuls les critères qui jugent la sortie, ou `sansErreur`, tombent
+sur une erreur. (Les parcours, eux, refusent toujours un programme qui plante.)
+
+**Tester le respect d'une interface.** Dans `tests`, on peut redéfinir
+l'implémentation *après* le code de l'élève — une pile rangée dans un
+dictionnaire, par exemple — puis rejouer un cas : une fonction qui « regardait
+dedans » (`len(p)`, `p[-1]`, `p.append`) échoue alors. C'est le procédé du
+parcours de Terminale, repris dans `eval-nsi-term-ch1`.
+
 **QCM** : `correct` est un indice (0 = A). Une liste pour un QCM à réponses
 multiples, avec `partiel: true` pour une note proportionnelle.
 
@@ -314,10 +326,12 @@ que tout se corrige :
   tapent dans la console. On peut le modifier pour tester une hypothèse (« et
   avec `<=` ? ») : c'est un bac à sable, la copie et la note n'en sont pas
   touchées, et **Rétablir** rend le code tel qu'il a été remis ;
-* **chaque critère, cliquable** : un clic renverse le verdict du barème (vert ↔
-  rouge), un second le lui rend. Les points de l'exercice, le total et la note
-  suivent aussitôt. Un critère renversé porte un trait violet, et la copie de
-  l'élève indique « revu par ton professeur » ;
+* **chaque critère, réglable** : les boutons **−** et **+** déplacent ses points
+  d'un quart de point, entre 0 et son maximum ; un clic sur l'intitulé le déclare
+  entièrement rempli ou manqué. Un critère réussi en partie passe en orange. Les
+  points de l'exercice, le total et la note suivent aussitôt ; revenir à la
+  valeur du barème efface la retouche. Un critère retouché porte un trait violet,
+  et la copie de l'élève indique « revu par ton professeur » ;
 * **les points de chaque exercice**, dans un champ qui prend le pas sur les
   critères. Renverser un critère efface ce nombre : on laisse alors les
   critères décider ;
