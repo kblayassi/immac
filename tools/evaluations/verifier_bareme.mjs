@@ -157,13 +157,23 @@ async function verifier(cle) {
         renverses.criteres[q.id] = Object.fromEntries(q.criteres.map((c, i) => [i, c.ok !== true]));
       }
     }
-    const copieRetouchee = construireCopie({ rendu, note, retouches: renverses, bareme });
-    const totalRenverse = totalRetenu(renverses, note);
-    const retoucheJuste =
-      copieRetouchee.note.total === totalRenverse &&
-      copieRetouchee.note.valeur === noteRetenue(renverses, note, bareme) &&
-      copieRetouchee.questions.every((q) =>
-        q.points === q.criteres.reduce((s, c) => s + c.points, 0) || !q.criteres.length);
+    /* …et avec des verdicts partiels, au quart de point : la moitié de chaque
+       critère, comme le poserait un enseignant avec les boutons − et +. */
+    const partiels = { criteres: {} };
+    for (const q of note.questions) {
+      if (q.criteres?.length) {
+        partiels.criteres[q.id] = Object.fromEntries(
+          q.criteres.map((c, i) => [i, Math.round(c.max / 2 / 0.25) * 0.25]));
+      }
+    }
+    const concorde = (retouches) => {
+      const c = construireCopie({ rendu, note, retouches, bareme });
+      return c.note.total === totalRetenu(retouches, note) &&
+        c.note.valeur === noteRetenue(retouches, note, bareme) &&
+        c.questions.every((q) =>
+          !q.criteres.length || q.points === q.criteres.reduce((s, x) => s + x.points, 0));
+    };
+    const retoucheJuste = concorde(renverses) && concorde(partiels);
 
     const copieJuste = estUneCopie(copie) &&
       copie.note.valeur === attendueSurVingt &&

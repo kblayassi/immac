@@ -450,39 +450,15 @@ function bloc(copie, q) {
     boite.appendChild(consigne);
   }
 
-  /* Les critères : l'avis du barème, que l'enseignant peut renverser d'un clic.
-     Un critère renversé change les points de l'exercice, donc le total et la
-     note ; un second clic le rend au barème. */
+  /* Les critères : l'avis du barème, que l'enseignant peut corriger de deux
+     façons. Les boutons − et + déplacent les points d'un quart de point, entre 0
+     et le maximum du critère ; un clic sur l'intitulé le déclare entièrement
+     rempli ou manqué. Chaque changement se répercute sur l'exercice, le total et
+     la note ; revenir à la valeur du barème efface la retouche. */
+  const PAS = 0.25;
   const liste = elem("ul", "criteres criteres-bascules");
-  const peindre = () => {
-    liste.replaceChildren();
-    criteresRetenus(copie.retouches, q).forEach((critere, rang) => {
-      const li = elem("li");
-      li.dataset.ok = critere.ok === true ? "1" : critere.ok === false ? "0" : "";
-      if (critere.retouche) li.dataset.retouche = "1";
-      const bouton = elem("button", "critere-bascule");
-      bouton.type = "button";
-      bouton.title = critere.retouche
-        ? `Ton verdict — le barème disait : ${q.criteres[rang].ok ? "rempli" : "manqué"}. Clique pour le lui rendre.`
-        : `Clique pour déclarer ce critère ${critere.ok ? "manqué" : "rempli"}.`;
-      bouton.appendChild(elem("span", "critere-points", `${arrondi(critere.points)}/${critere.max}`));
-      const texte = elem("span");
-      texte.textContent = critere.libelle;
-      if (critere.retouche) texte.appendChild(elem("span", "critere-retouche", " — modifié par toi"));
-      else if (critere.detail) texte.appendChild(elem("span", "critere-detail", ` — ${critere.detail}`));
-      bouton.appendChild(texte);
-      bouton.addEventListener("click", () => basculer(rang));
-      li.appendChild(bouton);
-      liste.appendChild(li);
-    });
-  };
-  const basculer = (rang) => {
-    const auto = q.criteres[rang].ok === true;
-    const voulu = !(criteresRetenus(copie.retouches, q)[rang].ok === true);
-    copie.retouches.criteres ||= {};
-    const verdicts = (copie.retouches.criteres[q.id] ||= {});
-    if (voulu === auto) delete verdicts[rang]; else verdicts[rang] = voulu;
-    if (!Object.keys(verdicts).length) delete copie.retouches.criteres[q.id];
+
+  const apresChangement = () => {
     /* Toucher un critère, c'est laisser les critères décider des points : un
        nombre tapé plus tôt dans « Points » les masquerait, on le retire. */
     if (copie.retouches.questions?.[q.id] != null && copie.retouches.questions[q.id] !== "") {
@@ -494,6 +470,69 @@ function bloc(copie, q) {
     peindre();
     proposer();
     rafraichirTotaux(copie);
+  };
+
+  // Poser un verdict, ou l'effacer quand il redit ce que disait le barème.
+  const poser = (rang, verdict) => {
+    const auto = q.criteres[rang];
+    copie.retouches.criteres ||= {};
+    const verdicts = (copie.retouches.criteres[q.id] ||= {});
+    const points = typeof verdict === "boolean" ? (verdict ? auto.max : 0) : verdict;
+    if (points === auto.points) delete verdicts[rang]; else verdicts[rang] = verdict;
+    if (!Object.keys(verdicts).length) delete copie.retouches.criteres[q.id];
+    apresChangement();
+  };
+
+  const basculer = (rang) => {
+    const retenu = criteresRetenus(copie.retouches, q)[rang];
+    poser(rang, retenu.ok !== true);          // partiel ou manqué → rempli ; rempli → manqué
+  };
+
+  const ajuster = (rang, sens) => {
+    const retenu = criteresRetenus(copie.retouches, q)[rang];
+    const brut = Math.round((retenu.points + sens * PAS) / PAS) * PAS;
+    poser(rang, Math.min(retenu.max, Math.max(0, brut)));
+  };
+
+  const peindre = () => {
+    liste.replaceChildren();
+    criteresRetenus(copie.retouches, q).forEach((critere, rang) => {
+      const li = elem("li");
+      li.dataset.ok = critere.ok === true ? "1" : critere.ok === false ? "0"
+                    : critere.retouche ? "partiel" : "";
+      if (critere.retouche) li.dataset.retouche = "1";
+
+      const reglage = elem("span", "critere-reglage");
+      const moins = elem("button", "critere-pas", "−");
+      moins.type = "button";
+      moins.title = "Retirer 0,25 point à ce critère";
+      moins.disabled = critere.points <= 0;
+      moins.addEventListener("click", () => ajuster(rang, -1));
+      const plus = elem("button", "critere-pas", "+");
+      plus.type = "button";
+      plus.title = "Ajouter 0,25 point à ce critère";
+      plus.disabled = critere.points >= critere.max;
+      plus.addEventListener("click", () => ajuster(rang, +1));
+      reglage.append(moins, elem("span", "critere-points", `${arrondi(critere.points)}/${critere.max}`), plus);
+      li.appendChild(reglage);
+
+      const bouton = elem("button", "critere-bascule");
+      bouton.type = "button";
+      const auto = q.criteres[rang];
+      bouton.title = critere.retouche
+        ? `Ta correction — le barème donnait ${arrondi(auto.points)}/${auto.max}. ` +
+          `Clique pour déclarer ce critère ${critere.ok === true ? "manqué" : "rempli"}.`
+        : `Clique pour déclarer ce critère ${critere.ok === true ? "manqué" : "rempli"}.`;
+      const texte = elem("span");
+      texte.textContent = critere.libelle;
+      if (critere.retouche) texte.appendChild(elem("span", "critere-retouche", " — modifié par toi"));
+      else if (critere.detail) texte.appendChild(elem("span", "critere-detail", ` — ${critere.detail}`));
+      bouton.appendChild(texte);
+      bouton.addEventListener("click", () => basculer(rang));
+      li.appendChild(bouton);
+
+      liste.appendChild(li);
+    });
   };
   peindre();
   boite.appendChild(liste);

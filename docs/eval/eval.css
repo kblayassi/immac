@@ -342,7 +342,7 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
 /* Dans la correction, chaque critère est un bouton : un clic renverse l'avis du
    barème, un second le lui rend. Il doit se lire comme la liste, pas comme une
    rangée de boutons — l'action se découvre au survol. */
-.criteres-bascules li { display: block; padding: 0; }
+.criteres-bascules li { display: flex; align-items: center; gap: .5rem; padding: .08em 0; }
 .critere-bascule {
   display: flex; gap: .6rem; align-items: baseline; width: 100%;
   font: inherit; color: inherit; text-align: left;
@@ -353,6 +353,23 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
 .critere-bascule:focus-visible { outline: 2px solid var(--violet-vif); outline-offset: 1px; }
 .criteres li[data-retouche="1"] .critere-bascule { box-shadow: inset 3px 0 0 var(--violet-vif); }
 .critere-retouche { color: var(--violet-vif); font-style: italic; }
+
+/* − 0,5/1 + : régler un critère au quart de point près. */
+.critere-reglage { display: inline-flex; align-items: center; gap: .15rem; flex: none; }
+.critere-reglage .critere-points { flex: 0 0 3.4rem; text-align: center; }
+.critere-pas {
+  width: 1.45rem; height: 1.45rem; padding: 0;
+  display: inline-grid; place-items: center;
+  font: 600 .95rem/1 var(--mono); color: var(--texte-doux);
+  background: var(--surface-2); border: 1px solid var(--bordure); border-radius: 50%;
+  cursor: pointer;
+}
+.critere-pas:hover:not(:disabled) { color: var(--violet-vif); border-color: var(--violet-vif); }
+.critere-pas:disabled { opacity: .35; cursor: default; }
+.criteres-bascules .critere-bascule { flex: 1 1 auto; width: auto; margin: 0; }
+
+/* Un critère réussi en partie : ni vert, ni rouge. */
+.criteres li[data-ok="partiel"] .critere-points { color: var(--orange); }
 
 /* Une réponse donnée à un autre exercice que celui-ci (sujet changé entre-temps). */
 .ecart-version {

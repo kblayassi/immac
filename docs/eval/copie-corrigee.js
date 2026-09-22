@@ -33,14 +33,21 @@ export function estUneCopie(objet) {
 const posee = (v) => v != null && v !== "";
 
 /* Les critères d'une question, avec le verdict de l'enseignant quand il en a
-   rendu un : un critère qu'il déclare rempli vaut tous ses points, un critère
-   qu'il déclare manqué n'en vaut aucun. `retouche` dit lequel des deux a parlé. */
+   rendu un. Ce verdict est soit un booléen — rempli, tous les points ; manqué,
+   aucun —, soit un nombre de points, entre 0 et le maximum du critère, pour
+   une réussite partielle. `ok` vaut alors null : ni vert, ni rouge. `retouche`
+   dit si c'est l'enseignant qui a parlé, ou le barème. */
 export function criteresRetenus(retouches, question) {
   const verdicts = retouches?.criteres?.[question.id] || {};
   return (question.criteres || []).map((c, rang) => {
     const v = verdicts[rang];
-    if (typeof v !== "boolean") return { ...c, retouche: false };
-    return { ...c, ok: v, points: v ? c.max : 0, retouche: true };
+    if (typeof v === "boolean") return { ...c, ok: v, points: v ? c.max : 0, retouche: true };
+    if (typeof v === "number" && Number.isFinite(v)) {
+      const points = Math.min(c.max, Math.max(0, v));
+      const ok = points >= c.max ? true : points <= 0 ? false : null;
+      return { ...c, ok, points, retouche: true };
+    }
+    return { ...c, retouche: false };
   });
 }
 

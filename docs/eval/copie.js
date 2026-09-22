@@ -120,7 +120,7 @@ function question(q) {
     const liste = elem("ul", "criteres");
     for (const c of q.criteres) {
       const li = elem("li");
-      li.dataset.ok = c.ok === true ? "1" : c.ok === false ? "0" : "";
+      li.dataset.ok = c.ok === true ? "1" : c.ok === false ? "0" : c.retouche ? "partiel" : "";
       li.appendChild(elem("span", "critere-points", `${nombre(c.points)}/${nombre(c.max)}`));
       const libelle = elem("span", null, c.libelle);
       // Le professeur a renversé l'avis automatique : l'élève doit savoir que ce
