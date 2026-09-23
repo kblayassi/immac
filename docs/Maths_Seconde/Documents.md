@@ -12,6 +12,10 @@ Vous retrouverez sur cette page l'ensemble des documents importants de l'année.
 
 Vous pouvez télécharger le livret de cours complet en cliquant [ici :fontawesome-solid-file-pdf:](../files/td_seconde/cours-eleves.pdf)
 
+{% if config.extra.version == "prof" %}
+Version complétée du livret, pour le professeur : [cours complet :fontawesome-solid-file-pdf:](../files/td_seconde/cours-complet.pdf)
+{% endif %}
+
 ---
 
 ### TD et correction
