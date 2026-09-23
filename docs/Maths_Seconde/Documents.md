@@ -21,7 +21,7 @@ correction. Ils sont mis en ligne au fur et à mesure de l'année.
 
 - TD1 - Calcul littéral
 
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td1.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td1-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td1.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td1-correction.pdf)
 
 - TD2 - Vecteurs (partie 1)
 
