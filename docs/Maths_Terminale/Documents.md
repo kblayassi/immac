@@ -24,7 +24,7 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà abordés en cla
 
 - TD2 - Suites et raisonnement par récurrence
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td2.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td2-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td2.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td2-correction.pdf)
 
 - TD3 - Limites de suites
     
