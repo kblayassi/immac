@@ -191,7 +191,7 @@ Nombre d'enfants ? 2
           validation: {
             codeContient: [
               { motif: "int\\s*\\(\\s*input", message: "Les deux nombres doivent être demandés et convertis." },
-              { motif: "a_payer\\s*=\\s*prix\\s*\\(|prix\\s*\\(\\s*adultes", message: "Le résultat de la fonction doit être récupéré." },
+              { motif: "\\b\\w+\\s*=\\s*prix\\s*\\(|prix\\s*\\(\\s*adultes", message: "Le résultat de la fonction doit être récupéré." },
             ],
             sortieRegex: "À payer : \\d+ €",
             sortieRegexMessage: "Le programme doit afficher « À payer : … € ».",
@@ -490,7 +490,7 @@ Distance d'arrêt : 26.38888888888889 m</code></pre>`,
           saisiesTest: ["50"],
           validation: {
             codeContient: [
-              { motif: "float\\s*\\(\\s*input", message: "La vitesse doit être demandée et convertie." },
+              { motif: "float\\s*\\(\\s*input", message: "La vitesse doit être demandée et convertie en décimal avec float() (pas int())." },
               { motif: "arret\\s*\\(", message: "Le programme doit appeler les trois fonctions." },
             ],
             sortie: "Quelle est votre vitesse en km/h ? 50\nDistance de réaction : 13.88888888888889 m\nDistance de freinage : 12.5 m\nDistance d'arrêt : 26.38888888888889 m",

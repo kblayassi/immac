@@ -131,7 +131,7 @@ print(euros, "€ représente", montant_converti, "yuan")</code></pre>`,
               { motif: "carre\\s*\\(\\s*5\\s*\\)", message: "Garde l'appel avec 5." },
             ],
             codeAbsent: [
-              { motif: "^resultat\\s*=", options: "m", message: "Ne recopie pas le calcul en dehors : la fonction doit le renvoyer." },
+              { motif: "^resultat\\s*=(?!\\s*carre\\s*\\()", options: "m", message: "Ne recopie pas le calcul en dehors : la fonction doit le renvoyer." },
             ],
             sortie: "Le carré vaut 25",
           },
@@ -394,7 +394,7 @@ Nicolas peut offrir les deux parfums à sa mère.</code></pre>
           saisiesTest: ["10", "20"],
           validation: {
             codeContient: [
-              { motif: "float\\s*\\(\\s*input", message: "Les deux prix doivent être demandés et convertis." },
+              { motif: "float\\s*\\(\\s*input", message: "Les deux prix doivent être demandés et convertis en décimal avec float() (pas int())." },
               { motif: "meilleure_formule\\s*\\(", message: "Le programme doit appeler meilleure_formule." },
               { motif: "\\bif\\b", message: "Il faut un test pour savoir si les 50 € suffisent." },
             ],
