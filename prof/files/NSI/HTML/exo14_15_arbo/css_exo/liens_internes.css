@@ -1,0 +1,13 @@
+@charset "utf-8";
+/**---- Author : Jean-Manuel Mény & Nicolas Buyle-Bodin ----- Groupe ISN-IREM ----- LYON ----**/
+
+
+strong {
+	font-weight: bold;
+	color: #8b0000;
+	}
+
+a { 										
+	text-decoration: none;
+	background-color: #ffd700;
+	}

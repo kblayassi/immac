@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathAuto – Automatismes Bac</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f0e17;--surface:#1a1828;--surface2:#242236;--border:#2e2b4a;
+  --accent:#ff6b6b;--accent2:#ffd166;--accent3:#06d6a0;--accent4:#118ab2;--accent5:#a855f7;
+  --text:#fffffe;--text-muted:#a8a4c8;--radius:16px;--shadow:0 8px 32px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35}
+#app{position:relative;z-index:1;min-height:100vh}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;background:rgba(15,14,23,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nav-logo{font-size:1.5rem;font-weight:900;letter-spacing:-1px}
+.nav-logo span{color:var(--accent2)}
+.nav-tabs{display:flex;gap:8px}
+.nav-tab{padding:8px 20px;border-radius:50px;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s}
+.nav-tab:hover{border-color:var(--accent2);color:var(--accent2)}
+.nav-tab.active{background:var(--accent2);border-color:var(--accent2);color:var(--bg)}
+.screen{display:none;padding:32px;max-width:960px;margin:0 auto}
+.screen.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.hero{text-align:center;padding:48px 0 32px}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;line-height:1.1}
+.hero h1 em{font-style:normal;color:var(--accent2)}
+.hero p{color:var(--text-muted);margin-top:12px;font-size:1.1rem}
+.mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}
+.mode-card{padding:36px 28px;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--surface);cursor:pointer;text-align:left;transition:all .25s;position:relative;overflow:hidden}
+.mode-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--card-color,#fff) 0%,transparent 60%);opacity:0;transition:opacity .25s}
+.mode-card:hover{border-color:var(--card-color,var(--accent));transform:translateY(-4px);box-shadow:var(--shadow)}
+.mode-card:hover::before{opacity:.07}
+.mode-card .icon{font-size:3rem;margin-bottom:16px;display:block}
+.mode-card h2{font-size:1.5rem;font-weight:700}
+.mode-card p{color:var(--text-muted);margin-top:8px;font-size:.95rem;line-height:1.5}
+.mode-card .badge{display:inline-block;margin-top:16px;padding:5px 14px;background:var(--card-color,var(--accent));border-radius:50px;font-size:.8rem;font-weight:700;color:var(--bg)}
+.section-header{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.back-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.back-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.section-title{font-size:1.6rem;font-weight:700}
+.themes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.group-head{grid-column:1/-1;margin:18px 0 0}.group-head:first-child{margin-top:0}.group-head h2{font-size:1.15rem;font-weight:800}.group-head p{color:var(--text-muted);font-size:.85rem;margin-top:2px}
+.question-text .fig svg text{font-weight:600}
+.theme-card{padding:24px 20px;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--surface);cursor:pointer;transition:all .2s;position:relative}
+.theme-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.theme-card .t-icon{font-size:2rem;margin-bottom:10px}
+.theme-card h3{font-size:1.1rem;font-weight:700}
+.theme-card .t-sub{color:var(--text-muted);font-size:.82rem;margin-top:4px}
+.theme-card .rank-badge{position:absolute;top:14px;right:14px;font-size:1.2rem}
+.level-bar{margin-top:14px}
+.level-bar-track{height:6px;border-radius:3px;background:var(--border);overflow:hidden}
+.level-bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.level-text{font-size:.75rem;color:var(--text-muted);margin-top:5px}
+.train-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:12px;flex-wrap:wrap}
+.train-meta{display:flex;flex-direction:column;gap:4px;flex:1}
+.train-theme-name{font-size:1.1rem;font-weight:700}
+.train-item-name{font-size:.85rem;color:var(--text-muted)}
+.stars-display{display:flex;gap:4px;font-size:1.4rem}
+.progress-wrap{margin-bottom:28px}
+.progress-label{display:flex;justify-content:space-between;font-size:.82rem;color:var(--text-muted);margin-bottom:6px}
+.progress-track{height:10px;border-radius:5px;background:var(--border);overflow:hidden}
+.progress-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent3),var(--accent4));transition:width .4s ease}
+.question-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:32px 28px;margin-bottom:20px}
+.question-text{font-size:1.15rem;font-weight:600;line-height:1.6;margin-bottom:8px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+.choices.wide{grid-template-columns:1fr 1fr}
+.choice-btn{padding:16px 18px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'Outfit',sans-serif;font-size:.98rem;font-weight:500;cursor:pointer;text-align:left;transition:all .18s;line-height:1.4}
+.choice-btn:hover:not(:disabled){border-color:var(--accent4);background:rgba(17,138,178,.12)}
+.choice-btn.correct{border-color:var(--accent3)!important;background:rgba(6,214,160,.15)!important;color:var(--accent3)!important}
+.choice-btn.wrong{border-color:var(--accent)!important;background:rgba(255,107,107,.15)!important;color:var(--accent)!important}
+.choice-btn:disabled{cursor:default}
+.feedback-card{border-radius:var(--radius);padding:24px 28px;margin-bottom:20px;display:none;animation:fadeIn .3s ease}
+.feedback-card.show{display:block}
+.feedback-card.ok{background:rgba(6,214,160,.1);border:1.5px solid var(--accent3)}
+.feedback-card.ko{background:rgba(255,107,107,.08);border:1.5px solid var(--accent)}
+.feedback-title{font-size:1.1rem;font-weight:700;margin-bottom:10px}
+.feedback-card.ok .feedback-title{color:var(--accent3)}
+.feedback-card.ko .feedback-title{color:var(--accent)}
+.feedback-body{font-size:.95rem;line-height:1.6;color:var(--text-muted)}
+.feedback-body strong{color:var(--text)}
+.lesson-box{margin-top:16px;padding:16px 18px;border-radius:10px;background:var(--surface2);border-left:3px solid var(--accent2)}
+.lesson-box h4{color:var(--accent2);font-size:.9rem;margin-bottom:8px}
+.lesson-box p{font-size:.9rem;line-height:1.6}
+.lesson-box .example{font-family:'Crimson Pro',serif;font-size:1.05rem;color:var(--accent2);display:block;margin-top:6px}
+.next-btn{width:100%;padding:16px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent4),var(--accent3));color:#fff;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px}
+.next-btn:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.level-toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--accent2);color:var(--bg);padding:14px 28px;border-radius:50px;font-weight:700;font-size:1.1rem;opacity:0;pointer-events:none;transition:all .4s;z-index:999}
+.level-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.exam-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.timer-box{font-size:2rem;font-weight:900;font-variant-numeric:tabular-nums;color:var(--accent2);letter-spacing:2px}
+.timer-box.warning{color:var(--accent);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.exam-q-num{font-size:1.4rem;font-weight:900;color:var(--accent5)}
+.exam-progress{font-size:.9rem;color:var(--text-muted)}
+.exam-dots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.exam-dot{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--text-muted);transition:all .2s;cursor:pointer}
+.exam-dot.answered{background:var(--accent5);border-color:var(--accent5);color:#fff}
+.exam-dot.current{border-color:var(--accent2);color:var(--accent2);box-shadow:0 0 10px rgba(255,209,102,.4)}
+.results-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:40px 32px;text-align:center}
+.results-score{font-size:4rem;font-weight:900;line-height:1}
+.results-grade{font-size:1.2rem;color:var(--text-muted);margin-top:8px}
+.results-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0}
+.stat-box{background:var(--surface2);border-radius:12px;padding:18px 12px}
+.stat-val{font-size:1.8rem;font-weight:700}
+.stat-label{font-size:.8rem;color:var(--text-muted);margin-top:4px}
+.results-breakdown{text-align:left;margin-top:20px}
+.breakdown-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:.9rem;cursor:pointer;transition:background .15s;border-radius:4px}
+.breakdown-row:hover{background:var(--surface2);padding-left:8px}
+.breakdown-row .bq{flex:1;color:var(--text-muted);font-size:.82rem}
+.breakdown-row .br{font-weight:600;white-space:nowrap;margin-left:12px}
+.br.ok{color:var(--accent3)}.br.ko{color:var(--accent)}
+/* Detail panel */
+.breakdown-detail{display:none;padding:12px 16px;margin:0 0 4px 0;background:var(--surface2);border-radius:10px;font-size:.88rem;line-height:1.6;border-left:3px solid var(--border)}
+.breakdown-detail.show{display:block}
+.breakdown-detail.ok-detail{border-left-color:var(--accent3)}
+.breakdown-detail.ko-detail{border-left-color:var(--accent)}
+.bd-q{color:var(--text);margin-bottom:8px;line-height:1.5}
+.bd-your{margin-bottom:4px}
+.bd-correct{color:var(--accent3);font-weight:600;margin-bottom:8px}
+.bd-lesson{color:var(--text-muted);font-size:.83rem;padding-top:8px;border-top:1px solid var(--border);margin-top:8px}
+.results-btns{display:flex;gap:12px;justify-content:center;margin-top:28px}
+.btn-secondary{padding:12px 24px;border-radius:50px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:var(--accent2);color:var(--accent2)}
+.btn-primary{padding:12px 28px;border-radius:50px;border:none;background:var(--accent2);color:var(--bg);font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-primary:hover{filter:brightness(1.1)}
+/* Hamburger */
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:4px 8px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:all .25s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+/* Mobile menu */
+.mobile-menu{display:none;flex-direction:column;position:absolute;top:60px;left:0;right:0;background:rgba(15,14,23,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);z-index:99;padding:8px 0}
+.mobile-menu.open{display:flex}
+.mob-item{padding:14px 24px;border:none;background:none;color:var(--text);font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;text-align:left;cursor:pointer;transition:background .15s;display:block;width:100%}
+.mob-item:hover{background:var(--surface2)}
+.icon-btn{padding:6px 12px!important;font-size:1rem!important}
+@media(max-width:680px){
+  .mode-cards{grid-template-columns:1fr}
+  .choices{grid-template-columns:1fr}
+  nav{padding:12px 16px}
+  .screen{padding:20px 16px}
+  .results-stats{grid-template-columns:1fr}
+  #nav-tabs-desktop{display:none}
+  .hamburger{display:flex}
+}
+@media(min-width:681px){
+  .mobile-menu{display:none!important}
+}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div id="app">
+  <nav>
+    <div class="nav-logo"><span style="color:var(--accent2)">Auto</span>MATH<span style="color:var(--accent2)">ismes</span></div>
+    <!-- Desktop tabs -->
+    <div class="nav-tabs" id="nav-tabs-desktop">
+      <button class="nav-tab active" onclick="showScreen('home')">Accueil</button>
+      <button class="nav-tab" onclick="showScreen('train-themes')">Entraînement</button>
+      <button class="nav-tab" onclick="startExam()">Examen</button>
+      <a href="index.html" class="nav-tab icon-btn" title="Retour au site" style="text-decoration:none;color:var(--accent3);border-color:var(--accent3)">🏠</a>
+      <button class="nav-tab icon-btn" onclick="resetAll()" title="Remettre à zéro" style="color:var(--accent);border-color:var(--accent)">↺</button>
+    </div>
+    <!-- Hamburger (mobile only) -->
+    <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <button class="mob-item" onclick="showScreen('home');toggleMenu()">🏠 Accueil</button>
+    <button class="mob-item" onclick="showScreen('train-themes');toggleMenu()">🎯 Entraînement</button>
+    <button class="mob-item" onclick="startExam();toggleMenu()">⏱️ Examen</button>
+    <a href="index.html" class="mob-item" style="text-decoration:none;color:var(--accent3)">🏠 Retour au site</a>
+    <button class="mob-item" onclick="resetAll();toggleMenu()" style="color:var(--accent)">↺ Remettre à zéro</button>
+  </div>
+
+  <div id="screen-home" class="screen active">
+    <div class="hero">
+      <h1><span style="color:var(--accent2)">Auto</span>MATH<span style="color:var(--accent2)">ismes</span></h1>
+      <p>Première spécialité · Épreuve anticipée 2027 · Sans calculatrice</p>
+    </div>
+    <div class="mode-cards">
+      <div class="mode-card" style="--card-color:#06d6a0" onclick="showScreen('train-themes')">
+        <span class="icon">🎯</span>
+        <h2>Entraînement</h2>
+        <p>Choisis un thème, progresse par niveaux et accumule des points. Des explications dès que tu bloques.</p>
+        <span class="badge" id="home-badge">5 niveaux</span>
+      </div>
+      <div class="mode-card" style="--card-color:#a855f7" onclick="startExam()">
+        <span class="icon">⏱️</span>
+        <h2>Examen blanc</h2>
+        <p>12 questions mixtes de niveau 4-5 étoiles avec chronomètre. Conditions réelles de l'épreuve anticipée.</p>
+        <span class="badge" style="background:var(--accent5)">12 questions · chrono</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-train-themes" class="screen">
+    <div class="section-header">
+      <button class="back-btn" onclick="showScreen('home')">←</button>
+      <div class="section-title">Choisir un thème</div>
+    </div>
+    <div class="themes-grid" id="themes-grid"></div>
+  </div>
+
+  <div id="screen-train" class="screen">
+    <div class="train-header">
+      <button class="back-btn" onclick="showScreen('train-themes')">←</button>
+      <div class="train-meta">
+        <div class="train-theme-name" id="train-theme-name"></div>
+        <div class="train-item-name" id="train-item-name"></div>
+      </div>
+      <div class="stars-display" id="stars-display"></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Progression niveau <span id="progress-level">1</span> ⭐</span>
+        <span id="progress-count">0 / ?</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="question-card">
+      <div class="question-text" id="question-text"></div>
+      <div class="choices" id="choices"></div>
+    </div>
+    <div class="feedback-card" id="feedback-card">
+      <div class="feedback-title" id="feedback-title"></div>
+      <div class="feedback-body" id="feedback-body"></div>
+      <div class="lesson-box" id="lesson-box" style="display:none">
+        <h4>📚 Fiche leçon</h4>
+        <p id="lesson-text"></p>
+        <span class="example" id="lesson-example"></span>
+      </div>
+    </div>
+    <button class="next-btn" id="next-btn" style="display:none" onclick="nextQuestion()">Question suivante →</button>
+  </div>
+
+  <div id="screen-exam" class="screen">
+    <div class="exam-header">
+      <div>
+        <div class="exam-q-num" id="exam-q-num">Q1 / 12</div>
+        <div class="exam-progress" id="exam-progress">Thème : —</div>
+      </div>
+      <div class="timer-box" id="timer-box">00:00</div>
+    </div>
+    <div class="exam-dots" id="exam-dots"></div>
+    <div class="question-card">
+      <div class="question-text" id="exam-question-text"></div>
+      <div class="choices" id="exam-choices"></div>
+    </div>
+  </div>
+
+  <div id="screen-results" class="screen">
+    <div class="results-card">
+      <div style="font-size:1rem;color:var(--text-muted);margin-bottom:8px">Score final</div>
+      <div class="results-score" id="results-score">—</div>
+      <div class="results-grade" id="results-grade"></div>
+      <div class="results-stats">
+        <div class="stat-box"><div class="stat-val" id="stat-correct" style="color:var(--accent3)">—</div><div class="stat-label">Bonnes réponses</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-time" style="color:var(--accent2)">—</div><div class="stat-label">Temps total</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-pct" style="color:var(--accent5)">—</div><div class="stat-label">Taux de réussite</div></div>
+      </div>
+      <div class="results-breakdown" id="results-breakdown"></div>
+      <div class="results-btns">
+        <button class="btn-secondary" onclick="startExam()">Nouvel examen</button>
+        <button class="btn-primary" onclick="showScreen('train-themes')">S'entraîner</button>
+      </div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <footer style="text-align:center;padding:32px 16px 24px;color:var(--text-muted);font-size:.78rem;border-top:1px solid var(--border);margin-top:48px">
+    <span>© 2026 <strong style="color:var(--text)">Kévin BLAYASSI</strong> — Professeur de mathématiques</span><br>
+    <span style="opacity:.7">LG Immaculée Conception · Espalion</span><br>
+    <span style="opacity:.5;margin-top:6px;display:block">Ressource libre d'utilisation à des fins pédagogiques</span>
+  </footer>
+</div>
+<div class="level-toast" id="level-toast"></div>
+<script>
+
+// ═══════════════════════════════════════════════
+//  THEMES & ITEMS (automatismes de Première spécialité, comme dans Mathik)
+//  group 'socle' : automatismes communs (Première + révision de Seconde)
+//  group 'spe'   : approfondissement propre à la spécialité
+// ═══════════════════════════════════════════════
+const GROUPS = [
+  {id:'socle', name:'Automatismes communs', sub:'Programme de Première et révision de Seconde'},
+  {id:'spe',   name:'Approfondissement spécialité', sub:'Les notions de la spécialité retravaillées en automatismes'},
+];
+const THEMES = [
+  { id:'calc', group:'socle', name:'Calcul numérique et algébrique', icon:'🔢', color:'#ff6b6b',
+    items:[
+      {id:'c1',  label:'Comparer deux nombres'},
+      {id:'c2',  label:'Opérations sur les fractions'},
+      {id:'c3',  label:'Opérations sur les puissances'},
+      {id:'c4',  label:"Changer d'écriture d'un nombre"},
+      {id:'c5',  label:'Estimer un ordre de grandeur'},
+      {id:'c14', label:"Vraisemblance d'un résultat"},
+      {id:'c6',  label:"Conversions d'unités"},
+      {id:'c15', label:'Règles de signes'},
+      {id:'c7',  label:'Développer et réduire'},
+      {id:'c16', label:'Factoriser une expression'},
+      {id:'c8',  label:'Développer et factoriser (niveau Première)'},
+      {id:'c9',  label:'Résoudre une équation simple'},
+      {id:'c17', label:'Résoudre une inéquation du 1er degré'},
+      {id:'c10', label:'Isoler une variable dans une formule'},
+      {id:'c11', label:'Appliquer une formule'},
+      {id:'c12', label:'Équation produit nul'},
+      {id:'c13', label:"Signe d'une expression du 1er degré"},
+      {id:'c18', label:"Signe d'un produit factorisé"},
+    ]
+  },
+  { id:'prop', group:'socle', name:'Proportions et pourcentages', icon:'📊', color:'#ffd166',
+    items:[
+      {id:'p1', label:'Exprimer une proportion'},
+      {id:'p3', label:'Calculer une partie ou un tout'},
+      {id:'p2', label:'Prendre un pourcentage'},
+    ]
+  },
+  { id:'evol', group:'socle', name:'Évolutions et variations', icon:'📈', color:'#06d6a0',
+    items:[
+      {id:'e1', label:'Pourcentage ↔ coefficient multiplicateur'},
+      {id:'e6', label:'Appliquer une hausse ou une baisse'},
+      {id:'e2', label:"Appliquer un taux d'évolution"},
+      {id:'e3', label:"Calculer un taux d'évolution"},
+      {id:'e4', label:'Évolutions successives'},
+      {id:'e5', label:"Taux d'évolution réciproque"},
+    ]
+  },
+  { id:'fonc', group:'socle', name:'Fonctions et représentations', icon:'📉', color:'#118ab2',
+    items:[
+      {id:'f1', label:'Lire une image sur une courbe'},
+      {id:'f9', label:'Lire des antécédents sur une courbe'},
+      {id:'f2', label:'Point et équation de courbe'},
+      {id:'f3', label:'Reconnaître linéaire et affine'},
+      {id:'f4', label:'Résoudre f(x) = k graphiquement'},
+      {id:'f5', label:"Signe d'une fonction sur un graphique"},
+      {id:'f7', label:"Lire l'équation d'une droite"},
+      {id:'f6', label:'Droite : point et coefficient directeur'},
+      {id:'f8', label:'Coefficient directeur par deux points'},
+    ]
+  },
+  { id:'geo', group:'socle', name:'Géométrie', icon:'📐', color:'#90be6d',
+    items:[
+      {id:'g1', label:'Abscisse sur une droite graduée'},
+      {id:'g2', label:'Coordonnées dans un repère'},
+      {id:'g3', label:'Périmètres et aires'},
+      {id:'g4', label:'Volumes usuels'},
+      {id:'g5', label:'Théorème de Pythagore'},
+      {id:'g6', label:'Théorème de Thalès'},
+      {id:'g7', label:'Trigonométrie du triangle rectangle'},
+    ]
+  },
+  { id:'stat', group:'socle', name:'Statistiques', icon:'📋', color:'#a855f7',
+    items:[
+      {id:'s1', label:'Lire un diagramme'},
+      {id:'s5', label:'Lire toute représentation de données'},
+      {id:'s2', label:'Calculer une moyenne'},
+      {id:'s3', label:'Médiane et quartiles'},
+      {id:'s6', label:'Calculer des indicateurs'},
+      {id:'s4', label:'Comparer des boîtes à moustaches'},
+    ]
+  },
+  { id:'proba', group:'socle', name:'Probabilités', icon:'🎲', color:'#f97316',
+    items:[
+      {id:'pr1', label:'Une probabilité est entre 0 et 1'},
+      {id:'pr6', label:'Événement contraire'},
+      {id:'pr2', label:'Somme des probabilités'},
+      {id:'pr3', label:'Équiprobabilité'},
+      {id:'pr4', label:'Probabilité conditionnelle (tableau)'},
+      {id:'pr7', label:'Arbre pondéré'},
+      {id:'pr5', label:'Distinguer P(A∩B), P<sub>A</sub>(B), P<sub>B</sub>(A)'},
+    ]
+  },
+  { id:'deg2', group:'spe', name:'Second degré', icon:'⛰️', color:'#ef476f',
+    items:[
+      {id:'d1', label:'Forme canonique et sommet'},
+      {id:'d2', label:'Discriminant'},
+      {id:'d3', label:"Racines d'un trinôme"},
+      {id:'d4', label:"Signe d'un trinôme"},
+    ]
+  },
+  { id:'deriv', group:'spe', name:'Dérivation', icon:'📏', color:'#fb8500',
+    items:[
+      {id:'v1', label:'Dérivées usuelles'},
+      {id:'v2', label:'Nombre dérivé et tangente'},
+      {id:'v3', label:'Équation de la tangente'},
+      {id:'v4', label:"Signe de f′ et variations"},
+    ]
+  },
+  { id:'suites', group:'spe', name:'Suites numériques', icon:'🔁', color:'#43aa8b',
+    items:[
+      {id:'u1', label:'Suites arithmétiques'},
+      {id:'u2', label:'Suites géométriques'},
+      {id:'u3', label:'Calcul par récurrence'},
+    ]
+  },
+  { id:'expo', group:'spe', name:'Fonction exponentielle', icon:'🚀', color:'#ffb703',
+    items:[
+      {id:'x1', label:"Propriétés de l'exponentielle"},
+      {id:'x2', label:'Exponentielle : signe et variations'},
+    ]
+  },
+  { id:'trigo', group:'spe', name:'Trigonométrie', icon:'⭕', color:'#8ecae6',
+    items:[
+      {id:'t1', label:'Degrés et radians'},
+      {id:'t2', label:'Valeurs remarquables'},
+    ]
+  },
+  { id:'geom', group:'spe', name:'Géométrie repérée et produit scalaire', icon:'🧭', color:'#4cc9f0',
+    items:[
+      {id:'w1', label:'Colinéarité de deux vecteurs'},
+      {id:'w2', label:'Produit scalaire'},
+      {id:'w3', label:"Vecteur directeur d'une droite"},
+    ]
+  },
+  { id:'va', group:'spe', name:'Variables aléatoires', icon:'🎰', color:'#c77dff',
+    items:[
+      {id:'a1', label:"Loi d'une variable aléatoire"},
+      {id:'a2', label:"Espérance d'une variable aléatoire"},
+    ]
+  },
+];
+
+// ═══════════════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════════════
+const rI=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=rI(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;};
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;}
+function simplify(n,d){const g=gcd(n,d);return [n/g,d/g];}
+
+// Nice wrong answers (integers or simple decimals)
+function wrongNums(correct, n=3, deltas=null) {
+  const c = parseFloat(correct);
+  const ws = new Set();
+  // Use explicit deltas for clean values
+  const dd = deltas || [1,2,3,5,10];
+  let attempts = 0;
+  while(ws.size < n && attempts < 200) {
+    attempts++;
+    const d = dd[rI(0, dd.length-1)];
+    const sign = Math.random() < 0.5 ? 1 : -1;
+    let w = c + sign * d;
+    if(Number.isInteger(c)) w = Math.round(w);
+    else w = Math.round(w * 100) / 100;
+    if(w !== c && !ws.has(w)) ws.add(w);
+  }
+  return [...ws].slice(0, n);
+}
+
+function mkChoices(correct, wrongs) {
+  // Always produce exactly 4 choices
+  const pool = [...new Set(wrongs.map(String).filter(w=>w!==String(correct)))];
+  // Pad if needed with offset values
+  const c = parseFloat(correct);
+  let offset = 1;
+  while(pool.length < 3) {
+    const candidate = String(Number.isInteger(c) ? c+offset : Math.round((c+offset)*100)/100);
+    if(candidate !== String(correct) && !pool.includes(candidate)) pool.push(candidate);
+    offset++;
+  }
+  return shuffle([{val:String(correct),correct:true}, ...pool.slice(0,3).map(w=>({val:w,correct:false}))]);
+}
+
+// ═══════════════════════════════════════════════
+//  NICE PERCENTAGES & VALUES BY LEVEL
+//  Niveaux : 1=10/50%, 2=25/75%, 3=20/40/60/80%, 4=5/15/30%, 5=tous
+// ═══════════════════════════════════════════════
+const PCT_BY_LEVEL = {
+  1: [10, 50],
+  2: [10, 25, 50, 75],
+  3: [10, 20, 25, 40, 50, 75, 80],
+  4: [5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 80],
+  5: [5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 80, 90],
+};
+// Nice round totals by level
+const TOTAL_BY_LEVEL = {
+  1: [10, 20, 50, 100, 200],
+  2: [20, 40, 60, 80, 100, 200, 400],
+  3: [50, 100, 120, 150, 200, 250, 400, 500],
+  4: [60, 80, 120, 150, 200, 250, 300, 400, 500, 600, 800],
+  5: [120, 150, 200, 240, 250, 300, 400, 500, 600, 800, 1000],
+};
+function nicePct(level) {
+  const arr = PCT_BY_LEVEL[Math.min(level, 5)];
+  return arr[rI(0, arr.length-1)];
+}
+function niceTotal(level) {
+  const arr = TOTAL_BY_LEVEL[Math.min(level, 5)];
+  return arr[rI(0, arr.length-1)];
+}
+// Returns a (total, pct) pair guaranteed to give an integer result
+function nicePair(level) {
+  // Try up to 20 times to find a combo where total*pct/100 is integer
+  for(let i=0;i<20;i++) {
+    const pct = nicePct(level);
+    const total = niceTotal(level);
+    if(Number.isInteger(total * pct / 100)) return [total, pct];
+  }
+  // Fallback: always-safe pairs
+  const safe = [[100,25],[200,50],[100,10],[100,50],[200,25]];
+  return safe[rI(0,safe.length-1)];
+}
+// Format a number exactly if simple, else with ≈ if it needs rounding
+function fmtNum(n) {
+  if(Number.isInteger(n)) return String(n);
+  const r2 = Math.round(n*100)/100;
+  if(r2 === n) return String(n); // exact 2 decimals
+  const r1 = Math.round(n*10)/10;
+  if(Math.abs(r1-n)<0.001) return String(r1);
+  return `≈ ${Math.round(n*100)/100}`;
+}
+
+// ═══════════════════════════════════════════════
+//  OUTILS D'ÉCRITURE (format français, expressions, QCM)
+// ═══════════════════════════════════════════════
+const MOINS='−';
+const R=(x,d=2)=>{const p=10**d;return Math.round(x*p)/p;};
+const pick=a=>a[rI(0,a.length-1)];
+const nz=(a,b)=>{let v;do{v=rI(a,b);}while(v===0);return v;};
+// Nombre affiché avec le vrai signe moins (la virgule est posée par frDec)
+function num(x){x=R(x,4);return x<0?MOINS+String(-x):String(x);}
+// Grands entiers : espace des milliers
+function grp(x){const s=String(Math.abs(Math.round(x))).replace(/\B(?=(\d{3})+(?!\d))/g,' ');return (x<0?MOINS:'')+s;}
+const paren=x=>x<0?`(${num(x)})`:num(x);
+const pc=t=>`${t>0?'+':''}${num(t)} %`;
+const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','−':'⁻','-':'⁻'};
+const sup=n=>String(n).split('').map(c=>SUP[c]||c).join('');
+// Polynôme : coefficients du plus haut degré au plus bas
+function poly(cs,v='x'){
+  const n=cs.length-1;let s='';
+  cs.forEach((a,i)=>{
+    if(!a)return;const d=n-i,ab=Math.abs(a);
+    const part=(ab===1&&d>0?'':num(ab))+(d===0?'':d===1?v:v+sup(d));
+    s+=s===''?(a<0?MOINS+part:part):(a<0?' − ':' + ')+part;
+  });
+  return s||'0';
+}
+const lin=(a,b,v='x')=>poly([a,b],v);
+// Facteur (x − r)
+const xm=(r,v='x')=>r===0?v:`${v} ${r<0?'+':'−'} ${num(Math.abs(r))}`;
+// Fraction irréductible
+function fr(n,d){if(d<0){n=-n;d=-d;}const g=gcd(n,d);n/=g;d/=g;return d===1?num(n):`${num(n)}/${d}`;}
+// Décimal → virgule, hors balises HTML
+function frDec(s){return String(s).replace(/(<\/?[a-zA-Z][^>]*>)|(\d)\.(\d)/g,(m,t,a,b)=>t?t:a+','+b);}
+
+// QCM : bonne réponse + jusqu'à 3 distracteurs distincts
+function Q(text,c,ws,lesson,example){
+  c=String(c);const seen=new Set([c]);const w=[];
+  for(const x of ws){const s=String(x);if(s&&!seen.has(s)&&!/NaN|undefined|Infinity/.test(s)){seen.add(s);w.push(s);}if(w.length===3)break;}
+  return{text,choices:shuffle([{val:c,correct:true},...w.map(v=>({val:v,correct:false}))]),correct:c,lesson,example};
+}
+// QCM numérique : distracteurs complétés par c ± 1, c ± 2…
+function QN(text,c,ws,lesson,example,unit=''){
+  const u=unit?' '+unit:'';const f=x=>num(x)+u;
+  const pool=ws.filter(x=>typeof x==='number'&&isFinite(x)&&R(x,4)!==R(c,4)).map(f);
+  const step=Math.abs(c)>=50?Math.pow(10,Math.floor(Math.log10(Math.abs(c)))-1)*5:1;
+  for(let k=1;k<=4;k++){pool.push(f(c+k*step),f(c-k*step));}
+  return Q(text,f(c),pool,lesson,example);
+}
+// Intervalles
+const ivl=(a,b,lc,rc)=>`${lc?'[':']'}${a} ; ${b}${rc?']':'['}`;
+const cup=(...xs)=>xs.join(' ∪ ');
+
+// ═══════════════════════════════════════════════
+//  FIGURES SVG
+// ═══════════════════════════════════════════════
+let SVG_ID=0;
+const svgWrap=(w,h,inner)=>`<div class="fig"><svg viewBox="-4 -4 ${w+8} ${h+8}" style="width:100%;max-width:${w}px;display:block;margin:12px auto 4px;background:var(--surface2);border-radius:10px;font-family:Outfit,sans-serif">${inner}</svg></div>`;
+
+// Repère quadrillé avec courbes, droites et points
+function svgGraph(o){
+  const {xmin,xmax,ymin,ymax}=o,W=o.w||300,u=W/(xmax-xmin),H=R((ymax-ymin)*u,1);
+  const X=x=>R((x-xmin)*u,1),Y=y=>R((ymax-y)*u,1);
+  const id='clip'+(++SVG_ID);
+  let s=`<defs><clipPath id="${id}"><rect x="0" y="0" width="${W}" height="${H}"/></clipPath></defs>`;
+  for(let x=Math.ceil(xmin);x<=xmax;x++)s+=`<line x1="${X(x)}" y1="0" x2="${X(x)}" y2="${H}" style="stroke:var(--border);stroke-width:1"/>`;
+  for(let y=Math.ceil(ymin);y<=ymax;y++)s+=`<line x1="0" y1="${Y(y)}" x2="${W}" y2="${Y(y)}" style="stroke:var(--border);stroke-width:1"/>`;
+  const ax='stroke:var(--text-muted);stroke-width:1.5';
+  if(ymin<=0&&ymax>=0)s+=`<line x1="0" y1="${Y(0)}" x2="${W}" y2="${Y(0)}" style="${ax}"/>`;
+  if(xmin<=0&&xmax>=0)s+=`<line x1="${X(0)}" y1="0" x2="${X(0)}" y2="${H}" style="${ax}"/>`;
+  const st=(o.lab||1),tx='fill:var(--text-muted);font-size:10px';
+  const x0=xmin<=0&&xmax>=0?0:xmin,y0=ymin<=0&&ymax>=0?0:ymin;
+  for(let x=Math.ceil(xmin);x<=xmax;x++)if(x!==0&&x%st===0)s+=`<text x="${X(x)}" y="${Math.min(Y(y0)+12,H-2)}" text-anchor="middle" style="${tx}">${num(x)}</text>`;
+  for(let y=Math.ceil(ymin);y<=ymax;y++)if(y!==0&&y%st===0)s+=`<text x="${Math.max(X(x0)-4,8)}" y="${Y(y)+3.5}" text-anchor="end" style="${tx}">${num(y)}</text>`;
+  if(x0===0&&y0===0)s+=`<text x="${X(0)-4}" y="${Y(0)+12}" text-anchor="end" style="${tx}">0</text>`;
+  let g='';
+  (o.lines||[]).forEach(l=>{g+=`<line x1="${X(xmin)}" y1="${Y(l.a*xmin+l.b)}" x2="${X(xmax)}" y2="${Y(l.a*xmax+l.b)}" style="stroke:${l.color||'var(--accent2)'};stroke-width:${l.dash?1.5:2.5};${l.dash?'stroke-dasharray:6 4':''}"/>`;});
+  (o.curves||[]).forEach(c=>{g+=`<polyline points="${c.pts.map(p=>X(p[0])+','+Y(p[1])).join(' ')}" style="fill:none;stroke:${c.color||'var(--accent4)'};stroke-width:2.5;stroke-linejoin:round"/>`;});
+  s+=`<g clip-path="url(#${id})">${g}</g>`;
+  (o.pts||[]).forEach(p=>{s+=`<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="4" style="fill:${p.color||'var(--accent)'}"/>`;if(p.label)s+=`<text x="${X(p.x)+6}" y="${Y(p.y)-6}" style="fill:var(--text);font-size:12px;font-weight:700">${p.label}</text>`;});
+  if(o.name)s+=`<text x="${W-6}" y="14" text-anchor="end" style="fill:${o.nameColor||'var(--accent4)'};font-size:13px;font-weight:700;font-style:italic">${o.name}</text>`;
+  return svgWrap(W,H,s);
+}
+
+// Interpolation monotone (Fritsch–Carlson) : la courbe reste entre deux nœuds
+// consécutifs, donc ce qu'on lit aux nœuds suffit pour les signes et les antécédents.
+function monoCubic(nodes,steps=10){
+  const n=nodes.length,xs=nodes.map(p=>p[0]),ys=nodes.map(p=>p[1]),d=[],m=[];
+  for(let i=0;i<n-1;i++)d.push((ys[i+1]-ys[i])/(xs[i+1]-xs[i]));
+  m[0]=d[0];m[n-1]=d[n-2];
+  for(let i=1;i<n-1;i++)m[i]=d[i-1]*d[i]<=0?0:(d[i-1]+d[i])/2;
+  for(let i=0;i<n-1;i++){
+    if(d[i]===0){m[i]=m[i+1]=0;continue;}
+    const a=m[i]/d[i],b=m[i+1]/d[i],s=a*a+b*b;
+    if(s>9){const t=3/Math.sqrt(s);m[i]=t*a*d[i];m[i+1]=t*b*d[i];}
+  }
+  const out=[];
+  for(let i=0;i<n-1;i++){const h=xs[i+1]-xs[i];
+    for(let k=0;k<steps;k++){const t=k/steps,t2=t*t,t3=t2*t;
+      out.push([xs[i]+t*h,(2*t3-3*t2+1)*ys[i]+(t3-2*t2+t)*h*m[i]+(-2*t3+3*t2)*ys[i+1]+(t3-t2)*h*m[i+1]]);}}
+  out.push([xs[n-1],ys[n-1]]);return out;
+}
+// Nœuds entiers aléatoires sur [x0 ; x1], deux nœuds voisins jamais égaux
+function randNodes(x0,x1,lo,hi){
+  const nodes=[];let y=rI(lo+1,hi-1);
+  for(let x=x0;x<=x1;x++){
+    if(x>x0){let ny;do{ny=y+pick([-3,-2,-1,1,2,3]);}while(ny<lo||ny>hi);y=ny;}
+    nodes.push([x,y]);
+  }
+  return nodes;
+}
+const fnCurve=(f,a,b,n=80)=>Array.from({length:n+1},(_,i)=>{const x=a+(b-a)*i/n;return[x,f(x)];});
+
+// Droite graduée
+function svgAxis(a,n,val,label){
+  const W=320,H=60,span=3,u=(W-40)/span,X=x=>R(20+(x-a)*u,1);
+  let s=`<line x1="10" y1="30" x2="${W-10}" y2="30" style="stroke:var(--text-muted);stroke-width:1.5"/>`;
+  for(let k=0;k<=span*n;k++){const x=a+k/n,maj=k%n===0;
+    s+=`<line x1="${X(x)}" y1="${maj?22:26}" x2="${X(x)}" y2="${maj?38:34}" style="stroke:var(--text-muted);stroke-width:${maj?1.5:1}"/>`;
+    if(maj)s+=`<text x="${X(x)}" y="52" text-anchor="middle" style="fill:var(--text-muted);font-size:11px">${num(x)}</text>`;}
+  s+=`<circle cx="${X(val)}" cy="30" r="4.5" style="fill:var(--accent)"/><text x="${X(val)}" y="15" text-anchor="middle" style="fill:var(--text);font-size:12px;font-weight:700">${label}</text>`;
+  return svgWrap(W,H,s);
+}
+
+// Diagramme en barres
+function svgBars(labels,vals,step,top){
+  const W=320,H=190,L=34,B=24,T=8,w=(W-L-6)/labels.length,Y=v=>R(T+(H-T-B)*(1-v/top),1);
+  let s='';
+  for(let v=0;v<=top;v+=step){s+=`<line x1="${L}" y1="${Y(v)}" x2="${W-4}" y2="${Y(v)}" style="stroke:var(--border);stroke-width:1"/><text x="${L-5}" y="${Y(v)+3.5}" text-anchor="end" style="fill:var(--text-muted);font-size:10px">${v}</text>`;}
+  labels.forEach((lb,i)=>{const x=L+i*w+w*0.18,bw=w*0.64;
+    s+=`<rect x="${R(x,1)}" y="${Y(vals[i])}" width="${R(bw,1)}" height="${R(Y(0)-Y(vals[i]),1)}" rx="3" style="fill:var(--accent5);opacity:.85"/>`;
+    s+=`<text x="${R(x+bw/2,1)}" y="${H-8}" text-anchor="middle" style="fill:var(--text-muted);font-size:10px">${lb}</text>`;});
+  s+=`<line x1="${L}" y1="${Y(0)}" x2="${W-4}" y2="${Y(0)}" style="stroke:var(--text-muted);stroke-width:1.5"/>`;
+  return svgWrap(W,H,s);
+}
+
+// Boîtes à moustaches horizontales sur une échelle [lo ; hi]
+function svgBoxes(boxes,lo,hi,step){
+  const W=320,rowH=46,H=boxes.length*rowH+26,L=24,X=v=>R(L+(W-L-12)*(v-lo)/(hi-lo),1);
+  let s='';
+  for(let v=lo;v<=hi;v+=step){s+=`<line x1="${X(v)}" y1="4" x2="${X(v)}" y2="${H-22}" style="stroke:var(--border);stroke-width:1"/><text x="${X(v)}" y="${H-8}" text-anchor="middle" style="fill:var(--text-muted);font-size:10px">${v}</text>`;}
+  boxes.forEach((b,i)=>{const y=12+i*rowH,h=24,c=b.color||'var(--accent4)';
+    s+=`<text x="4" y="${y+h/2+4}" style="fill:var(--text);font-size:12px;font-weight:700">${b.label}</text>`;
+    s+=`<line x1="${X(b.min)}" y1="${y+h/2}" x2="${X(b.max)}" y2="${y+h/2}" style="stroke:${c};stroke-width:1.5"/>`;
+    s+=`<line x1="${X(b.min)}" y1="${y+4}" x2="${X(b.min)}" y2="${y+h-4}" style="stroke:${c};stroke-width:1.5"/><line x1="${X(b.max)}" y1="${y+4}" x2="${X(b.max)}" y2="${y+h-4}" style="stroke:${c};stroke-width:1.5"/>`;
+    s+=`<rect x="${X(b.q1)}" y="${y}" width="${R(X(b.q3)-X(b.q1),1)}" height="${h}" style="fill:var(--surface);stroke:${c};stroke-width:2"/>`;
+    s+=`<line x1="${X(b.me)}" y1="${y}" x2="${X(b.me)}" y2="${y+h}" style="stroke:var(--accent2);stroke-width:3"/>`;});
+  return svgWrap(W,H,s);
+}
+
+// Arbre pondéré à deux niveaux (w = [p(A), p(Ā), p_A(B), p_A(B̄), p_Ā(B), p_Ā(B̄)])
+function svgTree(w){
+  const W=300,H=180,tx='fill:var(--text);font-size:13px;font-weight:700',pw='fill:var(--accent2);font-size:12px;font-weight:600';
+  const P={r:[12,90],A:[118,46],nA:[118,134],AB:[250,18],AnB:[250,74],nAB:[250,106],nAnB:[250,162]};
+  const edge=(a,b,t,dy)=>{const[x1,y1]=P[a],[x2,y2]=P[b];return`<line x1="${x1+8}" y1="${y1}" x2="${x2-14}" y2="${y2}" style="stroke:var(--text-muted);stroke-width:1.5"/><text x="${R((x1+x2)/2-4,1)}" y="${R((y1+y2)/2+dy,1)}" text-anchor="middle" style="${pw}">${t}</text>`;};
+  let s=edge('r','A',w[0],-6)+edge('r','nA',w[1],14)+edge('A','AB',w[2],-5)+edge('A','AnB',w[3],13)+edge('nA','nAB',w[4],-5)+edge('nA','nAnB',w[5],13);
+  const lab=(k,t)=>`<text x="${P[k][0]-4}" y="${P[k][1]+4}" style="${tx}">${t}</text>`;
+  s+=lab('A','A')+lab('nA','A̅')+lab('AB','B')+lab('AnB','B̅')+lab('nAB','B')+lab('nAnB','B̅');
+  return svgWrap(W,H,s);
+}
+
+// Tableau HTML simple
+function htmlTable(head,rows){
+  const td='padding:6px 12px;border:1px solid var(--border);text-align:center';
+  return `<table style="border-collapse:collapse;margin:10px 0;font-size:.9rem"><tr style="background:var(--surface2)">${head.map(h=>`<th style="${td}">${h}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td style="${td}">${c}</td>`).join('')}</tr>`).join('')}</table>`;
+}
+
+// ═══════════════════════════════════════════════
+//  GENERATORS
+//  Chaque générateur reçoit le niveau (1 à 5) et renvoie
+//  {text, choices:[{val,correct}], correct, lesson, example}
+// ═══════════════════════════════════════════════
+const G = {};
+
+// ─────────────────────────────
+//  CALCUL NUMÉRIQUE ET ALGÉBRIQUE
+// ─────────────────────────────
+G.c1 = lv => {
+  const t=rI(0,lv<=2?1:2);let A,B,va,vb;
+  if(t===0){
+    const base=rI(0,9);let a,b;
+    do{a=R(base+rI(1,9)/10+(lv>2?rI(0,9)/100:0),2);b=R(base+rI(1,9)/10+rI(0,9)/100,2);}while(a===b);
+    const s=lv>=2&&Math.random()<.5?-1:1;va=s*a;vb=s*b;A=num(va);B=num(vb);
+  }else if(t===1){
+    let n1,d1,n2,d2;do{d1=rI(2,9);d2=rI(2,9);n1=rI(1,2*d1);n2=rI(1,2*d2);}while(d1===d2||n1*d2===n2*d1||gcd(n1,d1)>1||gcd(n2,d2)>1);
+    va=n1/d1;vb=n2/d2;A=`${n1}/${d1}`;B=`${n2}/${d2}`;
+  }else{
+    const b=rI(2,9),a=b*b+pick([-2,-1,1,2]);va=Math.sqrt(a);vb=b;A=`√${a}`;B=String(b);
+  }
+  const c=va>vb?`${A} > ${B}`:`${A} < ${B}`;
+  return Q(`Compare <strong>${A}</strong> et <strong>${B}</strong>.`,c,[va>vb?`${A} < ${B}`:`${A} > ${B}`,`${A} = ${B}`],
+    'Pour comparer deux nombres, on les écrit sous une même forme (même nombre de décimales, même dénominateur) ou on étudie le signe de leur différence.',
+    'Ex : 3/4 et 5/7 → 21/28 et 20/28, donc 3/4 > 5/7');
+};
+
+G.c2 = lv => {
+  const op=pick(lv<=1?['+','−']:['+','−','×','÷']);
+  let d1,d2;do{d1=rI(2,lv<=2?6:9);d2=rI(2,lv<=2?6:9);}while(d1===d2);
+  let n1,n2;do{n1=rI(1,d1+2);n2=rI(1,d2+2);}while(gcd(n1,d1)>1||gcd(n2,d2)>1);let N,D,w;
+  if(op==='+'){N=n1*d2+n2*d1;D=d1*d2;w=[fr(n1+n2,d1+d2),fr(n1*n2,d1*d2),fr(n1+n2,d1*d2)];}
+  else if(op==='−'){N=n1*d2-n2*d1;D=d1*d2;w=[fr(n1-n2,d1+d2),fr(n2*d1-n1*d2,d1*d2),fr(n1*d2+n2*d1,d1*d2)];}
+  else if(op==='×'){N=n1*n2;D=d1*d2;w=[fr(n1*d2,d1*n2),fr(n1*n2,d1+d2),fr(n1+n2,d1*d2)];}
+  else{N=n1*d2;D=d1*n2;w=[fr(n1*n2,d1*d2),fr(d1*n2,n1*d2),fr(n1*d2,d1*d2)];}
+  const L={'+':'Pour additionner, on réduit au même dénominateur puis on additionne les numérateurs.','−':'Pour soustraire, on réduit au même dénominateur puis on soustrait les numérateurs.','×':'Pour multiplier : numérateur × numérateur et dénominateur × dénominateur.','÷':"Diviser par une fraction, c'est multiplier par son inverse."};
+  return Q(`Calcule (résultat irréductible) : <strong>${n1}/${d1} ${op} ${n2}/${d2}</strong>`,fr(N,D),[...w,fr(N+D,D),fr(N-D,D)],L[op],'Ex : 2/3 + 1/4 = 8/12 + 3/12 = 11/12 ; 2/3 ÷ 4/5 = 2/3 × 5/4 = 5/6');
+};
+
+G.c3 = lv => {
+  const t=rI(0,lv<=2?2:3),a=rI(2,7),P=(b,e)=>`${b}<sup>${num(e)}</sup>`;
+  const txt=e=>`Écris sous la forme d'une seule puissance : <strong>${e}</strong>`;
+  if(t===0){const m=rI(2,6),n=rI(2,6);return Q(txt(`${P(a,m)} × ${P(a,n)}`),P(a,m+n),[P(a,m*n),P(a*a,m+n),P(a,m+n+1),P(2*a,m*n)],'aⁿ × aᵐ = aⁿ⁺ᵐ : on additionne les exposants.','Ex : 2³ × 2⁴ = 2⁷');}
+  if(t===1){const m=rI(4,9),n=rI(1,m-1);return Q(txt(`${P(a,m)} ÷ ${P(a,n)}`),P(a,m-n),[P(a,m+n),P(a,n-m),P(a,m*n)],'aⁿ ÷ aᵐ = aⁿ⁻ᵐ : on soustrait les exposants.','Ex : 3⁵ ÷ 3² = 3³');}
+  if(t===2){const m=rI(2,4),n=rI(2,4);return Q(txt(`(${P(a,m)})<sup>${n}</sup>`),P(a,m*n),[P(a,m+n),P(a*n,m),P(a,m*n+1)],'(aⁿ)ᵐ = aⁿˣᵐ : on multiplie les exposants.','Ex : (2³)² = 2⁶');}
+  const m=rI(2,8),n=rI(2,9);return Q(txt(`${P(10,m)} × ${P(10,-n)}`),P(10,m-n),[P(10,m+n),P(10,-m*n),P(10,n-m)],'10ⁿ × 10ᵐ = 10ⁿ⁺ᵐ, aussi avec des exposants négatifs.','Ex : 10⁵ × 10⁻⁸ = 10⁻³');
+};
+
+G.c4 = lv => {
+  const t=rI(0,lv<=2?3:4);
+  if(t===0){const p=nicePct(lv),d=p/100;return Q(`Écris en pourcentage : <strong>${num(d)}</strong>`,`${p} %`,[`${num(p/10)} %`,`${p*10} %`,`${num(d)} %`],'Décimal → pourcentage : on multiplie par 100.','Ex : 0,35 = 35 %');}
+  if(t===1){const p=nicePct(lv),d=p/100;return Q(`Écris sous forme décimale : <strong>${p} %</strong>`,num(d),[num(p/10),num(p/1000),String(p)],'Pourcentage → décimal : on divise par 100.','Ex : 45 % = 0,45');}
+  if(t===2){const[n,d]=pick([[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[1,8],[3,8],[7,4],[5,2]]);return Q(`Écris sous forme décimale : <strong>${n}/${d}</strong>`,num(n/d),[`${n}.${d}`,num(R(d/n,3)),num(n/d+(n/d<1?0.1:1))],'Fraction → décimal : on effectue la division n ÷ d.','Ex : 3/8 = 3 ÷ 8 = 0,375');}
+  if(t===3){const[n,d]=pick([[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,20],[3,20],[7,10]]);return Q(`Écris sous forme de fraction irréductible : <strong>${num(n/d)}</strong>`,`${n}/${d}`,[`${n*2}/${d*2}`,`${n}/${d+1}`,`${d}/${n}`],'Décimal → fraction : on écrit le nombre sur 10, 100… puis on simplifie.','Ex : 0,75 = 75/100 = 3/4');}
+  const m=rI(11,99),e=rI(2,5),v=(m/10*10**(-e)).toFixed(e+1);return Q(`Écriture scientifique de <strong>${v}</strong> ?`,`${num(m/10)} × 10<sup>${num(-e)}</sup>`,[`${num(m/10)} × 10<sup>${e}</sup>`,`${m} × 10<sup>${num(-e-1)}</sup>`,`${num(m/10)} × 10<sup>${num(-e-1)}</sup>`],"Écriture scientifique : a × 10ⁿ avec 1 ≤ a < 10.",'Ex : 0,0035 = 3,5 × 10⁻³');
+};
+
+G.c5 = lv => {
+  const k1=rI(1,lv<=2?2:3),k2=rI(0,2),a1=rI(2,9),a2=rI(2,9);
+  const x=a1*10**k1+rI(-3,3)*10**(k1-1);
+  const y=k2===0?R(a2+rI(-3,3)/10,1):a2*10**k2+rI(-3,3)*10**(k2-1);
+  const est=a1*a2*10**(k1+k2);
+  return Q(`Un ordre de grandeur de <strong>${grp(x)} × ${k2===0?num(y):grp(y)}</strong> est :`,grp(est),[grp(est*10),grp(est/10),grp(est*100)],"On arrondit chaque facteur à un seul chiffre significatif, puis on calcule de tête.",'Ex : 487 × 21 ≈ 500 × 20 = 10 000');
+};
+
+G.c14 = lv => {
+  const items=[
+    ['La hauteur d’une porte est d’environ 2 m.',true,'Une porte standard mesure environ 2 m de haut.'],
+    ['Une pomme pèse environ 15 kg.',false,'Une pomme pèse environ 150 g.'],
+    ['Un piéton marche à environ 5 km/h.',true,'La vitesse de marche est bien d’environ 5 km/h.'],
+    ['Une bouteille d’eau contient environ 150 L.',false,'Une bouteille contient environ 1,5 L ; 150 L, c’est une baignoire.'],
+    ['Un cours au lycée dure environ 3 300 secondes.',true,'3 300 s = 55 min : c’est bien la durée d’un cours.'],
+    ['La distance Paris–Marseille est d’environ 78 km.',false,'Paris–Marseille, c’est environ 780 km.'],
+    ['Un TGV roule à environ 300 km/h.',true,'Un TGV circule bien autour de 300 km/h.'],
+    ['Une salle de classe a une surface d’environ 6 m².',false,'Une salle de classe fait environ 60 m².'],
+    ['Une baguette coûte environ 12 €.',false,'Une baguette coûte environ 1,20 €.'],
+    ['Un smartphone pèse environ 200 g.',true,'Les smartphones pèsent entre 150 g et 250 g.'],
+    ['Un adulte mesure environ 17 m.',false,'Un adulte mesure environ 1,70 m.'],
+    ['Une année scolaire compte environ 36 semaines de cours.',true,'L’année scolaire compte bien environ 36 semaines.'],
+    ['Un vélo roule en ville à environ 15 km/h.',true,'En ville, un cycliste roule entre 12 et 20 km/h.'],
+    ['Une baignoire contient environ 2 L d’eau.',false,'Une baignoire contient environ 150 à 200 L.'],
+    ['Un élève a obtenu 25 sur 20 à un devoir.',false,'Une note sur 20 ne peut pas dépasser 20.'],
+    ['Une remise de 30 % sur 50 € fait payer 65 €.',false,'Après une remise, on paie moins : 50 × 0,7 = 35 €.'],
+  ];
+  const[t,ok,why]=pick(items);
+  return Q(`Ce résultat est-il vraisemblable ?<br><strong>${t}</strong>`,ok?'Vraisemblable':'Invraisemblable',[ok?'Invraisemblable':'Vraisemblable'],why+' On contrôle toujours un résultat avec un ordre de grandeur connu.','Ex : une voiture qui roule à 900 km/h : invraisemblable.');
+};
+
+G.c6 = lv => {
+  const cs=[
+    ['Convertis <strong>2,5 km</strong> en mètres.','2 500 m',['250 m','25 000 m','25 m']],
+    ['Convertis <strong>3 500 m</strong> en kilomètres.','3,5 km',['35 km','350 km','0,35 km']],
+    ['Convertis <strong>2 h 30 min</strong> en minutes.','150 min',['130 min','230 min','250 min']],
+    ['Convertis <strong>450 min</strong> en heures et minutes.','7 h 30 min',['7 h 50 min','4 h 50 min','7 h 05 min']],
+    ['Convertis <strong>1,5 m²</strong> en cm².','15 000 cm²',['150 cm²','1 500 cm²','150 000 cm²']],
+    ['Convertis <strong>72 km/h</strong> en m/s.','20 m/s',['72 m/s','7,2 m/s','200 m/s']],
+    ['Convertis <strong>2,5 L</strong> en mL.','2 500 mL',['250 mL','25 mL','25 000 mL']],
+    ['Convertis <strong>1 dm³</strong> en litres.','1 L',['10 L','0,1 L','1 000 L']],
+    ['Convertis <strong>0,75 h</strong> en minutes.','45 min',['75 min','7,5 min','40 min']],
+    ['Convertis <strong>3 m³</strong> en dm³.','3 000 dm³',['30 dm³','300 dm³','30 000 dm³']],
+    ['Convertis <strong>250 g</strong> en kilogrammes.','0,25 kg',['2,5 kg','25 kg','0,025 kg']],
+  ];
+  const[q,c,w]=pick(cs);
+  return Q(q,c,w,'Repères : 1 km = 1 000 m ; 1 m² = 10 000 cm² ; 1 dm³ = 1 L ; 1 h = 60 min = 3 600 s.','Ex : 72 km/h = 72 000 m ÷ 3 600 s = 20 m/s');
+};
+
+G.c15 = lv => {
+  const t=rI(0,3);
+  if(t===0){const n=rI(3,lv<=2?4:6),fs=Array.from({length:n},()=>nz(-9,9)),neg=fs.filter(x=>x<0).length,c=neg%2===0?'Positif':'Négatif';
+    return Q(`Quel est le signe de <strong>${fs.map(paren).join(' × ')}</strong> ?`,c,[c==='Positif'?'Négatif':'Positif','Nul'],"Un produit de facteurs non nuls est positif s'il a un nombre pair de facteurs négatifs, négatif sinon.",'Ex : (−2) × 3 × (−5) : deux facteurs négatifs → positif');}
+  if(t===1){const a=nz(-12,12),b=nz(-9,9);return QN(`Calcule : <strong>${paren(a)} × ${paren(b)}</strong>`,a*b,[-a*b,a+b,a-b],'Deux nombres de même signe ont un produit positif ; de signes contraires, un produit négatif.','Ex : (−4) × (−6) = 24 ; (−4) × 6 = −24');}
+  if(t===2){const b=nz(-9,9),q=nz(-9,9),a=b*q;return QN(`Calcule : <strong>${paren(a)} ÷ ${paren(b)}</strong>`,q,[-q,a-b],'Même règle des signes pour le quotient que pour le produit.','Ex : (−36) ÷ (−4) = 9');}
+  const a=nz(-15,15),b=nz(-15,15);return QN(`Calcule : <strong>${num(a)} − ${paren(b)}</strong>`,a-b,[a+b,-a-b,b-a],'Soustraire un nombre, c’est ajouter son opposé : a − (−b) = a + b.','Ex : −7 − (−3) = −7 + 3 = −4');
+};
+
+G.c7 = lv => {
+  let k,a,b,m,c,d,s,A,B;
+  do{k=rI(2,6);a=nz(-4,4);b=nz(-9,9);m=rI(2,5);c=nz(-4,4);d=nz(-9,9);s=pick([1,-1]);A=k*a+s*m*c;B=k*b+s*m*d;}while(A===0||B===0);
+  const e=`${k}(${lin(a,b)}) ${s>0?'+':'−'} ${m}(${lin(c,d)})`;
+  return Q(`Développe et réduis : <strong>${e}</strong>`,lin(A,B),[lin(A,k*b+s*d),lin(A,k*b-s*m*d),lin(k*a+s*c,B),lin(A,b+s*m*d)],"On distribue chaque facteur sur tous les termes de la parenthèse (attention au signe « − » devant), puis on regroupe les termes en x et les constantes.",'Ex : 3(x + 2) − 2(x − 1) = 3x + 6 − 2x + 2 = x + 8');
+};
+
+G.c16 = lv => {
+  const t=rI(0,lv<=2?3:4);
+  if(t===0){const k=rI(2,6),a=nz(-5,5),b=nz(-9,9);if(gcd(a,b)!==1)return G.c16(lv);
+    return Q(`Factorise : <strong>${lin(k*a,k*b)}</strong>`,`${k}(${lin(a,b)})`,[`${k}(${lin(k*a,b)})`,`${k}(${lin(a,-b)})`,`${k}x(${lin(a,b)})`],'On repère le facteur commun à tous les termes : ka + kb = k(a + b).','Ex : 6x − 9 = 3(2x − 3)');}
+  if(t===1){const p=rI(1,5),q=nz(-6,6),g=rI(1,3);if(gcd(p,Math.abs(q))!==1)return G.c16(lv);const gx=(g===1?'':g)+'x';
+    return Q(`Factorise au maximum : <strong>${poly([g*p,g*q,0])}</strong>`,`${gx}(${lin(p,q)})`,[`${gx}(${lin(p,-q)})`,`${gx}²(${lin(p,q)})`,`${gx}(${lin(g*p,q)})`],'Le facteur commun est ici x (et éventuellement un nombre) : ax² + bx = x(ax + b).','Ex : 3x² + 5x = x(3x + 5)');}
+  if(t===2){const a=rI(1,9);return Q(`Factorise : <strong>x² − ${a*a}</strong>`,`(${xm(a)})(${xm(-a)})`,[`(${xm(a)})²`,`(${xm(-a)})²`,`(${xm(a*a)})(${xm(-a*a)})`],'Identité remarquable : a² − b² = (a − b)(a + b).','Ex : x² − 25 = (x − 5)(x + 5)');}
+  if(t===3){const a=nz(-7,7);return Q(`Factorise : <strong>${poly([1,2*a,a*a])}</strong>`,`(${xm(-a)})²`,[`(${xm(a)})²`,`(${xm(-a)})(${xm(a)})`,`(${xm(-2*a)})²`],'Identités remarquables : a² + 2ab + b² = (a + b)² et a² − 2ab + b² = (a − b)².','Ex : x² + 6x + 9 = (x + 3)²');}
+  const a=rI(1,3),b=nz(-5,5),c=nz(-3,3),d=nz(-5,5),e=nz(-3,3),f=nz(-5,5);if(c+e===0||gcd(a,Math.abs(b))!==1)return G.c16(lv);
+  const F=`(${lin(a,b)})`;
+  return Q(`Factorise : <strong>${F}(${lin(c,d)}) + ${F}(${lin(e,f)})</strong>`,`${F}(${lin(c+e,d+f)})`,[`${F}(${lin(c*e,d*f)})`,`${F}²(${lin(c+e,d+f)})`,`${F}(${lin(c-e,d-f)})`],'On repère la parenthèse commune : A·B + A·C = A(B + C).','Ex : (x + 1)(2x) + (x + 1)(3) = (x + 1)(2x + 3)');
+};
+
+G.c8 = lv => {
+  const t=rI(0,2);
+  if(t===0){const k=lv<=2?1:rI(1,3),a=nz(-7,7);
+    return Q(`Développe : <strong>(${lin(k,a)})²</strong>`,poly([k*k,2*k*a,a*a]),[poly([k*k,0,a*a]),poly([k*k,-2*k*a,a*a]),poly([k*k,k*a,a*a]),poly([k,2*k*a,a*a])],'(a + b)² = a² + 2ab + b² et (a − b)² = a² − 2ab + b² : ne pas oublier le double produit.','Ex : (x − 3)² = x² − 6x + 9');}
+  if(t===1){const k=rI(1,lv<=2?1:4),a=rI(1,9);
+    return Q(`Développe : <strong>(${lin(k,a)})(${lin(k,-a)})</strong>`,poly([k*k,0,-a*a]),[poly([k*k,0,a*a]),poly([k*k,-2*k*a,-a*a]),poly([k,0,-a])],'(a + b)(a − b) = a² − b².','Ex : (2x + 3)(2x − 3) = 4x² − 9');}
+  const a=nz(-6,6),b=nz(-6,6);
+  return Q(`Développe : <strong>(${lin(1,a)})(${lin(1,b)})</strong>`,poly([1,a+b,a*b]),[poly([1,a*b,a+b]),poly([1,0,a*b]),poly([1,a+b,-a*b]),poly([1,-(a+b),a*b])],'Double distributivité : (a + b)(c + d) = ac + ad + bc + bd.','Ex : (x + 2)(x − 5) = x² − 5x + 2x − 10 = x² − 3x − 10');
+};
+
+G.c9 = lv => {
+  const t=rI(0,3);
+  if(t===0){let a,b,c;do{a=nz(-9,9);b=nz(-12,12);c=rI(-12,12);}while(a===1&&b===0);
+    return Q(`Résous : <strong>${lin(a,b)} = ${num(c)}</strong>`,`x = ${fr(c-b,a)}`,[`x = ${fr(c+b,a)}`,`x = ${fr(a,c-b)}`,`x = ${fr(c-b,-a)}`,`x = ${num(c-b-a)}`,`x = ${fr(c-b+1,a)}`],"On isole x : on retire b des deux côtés, puis on divise par a.",'Ex : 3x + 2 = 11 → 3x = 9 → x = 3');}
+  if(t===1){let a,b,c,d;do{a=nz(-8,8);b=rI(-12,12);c=nz(-8,8);d=rI(-12,12);}while(a===c||b===d);
+    return Q(`Résous : <strong>${lin(a,b)} = ${lin(c,d)}</strong>`,`x = ${fr(d-b,a-c)}`,[`x = ${fr(d+b,a-c)}`,`x = ${fr(d-b,a+c)}`,`x = ${fr(a-c,d-b)}`,`x = ${fr(d-b+1,a-c)}`,`x = ${fr(b-d,a-c)}`],"On regroupe les termes en x d'un côté, les constantes de l'autre, puis on divise.",'Ex : 3x + 2 = x + 8 → 2x = 6 → x = 3');}
+  if(t===2){const neg=lv>=3&&Math.random()<.25,sq=Math.random()<.6,r=rI(1,9),a=neg?-rI(1,20):sq?r*r:pick([2,3,5,6,7,10,11]);
+    const c=a<0?'Pas de solution':sq?`x = −${r} ou x = ${r}`:`x = −√${a} ou x = √${a}`;
+    return Q(`Résous : <strong>x² = ${num(a)}</strong>`,c,a<0?[`x = −√${-a} ou x = √${-a}`,`x = ${num(a/2)}`,`x = ${num(-a)}`]:sq?[`x = ${r}`,`x = −${a} ou x = ${a}`,`x = ${num(a/2)}`,'Pas de solution']:[`x = √${a}`,`x = ${num(a/2)}`,'Pas de solution'],"x² = a : deux solutions −√a et √a si a > 0, une seule (0) si a = 0, aucune si a < 0.",'Ex : x² = 9 → x = −3 ou x = 3');}
+  const a=nz(-12,12),b=nz(-9,9);
+  return Q(`Résous : <strong>${num(a)}/x = ${num(b)}</strong> (x ≠ 0)`,`x = ${fr(a,b)}`,[`x = ${fr(b,a)}`,`x = ${num(a*b)}`,`x = ${fr(-a,b)}`,`x = ${fr(a+1,b)}`],'a/x = b ⟺ a = bx ⟺ x = a/b.','Ex : 6/x = 3 → x = 2');
+};
+
+G.c17 = lv => {
+  const syms=['<','>','≤','≥'],flip={'<':'>','>':'<','≤':'≥','≥':'≤'},strict={'<':'≤','>':'≥','≤':'<','≥':'>'};
+  let a,b,c;do{a=lv<=1?rI(2,6):nz(-6,6);b=nz(-10,10);c=rI(-10,10);}while(Math.abs(a)===1||c===b);
+  const s=pick(syms),s2=a<0?flip[s]:s,sol=fr(c-b,a);
+  return Q(`Résous : <strong>${lin(a,b)} ${s} ${num(c)}</strong>`,`x ${s2} ${sol}`,[`x ${a<0?s:flip[s]} ${sol}`,`x ${s2} ${fr(c+b,a)}`,`x ${strict[s2]} ${sol}`],"On isole x comme dans une équation. Si l'on multiplie ou divise par un nombre négatif, on change le sens de l'inégalité.",'Ex : −2x + 1 > 7 → −2x > 6 → x < −3');
+};
+
+G.c10 = lv => {
+  const vars=[
+    ['Dans <strong>v = d / t</strong>, isole <strong>d</strong>.','d = v × t',['d = v / t','d = t / v','d = v + t']],
+    ['Dans <strong>P = U × I</strong>, isole <strong>I</strong>.','I = P / U',['I = P × U','I = U / P','I = P − U']],
+    ['Dans <strong>S = ½ × b × h</strong>, isole <strong>h</strong>.','h = 2S / b',['h = S / b','h = 2S × b','h = S / (2b)']],
+    ['Dans <strong>C = 2πr</strong>, isole <strong>r</strong>.','r = C / (2π)',['r = 2πC','r = C × 2π','r = C − 2π']],
+    ['Dans <strong>E = mc²</strong>, isole <strong>m</strong>.','m = E / c²',['m = E × c²','m = E − c²','m = c² / E']],
+    ['Dans <strong>a = (v − v₀) / t</strong>, isole <strong>v</strong>.','v = v₀ + at',['v = at − v₀','v = v₀ − at','v = v₀ / (at)']],
+    ['Dans <strong>y = 3x − 5</strong>, isole <strong>x</strong>.','x = (y + 5) / 3',['x = (y − 5) / 3','x = y / 3 + 5','x = 3y + 5']],
+    ['Dans <strong>P = 2(L + ℓ)</strong>, isole <strong>L</strong>.','L = P/2 − ℓ',['L = P − 2ℓ','L = 2P − ℓ','L = (P − ℓ)/2']],
+  ];
+  const[q,c,w]=pick(vars);
+  return Q(q,c,w,"Pour isoler une variable, on applique les opérations inverses, dans l'ordre inverse, aux deux membres.",'Ex : v = d/t → d = v × t (on multiplie les deux membres par t)');
+};
+
+G.c11 = lv => {
+  const fns=[
+    ()=>{const v=rI(2,13)*10,t=rI(2,5);return[`<strong>d = v × t</strong> avec v = ${v} km/h et t = ${t} h. Calcule d (en km).`,v*t,[v+t,v*t/10,v*(t+1)]];},
+    ()=>{const b=rI(2,10)*2,h=rI(2,10);return[`<strong>S = ½ × b × h</strong> avec b = ${b} cm et h = ${h} cm. Calcule S (en cm²).`,b*h/2,[b*h,b+h,b*h/4]];},
+    ()=>{const m=rI(1,5)*2,v=rI(2,6);return[`<strong>E = ½ m v²</strong> avec m = ${m} kg et v = ${v} m/s. Calcule E (en J).`,m*v*v/2,[m*v/2,(m*v)**2/2,m*v*v]];},
+    ()=>{const L=rI(4,15),l=rI(2,L-1);return[`<strong>P = 2(L + ℓ)</strong> avec L = ${L} m et ℓ = ${l} m. Calcule P (en m).`,2*(L+l),[2*L+l,L+l,L*l]];},
+    ()=>{const x=nz(-5,5);return[`<strong>A = 2x² − 3x + 1</strong> avec x = ${num(x)}. Calcule A.`,2*x*x-3*x+1,[-2*x*x-3*x+1,4*x*x-3*x+1,2*x*x+3*x+1]];},
+  ];
+  const[q,c,w]=pick(fns)();
+  return QN(`Applique la formule : ${q}`,c,w,'On remplace chaque lettre par sa valeur (entre parenthèses si elle est négative), puis on respecte les priorités de calcul.','Ex : 2x² avec x = −3 : 2 × (−3)² = 2 × 9 = 18');
+};
+
+G.c12 = lv => {
+  let a,p,q;do{a=nz(-9,9);p=lv<=2?1:rI(1,3);q=nz(-9,9);}while(fr(-q,p)===num(a));
+  const f2=lin(p,q),r2=fr(-q,p);
+  return Q(`Résous : <strong>(${xm(a)})(${f2}) = 0</strong>`,`x = ${num(a)} ou x = ${r2}`,[`x = ${num(-a)} ou x = ${fr(q,p)}`,`x = ${num(a)}`,`x = ${num(-a)} ou x = ${r2}`,`x = ${num(a)} ou x = ${fr(q,p)}`],"Un produit est nul si et seulement si l'un de ses facteurs est nul : A × B = 0 ⟺ A = 0 ou B = 0.",'Ex : (x − 2)(3x + 6) = 0 → x = 2 ou x = −2');
+};
+
+G.c13 = lv => {
+  const a=nz(-5,5),b=nz(-9,9),z=fr(-b,a),pos=Math.random()<.5;
+  const up=(a>0)===pos,c=`x ${up?'>':'<'} ${z}`;
+  return Q(`<strong>${lin(a,b)}</strong> est strictement <strong>${pos?'positive':'négative'}</strong> lorsque :`,c,[`x ${up?'<':'>'} ${z}`,`x ${up?'>':'<'} ${fr(b,a)}`,`x ${pos?'>':'<'} 0`],"ax + b s'annule en x = −b/a. Si a > 0, l'expression est négative puis positive ; si a < 0, positive puis négative.",'Ex : −2x + 6 > 0 ⟺ x < 3');
+};
+
+G.c18 = lv => {
+  let a,b,c,d;do{a=pick(lv<=2?[1,2]:[1,-1,2,-2]);b=nz(-6,6);c=pick([1,1,2]);d=nz(-6,6);}while(b*c===a*d);
+  const z1=-b/a,z2=-d/c,lo=z1<z2?fr(-b,a):fr(-d,c),hi=z1<z2?fr(-d,c):fr(-b,a);
+  const pos=Math.random()<.5,lead=a*c>0,outside=lead===pos;
+  const out=cup(ivl('−∞',lo,false,false),ivl(hi,'+∞',false,false)),ins=ivl(lo,hi,false,false);
+  return Q(`<strong>(${lin(a,b)})(${lin(c,d)})</strong> est strictement <strong>${pos?'positif':'négatif'}</strong> sur :`,outside?out:ins,[outside?ins:out,ivl(lo,'+∞',false,false),ivl('−∞',hi,false,false)],"On dresse un tableau de signes : chaque facteur change de signe en sa racine ; le produit est positif quand les deux facteurs ont le même signe.",'Ex : (x − 1)(x + 3) > 0 sur ]−∞ ; −3[ ∪ ]1 ; +∞[');
+};
+
+// ─────────────────────────────
+//  PROPORTIONS ET POURCENTAGES
+// ─────────────────────────────
+G.p1 = lv => {
+  const PAIRS={1:[[20,50],[100,10],[50,50],[20,10],[10,50]],2:[[100,25],[40,25],[80,25],[40,75],[200,75],[20,25]],3:[[100,20],[200,40],[50,20],[150,20],[400,25],[200,40]],4:[[200,30],[120,25],[300,40],[150,60],[500,20],[600,30]],5:[[240,25],[300,60],[400,30],[600,15],[800,75],[1000,60]]};
+  const[total,p]=pick(PAIRS[Math.min(lv,5)]),part=total*p/100;
+  if(Math.random()<.35){return Q(`Sur <strong>${total}</strong> élèves, <strong>${part}</strong> sont demi-pensionnaires. Proportion sous forme de fraction irréductible ?`,fr(part,total),[fr(total,part),fr(part,total-part),fr(total-part,total)],'Proportion = effectif de la partie / effectif total, puis on simplifie.','Ex : 12 sur 30 → 12/30 = 2/5');}
+  const others=[5,10,15,20,25,30,40,50,60,75,80,90].filter(x=>x!==p);
+  return Q(`Sur <strong>${total}</strong> élèves, <strong>${part}</strong> ont réussi. Quelle est la proportion en % ?`,`${p} %`,shuffle(others).map(x=>`${x} %`),'Proportion (%) = partie / tout × 100.','Ex : 30 sur 120 → 30/120 = 0,25 = 25 %');
+};
+
+G.p3 = lv => {
+  if(Math.random()<.5){const[total,p]=nicePair(lv),part=total*p/100;
+    return QN(`<strong>${p} %</strong> des élèves d'un lycée, soit <strong>${part}</strong> élèves, sont internes. Combien d'élèves compte le lycée ?`,total,[part*p/100,part+p,part*(100-p)/100,total/2],'Tout = partie ÷ proportion : si p % du tout vaut A, le tout vaut A ÷ (p/100).','Ex : 20 % du tout = 30 → tout = 30 ÷ 0,2 = 150');}
+  const[n,d]=pick([[2,3],[3,4],[2,5],[3,5],[4,5],[3,8],[5,6]]),total=d*rI(2,lv<=2?6:15);
+  return QN(`Les <strong>${n}/${d}</strong> des <strong>${total}</strong> élèves d'un niveau sont des filles. Combien y a-t-il de filles ?`,total*n/d,[total/d,total-total*n/d,total*n/d+d,n*d],'Prendre une fraction d’une quantité, c’est la multiplier par cette fraction : (n/d) × T = T ÷ d × n.','Ex : les 3/5 de 40 → 40 ÷ 5 × 3 = 24');
+};
+
+G.p2 = lv => {
+  const PAIRS={1:[[20,50],[100,10],[50,50],[200,10],[10,50]],2:[[100,25],[40,25],[80,75],[200,25],[60,25]],3:[[200,40],[150,20],[400,25],[50,40],[120,25]],4:[[200,30],[120,25],[300,40],[150,60],[600,30],[240,25]],5:[[300,60],[400,30],[600,15],[800,75],[1000,20],[240,35]]};
+  const[total,p]=pick(PAIRS[Math.min(lv,5)]),part=total*p/100;
+  return QN(`Calcule <strong>${p} %</strong> de <strong>${total}</strong>.`,part,[total*p/10,total+p,total-part,p],`Prendre p % d'une quantité, c'est la multiplier par p/100 : ${p} % de ${total} = ${total} × ${num(p/100)}.`,'Ex : 25 % de 200 = 200 × 0,25 = 50');
+};
+
+// ─────────────────────────────
+//  ÉVOLUTIONS ET VARIATIONS
+// ─────────────────────────────
+G.e1 = lv => {
+  const p=nicePct(lv),up=Math.random()<.5,k=R(1+(up?1:-1)*p/100,4);
+  if(Math.random()<.5){
+    return Q(`Quel coefficient multiplicateur correspond à ${up?'une hausse':'une baisse'} de <strong>${p} %</strong> ?`,`× ${num(k)}`,[`× ${num(p/100)}`,`× ${num(R(1+(up?-1:1)*p/100,4))}`,`× ${num(up?1+p/10:1-p/1000)}`],'Hausse de t % → × (1 + t/100) ; baisse de t % → × (1 − t/100).','Ex : +20 % → × 1,2 ; −15 % → × 0,85');}
+  return Q(`Multiplier par <strong>${num(k)}</strong> revient à :`,`${up?'une hausse':'une baisse'} de ${p} %`,[`${up?'une baisse':'une hausse'} de ${p} %`,`${up?'une hausse':'une baisse'} de ${num(k)} %`,`${up?'une hausse':'une baisse'} de ${num(up?(k-1)*10:(1-k)*10)} %`],'Coefficient k > 1 : hausse de (k − 1) × 100 % ; k < 1 : baisse de (1 − k) × 100 %.','Ex : × 0,85 → baisse de 15 %');
+};
+
+G.e6 = lv => {
+  const[total,p]=nicePair(lv),up=Math.random()<.5,vf=R(total*(1+(up?1:-1)*p/100),2);
+  return QN(`Un article coûte <strong>${total} €</strong>. Son prix ${up?'augmente':'baisse'} de <strong>${p} %</strong>. Nouveau prix (en €) ?`,vf,[total*p/100,R(total*(1+(up?-1:1)*p/100),2),total+(up?1:-1)*p],`Valeur finale = valeur initiale × coefficient multiplicateur : ${total} × ${num(1+(up?1:-1)*p/100)}.`,'Ex : 200 € − 10 % → 200 × 0,9 = 180 €');
+};
+
+G.e2 = lv => {
+  let v0,p,up,vf;do{v0=niceTotal(lv);p=nicePct(lv);up=Math.random()<.5;vf=R(v0*(1+(up?1:-1)*p/100),2);}while(!Number.isInteger(vf));
+  return QN(`Après ${up?'une hausse':'une baisse'} de <strong>${p} %</strong>, un prix vaut <strong>${num(vf)} €</strong>. Quel était le prix initial (en €) ?`,v0,[R(vf*(1+(up?-1:1)*p/100),2),vf+(up?-1:1)*p,R(vf/(1+(up?-1:1)*p/100),2)],'Valeur initiale = valeur finale ÷ coefficient multiplicateur. On ne retranche pas le même pourcentage !','Ex : après +25 %, 150 € → 150 ÷ 1,25 = 120 €');
+};
+
+G.e3 = lv => {
+  const[total,p]=nicePair(lv),up=Math.random()<.5,vf=total*(1+(up?1:-1)*p/100),t=R((vf-total)/total*100,2);
+  return Q(`Un prix passe de <strong>${total} €</strong> à <strong>${num(vf)} €</strong>. Taux d'évolution ?`,pc(t),[pc(R((vf-total)/vf*100,1)),pc(-t),pc(R(vf-total,2)),pc(t+5)],"Taux d'évolution = (valeur finale − valeur initiale) / valeur initiale, exprimé en %.",'Ex : de 80 € à 100 € : (100 − 80)/80 = 0,25 → +25 %');
+};
+
+G.e4 = lv => {
+  const t1=nicePct(lv)*pick([1,-1]),t2=nicePct(lv)*pick([1,-1]),k=(1+t1/100)*(1+t2/100),tg=R((k-1)*100,2);
+  const w=t=>t>0?`une hausse de ${t} %`:`une baisse de ${-t} %`;
+  return Q(`Un prix subit ${w(t1)} puis ${w(t2)}. Taux d'évolution global ?`,pc(tg),[pc(t1+t2),pc(R(tg+1,2)),pc(R(t1*t2/100,2)),pc(R(-tg,2))],'On multiplie les coefficients : (1 + t₁)(1 + t₂) − 1. Les taux ne s’additionnent pas !','Ex : +10 % puis −10 % → 1,1 × 0,9 = 0,99 → −1 %');
+};
+
+G.e5 = lv => {
+  const cases=[[100,true,-50],[25,true,-20],[20,false,25],[50,false,100],[60,false,150],[150,true,-60],[300,true,-75],[75,false,300],[400,true,-80]];
+  const[t,up,r]=pick(lv<=2?cases.slice(0,4):cases);
+  return Q(`Après ${up?'une hausse':'une baisse'} de <strong>${t} %</strong>, quel taux permet de revenir à la valeur initiale ?`,pc(r),[pc(up?-t:t),pc(up?-(t+5):t+5),pc(up?-Math.round(t/2):Math.round(t/2))],'Le coefficient réciproque de k est 1/k : taux réciproque = 1/k − 1. Le réciproque d’une hausse de t % n’est pas une baisse de t % !','Ex : +25 % → × 1,25 → × 1/1,25 = × 0,8 → −20 %');
+};
+
+// ─────────────────────────────
+//  FONCTIONS ET REPRÉSENTATIONS
+// ─────────────────────────────
+const WIN={xmin:-4,xmax:4,ymin:-4,ymax:4};
+// Nombre de solutions de f(x) = k pour une courbe monotone entre nœuds
+function countSol(nodes,k){
+  let n=nodes.filter(p=>p[1]===k).length;
+  for(let i=0;i<nodes.length-1;i++){const a=nodes[i][1],b=nodes[i+1][1];if((a<k&&k<b)||(b<k&&k<a))n++;}
+  return n;
+}
+const listX=xs=>xs.length===1?num(xs[0]):xs.slice(0,-1).map(num).join(' ; ')+' et '+num(xs[xs.length-1]);
+
+G.f1 = lv => {
+  const nodes=randNodes(-4,4,-3,3),[x0,y0]=pick(nodes.slice(1,-1));
+  const fig=svgGraph({...WIN,curves:[{pts:monoCubic(nodes)}],name:'𝒞f'});
+  return QN(`Voici la courbe 𝒞f d'une fonction f définie sur [−4 ; 4].${fig}Lis <strong>f(${num(x0)})</strong>.`,y0,[x0,-y0,y0+1,y0-1],"L'image f(a) se lit sur l'axe des ordonnées : on part de a sur l'axe des abscisses, on monte (ou descend) jusqu'à la courbe, puis on lit l'ordonnée.",'Ex : la courbe passe par (2 ; 3) → f(2) = 3');
+};
+
+G.f9 = lv => {
+  let nodes,ks;
+  do{nodes=randNodes(-4,4,-3,3);const vals=[...new Set(nodes.map(p=>p[1]))];
+    ks=vals.filter(k=>{const xs=nodes.filter(p=>p[1]===k);return xs.length<=3&&countSol(nodes,k)===xs.length&&xs.every(p=>p[0]>-4&&p[0]<4);});
+  }while(!ks.length);
+  const k=pick(ks),xs=nodes.filter(p=>p[1]===k).map(p=>p[0]);
+  const fig=svgGraph({...WIN,curves:[{pts:monoCubic(nodes)}],name:'𝒞f'});
+  const img=nodes.find(p=>p[0]===k);
+  const extra=nodes.filter(p=>!xs.includes(p[0])&&p[0]>-4&&p[0]<4).map(p=>p[0]);
+  return Q(`Voici la courbe 𝒞f d'une fonction f définie sur [−4 ; 4].${fig}Quels sont le ou les antécédents de <strong>${num(k)}</strong> par f ?`,listX(xs),[img?listX([img[1]]):listX([k]),xs.length>1?listX([xs[0]]):listX([...xs,pick(extra)].sort((a,b)=>a-b)),listX(xs.map(x=>-x).sort((a,b)=>a-b)),listX([pick(extra)])],"Les antécédents de k sont les abscisses des points de la courbe d'ordonnée k : on trace la droite horizontale y = k et on lit les abscisses des points d'intersection.",'Ex : la courbe coupe y = 2 en x = −1 et x = 3 → antécédents de 2 : −1 et 3');
+};
+
+G.f2 = lv => {
+  const a=nz(-3,3),b=rI(-5,5),x0=nz(-3,3),y=a*x0*x0+b,ok=Math.random()<.5,yy=ok?y:y+pick([-2,-1,1,2]);
+  const e=poly([a,0,b]);
+  if(Math.random()<.5)return Q(`Le point <strong>A(${num(x0)} ; ${num(yy)})</strong> appartient-il à la courbe de <strong>f(x) = ${e}</strong> ?`,ok?'Oui':'Non',[ok?'Non':'Oui'],'A(x ; y) appartient à la courbe de f si et seulement si f(x) = y : on calcule f(x_A) et on compare à y_A.',`Ex : f(x) = x² + 1 et A(2 ; 5) : f(2) = 5 → oui`);
+  return QN(`Quelle est l'ordonnée du point d'abscisse <strong>${num(x0)}</strong> de la courbe de <strong>f(x) = ${e}</strong> ?`,y,[a*x0+b,-a*x0*x0+b,a*2*x0+b],"Le point de la courbe d'abscisse a a pour ordonnée f(a).",'Ex : f(x) = 2x² − 3, x = −1 → f(−1) = 2 × 1 − 3 = −1');
+};
+
+G.f3 = lv => {
+  const forms=[['f(x) = 3x','linéaire'],['f(x) = −2x','linéaire'],['f(x) = x/4','linéaire'],['f(x) = 2x + 1','affine non linéaire'],['f(x) = −x + 4','affine non linéaire'],['f(x) = 5 − 3x','affine non linéaire'],['f(x) = 7','constante'],['f(x) = x² + 1','ni affine ni linéaire'],['f(x) = 1/x','ni affine ni linéaire'],['f(x) = 3(x − 1)','affine non linéaire']];
+  const[e,t]=pick(forms);
+  return Q(`Nature de la fonction <strong>${e}</strong> ?`,t,shuffle(['linéaire','affine non linéaire','constante','ni affine ni linéaire'].filter(x=>x!==t)),'f(x) = ax : linéaire (droite passant par l’origine). f(x) = ax + b : affine (droite). Une fonction constante est affine avec a = 0.','Ex : f(x) = 3x est linéaire ; f(x) = 3x + 1 est affine ; f(x) = x² ne l’est pas');
+};
+
+G.f4 = lv => {
+  const nodes=randNodes(-4,4,-3,3),k=pick([-3,-2,-1,0,1,2,3])+(lv>=3&&Math.random()<.4?0.5:0);
+  const n=countSol(nodes,k);
+  const fig=svgGraph({...WIN,curves:[{pts:monoCubic(nodes)}],lines:[{a:0,b:k,dash:true,color:'var(--accent3)'}],name:'𝒞f'});
+  return Q(`Voici la courbe de f sur [−4 ; 4] et la droite d'équation y = ${num(k)} (pointillés).${fig}Combien l'équation <strong>f(x) = ${num(k)}</strong> a-t-elle de solutions ?`,String(n),[n+1,n-1,n+2,n+3].filter(x=>x>=0).map(String),"Les solutions de f(x) = k sont les abscisses des points d'intersection de la courbe avec la droite horizontale y = k : on compte ces points.",'Ex : la courbe coupe 3 fois la droite y = 1 → 3 solutions');
+};
+
+G.f5 = lv => {
+  const two=Math.random()<.5,sg=pick([1,-1]);let z1,z2,s;
+  if(two){z1=rI(-3,0);z2=rI(z1+2,3);s=x=>sg*((x<z1||x>z2)?1:-1);}else{z1=rI(-2,2);s=x=>sg*(x<z1?-1:1);}
+  const nodes=[];for(let x=-4;x<=4;x++)nodes.push([x,(x===z1||(two&&x===z2))?0:s(x)*rI(1,3)]);
+  const fig=svgGraph({...WIN,curves:[{pts:monoCubic(nodes)}],name:'𝒞f'});
+  const ask=Math.random()<.5?1:-1,want=x=>s(x)===ask;
+  let c,w;
+  const A=(a,b)=>ivl(num(a),num(b),true,true);
+  if(two){const outS=cup(A(-4,z1),A(z2,4)),inS=A(z1,z2),outside=want(-4);c=outside?outS:inS;w=[outside?inS:outS,cup(ivl(num(-4),num(z1),true,false),ivl(num(z2),num(4),false,true)),A(-4,4)];if(!outside)w[1]=ivl(num(z1),num(z2),false,false);}
+  else{const r=A(z1,4),l=A(-4,z1),right=want(4);c=right?r:l;w=[right?l:r,right?ivl(num(z1),num(4),false,true):ivl(num(-4),num(z1),true,false),A(-4,4)];}
+  return Q(`Voici la courbe d'une fonction f définie sur [−4 ; 4].${fig}Sur quel ensemble a-t-on <strong>f(x) ${ask>0?'≥':'≤'} 0</strong> ?`,c,w,"f(x) ≥ 0 là où la courbe est au-dessus de l'axe des abscisses (ou dessus), f(x) ≤ 0 là où elle est en dessous. Les bornes sont les abscisses où la courbe coupe l'axe.",'Ex : courbe au-dessus de l’axe de −1 à 3 → f(x) ≥ 0 sur [−1 ; 3]');
+};
+
+G.f7 = lv => {
+  const halves=lv>=3&&Math.random()<.4,a=halves?pick([0.5,-0.5,1.5,-1.5]):nz(-3,3),b=rI(-3,3);
+  const x2=halves?2:1,fig=svgGraph({...WIN,lines:[{a,b}],pts:[{x:0,y:b},{x:x2,y:a*x2+b}].filter(p=>Math.abs(p.y)<=4)});
+  return Q(`Quelle est l'équation réduite de la droite tracée ?${fig}`,`y = ${lin(a,b)}`,[`y = ${lin(b||1,a)}`,`y = ${lin(-a,b)}`,`y = ${lin(a,-b||b+1)}`,`y = ${lin(R(1/a,2),b)}`],"y = ax + b : b est l'ordonnée à l'origine (où la droite coupe l'axe des ordonnées) ; a est le coefficient directeur : quand x augmente de 1, y varie de a.",'Ex : coupe l’axe des ordonnées en 1 et monte de 2 quand x avance de 1 → y = 2x + 1');
+};
+
+G.f6 = lv => {
+  const a=nz(-5,5),x0=nz(-5,5),y0=rI(-6,6),b=y0-a*x0;
+  return Q(`Équation réduite de la droite passant par <strong>A(${num(x0)} ; ${num(y0)})</strong> et de coefficient directeur <strong>${num(a)}</strong> ?`,`y = ${lin(a,b)}`,[`y = ${lin(a,y0+a*x0)}`,`y = ${lin(a,y0)}`,`y = ${lin(y0||1,a)}`,`y = ${lin(a,x0-a*y0)}`],"y = ax + b avec a connu ; on trouve b en écrivant que A est sur la droite : y_A = a·x_A + b, donc b = y_A − a·x_A.",'Ex : a = 2 et A(1 ; 5) → 5 = 2 × 1 + b → b = 3 → y = 2x + 3');
+};
+
+G.f8 = lv => {
+  const x1=rI(-5,5),y1=rI(-6,6);let dx,dy;do{dx=nz(-5,5);dy=rI(-8,8);}while(lv<=2&&dy%dx!==0);
+  const x2=x1+dx,y2=y1+dy;
+  return Q(`Coefficient directeur de la droite (AB) avec <strong>A(${num(x1)} ; ${num(y1)})</strong> et <strong>B(${num(x2)} ; ${num(y2)})</strong> ?`,fr(dy,dx),[dy!==0?fr(dx,dy):fr(dy+1,dx),fr(-dy,dx),fr(y2+y1,x2+x1||1),fr(dy+1,dx),fr(dy-1,dx),fr(2*dy+1,dx)],'a = (y_B − y_A) / (x_B − x_A) : la variation des ordonnées divisée par la variation des abscisses.','Ex : A(1 ; 2) et B(3 ; 8) → (8 − 2)/(3 − 1) = 3');
+};
+
+// ─────────────────────────────
+//  GÉOMÉTRIE
+// ─────────────────────────────
+G.g1 = lv => {
+  const n=pick(lv<=2?[2,4,5]:[4,5,10,3]),a=rI(-3,2);let k;do{k=rI(1,3*n-1);}while(k%n===0);
+  const v=a+k/n,fig=svgAxis(a,n,v,'A');
+  const c=n===3?fr(a*3+k,3):num(R(v,3));
+  return Q(`Quelle est l'abscisse du point A ?${fig}`,c,[n===3?num(R(a+k/10,2)):num(R(a+k/10,3)),n===3?fr(a*3+k+1,3):num(R(v+1/n,3)),n===3?fr(a*3+k-1,3):num(R(v-1/n,3)),num(R(a+Math.floor(k/n)+ (k%n)/10,3))],"On compte en combien de parts égales est partagée une unité : chaque petite graduation vaut 1/n. On part de l'entier le plus proche.",'Ex : unité partagée en 4, A est 3 graduations après 1 → 1 + 3/4 = 1,75');
+};
+
+G.g2 = lv => {
+  const x=nz(-4,4),y=nz(-4,4),fig=svgGraph({xmin:-5,xmax:5,ymin:-5,ymax:5,w:280,pts:[{x,y,label:'A'}]});
+  return Q(`Quelles sont les coordonnées du point A ?${fig}`,`(${num(x)} ; ${num(y)})`,[`(${num(y)} ; ${num(x)})`,`(${num(-x)} ; ${num(y)})`,`(${num(x)} ; ${num(-y)})`,`(${num(-x)} ; ${num(-y)})`],"Les coordonnées s'écrivent (abscisse ; ordonnée) : d'abord la lecture sur l'axe horizontal, puis sur l'axe vertical.",'Ex : A à 2 carreaux à droite et 3 carreaux en bas de l’origine → A(2 ; −3)');
+};
+
+G.g3 = lv => {
+  const t=rI(0,4);
+  if(t===0){const L=rI(3,12),l=rI(2,L-1);return Q(`Aire d'un rectangle de longueur ${L} cm et de largeur ${l} cm ?`,`${L*l} cm²`,[`${2*(L+l)} cm²`,`${L+l} cm²`,`${L*l} cm`],'Aire du rectangle = L × ℓ (en unités d’aire).','Ex : 5 cm × 3 cm = 15 cm²');}
+  if(t===1){const L=rI(3,12),l=rI(2,L-1);return Q(`Périmètre d'un rectangle de longueur ${L} cm et de largeur ${l} cm ?`,`${2*(L+l)} cm`,[`${L*l} cm`,`${L+l} cm`,`${2*L+l} cm`],'Périmètre du rectangle = 2 × (L + ℓ).','Ex : 5 cm et 3 cm → 2 × 8 = 16 cm');}
+  if(t===2){const b=rI(2,10)*2,h=rI(2,10);return Q(`Aire d'un triangle de base ${b} cm et de hauteur associée ${h} cm ?`,`${b*h/2} cm²`,[`${b*h} cm²`,`${b+h} cm²`,`${b*h/4} cm²`],'Aire du triangle = base × hauteur / 2.','Ex : base 6, hauteur 4 → 6 × 4 / 2 = 12');}
+  const r=rI(2,9);
+  if(t===3)return Q(`Aire d'un disque de rayon ${r} cm ?`,`${r*r}π cm²`,[`${2*r}π cm²`,`${2*r*r}π cm²`,`${r}π cm²`],'Aire du disque = π × r².','Ex : r = 3 → 9π cm²');
+  return Q(`Périmètre d'un cercle de rayon ${r} cm ?`,`${2*r}π cm`,[`${r*r}π cm`,`${r}π cm`,`${4*r}π cm`],'Périmètre du cercle = 2 × π × r.','Ex : r = 3 → 6π cm');
+};
+
+G.g4 = lv => {
+  const t=rI(0,4);
+  if(t===0){const a=rI(2,6);return Q(`Volume d'un cube d'arête ${a} cm ?`,`${a**3} cm³`,[`${a*a} cm³`,`${3*a} cm³`,`${6*a*a} cm³`],'Volume du cube = a³.','Ex : a = 3 → 27 cm³');}
+  if(t===1){const L=rI(3,8),l=rI(2,6),h=rI(2,6);return Q(`Volume d'un pavé droit de dimensions ${L} cm, ${l} cm et ${h} cm ?`,`${L*l*h} cm³`,[`${L+l+h} cm³`,`${2*(L*l+l*h+L*h)} cm³`,`${L*l} cm³`],'Volume du pavé = L × ℓ × h.','Ex : 5 × 3 × 2 = 30 cm³');}
+  const r=rI(1,5),h=rI(2,9)*3;
+  if(t===2)return Q(`Volume d'un cylindre de rayon ${r} cm et de hauteur ${h} cm ?`,`${r*r*h}π cm³`,[`${2*r*h}π cm³`,`${r*h}π cm³`,`${r*r*h/3}π cm³`],'Volume du cylindre = π × r² × h (aire de la base × hauteur).','Ex : r = 2, h = 5 → 20π cm³');
+  if(t===3)return Q(`Volume d'un cône de rayon ${r} cm et de hauteur ${h} cm ?`,`${r*r*h/3}π cm³`,[`${r*r*h}π cm³`,`${r*h/3}π cm³`,`${2*r*h/3}π cm³`],'Volume du cône = (1/3) × π × r² × h.','Ex : r = 3, h = 4 → 12π cm³');
+  const rb=pick([3,6]);return Q(`Volume d'une boule de rayon ${rb} cm ?`,`${4*rb**3/3}π cm³`,[`${rb**3}π cm³`,`${4*rb*rb}π cm³`,`${4*rb**3}π cm³`],'Volume de la boule = (4/3) × π × r³.','Ex : r = 3 → (4/3) × 27π = 36π cm³');
+};
+
+G.g5 = lv => {
+  const[p,q,h]=pick([[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[7,24,25],[12,16,20]]);
+  const t=rI(0,lv<=2?1:2);
+  if(t===0)return QN(`ABC est rectangle en A, avec AB = ${p} cm et AC = ${q} cm. Calcule BC (en cm).`,h,[p+q,Math.abs(q-p),h+1],"Dans un triangle rectangle, le carré de l'hypoténuse est égal à la somme des carrés des deux autres côtés : BC² = AB² + AC².",'Ex : 3² + 4² = 25 → BC = 5');
+  if(t===1)return QN(`ABC est rectangle en A, avec BC = ${h} cm et AB = ${p} cm. Calcule AC (en cm).`,q,[h-p,h+p,q+1],"L'hypoténuse est le plus grand côté : AC² = BC² − AB².",'Ex : 13² − 5² = 144 → AC = 12');
+  let a,b;do{a=rI(1,7);b=rI(1,7);}while(Number.isInteger(Math.sqrt(a*a+b*b)));
+  return Q(`ABC est rectangle en A, avec AB = ${a} et AC = ${b}. Valeur exacte de BC ?`,`√${a*a+b*b}`,[`${a+b}`,`√${a+b}`,`√${Math.abs(a*a-b*b)||a*a+b*b+1}`],'BC² = AB² + AC², puis BC = √(AB² + AC²).','Ex : AB = 1, AC = 2 → BC = √5');
+};
+
+G.g6 = lv => {
+  const am=rI(2,6),r=pick(lv<=2?[2,3]:[2,3,1.5,2.5]),an=rI(2,8),ab=R(am*r,2),ac=R(an*r,2),bc=R(rI(2,8)*r,2),mn=R(bc/r,2);
+  if(Math.random()<.5)return QN(`Dans le triangle ABC, M ∈ [AB], N ∈ [AC] et (MN) // (BC). AM = ${num(am)}, AB = ${num(ab)}, AN = ${num(an)}. Calcule AC.`,ac,[R(an*am/ab,2),an+ab-am,R(ac+1,2)],"Théorème de Thalès : AM/AB = AN/AC = MN/BC. On isole l'inconnue par un produit en croix.",'Ex : AM = 2, AB = 6, AN = 3 → AC = 3 × 6 / 2 = 9');
+  return QN(`Dans le triangle ABC, M ∈ [AB], N ∈ [AC] et (MN) // (BC). AM = ${num(am)}, AB = ${num(ab)}, BC = ${num(bc)}. Calcule MN.`,mn,[R(bc*r,2),bc-(ab-am),R(mn+1,2)],"Théorème de Thalès : AM/AB = AN/AC = MN/BC, donc MN = BC × AM / AB.",'Ex : AM = 2, AB = 6, BC = 9 → MN = 9 × 2 / 6 = 3');
+};
+
+G.g7 = lv => {
+  const[P,U,V]=shuffle(pick([['A','B','C'],['E','F','G'],['R','S','T'],['K','L','M']]));
+  const f=pick(['cos','sin','tan']),adj=P+U,opp=P+V,hyp=U+V;
+  const rat={cos:`${adj}/${hyp}`,sin:`${opp}/${hyp}`,tan:`${opp}/${adj}`};
+  if(lv>=3&&Math.random()<.5){const[a,b,c]=pick([[3,4,5],[5,12,13],[8,15,17],[6,8,10]]),vals={cos:fr(a,c),sin:fr(b,c),tan:fr(b,a)};
+    return Q(`${U}${P}${V} est rectangle en ${P}, avec ${adj} = ${a}, ${opp} = ${b} et ${hyp} = ${c}. Que vaut <strong>${f}(${U}̂)</strong> ?`,vals[f],Object.values(vals).filter(x=>x!==vals[f]).concat([fr(c,a)]),'Dans un triangle rectangle : cos = adjacent/hypoténuse, sin = opposé/hypoténuse, tan = opposé/adjacent (moyen mnémotechnique : SOH CAH TOA).','Ex : côtés 3, 4, 5 : cos de l’angle adjacent au côté 3 = 3/5');}
+  return Q(`${U}${P}${V} est rectangle en ${P}. Que vaut <strong>${f}(${U}̂)</strong> ?`,rat[f],[...Object.values(rat).filter(x=>x!==rat[f]),`${adj}/${opp}`,`${hyp}/${adj}`],'Pour l’angle en '+U+' : le côté adjacent est ['+adj+'], le côté opposé ['+opp+'], l’hypoténuse ['+hyp+']. cos = adj/hyp, sin = opp/hyp, tan = opp/adj.','Ex : ABC rectangle en A : cos(B̂) = AB/BC');
+};
+
+// ─────────────────────────────
+//  STATISTIQUES
+// ─────────────────────────────
+const JOURS=['Lun','Mar','Mer','Jeu','Ven'],JOURL=['lundi','mardi','mercredi','jeudi','vendredi'];
+G.s1 = lv => {
+  let vals;do{vals=JOURS.map(()=>rI(1,8)*5);}while(new Set(vals).size<4||vals.filter(v=>v===Math.max(...vals)).length>1);
+  const fig=svgBars(JOURS,vals,5,45),t=rI(0,2);
+  if(t===0){const i=rI(0,4);return QN(`Nombre de visiteurs d'un CDI selon le jour :${fig}Combien de visiteurs le <strong>${JOURL[i]}</strong> ?`,vals[i],[vals[i]+5,vals[i]-5,vals[(i+1)%5]],"On lit la hauteur de la barre sur l'axe vertical, en repérant la graduation (ici de 5 en 5).",'Ex : barre arrivant au trait 25 → 25 visiteurs');}
+  if(t===1){const mx=Math.max(...vals),i=vals.indexOf(mx);return Q(`Nombre de visiteurs d'un CDI selon le jour :${fig}Quel jour y a-t-il eu le plus de visiteurs ?`,JOURL[i],shuffle(JOURL.filter(j=>j!==JOURL[i])),'La plus grande valeur correspond à la barre la plus haute.','Ex : la barre la plus haute est celle du mercredi');}
+  const i=rI(0,4);let j;do{j=rI(0,4);}while(j===i||vals[j]===vals[i]);
+  return QN(`Nombre de visiteurs d'un CDI selon le jour :${fig}Combien de visiteurs de plus le <strong>${vals[i]>vals[j]?JOURL[i]:JOURL[j]}</strong> que le <strong>${vals[i]>vals[j]?JOURL[j]:JOURL[i]}</strong> ?`,Math.abs(vals[i]-vals[j]),[vals[i]+vals[j],Math.max(vals[i],vals[j])],'On lit les deux valeurs, puis on calcule leur différence.','Ex : 35 le lundi, 20 le mardi → 15 de plus le lundi');
+};
+
+G.s5 = lv => {
+  const t=rI(0,2);
+  if(t===0){const[total,p]=nicePair(lv),part=total*p/100;
+    return Q(`Dans un diagramme circulaire, un secteur représente <strong>${part}</strong> personnes sur <strong>${total}</strong>. Quel est l'angle de ce secteur ?`,`${num(R(p*3.6,1))}°`,[`${p}°`,`${num(R(p*1.8,1))}°`,`${num(R(p*3.6+10,1))}°`],'Angle = proportion × 360°.','Ex : 25 % → 0,25 × 360 = 90°');}
+  if(t===1){const cls=['[0 ; 10[','[10 ; 20[','[20 ; 30[','[30 ; 40['],eff=cls.map(()=>rI(3,20)),i=rI(0,2);
+    return QN(`Temps de trajet (en min) des élèves d'une classe :${htmlTable(['Durée (min)','Effectif'],cls.map((c,k)=>[c,eff[k]]))}Combien d'élèves mettent ${i?`au moins ${i*10} min et `:''}moins de ${i*10+20} min ?`,eff[i]+eff[i+1],[eff[i],eff[i+1],eff.reduce((a,b)=>a+b,0)],'On additionne les effectifs des classes concernées.','Ex : [10 ; 20[ : 8 et [20 ; 30[ : 5 → 13 élèves entre 10 et 30 min');}
+  const q1=rI(4,12),me=q1+rI(2,8),q3=me+rI(2,8),mn=q1-rI(1,4),mx=q3+rI(2,8),fig=svgBoxes([{label:'',min:mn,q1,me,q3,max:mx}],0,40,5);
+  const k=pick([['la médiane',me],['le premier quartile Q₁',q1],['le troisième quartile Q₃',q3],['le maximum',mx]]);
+  return QN(`Voici la boîte à moustaches d'une série.${fig}Lis <strong>${k[0]}</strong>.`,k[1],[me,q1,q3,mx,mn].filter(v=>v!==k[1]),"Boîte à moustaches : extrémités = minimum et maximum, bords de la boîte = Q₁ et Q₃, trait intérieur = médiane.",'Ex : boîte de 10 à 18 avec un trait en 14 → Q₁ = 10, Me = 14, Q₃ = 18');
+};
+
+G.s2 = lv => {
+  if(Math.random()<.5){const n=rI(4,lv<=2?5:7),m=rI(8,15);let vals=Array.from({length:n-1},()=>m+rI(-5,5));vals.push(m*n-vals.reduce((a,b)=>a+b,0));if(vals[n-1]<0||vals[n-1]>20)return G.s2(lv);vals=shuffle(vals);
+    const s=[...vals].sort((a,b)=>a-b),med=n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;
+    return QN(`Notes d'un élève : <strong>${vals.join(' ; ')}</strong>. Calcule la moyenne.`,m,[med,R(m+0.5,2),R(vals.reduce((a,b)=>a+b,0)/(n+1),1)],'Moyenne = somme des valeurs / nombre de valeurs.','Ex : 8 ; 12 ; 13 → 33 / 3 = 11');}
+  const xs=[8,10,12,14,16].slice(0,rI(3,5));let ns;do{ns=xs.map(()=>rI(1,6));}while(!Number.isInteger(xs.reduce((s,x,i)=>s+x*ns[i],0)*10/ns.reduce((a,b)=>a+b,0)));
+  const N=ns.reduce((a,b)=>a+b,0),m=R(xs.reduce((s,x,i)=>s+x*ns[i],0)/N,2),plain=R(xs.reduce((a,b)=>a+b,0)/xs.length,2);
+  return QN(`Notes obtenues dans un groupe :${htmlTable(['Note',...xs],[['Effectif',...ns]])}Calcule la note moyenne.`,m,[plain,R(xs.reduce((s,x,i)=>s+x*ns[i],0)/xs.length,1),R(m+1,2)],'Moyenne pondérée = (somme des valeurs × effectifs) / effectif total.','Ex : 10 (×2) et 16 (×1) → (20 + 16) / 3 = 12');
+};
+
+G.s3 = lv => {
+  const n=rI(7,lv<=2?9:12),vals=Array.from({length:n},()=>rI(2,20)),s=[...vals].sort((a,b)=>a-b);
+  const med=n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2,q1=s[Math.ceil(n/4)-1],q3=s[Math.ceil(3*n/4)-1];
+  const shown=lv<=2?s:vals,t=rI(0,lv<=2?0:2);
+  const mean=R(vals.reduce((a,b)=>a+b,0)/n,2);
+  if(t===0)return QN(`Série${lv<=2?' (rangée)':''} : <strong>${shown.join(' ; ')}</strong> (${n} valeurs). Médiane ?`,med,[mean,vals[Math.floor(n/2)],s[Math.floor(n/2)+1]],'On range les valeurs ; la médiane partage la série en deux groupes de même effectif (valeur du milieu, ou moyenne des deux du milieu si n est pair).','Ex : 3 ; 5 ; 8 ; 9 → (5 + 8)/2 = 6,5');
+  return QN(`Série : <strong>${shown.join(' ; ')}</strong> (${n} valeurs). Quel est le ${t===1?'premier quartile Q₁':'troisième quartile Q₃'} ?`,t===1?q1:q3,[med,t===1?q3:q1,t===1?s[Math.ceil(n/4)]:s[Math.ceil(3*n/4)-2],t===1?vals[Math.ceil(n/4)-1]:vals[Math.ceil(3*n/4)-1]],`Q₁ est la plus petite valeur telle qu'au moins 25 % des valeurs lui soient inférieures ou égales : dans la série rangée, rang n/4 arrondi à l'entier supérieur (3n/4 pour Q₃).`,'Ex : 10 valeurs → Q₁ au rang 3, Q₃ au rang 8');
+};
+
+G.s6 = lv => {
+  const t=rI(0,2);
+  if(t===0){const vals=Array.from({length:rI(6,9)},()=>rI(2,40));const mx=Math.max(...vals),mn=Math.min(...vals);
+    return QN(`Série : <strong>${vals.join(' ; ')}</strong>. Calcule l'étendue.`,mx-mn,[mx,mx+mn,Math.abs(vals[vals.length-1]-vals[0]),mn],'Étendue = valeur maximale − valeur minimale.','Ex : de 4 à 19 → étendue 15');}
+  if(t===1){const q1=rI(5,15),q3=q1+rI(3,15),me=rI(q1+1,q3-1);
+    return QN(`Une série a pour médiane ${me}, pour premier quartile ${q1} et pour troisième quartile ${q3}. Écart interquartile ?`,q3-q1,[q3-me,me-q1,q3+q1],'Écart interquartile = Q₃ − Q₁ : il mesure la dispersion de la moitié centrale des valeurs.','Ex : Q₁ = 8 et Q₃ = 15 → 7');}
+  const[total,p]=nicePair(lv),part=total*p/100;
+  return Q(`Sur ${total} élèves interrogés, ${part} viennent en bus. Fréquence de cette modalité ?`,num(p/100),[num(part),num(p),num(R(total/part/100,3)),num(p/1000),num(R(1-p/100,2))],'Fréquence = effectif / effectif total (un nombre entre 0 et 1, parfois écrit en %).','Ex : 12 sur 48 → 0,25');
+};
+
+G.s4 = lv => {
+  const mk=lab=>{const q1=rI(6,16),me=q1+rI(2,8),q3=me+rI(2,8);return{label:lab,min:q1-rI(2,6),q1,me,q3,max:q3+rI(2,10)};};
+  let A,B;do{A=mk('A');B=mk('B');A.color='var(--accent4)';B.color='var(--accent)';}while(A.me===B.me||A.q3-A.q1===B.q3-B.q1||A.max-A.min===B.max-B.min);
+  const fig=svgBoxes([A,B],0,50,5),t=rI(0,2);
+  if(t===0)return Q(`Deux séries A et B :${fig}Quelle série a la plus grande médiane ?`,A.me>B.me?'La série A':'La série B',[A.me>B.me?'La série B':'La série A','Elles ont la même'],"La médiane est le trait à l'intérieur de la boîte.",'Ex : trait à 20 pour A, à 25 pour B → B a la plus grande médiane');
+  if(t===1){const eA=A.q3-A.q1,eB=B.q3-B.q1;return Q(`Deux séries A et B :${fig}Quelle série a le plus grand écart interquartile ?`,eA>eB?'La série A':'La série B',[eA>eB?'La série B':'La série A','Ils sont égaux'],'Écart interquartile = Q₃ − Q₁ = largeur de la boîte.','Ex : boîte de 10 à 30 (20) plus large que boîte de 15 à 25 (10)');}
+  const S=pick([A,B]);return Q(`Deux séries A et B :${fig}Pour la série ${S.label}, quelle affirmation est vraie ?`,`Au moins 50 % des valeurs sont ≥ ${S.me}`,[`Au moins 75 % des valeurs sont ≥ ${S.me}`,`Au moins 50 % des valeurs sont ≥ ${S.q3}`,`Au plus 25 % des valeurs sont ≤ ${S.q3}`],'Au moins 50 % des valeurs sont ≥ médiane ; au moins 75 % sont ≥ Q₁ ; au moins 75 % sont ≤ Q₃.','Ex : Q₁ = 12 → au moins 75 % des valeurs sont ≥ 12');
+};
+
+// ─────────────────────────────
+//  PROBABILITÉS
+// ─────────────────────────────
+G.pr1 = lv => {
+  const ok=['0,35','3/8','0,9','1/2','0','1','0,07','72 %','5/6'],ko=['1,2','−0,3','7/5','150 %','4/3','−1/4','1,01','−2'];
+  if(Math.random()<.5)return Q('Lequel de ces nombres peut être une probabilité ?',pick(ok),shuffle(ko),'Une probabilité est toujours comprise entre 0 et 1 (entre 0 % et 100 %).','Ex : 3/8 = 0,375 convient ; 7/5 = 1,4 ne convient pas');
+  return Q('Lequel de ces nombres <strong>ne peut pas</strong> être une probabilité ?',pick(ko),shuffle(ok),'Une probabilité est toujours comprise entre 0 et 1 : un nombre négatif ou supérieur à 1 ne convient pas.','Ex : −0,3 et 1,2 ne sont pas des probabilités');
+};
+
+G.pr6 = lv => {
+  const t=rI(0,2);
+  if(t===0){const p=pick([0.1,0.2,0.25,0.3,0.35,0.4,0.45,0.6,0.7,0.75,0.8,0.85,0.9]);return QN(`P(A) = <strong>${num(p)}</strong>. Que vaut P(A̅) ?`,R(1-p,2),[p,R(1/p,2),R(1-p+0.1,2)],'P(A̅) = 1 − P(A) : un événement et son contraire se partagent toute la probabilité.','Ex : P(A) = 0,3 → P(A̅) = 0,7');}
+  if(t===1){const d=rI(3,12),n=rI(1,d-1);return Q(`P(A) = <strong>${fr(n,d)}</strong>. Que vaut P(A̅) ?`,fr(d-n,d),[fr(n,d-n),fr(d,n),fr(1,d)],'P(A̅) = 1 − P(A).','Ex : P(A) = 2/7 → P(A̅) = 5/7');}
+  const p=rI(2,19)*5;return Q(`Il y a ${p} % de chances qu'il pleuve demain. Probabilité qu'il ne pleuve pas ?`,num(R(1-p/100,2)),[num(p/100),`${100-p}`,num(R(1-p/1000,3))],'Probabilité du contraire = 1 − probabilité de l’événement.','Ex : 30 % de pluie → 0,7 de ne pas pleuvoir');
+};
+
+G.pr2 = lv => {
+  const n=rI(3,4),parts=[];let rem=20;for(let i=0;i<n-1;i++){const p=rI(2,rem-2*(n-1-i));parts.push(p);rem-=p;}parts.push(rem);
+  const probs=parts.map(p=>p/20);
+  if(Math.random()<.5){const i=rI(0,n-1),row=probs.map((p,k)=>k===i?'?':num(p));
+    return QN(`Loi d'une expérience aléatoire :${htmlTable(['Issue',...probs.map((_,k)=>k+1)],[['Probabilité',...row]])}Que vaut la probabilité manquante ?`,probs[i],[R(probs.reduce((a,b)=>a+b,0)-probs[i]),probs[(i+1)%n],R(probs[i]+0.05,2)],'La somme des probabilités de toutes les issues vaut 1.','Ex : 0,2 + 0,5 + ? = 1 → ? = 0,3');}
+  const i1=rI(0,n-1),i2=(i1+1)%n,s=R(probs[i1]+probs[i2],2);
+  return QN(`Loi d'une expérience aléatoire :${htmlTable(['Issue',...probs.map((_,k)=>k+1)],[['Probabilité',...probs.map(num)]])}Probabilité d'obtenir l'issue ${i1+1} ou l'issue ${i2+1} ?`,s,[R(probs[i1]*probs[i2],4),R(1-s,2),probs[i1]],"La probabilité d'un événement est la somme des probabilités des issues qui le composent.",'Ex : P(1) = 0,3 et P(2) = 0,2 → P(1 ou 2) = 0,5');
+};
+
+G.pr3 = lv => {
+  if(Math.random()<.5){const ev=pick([['un nombre pair',3,6],['un multiple de 3',2,6],['un nombre supérieur ou égal à 5',2,6],['un nombre premier',3,6],['un 6',1,6],['un diviseur de 6',4,6],['un cœur (jeu de 32 cartes)',8,32],['un as (jeu de 32 cartes)',4,32],['une figure : valet, dame ou roi (jeu de 32 cartes)',12,32],['un roi rouge (jeu de 32 cartes)',2,32]]);
+    const[e,f,t]=ev,de=t===6;
+    return Q(`${de?'On lance un dé équilibré à 6 faces.':'On tire une carte au hasard.'} Probabilité d'obtenir <strong>${e}</strong> ?`,fr(f,t),[fr(t-f,t),fr(f+1,t),fr(1,f),fr(f,t-f)],'En situation d’équiprobabilité : P(A) = nombre d’issues favorables / nombre d’issues possibles.','Ex : dé, « pair » : 3 issues sur 6 → 1/2');}
+  const total=pick([10,12,20,25,30,40,50]),fav=rI(1,total-1);
+  return Q(`Une urne contient <strong>${total}</strong> boules indiscernables au toucher, dont <strong>${fav}</strong> rouges. Probabilité de tirer une boule rouge (fraction irréductible) ?`,fr(fav,total),[fr(fav,total-fav),fr(total-fav,total),fr(fav+1,total),fr(total,fav)],'En situation d’équiprobabilité : P(A) = nombre d’issues favorables / nombre d’issues possibles.','Ex : 6 rouges sur 20 → 6/20 = 3/10');
+};
+
+G.pr4 = lv => {
+  const a=rI(5,40),b=rI(5,40),c=rI(5,40),d=rI(5,40),t1=a+c,t2=b+d,sA=a+b,T=a+b+c+d;
+  const tab=htmlTable(['','Groupe 1','Groupe 2','Total'],[['Succès',a,b,sA],['Échec',c,d,c+d],['<strong>Total</strong>',t1,t2,T]]);
+  const t=rI(0,2);
+  if(t===0)return Q(`${tab}On choisit une personne au hasard. Calcule <strong>P<sub>G1</sub>(Succès)</strong>.`,fr(a,t1),[fr(a,sA),fr(a,T),fr(b,t2)],"P_A(B) : on se restreint à la population A. Dans un tableau : effectif de (A et B) / effectif total de A.",'Ex : 30 succès parmi 80 personnes du groupe 1 → 30/80 = 3/8');
+  if(t===1)return Q(`${tab}On choisit une personne au hasard. Calcule <strong>P<sub>Succès</sub>(G1)</strong>.`,fr(a,sA),[fr(a,t1),fr(a,T),fr(b,sA)],'P_Succès(G1) : parmi les succès seulement, proportion de personnes du groupe 1.','Ex : 30 personnes du groupe 1 parmi 50 succès → 30/50 = 3/5');
+  return Q(`${tab}On choisit une personne au hasard. Calcule <strong>P(G1 ∩ Succès)</strong>.`,fr(a,T),[fr(a,t1),fr(a,sA),fr(t1,T)],'P(A ∩ B) : effectif de (A et B) / effectif total.','Ex : 30 personnes du groupe 1 avec succès sur 200 → 30/200 = 3/20');
+};
+
+G.pr7 = lv => {
+  const p=pick([0.2,0.3,0.4,0.5,0.6,0.7,0.8]),q=rI(1,9)/10,r=rI(1,9)/10,w=[num(p),num(R(1-p,1)),num(q),num(R(1-q,1)),num(r),num(R(1-r,1))];
+  const t=rI(0,2);
+  if(t===0)return QN(`Arbre pondéré :${svgTree(w)}Calcule <strong>P(A ∩ B)</strong>.`,R(p*q,4),[R(p+q,2),q,R(p*q+(1-p)*r,4)],"On multiplie les probabilités le long du chemin A → B : P(A ∩ B) = P(A) × P_A(B).",'Ex : 0,4 × 0,5 = 0,2');
+  if(t===1)return QN(`Arbre pondéré :${svgTree(w)}Calcule <strong>P(B)</strong>.`,R(p*q+(1-p)*r,4),[R(p*q,4),R(q+r,2),R((q+r)/2,3)],'Formule des probabilités totales : on additionne les chemins qui mènent à B : P(B) = P(A)·P_A(B) + P(A̅)·P_A̅(B).','Ex : 0,4 × 0,5 + 0,6 × 0,2 = 0,32');
+  const w2=[...w];w2[3]='?';return QN(`Arbre pondéré :${svgTree(w2)}Quelle probabilité manque sur la branche « ? » ?`,R(1-q,1),[q,R(1-p,1),R(1-r,1)],'Les probabilités des branches issues d’un même nœud ont pour somme 1.','Ex : 0,3 sur une branche → 0,7 sur l’autre');
+};
+
+G.pr5 = lv => {
+  const ctx=pick([
+    {A:'F',a:'filles',B:'S',b:'font du sport',bi:'faire du sport'},
+    {A:'I',a:'internes',B:'C',b:'mangent à la cantine le soir',bi:'manger à la cantine le soir'},
+    {A:'T',a:'élèves de Terminale',B:'P',b:'ont le permis',bi:'avoir le permis'},
+    {A:'L',a:'latinistes',B:'M',b:'suivent la spécialité maths',bi:'suivre la spécialité maths'},
+  ]);
+  const p=rI(2,9)*10,A=ctx.A,B=ctx.B;
+  const opts={AB:`P(${A} ∩ ${B})`,AsB:`P<sub>${A}</sub>(${B})`,BsA:`P<sub>${B}</sub>(${A})`,Bp:`P(${B})`};
+  const tpl=pick([
+    [`Parmi les ${ctx.a}, ${p} % ${ctx.b}.`,'AsB'],
+    [`Parmi les élèves qui ${ctx.b}, ${p} % sont des ${ctx.a}.`,'BsA'],
+    [`${p} % des élèves sont des ${ctx.a} qui ${ctx.b}.`,'AB'],
+    [`${p} % des élèves ${ctx.b}.`,'Bp'],
+  ]);
+  return Q(`On choisit un élève au hasard. ${A} : « être parmi les ${ctx.a} », ${B} : « ${ctx.bi} ».<br><strong>${tpl[0]}</strong><br>Quelle probabilité vaut ${num(p/100)} ?`,opts[tpl[1]],shuffle(Object.keys(opts).filter(k=>k!==tpl[1]).map(k=>opts[k])),'« Parmi les A… » → probabilité conditionnelle P_A(…) : on se restreint à A. « … sont des A et des B » → P(A ∩ B), sur toute la population.','Ex : « parmi les filles, 30 % font du sport » → P_F(S) = 0,3');
+};
+
+// ─────────────────────────────
+//  SECOND DEGRÉ
+// ─────────────────────────────
+const coefA=a=>a===1?'':a===-1?MOINS:num(a);
+const canon=(a,al,be)=>`${coefA(a)}(${xm(al)})²${be?(be<0?' − ':' + ')+num(Math.abs(be)):''}`;
+const pt=(x,y)=>`(${x} ; ${y})`;
+
+G.d1 = lv => {
+  const t=rI(0,2);
+  if(t===0){const a=nz(-3,3),al=nz(-5,5),be=rI(-6,6);
+    return Q(`f(x) = <strong>${canon(a,al,be)}</strong>. Coordonnées du sommet de la parabole ?`,`S${pt(num(al),num(be))}`,[`S${pt(num(-al),num(be))}`,`S${pt(num(al),num(-be))}`,`S${pt(num(be),num(al))}`],'Forme canonique f(x) = a(x − α)² + β : le sommet est S(α ; β). Attention au signe : (x + 3)² correspond à α = −3.','Ex : 2(x + 1)² − 4 → S(−1 ; −4)');}
+  if(t===1){const p=nz(-5,5),c=rI(-9,9);
+    return Q(`Forme canonique de <strong>${poly([1,2*p,c])}</strong> ?`,canon(1,-p,c-p*p),[canon(1,-p,c+p*p),canon(1,p,c-p*p),canon(1,-2*p,c-4*p*p)],'x² + 2px + c = (x + p)² − p² + c : on fait apparaître le début d’une identité remarquable.','Ex : x² + 6x + 1 = (x + 3)² − 9 + 1 = (x + 3)² − 8');}
+  const a=nz(-3,3),al=nz(-5,5),be=nz(-6,6),mm=a>0?'minimum':'maximum',oo=a>0?'maximum':'minimum';
+  return Q(`f(x) = <strong>${canon(a,al,be)}</strong>. Quelle affirmation est vraie ?`,`f admet un ${mm} égal à ${num(be)}, atteint en x = ${num(al)}`,[`f admet un ${oo} égal à ${num(be)}, atteint en x = ${num(al)}`,`f admet un ${mm} égal à ${num(al)}, atteint en x = ${num(be)}`,`f admet un ${mm} égal à ${num(be)}, atteint en x = ${num(-al)}`],'Si a > 0, la parabole est « tournée vers le haut » : minimum β en α. Si a < 0 : maximum β en α.','Ex : −(x − 2)² + 5 : maximum 5 atteint en x = 2');
+};
+
+G.d2 = lv => {
+  let a,b,c;
+  if(Math.random()<.25){const p=nz(-3,3),q=nz(-5,5);a=p*p;b=2*p*q;c=q*q;}else{a=nz(-4,4);b=rI(-8,8);c=nz(-9,9);}
+  const D=b*b-4*a*c,e=poly([a,b,c]);
+  if(Math.random()<.5)return QN(`Calcule le discriminant de <strong>${e}</strong>.`,D,[b*b+4*a*c,-b*b-4*a*c,b-4*a*c,b*b-2*a*c],'Δ = b² − 4ac pour ax² + bx + c. Attention au signe de c et au carré de b.','Ex : 2x² − 3x − 1 : Δ = 9 + 8 = 17');
+  const n=D>0?2:D===0?1:0;
+  return Q(`Combien de racines réelles le trinôme <strong>${e}</strong> admet-il ?`,String(n),['0','1','2'].filter(x=>x!==String(n)),'Δ > 0 : deux racines ; Δ = 0 : une racine double ; Δ < 0 : aucune racine réelle.','Ex : x² + x + 1 : Δ = −3 < 0 → aucune racine');
+};
+
+G.d3 = lv => {
+  const t=rI(0,lv<=2?0:2),a=nz(-3,3);let r1=nz(-6,6),r2;do{r2=nz(-6,6);}while(r2===r1);
+  const both=(u,v)=>`${num(Math.min(u,v))} et ${num(Math.max(u,v))}`;
+  if(t===0)return Q(`Racines de <strong>${coefA(a)}(${xm(r1)})(${xm(r2)})</strong> ?`,both(r1,r2),[both(-r1,-r2),both(r1,-r2),`${num(a)} et ${num(r1)}`,both(-r1,r2)],'La forme factorisée a(x − x₁)(x − x₂) donne directement les racines x₁ et x₂.','Ex : 2(x − 1)(x + 3) → racines 1 et −3');
+  if(t===1||Math.random()<.7)return Q(`Racines du trinôme <strong>${poly([a,-a*(r1+r2),a*r1*r2])}</strong> ?`,both(r1,r2),[both(-r1,-r2),both(r1,-r2),'Aucune racine réelle',both(-r1,r2)],'On calcule Δ = b² − 4ac puis x = (−b ± √Δ)/(2a) ; on peut vérifier en remplaçant x par les valeurs trouvées.','Ex : x² − x − 6 : Δ = 25 → x = (1 ± 5)/2 → −2 et 3');
+  const b=rI(-3,3),c=rI(b*b+1,b*b+9);
+  return Q(`Racines du trinôme <strong>${poly([1,2*b,c])}</strong> ?`,'Aucune racine réelle',[both(-b-1,-b+1),`${num(-b)} (racine double)`,both(b,c)],'Si Δ < 0, le trinôme n’a aucune racine réelle.','Ex : x² + 2x + 5 : Δ = 4 − 20 < 0');
+};
+
+G.d4 = lv => {
+  if(lv>=3&&Math.random()<.25){const a=pick([1,2,-1,-2]),b=rI(-2,2),c=a>0?rI(b*b+1,b*b+6)*a:-rI(b*b+1,b*b+6)*Math.abs(a);const e=poly([a,2*a*b,c]);
+    const s=a>0?'strictement positif pour tout réel x':'strictement négatif pour tout réel x';
+    return Q(`Signe de <strong>${e}</strong> (son discriminant est négatif) ?`,s,[a>0?'strictement négatif pour tout réel x':'strictement positif pour tout réel x','positif puis négatif','négatif entre ses racines'],'Si Δ < 0, le trinôme garde le signe de a sur ℝ.','Ex : −x² + x − 3 (Δ < 0) est toujours négatif');}
+  const a=pick([1,-1,2,-2]);let r1=nz(-5,5),r2;do{r2=nz(-5,5);}while(r2===r1);const lo=Math.min(r1,r2),hi=Math.max(r1,r2);
+  const e=poly([a,-a*(r1+r2),a*r1*r2]),pos=Math.random()<.5,outside=(a>0)===pos;
+  const out=cup(ivl('−∞',num(lo),false,false),ivl(num(hi),'+∞',false,false)),ins=ivl(num(lo),num(hi),false,false);
+  return Q(`Le trinôme <strong>${e}</strong> a pour racines ${num(lo)} et ${num(hi)}. Sur quel ensemble est-il strictement <strong>${pos?'positif':'négatif'}</strong> ?`,outside?out:ins,[outside?ins:out,ivl(num(lo),'+∞',false,false),ivl('−∞',num(hi),false,false)],'Un trinôme est du signe de a à l’extérieur des racines, et du signe opposé entre les racines.','Ex : x² − x − 6 (a > 0, racines −2 et 3) : négatif sur ]−2 ; 3[');
+};
+
+// ─────────────────────────────
+//  DÉRIVATION
+// ─────────────────────────────
+G.v1 = lv => {
+  const t=rI(0,5);
+  if(t===0){const n=rI(2,6);return Q(`Dérivée de <strong>f(x) = x${sup(n)}</strong> ?`,`f′(x) = ${n===2?'2x':n+'x'+sup(n-1)}`,[`f′(x) = x${sup(n-1)}`,`f′(x) = ${n}x${sup(n+1)}`,`f′(x) = ${n-1}x${sup(n)}`],'(xⁿ)′ = n xⁿ⁻¹.','Ex : (x⁴)′ = 4x³');}
+  if(t===1){const a=nz(-5,5),b=nz(-9,9),c=nz(-9,9);return Q(`Dérivée de <strong>f(x) = ${poly([a,b,c])}</strong> ?`,`f′(x) = ${lin(2*a,b)}`,[`f′(x) = ${poly([2*a,b+c])}`,`f′(x) = ${lin(a,b)}`,`f′(x) = ${poly([2*a,b,c])}`],'(ax² + bx + c)′ = 2ax + b : la dérivée d’une constante est nulle.','Ex : (3x² − 5x + 2)′ = 6x − 5');}
+  if(t===2)return Q('Dérivée de <strong>f(x) = 1/x</strong> (x ≠ 0) ?','f′(x) = −1/x²',['f′(x) = 1/x²','f′(x) = −1/x','f′(x) = ln x'],'(1/x)′ = −1/x².','Ex : f(x) = 3/x → f′(x) = −3/x²');
+  if(t===3)return Q('Dérivée de <strong>f(x) = √x</strong> (x > 0) ?','f′(x) = 1/(2√x)',['f′(x) = 2√x','f′(x) = 1/√x','f′(x) = √x/2'],'(√x)′ = 1/(2√x).','Ex : f(x) = 4√x → f′(x) = 2/√x');
+  if(t===4){const a=nz(-4,4),b=nz(-9,9);return Q(`Dérivée de <strong>f(x) = ${poly([a,0,0,b])}</strong> ?`,`f′(x) = ${poly([3*a,0,0])}`,[`f′(x) = ${poly([a,0,0])}`,`f′(x) = ${poly([3*a,0,b])}`,`f′(x) = ${poly([3*a,0])}`],'(ax³)′ = 3ax² et (constante)′ = 0.','Ex : (2x³ + 7)′ = 6x²');}
+  const k=nz(-5,5);return Q(`Dérivée de <strong>f(x) = ${coefA(k)}eˣ</strong> ?`,`f′(x) = ${coefA(k)}eˣ`,[`f′(x) = ${coefA(k)}xeˣ⁻¹`,`f′(x) = eˣ`,`f′(x) = ${num(k)}`],'(eˣ)′ = eˣ, donc (k eˣ)′ = k eˣ.','Ex : (3eˣ)′ = 3eˣ');
+};
+
+G.v2 = lv => {
+  const c=pick([0.5,-0.5,1,-1]),h=rI(-1,1),k=c>0?rI(-3,0):rI(0,3),d=Math.abs(c)===1?pick([1,-1]):pick([1,-1,2,-2]),a=h+d;
+  const f=x=>c*(x-h)**2+k,s=2*c*(a-h),fa=f(a);
+  if(Math.abs(fa)>3.5)return G.v2(lv);
+  const fig=svgGraph({...WIN,curves:[{pts:fnCurve(f,-4,4)}],lines:[{a:s,b:fa-s*a}],pts:[{x:a,y:fa,label:'A'}],name:'𝒞f'});
+  return QN(`La courbe 𝒞f et sa tangente au point A d'abscisse ${num(a)} (en jaune).${fig}Que vaut <strong>f′(${num(a)})</strong> ?`,s,[fa,-s,s!==0?R(1/s,2):1,a],"f′(a) est le coefficient directeur de la tangente en A : on lit de combien monte (ou descend) la tangente quand x augmente de 1.",'Ex : tangente qui descend de 2 carreaux quand x avance de 1 → f′(a) = −2');
+};
+
+G.v3 = lv => {
+  if(Math.random()<.4){const a=nz(-4,4),fa=rI(-6,6),da=nz(-4,4),b=fa-da*a;
+    return Q(`f(${num(a)}) = ${num(fa)} et f′(${num(a)}) = ${num(da)}. Équation réduite de la tangente en ${num(a)} ?`,`y = ${lin(da,b)}`,[`y = ${lin(fa,da-fa*a)}`,`y = ${lin(da,fa)}`,`y = ${lin(da,fa+da*a)}`,`y = ${lin(-da,b)}`,`y = ${lin(da,b+1)}`],'Tangente en a : y = f′(a)(x − a) + f(a), puis on développe.','Ex : f(1) = 3 et f′(1) = 2 → y = 2(x − 1) + 3 = 2x + 1');}
+  const p=nz(-2,2),q=rI(-4,4),r=rI(-5,5),a=nz(-3,3),fa=p*a*a+q*a+r,m=2*p*a+q,b=fa-m*a;
+  return Q(`f(x) = <strong>${poly([p,q,r])}</strong>. Équation réduite de la tangente au point d'abscisse ${num(a)} ?`,`y = ${lin(m,b)}`,[`y = ${lin(m,fa)}`,`y = ${lin(fa,m-fa*a)}`,`y = ${lin(m,fa+m*a)}`,`y = ${lin(-m,b)}`,`y = ${lin(m,b+1)}`,`y = ${lin(m+1,b)}`],'On calcule f(a) et f′(a), puis y = f′(a)(x − a) + f(a).','Ex : f(x) = x², a = 1 : f(1) = 1, f′(1) = 2 → y = 2(x − 1) + 1 = 2x − 1');
+};
+
+G.v4 = lv => {
+  const t=rI(0,2);
+  if(t===0){const m=nz(-5,5),b=nz(-9,9),z=fr(-b,m),inc=Math.random()<.5,right=(m>0)===inc;
+    const R_=`[${z} ; +∞[`,L_=`]−∞ ; ${z}]`;
+    return Q(`f′(x) = <strong>${lin(m,b)}</strong>. Sur quel intervalle f est-elle <strong>${inc?'croissante':'décroissante'}</strong> ?`,right?R_:L_,[right?L_:R_,`[${fr(b,m)} ; +∞[`,`]−∞ ; ${fr(b,m)}]`],'f est croissante là où f′ ≥ 0 et décroissante là où f′ ≤ 0 : on étudie le signe de f′.','Ex : f′(x) = 2x − 6 ≥ 0 ⟺ x ≥ 3 → f croissante sur [3 ; +∞[');}
+  if(t===1){const p=nz(-3,3),x0=nz(-4,4),q=-2*p*x0,r=rI(-5,5),ext=p>0?'minimum':'maximum';
+    return Q(`f(x) = <strong>${poly([p,q,r])}</strong>. f′ s'annule en changeant de signe : f admet un ${ext} en x =`,num(x0),[num(-x0),num(q),num(p*x0*x0+q*x0+r)],'f′(x) = 2ax + b s’annule en x = −b/(2a) : c’est l’abscisse de l’extremum.','Ex : f(x) = x² − 4x + 1 : f′(x) = 2x − 4 = 0 → x = 2');}
+  const z=nz(-5,5),s=pick([1,-1]);const c=s>0?'décroissante puis croissante':'croissante puis décroissante';
+  return Q(`f′(x) ${s>0?'<':'>'} 0 sur ]−∞ ; ${num(z)}[ et f′(x) ${s>0?'>':'<'} 0 sur ]${num(z)} ; +∞[. Alors f est :`,c,[s>0?'croissante puis décroissante':'décroissante puis croissante','croissante sur ℝ','décroissante sur ℝ'],'f′ < 0 → f décroissante ; f′ > 0 → f croissante.','Ex : f′ négative puis positive → f admet un minimum');
+};
+
+// ─────────────────────────────
+//  SUITES NUMÉRIQUES
+// ─────────────────────────────
+const u=n=>`u<sub>${n}</sub>`;
+G.u1 = lv => {
+  const t=rI(0,2),u0=rI(-10,20),r=nz(-6,6);
+  if(t===0){const n=rI(5,20);return QN(`(${u('n')}) est arithmétique de premier terme ${u(0)} = ${num(u0)} et de raison ${num(r)}. Calcule ${u(n)}.`,u0+n*r,[u0+(n-1)*r,u0+(n+1)*r,n*r,u0*r**Math.min(n,3)],`Suite arithmétique : ${u('n')} = ${u(0)} + n × r.`,'Ex : u₀ = 3, r = 2 → u₁₀ = 3 + 10 × 2 = 23');}
+  if(t===1){const p=rI(0,5),q=p+rI(2,6);return QN(`(${u('n')}) est arithmétique avec ${u(p)} = ${num(u0+p*r)} et ${u(q)} = ${num(u0+q*r)}. Quelle est sa raison ?`,r,[(q-p)*r,-r,u0+q*r+u0+p*r],`Entre deux termes : ${u('q')} = ${u('p')} + (q − p) × r, donc r = (${u('q')} − ${u('p')}) / (q − p).`,'Ex : u₂ = 7 et u₅ = 16 → r = 9 / 3 = 3');}
+  return Q(`(${u('n')}) est arithmétique, ${u(0)} = ${num(u0)} et r = ${num(r)}. Expression de ${u('n')} ?`,`${u('n')} = ${lin(r,u0,'n')}`,[`${u('n')} = ${lin(u0||1,r,'n')}`,`${u('n')} = ${paren(u0)} × ${paren(r)}<sup>n</sup>`,`${u('n')} = ${lin(r,u0-r,'n')}`,`${u('n')} = ${lin(r,u0+r,'n')}`,`${u('n')} = ${lin(-r,u0,'n')}`],`${u('n')} = ${u(0)} + nr.`,'Ex : u₀ = 5, r = −2 → uₙ = 5 − 2n');
+};
+
+G.u2 = lv => {
+  const t=rI(0,2),u0=nz(-5,8),q=pick(lv<=2?[2,3,-2]:[2,3,-2,0.5,-3,5]);
+  if(t===0){const n=rI(2,lv<=2?4:5);return QN(`(${u('n')}) est géométrique de premier terme ${u(0)} = ${num(u0)} et de raison ${num(q)}. Calcule ${u(n)}.`,R(u0*q**n,4),[R(u0*q*n,4),R(u0*q**(n-1),4),u0+n*q,R(u0*q**(n+1),4)],`Suite géométrique : ${u('n')} = ${u(0)} × qⁿ.`,'Ex : u₀ = 3, q = 2 → u₄ = 3 × 2⁴ = 48');}
+  if(t===1){const a=nz(1,9)*(q===0.5?8:1),terms=[0,1,2,3].map(k=>num(R(a*q**k,4)));return Q(`Les premiers termes d'une suite géométrique sont <strong>${terms.join(' ; ')}</strong>. Raison ?`,num(q),[num(R(a*q-a,4)),num(R(1/q,4)),num(-q)],'Raison q = terme / terme précédent (et non la différence).','Ex : 3 ; 6 ; 12 → q = 6 / 3 = 2');}
+  return Q(`(${u('n')}) est géométrique, ${u(0)} = ${num(u0)} et q = ${num(q)}. Expression de ${u('n')} ?`,`${u('n')} = ${paren(u0)} × ${paren(q)}<sup>n</sup>`,[`${u('n')} = ${paren(q)} × ${paren(u0)}<sup>n</sup>`,`${u('n')} = ${lin(q,u0,'n')}`,`${u('n')} = ${paren(u0)} × ${paren(q)}<sup>n−1</sup>`,`${u('n')} = ${paren(u0)} × ${paren(q)}<sup>n+1</sup>`,`${u('n')} = ${paren(R(u0*q,4))}<sup>n</sup>`],`${u('n')} = ${u(0)} × qⁿ.`,'Ex : u₀ = 5 et q = 3 → uₙ = 5 × 3ⁿ');
+};
+
+G.u3 = lv => {
+  const a=pick([2,3,-1,-2]),b=rI(-4,4),u0=rI(-3,4),n=rI(2,3),seq=[u0];for(let i=0;i<n;i++)seq.push(a*seq[i]+b);
+  const rec=b?`${num(a)===MOINS+'1'?MOINS:a===1?'':num(a)}${u('n')}${b<0?' − ':' + '}${num(Math.abs(b))}`:`${num(a)}${u('n')}`;
+  return QN(`${u(0)} = ${num(u0)} et pour tout n, ${u('n+1')} = ${rec}. Calcule ${u(n)}.`,seq[n],[seq[n-1],a*seq[n]+b,a*u0+n*b,seq[n]+b],'On calcule les termes de proche en proche : u₁ à partir de u₀, puis u₂ à partir de u₁…','Ex : u₀ = 1 et uₙ₊₁ = 2uₙ + 3 → u₁ = 5, u₂ = 13');
+};
+
+// ─────────────────────────────
+//  FONCTION EXPONENTIELLE
+// ─────────────────────────────
+const ex=e=>`e<sup>${e}</sup>`;
+G.x1 = lv => {
+  const t=rI(0,3),m1=nz(-3,3),k1=rI(-5,5),m2=nz(-3,3),k2=nz(-5,5);
+  if(t===0){if(m1+m2===0)return G.x1(lv);return Q(`Simplifie <strong>${ex(poly([m1,k1]))} × ${ex(poly([m2,k2]))}</strong>`,ex(poly([m1+m2,k1+k2])),[ex(`(${poly([m1,k1])})(${poly([m2,k2])})`),ex(poly([m1-m2,k1-k2])),`${ex(poly([m1+m2,k1+k2]))}²`],'eᵃ × eᵇ = eᵃ⁺ᵇ.','Ex : e²ˣ × eˣ⁺¹ = e³ˣ⁺¹');}
+  if(t===1){if(m1===m2&&k1===k2)return G.x1(lv);return Q(`Simplifie <strong>${ex(poly([m1,k1]))} / ${ex(poly([m2,k2]))}</strong>`,ex(poly([m1-m2,k1-k2])),[ex(poly([m1+m2,k1+k2])),ex(poly([m2-m1,k2-k1])),'1'],'eᵃ / eᵇ = eᵃ⁻ᵇ.','Ex : e⁵ˣ / e²ˣ = e³ˣ');}
+  if(t===2){const n=rI(2,4);return Q(`Simplifie <strong>(${ex(poly([m1,k1]))})<sup>${n}</sup></strong>`,ex(poly([n*m1,n*k1])),[ex(poly([m1,k1+n])),ex(poly([n*m1,k1])),ex(poly([m1+n,k1+n]))],'(eᵃ)ⁿ = eⁿᵃ.','Ex : (e²ˣ)³ = e⁶ˣ');}
+  const pool=[['e⁰','1',['0','e','Non défini']],['1/eˣ',ex('−x'),[ex('1/x'),'−eˣ',ex('x−1')]],['e<sup>−3</sup> × e³','1',['0','e<sup>−9</sup>','e']],['√(e²ˣ)',ex('x'),[ex('x²'),ex('2x')+'/2',ex('√2x')]]];
+  const[e,c,w]=pick(pool);return Q(`Simplifie <strong>${e}</strong>`,c,w,'e⁰ = 1 ; e⁻ᵃ = 1/eᵃ ; eᵃ × eᵇ = eᵃ⁺ᵇ ; (eᵃ)ⁿ = eⁿᵃ.','Ex : e⁻ˣ × eˣ = e⁰ = 1');
+};
+
+G.x2 = lv => {
+  const t=rI(0,3);
+  if(t===0){const a=nz(-4,4),b=rI(-6,6),x=nz(-5,5),c=a*x+b,sym=pick(['=','<','>']),flip={'<':'>','>':'<','=':'='};
+    const s2=a<0?flip[sym]:sym,rel=sym==='='?'x =':`x ${s2}`;
+    return Q(`Résous <strong>${ex(lin(a,b))} ${sym} ${ex(num(c))}</strong>.`,`${rel} ${num(x)}`,[sym==='='?`x = ${fr(c+b,a)}`:`x ${flip[s2]} ${num(x)}`,`x ${sym==='='?'=':s2} ${fr(c,a)}`,`${rel} ${num(-x)}`],'La fonction exponentielle est strictement croissante : eᵃ = eᵇ ⟺ a = b et eᵃ < eᵇ ⟺ a < b.','Ex : e²ˣ⁺¹ > e⁵ ⟺ 2x + 1 > 5 ⟺ x > 2');}
+  if(t===1){const p=nz(-5,5),pos=Math.random()<.5;return Q(`Sur quel ensemble <strong>(${xm(p)})eˣ</strong> est-il strictement ${pos?'positif':'négatif'} ?`,pos?`]${num(p)} ; +∞[`:`]−∞ ; ${num(p)}[`,[pos?`]−∞ ; ${num(p)}[`:`]${num(p)} ; +∞[`,pos?`]${num(-p)} ; +∞[`:`]−∞ ; ${num(-p)}[`,'ℝ'],'Pour tout réel x, eˣ > 0 : le produit a le signe de l’autre facteur.','Ex : (x − 2)eˣ > 0 ⟺ x > 2');}
+  if(t===2){const k=pick([2,3,-1,-2,0.5,-0.5]);return Q(`Sens de variation de <strong>f(x) = ${ex(k===-1?'−x':poly([k,0]))}</strong> sur ℝ ?`,k>0?'Croissante':'Décroissante',[k>0?'Décroissante':'Croissante','Croissante puis décroissante','Constante'],'x ↦ eᵏˣ est croissante si k > 0 et décroissante si k < 0.','Ex : x ↦ e⁻²ˣ est décroissante');}
+  const st=pick([['Pour tout réel x, eˣ > 0.',true],['Il existe un réel x tel que eˣ = 0.',false],['Pour tout réel x, eˣ ≥ 1.',false],['La fonction exponentielle est croissante sur ℝ.',true],['e<sup>−x</sup> est toujours négatif.',false],['Pour x > 0, eˣ > 1.',true]]);
+  return Q(`Vrai ou faux ? <strong>${st[0]}</strong>`,st[1]?'Vrai':'Faux',[st[1]?'Faux':'Vrai'],'eˣ > 0 pour tout x, e⁰ = 1, et la fonction exponentielle est strictement croissante (eˣ > 1 ⟺ x > 0).','Ex : e⁻² ≈ 0,14 : positif mais inférieur à 1');
+};
+
+// ─────────────────────────────
+//  TRIGONOMÉTRIE
+// ─────────────────────────────
+const ANG=[[30,'π/6'],[45,'π/4'],[60,'π/3'],[90,'π/2'],[120,'2π/3'],[135,'3π/4'],[150,'5π/6'],[180,'π'],[270,'3π/2'],[360,'2π'],[210,'7π/6'],[240,'4π/3']];
+G.t1 = lv => {
+  const[d,r]=pick(lv<=2?ANG.slice(0,8):ANG),others=shuffle(ANG.filter(x=>x[0]!==d));
+  if(Math.random()<.5)return Q(`Convertis <strong>${d}°</strong> en radians.`,r,others.map(x=>x[1]),'180° = π rad : on multiplie par π/180.','Ex : 60° = 60 × π/180 = π/3');
+  return Q(`Convertis <strong>${r}</strong> rad en degrés.`,`${d}°`,others.map(x=>`${x[0]}°`),'π rad = 180° : on remplace π par 180°.','Ex : 3π/4 = 3 × 180°/4 = 135°');
+};
+
+const TRIG=[['0','1','0'],['π/6','√3/2','1/2'],['π/4','√2/2','√2/2'],['π/3','1/2','√3/2'],['π/2','0','1'],['2π/3','−1/2','√3/2'],['3π/4','−√2/2','√2/2'],['5π/6','−√3/2','1/2'],['π','−1','0'],['−π/6','√3/2','−1/2'],['−π/3','1/2','−√3/2'],['−π/2','0','−1'],['−π/4','√2/2','−√2/2']];
+G.t2 = lv => {
+  const[a,c,s]=pick(lv<=2?TRIG.slice(0,5):TRIG),isCos=Math.random()<.5,v=isCos?c:s,o=isCos?s:c;
+  const opp=v==='0'?'1':v.startsWith('−')?v.slice(1):'−'+v;
+  return Q(`Valeur exacte de <strong>${isCos?'cos':'sin'}(${a})</strong> ?`,v,[o,opp,...shuffle(['1/2','√2/2','√3/2','−1/2','0','1'])],'Sur le cercle trigonométrique, le point associé à x a pour coordonnées (cos x ; sin x). Valeurs à connaître : π/6, π/4, π/3 donnent 1/2, √2/2, √3/2.','Ex : cos(π/3) = 1/2 ; sin(π/3) = √3/2 ; cos(2π/3) = −1/2');
+};
+
+// ─────────────────────────────
+//  GÉOMÉTRIE REPÉRÉE ET PRODUIT SCALAIRE
+// ─────────────────────────────
+const vec=(n,x,y)=>`${n}⃗(${num(x)} ; ${num(y)})`;
+G.w1 = lv => {
+  const t=rI(0,2),a=nz(-5,5),b=nz(-5,5);
+  if(t===0){const k=pick([2,3,-2,-1,0.5]),col=Math.random()<.5,c=R(k*a,2),d=col?R(k*b,2):R(k*b+pick([-1,1]),2);
+    return Q(`Les vecteurs <strong>${vec('u',a,b)}</strong> et <strong>${vec('v',c,d)}</strong> sont-ils colinéaires ?`,col?'Oui':'Non',[col?'Non':'Oui'],'u⃗(x ; y) et v⃗(x′ ; y′) sont colinéaires ⟺ det(u⃗, v⃗) = xy′ − yx′ = 0.',"Ex : u⃗(2 ; 3) et v⃗(4 ; 6) : 2 × 6 − 3 × 4 = 0 → colinéaires");}
+  if(t===1){const k=pick([2,3,-2,-3]),c=k*a,m=k*b;return QN(`Pour quelle valeur de m les vecteurs <strong>${vec('u',a,b)}</strong> et <strong>v⃗(${num(c)} ; m)</strong> sont-ils colinéaires ?`,m,[b*a/c===m?m+1:R(b*a/c,2),-m,c*a],'On écrit det(u⃗, v⃗) = x·m − y·x′ = 0 et on résout.','Ex : u⃗(1 ; 2), v⃗(3 ; m) : 1 × m − 2 × 3 = 0 → m = 6');}
+  const c=nz(-5,5),d=nz(-5,5);return QN(`Calcule <strong>det(u⃗, v⃗)</strong> pour ${vec('u',a,b)} et ${vec('v',c,d)}.`,a*d-b*c,[a*c-b*d,a*d+b*c,b*c-a*d],'det(u⃗, v⃗) = xy′ − yx′.','Ex : u⃗(2 ; 1), v⃗(3 ; 4) : 2 × 4 − 1 × 3 = 5');
+};
+
+G.w2 = lv => {
+  const t=rI(0,2);
+  if(t===0){const a=nz(-5,5),b=nz(-5,5),c=nz(-5,5),d=nz(-5,5);return QN(`Calcule <strong>u⃗ · v⃗</strong> pour ${vec('u',a,b)} et ${vec('v',c,d)}.`,a*c+b*d,[a*d-b*c,a*b+c*d,a*c-b*d],'Dans un repère orthonormé : u⃗ · v⃗ = xx′ + yy′.','Ex : u⃗(2 ; −1), v⃗(3 ; 4) : 6 − 4 = 2');}
+  if(t===1){const n=rI(2,6),m=rI(2,6),[ang,val,w]=pick([['60°',R(n*m/2,2),[n*m,0,R(-n*m/2,2)]],['0°',n*m,[0,R(n*m/2,2),n+m]],['90°',0,[n*m,1,R(n*m/2,2)]],['120°',R(-n*m/2,2),[R(n*m/2,2),n*m,0]],['180°',-n*m,[n*m,0,R(-n*m/2,2)]]]);
+    return QN(`‖u⃗‖ = ${n}, ‖v⃗‖ = ${m} et l'angle entre u⃗ et v⃗ vaut ${ang}. Calcule u⃗ · v⃗.`,val,w,'u⃗ · v⃗ = ‖u⃗‖ × ‖v⃗‖ × cos(u⃗, v⃗). cos 60° = 1/2, cos 90° = 0, cos 120° = −1/2.','Ex : ‖u⃗‖ = 3, ‖v⃗‖ = 4, angle 60° → 3 × 4 × 1/2 = 6');}
+  const a=nz(-5,5),b=nz(-5,5),k=nz(-2,2),ok=Math.random()<.5,c=ok?-b*k:-b*k+pick([-1,1]),d=a*k;
+  return Q(`Les vecteurs <strong>${vec('u',a,b)}</strong> et <strong>${vec('v',c,d)}</strong> sont-ils orthogonaux ?`,ok?'Oui':'Non',[ok?'Non':'Oui'],'u⃗ et v⃗ sont orthogonaux ⟺ u⃗ · v⃗ = xx′ + yy′ = 0.','Ex : u⃗(2 ; 3), v⃗(−3 ; 2) : −6 + 6 = 0 → orthogonaux');
+};
+
+G.w3 = lv => {
+  if(Math.random()<.6){let a,b,c;do{a=nz(-6,6);b=nz(-6,6);c=rI(-9,9);}while(Math.abs(a)===Math.abs(b)||gcd(a,b)!==1);
+    const eq=`${lin(a,0)}${b<0?' − ':' + '}${Math.abs(b)===1?'':Math.abs(b)}y${c?(c<0?' − ':' + ')+Math.abs(c):''} = 0`;
+    const V=(x,y)=>`(${num(x)} ; ${num(y)})`;
+    return Q(`Un vecteur directeur de la droite d'équation <strong>${eq}</strong> est :`,V(-b,a),[V(a,b),V(b,a),V(a,-b)],'La droite ax + by + c = 0 a pour vecteur directeur (−b ; a). Le vecteur (a ; b) est normal (orthogonal) à la droite.','Ex : 2x − 3y + 1 = 0 → vecteur directeur (3 ; 2)');}
+  let m,p;do{m=nz(-5,5);p=nz(-6,6);}while(p===m);
+  return Q(`Un vecteur directeur de la droite d'équation <strong>y = ${lin(m,p)}</strong> est :`,`(1 ; ${num(m)})`,[`(${num(m)} ; 1)`,`(1 ; ${num(p)})`,`(${num(p)} ; ${num(m)})`,`(1 ; ${num(-m)})`,`(${num(m)} ; −1)`],'La droite y = mx + p a pour vecteur directeur (1 ; m) : quand x avance de 1, y varie de m.','Ex : y = 3x − 2 → (1 ; 3)');
+};
+
+// ─────────────────────────────
+//  VARIABLES ALÉATOIRES
+// ─────────────────────────────
+function randLaw(n,den=20){const parts=[];let rem=den;for(let i=0;i<n-1;i++){const p=rI(1,rem-(n-1-i));parts.push(p);rem-=p;}parts.push(rem);return shuffle(parts).map(p=>p/den);}
+G.a1 = lv => {
+  const xs=shuffle([-5,-2,0,1,2,3,5,10]).slice(0,4).sort((a,b)=>a-b),ps=randLaw(4,pick([10,20]));
+  if(Math.random()<.5){const i=rI(0,3);return QN(`Loi de probabilité de X :${htmlTable(['x<sub>i</sub>',...xs.map(num)],[['P(X = x<sub>i</sub>)',...ps.map((p,k)=>k===i?'?':num(p))]])}Que vaut la probabilité manquante ?`,ps[i],[R(1-ps[i],2),R(ps[(i+1)%4],2),R(ps[i]+0.05,2)],'La somme des probabilités de la loi vaut 1.','Ex : 0,1 + 0,4 + 0,3 + ? = 1 → ? = 0,2');}
+  const k=xs[rI(1,2)],ge=Math.random()<.5,v=R(ps.reduce((s,p,i)=>s+((ge?xs[i]>=k:xs[i]<=k)?p:0),0),2),v2=R(ps.reduce((s,p,i)=>s+((ge?xs[i]>k:xs[i]<k)?p:0),0),2);
+  return QN(`Loi de probabilité de X :${htmlTable(['x<sub>i</sub>',...xs.map(num)],[['P(X = x<sub>i</sub>)',...ps.map(num)]])}Calcule <strong>P(X ${ge?'≥':'≤'} ${num(k)})</strong>.`,v,[v2,R(1-v,2),ps[xs.indexOf(k)]],'On additionne les probabilités des valeurs concernées (attention à inclure ou non la borne).','Ex : P(X ≥ 2) = P(X = 2) + P(X = 5) + …');
+};
+
+G.a2 = lv => {
+  const xs=shuffle([-10,-5,-2,0,1,2,3,4,5,10,20]).slice(0,rI(3,4)).sort((a,b)=>a-b),ps=randLaw(xs.length,10);
+  const E=R(xs.reduce((s,x,i)=>s+x*ps[i],0),3),mean=R(xs.reduce((a,b)=>a+b,0)/xs.length,3);
+  return QN(`Un jeu rapporte X euros (gain algébrique) selon la loi :${htmlTable(['x<sub>i</sub>',...xs.map(num)],[['P(X = x<sub>i</sub>)',...ps.map(num)]])}Calcule l'espérance <strong>E(X)</strong>.`,E,[mean,R(-E,3),R(E+1,3),R(xs.reduce((s,x)=>s+x,0),3)],'E(X) = Σ xᵢ × P(X = xᵢ) : moyenne des valeurs pondérée par leurs probabilités. Elle donne le gain moyen par partie sur un grand nombre de parties.','Ex : X ∈ {−2 ; 5} avec P = 0,7 et 0,3 → E = −1,4 + 1,5 = 0,1');
+};
+
+// Question prête à afficher : virgule décimale partout
+function makeQ(id,lv){
+  const q=G[id](lv);
+  return{...q,text:frDec(q.text),choices:q.choices.map(c=>({...c,val:frDec(c.val)})),correct:frDec(q.correct),lesson:frDec(q.lesson||''),example:frDec(q.example||'')};
+}
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+function loadState(){try{return JSON.parse(localStorage.getItem('mathauto_v3')||'{}');}catch{return{};}}
+function saveState(s){localStorage.setItem('mathauto_v3',JSON.stringify(s));}
+function getTS(id){const s=loadState();return s[id]??{level:1,points:0};}
+function setTS(id,data){const s=loadState();s[id]=data;saveState(s);}
+function resetAll(){if(confirm('Remettre tous les scores et niveaux à zéro ?')){localStorage.removeItem('mathauto_v3');renderThemes();if(document.getElementById('screen-train').classList.contains('active'))showScreen('train-themes');showToast('🔄 Remis à zéro !');TS=null;}}
+
+// ═══════════════════════════════════════════════
+//  RANKS — basés sur les NIVEAUX (1-5), pas les points
+// ═══════════════════════════════════════════════
+const RANK_BY_LEVEL = [
+  {icon:'🪙', label:'Bronze',   crown:'👑'},        // niv 1
+  {icon:'🥈', label:'Argent',   crown:'👑✨'},       // niv 2
+  {icon:'🥇', label:'Or',       crown:'💎👑'},       // niv 3
+  {icon:'💎', label:'Diamant',  crown:'🏆👑'},       // niv 4
+  {icon:'🌟', label:'Prestige', crown:'🌟👑🌟'},     // niv 5
+];
+function getRankByLevel(lv){return RANK_BY_LEVEL[Math.min(lv-1,4)];}
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  // Update desktop tabs (first 3 only — icon btns not highlighted)
+  const tabs=document.querySelectorAll('#nav-tabs-desktop .nav-tab:not(.icon-btn)');
+  tabs.forEach(t=>t.classList.remove('active'));
+  const map={home:0,'train-themes':1,train:1,exam:2,results:2};
+  if(map[name]!==undefined)tabs[map[name]]?.classList.add('active');
+  if(name==='train-themes')renderThemes();
+}
+
+function showToast(msg){
+  const t=document.getElementById('level-toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ═══════════════════════════════════════════════
+//  THEMES GRID
+// ═══════════════════════════════════════════════
+function renderThemes(){
+  const g=document.getElementById('themes-grid');g.innerHTML='';
+  GROUPS.forEach(gr=>{
+  const head=document.createElement('div');head.className='group-head';
+  head.innerHTML=`<h2>${gr.name}</h2><p>${gr.sub}</p>`;g.appendChild(head);
+  THEMES.filter(t=>t.group===gr.id).forEach(theme=>{
+    const ts=getTS(theme.id);
+    const lv=Math.min(ts.level,5);
+    const rank=getRankByLevel(lv);
+    // Progress within current level = items successes / total needed
+    // We don't have per-item data in storage (only level), show level progress as stars
+    const card=document.createElement('div');card.className='theme-card';
+    card.style.borderColor=lv>1?theme.color+'55':'var(--border)';
+    // Stars for level
+    const stars='⭐'.repeat(lv)+'☆'.repeat(5-lv);
+    card.innerHTML=`
+      <div class="t-icon">${theme.icon}</div>
+      <h3>${theme.name}</h3>
+      <div class="t-sub">${theme.items.length} automatismes</div>
+      <div class="level-bar" style="margin-top:12px">
+        <div style="font-size:1.3rem;letter-spacing:2px;margin-bottom:6px">${stars}</div>
+        <div class="level-bar-track"><div class="level-bar-fill" style="background:${theme.color};width:${(lv-1)/4*100}%"></div></div>
+        <div class="level-text">${ts.points} pts · Niveau ${lv}/5</div>
+      </div>`;
+    card.onclick=()=>startTraining(theme.id);
+    g.appendChild(card);
+  });
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  TRAINING SESSION
+//  RÈGLE : 2 bonnes réponses par item pour passer
+// ═══════════════════════════════════════════════
+const SUCCESSES_NEEDED = 2; // ← modifiable ici
+let TS=null;
+
+function saveProgress(){
+  if(!TS)return;
+  const s=loadState();
+  s['_progress_'+TS.themeId]={level:TS.level,successes:TS.successes,queue:TS.queue,qIdx:TS.qIdx};
+  saveState(s);
+}
+function loadProgress(themeId,level){
+  const s=loadState();
+  const p=s['_progress_'+themeId];
+  const ids=new Set(THEMES.find(t=>t.id===themeId).items.map(i=>i.id));
+  if(p&&p.level===level&&Array.isArray(p.queue)&&p.queue.every(id=>ids.has(id))&&[...ids].every(id=>id in p.successes))return p;
+  return null;
+}
+function clearProgress(themeId){
+  const s=loadState();
+  delete s['_progress_'+themeId];
+  saveState(s);
+}
+
+function startTraining(themeId){
+  const theme=THEMES.find(t=>t.id===themeId);
+  const ts=getTS(themeId);
+  const level=Math.min(ts.level,5);
+  // Restore in-progress session if same level
+  const saved=loadProgress(themeId,level);
+  let successes,queue,qIdx;
+  if(saved){
+    successes=saved.successes;
+    queue=saved.queue;
+    qIdx=saved.qIdx;
+  } else {
+    successes={};
+    theme.items.forEach(it=>{successes[it.id]=0;});
+    queue=shuffle([...theme.items.map(i=>i.id)]);
+    qIdx=0;
+  }
+  TS={themeId,theme,level,successes,queue,qIdx,currentQ:null,waiting:false};
+  document.getElementById('train-theme-name').textContent=theme.name;
+  showScreen('train');
+  renderStars();
+  loadNext();
+}
+
+function renderStars(){
+  document.getElementById('stars-display').innerHTML=
+    Array.from({length:5},(_,i)=>`<span style="opacity:${i<TS.level?1:.2};filter:${i<TS.level?'drop-shadow(0 0 6px #ffd166)':'none'}">⭐</span>`).join('');
+}
+
+function findNextItemIdx(){
+  for(let i=0;i<TS.queue.length;i++){
+    const idx=(TS.qIdx+i)%TS.queue.length;
+    if((TS.successes[TS.queue[idx]]||0)<SUCCESSES_NEEDED)return idx;
+  }
+  return -1;
+}
+
+function loadNext(){
+  TS.waiting=false;
+  document.getElementById('feedback-card').classList.remove('show');
+  document.getElementById('next-btn').style.display='none';
+  const ni=findNextItemIdx();
+  if(ni===-1){doLevelUp();return;}
+  TS.qIdx=ni;
+  const item=TS.theme.items.find(it=>it.id===TS.queue[ni]);
+  document.getElementById('train-item-name').innerHTML=item.label;
+  TS.currentQ=makeQ(item.id,TS.level);
+  document.getElementById('question-text').innerHTML=TS.currentQ.text;
+  const ce=document.getElementById('choices');ce.innerHTML='';
+  TS.currentQ.choices.forEach((c,i)=>{
+    const btn=document.createElement('button');btn.className='choice-btn';btn.innerHTML=c.val;
+    btn.onclick=()=>onAnswer(c.correct,i);ce.appendChild(btn);
+  });
+  const total=Object.values(TS.successes).reduce((a,b)=>a+b,0);
+  const goal=TS.theme.items.length*SUCCESSES_NEEDED;
+  document.getElementById('progress-fill').style.width=`${total/goal*100}%`;
+  document.getElementById('progress-count').textContent=`${total} / ${goal}`;
+  document.getElementById('progress-level').textContent=TS.level;
+}
+
+function onAnswer(correct,btnIdx){
+  if(TS.waiting)return;TS.waiting=true;
+  const btns=document.querySelectorAll('#choices .choice-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns[btnIdx].classList.add(correct?'correct':'wrong');
+  if(!correct){
+    btns.forEach(b=>{
+      if(b.innerHTML===TS.currentQ.correct||b.textContent===TS.currentQ.correct)b.classList.add('correct');
+    });
+  }
+  const item=TS.theme.items.find(it=>it.id===TS.queue[TS.qIdx]);
+  const ts=getTS(TS.themeId);
+  if(correct){
+    TS.successes[item.id]=(TS.successes[item.id]||0)+1;
+    ts.points+=TS.level*2; setTS(TS.themeId,ts);
+    TS.qIdx=(TS.qIdx+1)%TS.queue.length;
+    saveProgress();
+    showFB(true);
+  }else{
+    ts.points=Math.max(0,ts.points-1); setTS(TS.themeId,ts);
+    // Reinsert item after current position
+    TS.queue.splice(TS.qIdx+1,0,item.id);
+    TS.qIdx=(TS.qIdx+1)%TS.queue.length;
+    saveProgress();
+    showFB(false,TS.currentQ.lesson,TS.currentQ.example);
+  }
+}
+
+function showFB(ok,lesson,example){
+  const card=document.getElementById('feedback-card');
+  card.className='feedback-card show '+(ok?'ok':'ko');
+  document.getElementById('feedback-title').textContent=ok?'✅ Bonne réponse !':'❌ Mauvaise réponse';
+  const ts=getTS(TS.themeId);
+  document.getElementById('feedback-body').innerHTML=ok?
+    `<strong>+${TS.level*2} points</strong> · Total : ${ts.points} pts`:
+    `Bonne réponse : <strong>${TS.currentQ.correct}</strong> · −1 point`;
+  const lb=document.getElementById('lesson-box');
+  if(!ok&&lesson){lb.style.display='block';document.getElementById('lesson-text').innerHTML=lesson;document.getElementById('lesson-example').textContent=example||'';}
+  else{lb.style.display='none';}
+  document.getElementById('next-btn').style.display='block';
+}
+
+function nextQuestion(){loadNext();}
+
+function doLevelUp(){
+  const ts=getTS(TS.themeId);
+  if(TS.level<5){
+    ts.level=TS.level+1; setTS(TS.themeId,ts);
+    clearProgress(TS.themeId);
+    TS.level=ts.level;
+    const newRank=getRankByLevel(TS.level);
+    showToast(`🎉 Niveau ${TS.level} ⭐ — ${newRank.icon} ${newRank.label} débloqué !`);
+    TS.theme.items.forEach(it=>{TS.successes[it.id]=0;});
+    TS.queue=shuffle([...TS.theme.items.map(i=>i.id)]);TS.qIdx=0;
+    renderStars(); loadNext();
+  }else{
+    showToast('🏆 Niveau Prestige atteint ! Félicitations !');
+    setTimeout(()=>showScreen('train-themes'),3000);
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  EXAM
+// ═══════════════════════════════════════════════
+let ES=null,examTimer=null;
+
+function startExam(){
+  if(examTimer)clearInterval(examTimer);
+  const all=[];
+  THEMES.forEach(t=>t.items.forEach(it=>{if(G[it.id])all.push({t,it});}));
+  const sel=shuffle([...all]).slice(0,12);
+  ES={
+    questions:sel.map(({t,it})=>{const lv=rI(4,5);const q=makeQ(it.id,lv);return{...q,themeName:t.name,lv};}),
+    answers:Array(12).fill(null),cur:0,start:Date.now(),done:false
+  };
+  examTimer=setInterval(updateTimer,1000);
+  renderExamDots();renderExamQ();showScreen('exam');
+  document.querySelectorAll('.nav-tab')[2]?.classList.add('active');
+}
+
+function updateTimer(){
+  if(!ES||ES.done)return;
+  const e=Math.floor((Date.now()-ES.start)/1000);
+  const m=Math.floor(e/60).toString().padStart(2,'0'),s=(e%60).toString().padStart(2,'0');
+  const el=document.getElementById('timer-box');
+  el.textContent=`${m}:${s}`;el.className='timer-box'+(e>600?' warning':'');
+}
+
+function renderExamDots(){
+  const el=document.getElementById('exam-dots');el.innerHTML='';
+  ES.questions.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='exam-dot'+(i===ES.cur?' current':ES.answers[i]!==null?' answered':'');
+    d.textContent=i+1;d.onclick=()=>{ES.cur=i;renderExamQ();renderExamDots();};
+    el.appendChild(d);
+  });
+}
+
+function renderExamQ(){
+  const q=ES.questions[ES.cur];
+  document.getElementById('exam-q-num').textContent=`Q${ES.cur+1} / 12`;
+  document.getElementById('exam-progress').textContent=`Thème : ${q.themeName}`;
+  document.getElementById('exam-question-text').innerHTML=q.text;
+  const ce=document.getElementById('exam-choices');ce.innerHTML='';
+  const done=ES.answers[ES.cur]!==null;
+  q.choices.forEach(c=>{
+    const btn=document.createElement('button');btn.className='choice-btn';btn.innerHTML=c.val;
+    if(done){
+      btn.disabled=true;
+      // Mark the chosen answer only (no color, just a subtle indicator)
+      if(ES.answers[ES.cur]===c.val) btn.style.borderColor='var(--text-muted)';
+    } else {
+      btn.onclick=()=>onExamAnswer(c.correct,c.val);
+    }
+    ce.appendChild(btn);
+  });
+}
+
+function onExamAnswer(correct,val){
+  ES.answers[ES.cur]=val;
+  // No visual feedback during exam — student discovers at the end
+  document.querySelectorAll('#exam-choices .choice-btn').forEach(b=>b.disabled=true);
+  renderExamDots();
+  setTimeout(()=>{
+    if(ES.answers.every(a=>a!==null)){finishExam();return;}
+    let next=ES.cur;
+    for(let i=1;i<=12;i++){const ni=(ES.cur+i)%12;if(ES.answers[ni]===null){next=ni;break;}}
+    ES.cur=next;renderExamQ();renderExamDots();
+  },300);
+}
+
+function finishExam(){
+  clearInterval(examTimer); ES.done=true;
+  const elapsed=Math.floor((Date.now()-ES.start)/1000);
+  const nbCorrect=ES.answers.filter((a,i)=>ES.questions[i].choices.find(c=>c.val===a&&c.correct)).length;
+  const score=Math.max(0,nbCorrect*10-Math.floor(elapsed/10));
+  document.getElementById('results-score').textContent=score;
+  document.getElementById('results-score').style.color=score>=80?'var(--accent3)':score>=50?'var(--accent2)':'var(--accent)';
+  const grades=["Courage, continue à t'entraîner 📚",'Bien joué ! 👍','Très bien ! 🎯','Excellent ! 🏆'];
+  document.getElementById('results-grade').textContent=grades[Math.min(Math.floor(nbCorrect/3),3)];
+  document.getElementById('stat-correct').textContent=nbCorrect+'/12';
+  const mm=Math.floor(elapsed/60), ss=elapsed%60;
+  document.getElementById('stat-time').textContent=mm+':'+(ss<10?'0':'')+ss;
+  document.getElementById('stat-pct').textContent=Math.round(nbCorrect/12*100)+'%';
+
+  const bd=document.getElementById('results-breakdown');
+  bd.innerHTML='<div style="font-weight:700;margin-bottom:12px;font-size:.9rem;color:var(--text-muted)">Détail par question <span style="font-weight:400;font-size:.8rem">(clique pour voir l\'explication)</span></div>';
+
+  ES.questions.forEach(function(q,i){
+    const userAns=ES.answers[i]||'—';
+    const ok=!!q.choices.find(function(c){return c.val===userAns&&c.correct;});
+    const correctChoice=q.choices.find(function(c){return c.correct;});
+    const correctVal=correctChoice?correctChoice.val:'—';
+
+    // Strip HTML for short preview
+    const qPreview=q.text.replace(/<div class="fig">[\s\S]*?<\/div>/g,' ').replace(/<\/?[a-zA-Z][^>]*>/g,' ').replace(/  +/g,' ').trim();
+    const qShort=qPreview.length>70?qPreview.slice(0,70)+'…':qPreview;
+    const userClean=userAns.replace(/<\/?[a-zA-Z][^>]*>/g,'');
+    const correctClean=correctVal.replace(/<\/?[a-zA-Z][^>]*>/g,'');
+
+    // Clickable summary row
+    const row=document.createElement('div');
+    row.className='breakdown-row';
+    row.innerHTML='<div class="bq"><strong style="color:var(--text)">Q'+(i+1)+'</strong> · '+q.themeName+'<br><span style="font-size:.78rem">'+qShort+'</span></div>'
+      +'<div class="br '+(ok?'ok':'ko')+'">'+(ok?'✅':'❌')+'</div>';
+
+    // Hidden detail panel
+    const detail=document.createElement('div');
+    detail.className='breakdown-detail '+(ok?'ok-detail':'ko-detail');
+
+    let html='<div class="bd-q">'+q.text+'</div>';
+    html+='<div class="bd-your" style="color:'+(ok?'var(--accent3)':'var(--accent)')+'">Ta réponse : <strong>'+userClean+'</strong> '+(ok?'✅':'❌')+'</div>';
+    if(!ok){
+      html+='<div class="bd-correct">Bonne réponse : '+correctClean+'</div>';
+    }
+    if(q.lesson){
+      html+='<div class="bd-lesson">💡 '+q.lesson;
+      if(q.example) html+='<br><em style="color:var(--accent2)">'+q.example+'</em>';
+      html+='</div>';
+    }
+    detail.innerHTML=html;
+
+    row.onclick=function(){
+      var wasOpen=detail.classList.contains('show');
+      bd.querySelectorAll('.breakdown-detail').forEach(function(d){d.classList.remove('show');});
+      if(!wasOpen) detail.classList.add('show');
+    };
+
+    bd.appendChild(row);
+    bd.appendChild(detail);
+  });
+
+  showScreen('results');
+}
+
+
+// ═══════════════════════════════════════════════
+//  BG CANVAS
+// ═══════════════════════════════════════════════
+function toggleMenu(){
+  const btn=document.getElementById('hamburger-btn');
+  const menu=document.getElementById('mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+// Close menu when clicking outside
+document.addEventListener('click',e=>{
+  const menu=document.getElementById('mobile-menu');
+  const btn=document.getElementById('hamburger-btn');
+  if(menu.classList.contains('open')&&!menu.contains(e.target)&&!btn.contains(e.target)){
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+  }
+});
+
+document.getElementById('home-badge').textContent=`${THEMES.length} thèmes · 5 niveaux · ${THEMES.reduce((n,t)=>n+t.items.length,0)} automatismes`;
+
+(()=>{
+  const cv=document.getElementById('bg-canvas'),ctx=cv.getContext('2d');
+  let W,H;const resize=()=>{W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;};
+  resize();window.addEventListener('resize',resize);
+  const cols=['#ff6b6b','#ffd166','#06d6a0','#118ab2','#a855f7','#f97316'];
+  const pts=Array.from({length:55},()=>({x:Math.random()*1920,y:Math.random()*1080,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*2+.5,color:cols[Math.floor(Math.random()*cols.length)],op:Math.random()*.4+.1}));
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color;ctx.globalAlpha=p.op;ctx.fill();
+    });
+    ctx.globalAlpha=1;requestAnimationFrame(draw);
+  })();
+})();
+</script>
+</body>
+</html>
