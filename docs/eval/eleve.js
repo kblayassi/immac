@@ -46,6 +46,41 @@ let etat = null;
    peut-être plus. Il est effacé quand l'élève quitte l'évaluation. */
 const POINTEUR = "eval:encours";
 
+/* Les évaluations déjà rendues. Ce repère, lui, survit à « Quitter
+   l'évaluation » : sans lui, il suffirait de quitter pour recommencer le devoir
+   à zéro. La page « Consulter une évaluation » de la version prof sait
+   l'effacer quand un poste doit resservir. */
+const RENDUS = "eval:rendus";
+
+/* L'évaluation à blanc sert à s'entraîner : elle se repasse à volonté. */
+const REPASSABLES = new Set(["eval-blanc"]);
+
+function lireRendus() {
+  try {
+    const lu = JSON.parse(localStorage.getItem(RENDUS) || "{}");
+    return lu && typeof lu === "object" ? lu : {};
+  } catch {
+    return {};
+  }
+}
+
+function noterRendu() {
+  const rendus = lireRendus();
+  if (rendus[EVALUATION.cle]) return;
+  rendus[EVALUATION.cle] = {
+    a: new Date(etat.termine?.a ?? Date.now()).toISOString(),
+    nom: etat.eleve?.nom || "",
+    prenom: etat.eleve?.prenom || "",
+  };
+  try { localStorage.setItem(RENDUS, JSON.stringify(rendus)); } catch { /* stockage bloqué */ }
+}
+
+/** Si cette évaluation a déjà été rendue ici, la date de la remise ; sinon null. */
+function dejaRendue() {
+  if (REPASSABLES.has(EVALUATION.cle)) return null;
+  return lireRendus()[EVALUATION.cle]?.a ?? null;
+}
+
 /** Charge une évaluation et son état local. Rend false si le sujet est
     introuvable ou si rien n'a encore été ouvert sur ce poste. */
 async function charger(cle, questionsOuvertes = null) {
@@ -262,6 +297,16 @@ function rendreCode() {
       alerte.textContent = "Ce code n'ouvre aucune évaluation.";
       alerte.hidden = false;
       champ.select();
+      return;
+    }
+    const rendueLe = dejaRendue();
+    if (rendueLe) {
+      const quand = new Date(rendueLe).toLocaleString("fr-FR",
+        { dateStyle: "long", timeStyle: "short" });
+      alerte.textContent = `Cette évaluation a déjà été rendue (le ${quand}). ` +
+                           "Elle ne se passe qu'une fois : adresse-toi à ton professeur.";
+      alerte.hidden = false;
+      champ.value = "";
       return;
     }
     // Le sujet est ouvert : il vit désormais dans ce navigateur, et l'élève ne
@@ -674,6 +719,7 @@ async function remettre(cause) {
     etat.termine = { a: Date.now(), cause };
     ecrireEtat();
   }
+  noterRendu();
 
   const fichier = await construireRendu();
   ouvrirRemise(fichier, cause);
@@ -738,7 +784,8 @@ function ouvrirRemise(rendu, cause) {
 
   /* Quitter efface le devoir de cet ordinateur. C'est voulu : en salle, le poste
      sert au groupe suivant, et le brouillon d'un élève n'a rien à y faire. D'où
-     la question posée franchement — le fichier est la seule chose qui reste. */
+     la question posée franchement — le fichier est la seule chose qui reste.
+     Seul survit le repère « déjà rendue » (RENDUS), qui ne contient aucune réponse. */
   const sortie = $("#btn-quitter");
   if (sortie) {
     sortie.onclick = () => {

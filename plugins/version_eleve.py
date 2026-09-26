@@ -35,6 +35,11 @@ le drapeau `window.PARCOURS_PROF`. Le moteur le lit pour n'y verrouiller aucune
 suit pas. Et dans les pages « Documents », il publie tous les TD, sujets et
 corrections encore marqués « À venir », pourvu que leur fichier soit déposé.
 
+Il retire aussi la page **Consulter une évaluation** (`eval/consulter.*`) :
+elle ouvre n'importe quel sujet, épreuves désactivées comprises, sans
+chronomètre, et libère un poste d'une évaluation déjà rendue. Ce sont des
+gestes de professeur.
+
 Le choix de la version se lit dans `extra.version` du fichier de configuration.
 """
 
@@ -324,6 +329,12 @@ def verifier_aucune_solution(fichier, source):
         "Écris ce champ `solution` sur une seule ligne, ou en objet `solution: {`…`},`.")
 
 
+# Pages du moteur d'évaluation réservées à la version prof. MkDocs les copie
+# telles quelles (ce ne sont pas des pages Markdown) : on les retire du dossier
+# de sortie de la version élève.
+PAGES_PROF = ('eval/consulter.html', 'eval/consulter.js')
+
+
 def on_post_build(config):
     version = config.get('extra', {}).get('version')
     if version == 'prof':
@@ -332,6 +343,8 @@ def on_post_build(config):
     if version != 'eleve':
         return
     racine = Path(config['site_dir'])
+    for page_prof in PAGES_PROF:
+        (racine / page_prof).unlink(missing_ok=True)
     for dossier in sorted(racine.glob('parcours-*/seances')):
       for fichier in sorted(dossier.glob('s*.js')):
         source = fichier.read_text(encoding='utf-8')

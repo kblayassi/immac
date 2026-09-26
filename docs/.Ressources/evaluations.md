@@ -30,6 +30,7 @@ docs/eval/                 le moteur, partagé par toutes les évaluations
   eleve.js                 la page de composition
   correction.js/.html      la table de correction (publiée, et vide par nature)
   copie.js/.html           la copie corrigée, côté élève : une page qui ne fait que lire
+  consulter.js/.html       relire un sujet et libérer un poste — VERSION PROF SEULEMENT
   bareme.js                la notation — aucune interface, donc testable
   copie-corrigee.js        les retouches et le format de la copie rendue
   rendu.js                 le format du fichier remis, et son empreinte
@@ -311,6 +312,28 @@ Si la page se ferme, la rouvrir suffit : le poste se souvient de l'évaluation e
 cours et **ne redemande pas le code** — le tableau ne l'affiche peut-être plus.
 Ce repère est effacé quand l'élève clique sur **Quitter l'évaluation** à la fin.
 
+**Une évaluation ne se passe qu'une fois par navigateur.** À la remise, la page
+note l'évaluation dans `eval:rendus` (date, nom, prénom — aucune réponse), et ce
+repère survit à **Quitter**. Entrer de nouveau le code affiche alors « déjà
+rendue depuis ce navigateur » au lieu du sujet. L'évaluation à blanc fait
+exception (`REPASSABLES` dans `eleve.js`) : elle sert à s'entraîner.
+
+## Consulter une évaluation
+
+Version prof seulement : **Évaluations → Consulter une évaluation**
+(`/immac/prof/eval/consulter.html`). La construction élève retire la page
+(`plugins/version_eleve.py`, `PAGES_PROF`).
+
+* **Relire un sujet** : on entre le code, et le sujet s'affiche en entier, en
+  lecture — consignes, énoncés, choix des QCM, code de départ, points, id des
+  questions. Sans chronomètre ni fichier à rendre, et rien n'est enregistré.
+  Le code est essayé sur toutes les évaluations, **désactivées comprises**.
+* **Libérer un poste** : la page liste les évaluations déjà rendues depuis le
+  navigateur où elle est ouverte, et efface celle qu'on choisit. Elle partage le
+  stockage de la page d'épreuve (même origine) : **l'ouvrir sur le poste de
+  l'élève**. Utile quand un poste sert à deux groupes pour la même épreuve, ou
+  pour refaire soi-même un essai.
+
 ## Corriger
 
 `/immac/prof/NSI/Evaluations/` → **Corriger les copies** (le bouton n'existe que dans
@@ -392,6 +415,9 @@ Le site est statique : pas de serveur, donc pas de contrôle réel.
 * **Le chronomètre** part au clic sur « Commencer » et l'heure de fin est écrite
   dans le navigateur : recharger la page, changer d'onglet ou fermer l'ordinateur
   ne rend pas une minute. Vider le stockage du navigateur, si.
+* **Une seule passe par navigateur** : un frein, pas un verrou. Une navigation
+  privée ou un stockage vidé le contournent — deux fichiers rendus au même nom
+  le trahissent.
 * **L'empreinte** (SHA-256) repère un fichier retouché après la remise. Elle ne
   résiste pas à quelqu'un qui lit le code de la page : c'est un scellé, pas un
   coffre.

@@ -16,6 +16,7 @@ travail est téléchargé sous la forme d'un fichier que tu remets à ton profes
 
 {% if config.extra.version == "prof" %}
 [Corriger les copies :material-arrow-right:](../eval/correction.html){ .md-button }
+[Consulter une évaluation :material-arrow-right:](../eval/consulter.html){ .md-button }
 {% endif %}
 
 !!! example "Pour t'entraîner : l'évaluation à blanc"
@@ -44,13 +45,15 @@ travail est téléchargé sous la forme d'un fichier que tu remets à ton profes
     Rouvre-la : ton devoir revient tout seul, le code n'est pas redemandé et le
     temps restant est le bon. Reste simplement sur **le même ordinateur**.
 
-!!! warning "Deux choses à savoir"
+!!! warning "Trois choses à savoir"
     - **Rien n'est corrigé pendant l'épreuve.** Tu peux lancer tes programmes et
       voir ce qu'ils affichent, mais la page ne te dira jamais si une réponse est
       juste : c'est un devoir, pas un exercice.
     - **Ton travail est enregistré dans ce navigateur** à chaque frappe. Si la
       page se ferme par accident, rouvre-la : tout est là, et le temps restant
       aussi. En revanche, reste sur **le même ordinateur**.
+    - **Une évaluation ne se passe qu'une fois.** Une fois ton devoir rendu, le
+      code n'ouvre plus le sujet.
 
 !!! info "Ce que la page enregistre"
     Pour que ton devoir puisse être corrigé sans contestation, la page note

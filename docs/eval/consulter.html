@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consulter une évaluation</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../parcours/app.css">
+<link rel="stylesheet" href="eval.css">
+</head>
+<body>
+
+<!-- Version prof uniquement : la construction élève retire cette page
+     (plugins/version_eleve.py). Elle ne contient aucun code ni aucun sujet en
+     clair : elle déchiffre, dans le navigateur, le sujet dont on lui donne le code. -->
+<header class="barre">
+  <div class="barre-interieur">
+    <span class="marque" aria-hidden="true"><span class="logo">&gt;_</span></span>
+    <div class="barre-titre" id="barre-titre">Consulter une évaluation</div>
+    <span class="barre-espace"></span>
+    <button class="bouton fantome" id="btn-autre" type="button" hidden>Autre évaluation</button>
+  </div>
+</header>
+
+<main id="vue" class="page" tabindex="-1"></main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="consulter.js"></script>
+</body>
+</html>

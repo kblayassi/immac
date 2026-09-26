@@ -506,3 +506,6 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
   text-transform: uppercase;
 }
 .champ-code label { color: var(--violet-vif); }
+
+/* Consulter une évaluation (version prof) : les traces « déjà rendue » du poste. */
+.ligne-poste { display: flex; align-items: center; gap: 1rem; margin: .5rem 0; }
