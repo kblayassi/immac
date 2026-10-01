@@ -8,6 +8,8 @@
  *   3. idem pour chaque variante d'accompagnement du projet final ;
  *   4. la solution ne contient aucune erreur de syntaxe HTML ou CSS.
  * Pour chaque QCM : une bonne réponse et une seule.
+ * Une fois pour tout le parcours : le script que le moteur injecte dans chaque
+ * aperçu se compile, et gère les liens comme prévu.
  *
  * Il partage `docs/parcours/web-verif.js` avec le navigateur : ce qui passe ici
  * passe chez l'élève, au caractère près.
@@ -215,6 +217,51 @@ async function verifierSeance(parcours, id, nbEtapesAnnonce) {
   return soucis.length;
 }
 
+/* Le script que le moteur injecte dans chaque aperçu (SCRIPT_LIENS, app.js).
+   Il est écrit dans un gabarit, où une barre oblique inverse non doublée disparaît
+   sans bruit : c'est arrivé, le script était rejeté par le navigateur et les liens
+   de l'aperçu ne marchaient plus. On le reconstitue donc tel que l'aperçu le
+   reçoit, on vérifie qu'il se compile, puis on le fait tourner sur un faux
+   document : un lien externe s'ouvre dans un onglet, un lien interne est remonté. */
+function verifierScriptApercu() {
+  console.log("\n═══ Script injecté dans l'aperçu ═══");
+  const moteur = readFileSync(join(DOCS, "parcours", "app.js"), "utf8");
+  const gabarit = moteur.match(/const SCRIPT_LIENS = `([\s\S]*?)`;/);
+  if (!gabarit) return echec("SCRIPT_LIENS introuvable dans app.js");
+  if (gabarit[1].includes("${")) return echec("SCRIPT_LIENS ne doit rien interpoler");
+
+  const recu = new Function("return `" + gabarit[1] + "`;")();
+  const js = recu.replace(/<\/?script>/g, "").replace("@JETON@", "jeton-test");
+
+  let executer;
+  try { executer = new Function("document", "parent", js); }
+  catch (e) { return echec(`le script ne se compile pas : ${e.message}`); }
+
+  const lien = (href) => ({ nodeName: "A", getAttribute: () => href, target: "", rel: "" });
+  const externe = lien("https://www.marmiton.org");
+  const interne = lien("crepes.html");
+  const ecouteurs = {};
+  const messages = [];
+  const doc = {
+    getElementsByTagName: () => [externe, interne],
+    addEventListener: (type, f) => { ecouteurs[type] = f; },
+  };
+  try { executer(doc, { postMessage: (m) => messages.push(m) }); }
+  catch (e) { return echec(`le script plante à l'exécution : ${e.message}`); }
+
+  if (externe.target !== "_blank") return echec("un lien externe ne s'ouvre pas dans un nouvel onglet");
+  if (interne.target) return echec("un lien interne ne doit pas ouvrir d'onglet");
+  let empeche = false;
+  ecouteurs.click?.({ target: interne, preventDefault: () => { empeche = true; } });
+  if (!empeche || messages[0]?.href !== "crepes.html" || messages[0]?.parcoursApercu !== "jeton-test") {
+    return echec("un clic sur un lien interne n'est pas remonté au parcours");
+  }
+  console.log("  ✓ se compile, ouvre les liens externes en onglet, remonte les liens internes");
+  return 0;
+
+  function echec(message) { console.log(`  ✗ ${message}`); return 1; }
+}
+
 const [parcours, seance] = process.argv.slice(2);
 if (!parcours) {
   console.error("Usage : node tools/parcours/verifier_web.mjs <parcours> [séance]");
@@ -223,7 +270,7 @@ if (!parcours) {
 const { CATALOGUE } = await importer(join(DOCS, parcours, "seances", "manifeste.js"));
 const liste = seance ? [seance] : Object.keys(CATALOGUE).filter((id) => CATALOGUE[id].disponible);
 
-let total = 0;
+let total = verifierScriptApercu();
 for (const id of liste) total += await verifierSeance(parcours, id, CATALOGUE[id]?.nbEtapes);
 console.log(`\n${total ? `${total} problème(s) au total` : "✓ tout est vérifié"}`);
 process.exit(total ? 1 : 0);

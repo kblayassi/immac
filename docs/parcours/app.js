@@ -1082,11 +1082,13 @@ window.addEventListener("message", (ev) => {
      parent, qui change l'aperçu de page.
    · Un lien externe, lui, s'ouvre NATIVEMENT dans un nouvel onglet. Passer par le
      parent ferait perdre le geste de l'élève, et le navigateur bloquerait alors
-     l'ouverture comme une fenêtre surgissante. D'où `allow-popups` sur l'iframe. */
+     l'ouverture comme une fenêtre surgissante. D'où `allow-popups` sur l'iframe.
+   Ce script vit dans un gabarit : une barre oblique inverse s'y écrit doublée,
+   sinon elle disparaît et `\/\/` devient `//`, qui commente la fin de la ligne. */
 const SCRIPT_LIENS = `
 <script>
 (function () {
-  function externe(href) { return /^(https?:)?\/\//i.test(href) || /^mailto:/i.test(href); }
+  function externe(href) { return /^(https?:)?\\/\\//i.test(href) || /^mailto:/i.test(href); }
 
   function preparer() {
     var liens = document.getElementsByTagName("a");
