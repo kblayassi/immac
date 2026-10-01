@@ -32,6 +32,10 @@ code à gauche et ta page à droite, qui se dessine pendant que tu tapes.
 
 ## Les séances
 
+Les séances sont regroupées en **trois parties** : HTML, CSS, puis le projet.
+Chacune se termine par un **bilan** : une fiche qui résume ce qu'il faut savoir
+faire, exemples à l'appui.
+
 | # | Séance | Ce que tu apprends |
 |---|--------|--------------------|
 | 1 | Ta première page web | balises, `h1`…`h6`, `p`, `br`, `strong`, `em`, squelette d'une page |

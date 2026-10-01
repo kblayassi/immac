@@ -30,21 +30,26 @@ export const PARCOURS = {
   retour: { href: "../SNT/3_Le_Web/", libelle: "Retour au site" },
 };
 
+/* Chaque partie se clôt par un bilan : `bilan` est le résumé affiché sur
+   l'accueil, la fiche elle-même vit dans bilans.js. */
 export const PALIERS = [
   {
     id: "html",
     titre: "Partie 1 — HTML : ce qu'il y a dans la page",
     seances: ["s01", "s02"],
+    bilan: "Balises, squelette, listes, images et liens.",
   },
   {
     id: "css",
     titre: "Partie 2 — CSS : à quoi elle ressemble",
     seances: ["s03"],
+    bilan: "Feuille de style, sélecteurs, couleurs, texte et boîtes.",
   },
   {
     id: "projet",
     titre: "Partie 3 — Le projet",
     seances: ["s04"],
+    bilan: "Un site de plusieurs pages, sourcé, accessible, rendu.",
   },
 ];
 
