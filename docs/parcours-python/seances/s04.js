@@ -8,7 +8,7 @@ export default {
   numero: 4,
   titre: "L'instruction conditionnelle",
   sousTitre: "Faire choisir ton programme",
-  palier: "Partie 1 — Variables, affectation, instruction conditionnelle",
+  palier: "Partie 2 — Dialoguer et décider",
 
   accroche: `Tes programmes savent comparer, mais ils font toujours la même chose.
     Avec <code>if</code>, ils vont enfin <strong>bifurquer</strong> : faire une chose
@@ -21,7 +21,7 @@ export default {
     "utiliser une condition composée dans un test",
   ],
 
-  motDeLaFin: `La partie 1 est bouclée : variables, affectation, conditionnelle.
+  motDeLaFin: `La partie 2 est bouclée : saisie, comparaisons, conditionnelle.
     À la séance 5, on apprend à répéter — et tes programmes vont changer d'échelle.`,
 
   parties: [
@@ -790,7 +790,7 @@ Boisson servie. Rendu : 3 euros</code></pre>`,
             ],
             sortieNonVide: true,
           },
-          felicitation: "Séance 4 terminée, et la partie 1 avec elle. 🏁",
+          felicitation: "Séance 4 terminée, et la partie 2 avec elle. 🏁",
           indices: [
             "Structure : une saisie, une conversion, puis <code>if</code> / <code>elif</code> / <code>else</code>.",
             "Pense à afficher un message dans <em>chaque</em> branche, sinon certains cas resteront muets.",

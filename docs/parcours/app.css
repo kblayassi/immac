@@ -314,6 +314,49 @@ li { margin-bottom: .3em; }
 .titre-palier::after { content: ""; flex: 1; height: 1px; background: var(--bordure); }
 .titre-palier:first-of-type { margin-top: 1rem; }
 
+/* La carte du bilan ferme la grille de sa partie : même gabarit, mais
+   pointillée — c'est une fiche à relire, pas une séance à faire. */
+.carte-bilan { border-style: dashed; background: var(--surface-2); box-shadow: none; }
+.carte-bilan .numero { background: var(--vert-pale); color: var(--vert); font-size: 1.15rem; }
+
+/* ---------------------------------------------------------------- Bilans */
+.bilan-section {
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  padding: 1.25rem 1.35rem;
+  margin-bottom: 1.3rem;
+}
+.bilan-entete {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: .4rem 1rem; flex-wrap: wrap;
+  margin-bottom: .8rem;
+}
+.bilan-entete h2 { margin: 0; font-size: 1.15rem; }
+.bilan-revoir { font-size: .85rem; font-weight: 600; color: var(--violet-vif); text-decoration: none; }
+.bilan-revoir:hover { text-decoration: underline; }
+.bilan-chapo {
+  font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--texte-doux); margin-bottom: .4rem;
+}
+.bilan-savoirs { list-style: none; padding: 0; margin: 0 0 1em; }
+.bilan-savoirs li {
+  position: relative;
+  padding: .55rem 0 .55rem 1.7rem;
+  border-bottom: 1px solid var(--bordure);
+}
+.bilan-savoirs li:last-child { border-bottom: 0; }
+.bilan-savoirs li::before {
+  content: "✓";
+  position: absolute; left: .2rem; top: .55rem;
+  font-weight: 700; color: var(--vert);
+}
+.bilan-savoirs .bloc-code { margin: .5rem 0 .1rem; }
+.bilan-section > .encadre:last-child { margin-bottom: 0; }
+.bilan-section .encadre ul { margin: .2em 0 0; padding-left: 1.2em; }
+.bilan-pied { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.8rem; }
+
 /* --------------------------------------------------------- Parties (séance) */
 .partie-entete {
   margin: 2.8rem 0 1.2rem;

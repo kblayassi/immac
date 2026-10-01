@@ -9,7 +9,7 @@ export default {
   numero: 7,
   titre: "Écrire une fonction",
   sousTitre: "Ranger du code dans une boîte réutilisable",
-  palier: "Partie 3 — Fonctions et aléatoire",
+  palier: "Partie 4 — Les fonctions",
 
   accroche: `En Scratch, tu pouvais « créer un bloc » et le réutiliser partout.
     En Python, ça s'appelle une <strong>fonction</strong>, et c'est l'outil qui permet

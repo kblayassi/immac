@@ -11,7 +11,7 @@ export default {
   numero: 6,
   titre: "La boucle non bornée while",
   sousTitre: "Répéter jusqu'à ce que…",
-  palier: "Partie 2 — Boucle bornée et boucle non bornée",
+  palier: "Partie 3 — Boucle bornée et boucle non bornée",
 
   accroche: `Avec <code>for</code>, tu sais combien de tours tu vas faire. Mais
     « combien de fois faut-il doubler 1 € pour dépasser 1 000 € ? » — là, tu ne sais pas
@@ -24,7 +24,7 @@ export default {
     "encadrer un nombre par <strong>balayage</strong>",
   ],
 
-  motDeLaFin: `La partie 2 est bouclée. Les deux boucles de Python n'ont plus de secret.
+  motDeLaFin: `La partie 3 est bouclée. Les deux boucles de Python n'ont plus de secret.
     À la séance 7, on range du code dans des boîtes réutilisables : les fonctions.`,
 
   parties: [
@@ -846,7 +846,7 @@ Valeur : 177147</code></pre>
             ],
             sortieNonVide: true,
           },
-          felicitation: "Séance 6 terminée, partie 2 bouclée. Les deux boucles sont à toi. 🏁",
+          felicitation: "Séance 6 terminée, partie 3 bouclée. Les deux boucles sont à toi. 🏁",
           indices: [
             "Structure : une quantité, un compteur, une boucle qui fait évoluer les deux.",
             "Exemple de la feuille pliée : <code>epaisseur = 0.1</code> en millimètres, la tour Eiffel fait 330 000 mm.",

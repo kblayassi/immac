@@ -7,6 +7,10 @@
  *
  * Progression validée : 10 séances + 1 bonus, adossées aux fiches T6 / T7 / T8
  * de l'audit des savoir-faire (partie « Algorithmique et programmation »).
+ *
+ * Les séances sont regroupées en cinq parties de deux séances (la dernière
+ * rassemble le reste). Chaque partie se clôt par un bilan : sa clé `bilan` est
+ * le résumé affiché sur l'accueil, et la fiche elle-même vit dans bilans.js.
  */
 
 /* Identité de ce parcours : lue par le moteur partagé (docs/parcours/app.js). */
@@ -23,24 +27,34 @@ export const PARCOURS = {
 
 export const PALIERS = [
   {
-    id: "t6",
-    titre: "Partie 1 — Variables, affectation, instruction conditionnelle",
-    seances: ["s01", "s02", "s03", "s04"],
+    id: "p1",
+    titre: "Partie 1 — Premiers programmes et variables",
+    seances: ["s01", "s02"],
+    bilan: "Afficher, calculer, ranger une valeur dans une variable.",
   },
   {
-    id: "t7",
-    titre: "Partie 2 — Boucle bornée et boucle non bornée",
+    id: "p2",
+    titre: "Partie 2 — Dialoguer et décider",
+    seances: ["s03", "s04"],
+    bilan: "Demander une valeur, comparer, choisir entre plusieurs cas.",
+  },
+  {
+    id: "p3",
+    titre: "Partie 3 — Boucle bornée et boucle non bornée",
     seances: ["s05", "s06"],
+    bilan: "Répéter, accumuler, s'arrêter au bon moment.",
   },
   {
-    id: "t8",
-    titre: "Partie 3 — Fonctions et aléatoire",
-    seances: ["s07", "s08", "s09"],
+    id: "p4",
+    titre: "Partie 4 — Les fonctions",
+    seances: ["s07", "s08"],
+    bilan: "Écrire, appeler et réutiliser une fonction.",
   },
   {
-    id: "fin",
-    titre: "Partie 4 — Pour finir",
-    seances: ["s10", "s11"],
+    id: "p5",
+    titre: "Partie 5 — Hasard, projet et boîte à outils",
+    seances: ["s09", "s10", "s11"],
+    bilan: "Simuler le hasard, et choisir le bon algorithme.",
   },
 ];
 

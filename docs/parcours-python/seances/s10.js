@@ -12,7 +12,7 @@ export default {
   numero: 10,
   titre: "Projet & bilan",
   sousTitre: "Assembler tout ce que tu sais",
-  palier: "Partie 4 — Pour finir",
+  palier: "Partie 5 — Hasard, projet et boîte à outils",
 
   accroche: `Neuf séances, neuf outils. Il est temps de les faire tenir ensemble dans
     un seul programme qui sert vraiment à quelque chose : un <strong>bulletin de

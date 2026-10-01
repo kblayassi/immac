@@ -13,7 +13,7 @@ export default {
   numero: 1,
   titre: "De Scratch à Python",
   sousTitre: "Ton tout premier programme",
-  palier: "Partie 1 — Variables, affectation, instruction conditionnelle",
+  palier: "Partie 1 — Premiers programmes et variables",
 
   accroche: `Tu sais déjà programmer. En Scratch, tu empilais des blocs ;
     ici, tu vas écrire ces mêmes ordres au clavier. C'est tout ce qui change —

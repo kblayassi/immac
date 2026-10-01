@@ -9,7 +9,7 @@ export default {
   numero: 8,
   titre: "Fonctions à plusieurs arguments",
   sousTitre: "Lire, modifier et compléter du code",
-  palier: "Partie 3 — Fonctions et aléatoire",
+  palier: "Partie 4 — Les fonctions",
 
   accroche: `Une fonction peut recevoir autant d'informations qu'on veut. C'est ce qui
     permet d'écrire de vrais outils mathématiques — et de comprendre le code que
@@ -22,8 +22,8 @@ export default {
     "compléter et modifier un programme existant",
   ],
 
-  motDeLaFin: `Tes fonctions savent tout faire. À la séance 9, on leur ajoute la
-    dernière pièce du programme : le hasard.`,
+  motDeLaFin: `Tes fonctions savent tout faire : la partie 4 est bouclée. À la séance 9,
+    on leur ajoute la dernière pièce du programme : le hasard.`,
 
   parties: [
 

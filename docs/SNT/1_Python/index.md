@@ -30,17 +30,24 @@ avant d'ouvrir la suivante**.
 
 ## Les séances
 
+Le parcours est découpé en **cinq parties**. Chacune se termine par un **bilan** :
+une fiche qui résume ce qu'il faut savoir faire, exemples à l'appui.
+
 | # | Séance | Ce que tu apprends |
 |---|--------|--------------------|
+| | **Partie 1 — Premiers programmes et variables** | |
 | 1 | De Scratch à Python | premier programme, `print()`, séquence, lire une erreur |
 | 2 | Variables, types et calculs | affectation, entiers, flottants, chaînes, `//` et `%` |
+| | **Partie 2 — Dialoguer et décider** | |
 | 3 | Dialoguer et comparer | `input()`, conversions, booléens, `and` / `or` / `not` |
 | 4 | L'instruction conditionnelle | `if`, `elif`, `else`, indentation |
+| | **Partie 3 — Boucle bornée et boucle non bornée** | |
 | 5 | La boucle bornée `for` | `range`, répéter, accumuler |
 | 6 | La boucle non bornée `while` | condition d'arrêt, seuil, balayage |
+| | **Partie 4 — Les fonctions** | |
 | 7 | Écrire une fonction | `def`, paramètre, `return` |
 | 8 | Fonctions à plusieurs arguments | lire, modifier et compléter une fonction |
+| | **Partie 5 — Hasard, projet et boîte à outils** | |
 | 9 | Hasard et simulation | `random`, expérience aléatoire, loi des grands nombres |
 | 10 | Projet & bilan | trois sujets au choix, trois niveaux |
 | 11 | Bonus | les algorithmes du programme de maths, rassemblés |
-

@@ -13,7 +13,7 @@ export default {
   numero: 9,
   titre: "Hasard et simulation",
   sousTitre: "Faire des expériences par milliers",
-  palier: "Partie 3 — Fonctions et aléatoire",
+  palier: "Partie 5 — Hasard, projet et boîte à outils",
 
   accroche: `Lancer un dé mille fois à la main prend une heure. Ton programme le fera
     en un centième de seconde — et te montrera quelque chose que personne n'avait pu
@@ -814,7 +814,7 @@ Match nul : 0.1663</code></pre>
             ],
             sortieNonVide: true,
           },
-          felicitation: "Séance 9 terminée, partie 3 bouclée. Tu as vu tout le Python de la Seconde. 🏁",
+          felicitation: "Séance 9 terminée. Tu as vu tout le Python de la Seconde. 🏁",
           indices: [
             "Structure : <code>def experience(): …</code>, un compteur, une boucle, une division.",
             "Exemple : au moins un 6 en trois lancers — la probabilité théorique vaut 1 − (5/6)³ ≈ 0,42.",

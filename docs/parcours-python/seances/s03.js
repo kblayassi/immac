@@ -9,7 +9,7 @@ export default {
   numero: 3,
   titre: "Dialoguer et comparer",
   sousTitre: "Poser des questions, obtenir des réponses vraies ou fausses",
-  palier: "Partie 1 — Variables, affectation, instruction conditionnelle",
+  palier: "Partie 2 — Dialoguer et décider",
 
   accroche: `Jusqu'ici tes programmes récitaient. Ils vont maintenant
     <strong>poser des questions</strong> et <strong>comparer</strong>. Deux nouveautés

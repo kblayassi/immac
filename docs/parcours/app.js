@@ -258,7 +258,16 @@ async function validerCode(etape, code, lancerLeCode) {
 
 function route() {
   const h = location.hash.replace(/^#\/?/, "").trim();
-  return h && CATALOGUE[h] ? { vue: "seance", id: h } : { vue: "hub" };
+  if (h && CATALOGUE[h]) return { vue: "seance", id: h };
+  const bilan = h.match(/^bilan-(.+)$/);
+  if (bilan && palierAvecBilan(bilan[1])) return { vue: "bilan", id: bilan[1] };
+  return { vue: "hub" };
+}
+
+/* Une partie peut se clore par un bilan : sa clé `bilan` dans le manifeste en
+   donne le résumé, la fiche elle-même vit dans seances/bilans.js. */
+function palierAvecBilan(id) {
+  return PALIERS.find((p) => p.id === id && p.bilan) || null;
 }
 
 function aller(hash) {
@@ -323,8 +332,19 @@ function rendreHub() {
       carte.append(numero, bloc, etatTexte);
       grille.appendChild(carte);
     }
+    if (palier.bilan) grille.appendChild(carteBilan(palier));
     vue.appendChild(grille);
   }
+}
+
+function carteBilan(palier) {
+  const carte = elem("a", "carte-seance carte-bilan");
+  carte.href = `#/bilan-${palier.id}`;
+  const bloc = elem("div");
+  bloc.appendChild(elem("div", "titre", "Bilan — ce qu'il faut savoir faire"));
+  bloc.appendChild(elem("div", "detail", palier.bilan));
+  carte.append(elem("div", "numero", "✎"), bloc, elem("div", "etat", "fiche"));
+  return carte;
 }
 
 /* Un seul bouton de retour, dont la destination suit la vue : on ne se retrouve
@@ -423,14 +443,108 @@ async function rendreSeance(id) {
   const final = elem("div", "final");
   final.id = "bloc-final";
   final.hidden = true;
+  const palier = PALIERS.find((p) => p.bilan && p.seances.at(-1) === id);
   final.innerHTML = `
     <h2>Séance ${def.numero} terminée 🎉</h2>
     <p>${def.motDeLaFin || "Tu as bouclé toutes les étapes de cette séance."}</p>
+    ${palier ? `<a class="bouton" href="#/bilan-${palier.id}">Faire le bilan de la partie</a>` : ""}
     <a class="bouton" href="#/">Retour aux séances</a>`;
   vue.appendChild(final);
 
   rafraichirVerrous();
   if (LANGAGE !== "web") Python.prechauffer();
+}
+
+/* ====================================================================== Bilan */
+
+let Bilans = null;
+
+async function rendreBilan(idPalier) {
+  const vue = $("#vue");
+  vue.textContent = "";
+  const palier = palierAvecBilan(idPalier);
+
+  let fiche;
+  try {
+    Bilans ||= (await import(new URL("seances/bilans.js", PAGE).href)).default;
+    fiche = Bilans[idPalier];
+  } catch { /* fichier absent : traité comme une fiche absente */ }
+  if (!fiche) {
+    vue.appendChild(elem("p", null, "Ce bilan n'est pas encore disponible."));
+    return;
+  }
+
+  majRetour("seance");
+  const partie = palier.titre.split(" — ")[0];
+  $("#barre-titre").innerHTML = `Bilan — ${echapper(partie)}<small>${echapper(fiche.titre)}</small>`;
+
+  // La jauge suit la partie : on voit d'un coup d'œil si elle est bouclée.
+  const total = palier.seances.reduce((s, id) => s + totalEtapes(id), 0);
+  const faites = palier.seances.reduce((s, id) => s + Math.min(nbReussies(id), totalEtapes(id)), 0);
+  majJauge($("#jauge-barre"), faites, total);
+  $("#compteur-barre").textContent = total ? `${Math.round((faites / total) * 100)} %` : "";
+
+  const chapeau = elem("div", "chapeau");
+  chapeau.innerHTML = `
+    <div class="sur-titre">${echapper(palier.titre)}</div>
+    <h1>Bilan : ${echapper(fiche.titre)}</h1>
+    <p class="accroche">${fiche.accroche}</p>`;
+  vue.appendChild(chapeau);
+
+  for (const section of fiche.sections) {
+    const bloc = elem("section", "bilan-section");
+
+    const entete = elem("div", "bilan-entete");
+    entete.appendChild(elem("h2", null, section.titre));
+    for (const id of section.seances || []) {
+      if (!CATALOGUE[id]) continue;
+      const lien = elem("a", "bilan-revoir", `Revoir la séance ${CATALOGUE[id].numero} →`);
+      lien.href = `#/${id}`;
+      entete.appendChild(lien);
+    }
+    bloc.appendChild(entete);
+
+    bloc.appendChild(elem("div", "bilan-chapo", "Je sais :"));
+    const liste = elem("ul", "bilan-savoirs");
+    for (const savoir of section.savoirs) {
+      const li = elem("li");
+      const texte = elem("div", "bilan-sait");
+      texte.innerHTML = savoir.sait;
+      li.appendChild(texte);
+      if (savoir.code) {
+        const pre = elem("pre", "bloc-code");
+        pre.appendChild(elem("code", null, savoir.code));
+        li.appendChild(pre);
+      }
+      liste.appendChild(li);
+    }
+    bloc.appendChild(liste);
+
+    if (section.pieges) {
+      const encadre = elem("div", "encadre");
+      encadre.dataset.ton = "attention";
+      encadre.innerHTML = `<span class="chapo">Les pièges à éviter</span>${section.pieges}`;
+      bloc.appendChild(encadre);
+    }
+    vue.appendChild(bloc);
+  }
+
+  if (fiche.suite) {
+    const suite = elem("div", "encadre");
+    suite.dataset.ton = "astuce";
+    suite.innerHTML = fiche.suite;
+    vue.appendChild(suite);
+  }
+
+  // La partie suivante, s'il y en a une : le bilan est un point de passage.
+  const rang = PALIERS.indexOf(palier);
+  const prochaine = PALIERS.slice(rang + 1).flatMap((p) => p.seances).find((id) => CATALOGUE[id]?.disponible);
+  const pied = elem("div", "bilan-pied");
+  pied.innerHTML = prochaine
+    ? `<a class="bouton" href="#/${prochaine}">Séance ${CATALOGUE[prochaine].numero} — ${echapper(CATALOGUE[prochaine].titre)} →</a>
+       <a class="bouton fantome" href="#/">Toutes les séances</a>`
+    : `<a class="bouton" href="#/">Toutes les séances</a>`;
+  vue.appendChild(pied);
 }
 
 /* -------------------------------------------------------- Verrous et jauges */
@@ -1473,6 +1587,7 @@ function interdireLaCopie() {
 function rendre() {
   const r = route();
   if (r.vue === "seance") rendreSeance(r.id);
+  else if (r.vue === "bilan") { seanceCourante = null; rendreBilan(r.id); }
   else { seanceCourante = null; rendreHub(); }
   window.scrollTo({ top: 0 });
 }

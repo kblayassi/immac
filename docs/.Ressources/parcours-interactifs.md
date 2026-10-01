@@ -143,6 +143,46 @@ export const CATALOGUE = {               // fiche d'identité de chaque séance
     `disponible: false` grise la carte et la rend inerte : c'est ainsi qu'on annonce une
     séance à venir.
 
+### Les bilans de fin de partie
+
+Une partie peut se clore par un **bilan** : une fiche « ce qu'il faut savoir faire »,
+sans exercice ni correction. On l'active en ajoutant au palier une clé `bilan`, dont la
+valeur est le résumé affiché sur la carte :
+
+```js
+{ id: "p1", titre: "Partie 1 — Premiers programmes et variables",
+  seances: ["s01", "s02"],
+  bilan: "Afficher, calculer, ranger une valeur dans une variable." },
+```
+
+La fiche vit dans `seances/bilans.js`, sous la même clé (`p1`) :
+
+```js
+export default {
+  p1: {
+    titre: "Premiers programmes et variables",
+    accroche: `Ce que l'élève doit savoir faire avant la partie suivante.`,
+    sections: [
+      { titre: "Afficher et calculer",
+        seances: ["s01"],                       // → lien « Revoir la séance 1 »
+        savoirs: [
+          { sait: "afficher un texte",          // HTML, à l'infinitif après « Je sais : »
+            code: `print("Bonjour")` },         // texte brut, échappé par le moteur
+          { sait: "lire un message d'erreur" }, // code facultatif
+        ],
+        pieges: `<ul><li>…</li></ul>` },        // facultatif : encadré « Les pièges à éviter »
+    ],
+    suite: `Le mot de la fin.`,                 // facultatif : encadré vert
+  },
+};
+```
+
+Le bilan s'ouvre à l'adresse `#/bilan-p1`. Il apparaît à trois endroits : une carte
+pointillée en fin de partie sur l'accueil, un bouton « Faire le bilan de la partie » à la
+fin de la **dernière séance** de la partie, et un lien vers la séance suivante en bas de
+la fiche. Il n'est jamais verrouillé : l'élève peut le relire pour réviser.
+Le fichier ne commence pas par `s` : le banc de test et le hook l'ignorent.
+
 ---
 
 ## 4 · Anatomie d'une séance

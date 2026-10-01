@@ -8,7 +8,7 @@ export default {
   numero: 2,
   titre: "Variables, types et calculs",
   sousTitre: "Faire retenir des choses à l'ordinateur",
-  palier: "Partie 1 — Variables, affectation, instruction conditionnelle",
+  palier: "Partie 1 — Premiers programmes et variables",
 
   accroche: `En Scratch, tu avais des variables : <em>score</em>, <em>vie</em>,
     <em>chrono</em>. En Python, c'est la même idée en beaucoup plus souple — et c'est
@@ -21,8 +21,8 @@ export default {
     "utiliser la division entière <code>//</code> et le reste <code>%</code>",
   ],
 
-  motDeLaFin: `Tes programmes savent maintenant mémoriser. À la séance 3, ils vont
-    apprendre à te poser des questions et à comparer des valeurs.`,
+  motDeLaFin: `Tes programmes savent maintenant mémoriser, et la partie 1 est bouclée.
+    À la séance 3, ils vont apprendre à te poser des questions et à comparer des valeurs.`,
 
   parties: [
 

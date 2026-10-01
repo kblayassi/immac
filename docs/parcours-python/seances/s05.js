@@ -9,7 +9,7 @@ export default {
   numero: 5,
   titre: "La boucle bornée for",
   sousTitre: "Répéter sans se répéter",
-  palier: "Partie 2 — Boucle bornée et boucle non bornée",
+  palier: "Partie 3 — Boucle bornée et boucle non bornée",
 
   accroche: `Écrire dix fois la même ligne, c'est perdre son temps — et le meilleur
     moyen de se tromper. La boucle <code>for</code> dit à Python : « refais ça

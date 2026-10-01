@@ -10,7 +10,7 @@ export default {
   numero: 11,
   titre: "La boîte à outils des maths",
   sousTitre: "Tous les algorithmes exigibles, rassemblés",
-  palier: "Partie 4 — Pour finir",
+  palier: "Partie 5 — Hasard, projet et boîte à outils",
 
   accroche: `Le programme de mathématiques de Seconde nomme une dizaine d'algorithmes
     que tu dois savoir lire, compléter ou écrire. Tu les as déjà tous croisés dans le
