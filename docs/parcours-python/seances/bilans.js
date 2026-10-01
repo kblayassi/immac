@@ -31,8 +31,9 @@ export default {
         savoirs: [
           { sait: "afficher un texte, écrit <strong>entre guillemets</strong>",
             code: `print("Bonjour")` },
-          { sait: "faire calculer Python avec <code>+</code> <code>-</code> <code>*</code> <code>/</code>",
-            code: `print(17 * 24)` },
+          { sait: `faire calculer Python avec <code>+</code> <code>-</code> <code>*</code> <code>/</code>,
+              et la puissance <code>**</code>`,
+            code: `print(17 * 24)\nprint(2 ** 10)      # 2 puissance 10, soit 1024` },
           { sait: "mélanger texte et calcul dans un même <code>print</code>, en les séparant par des virgules",
             code: `print("Total :", 12 + 5)` },
           { sait: "écrire plusieurs instructions, une par ligne : elles s'exécutent <strong>de haut en bas</strong>" },
