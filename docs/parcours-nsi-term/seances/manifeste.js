@@ -21,26 +21,32 @@ export const PARCOURS = {
   retour: { href: "../NSI_Terminale/1_Listes_piles_et_files/Parcours_interactif/", libelle: "Retour au site" },
 };
 
+/* Chaque partie se clôt par un bilan : `bilan` est le résumé affiché sur
+   l'accueil, la fiche elle-même vit dans bilans.js. */
 export const PALIERS = [
   {
     id: "specifier",
     titre: "Partie 1 — Spécifier avant de programmer",
     seances: ["s01", "s02"],
+    bilan: "Interface, implémentation, et le type abstrait liste.",
   },
   {
     id: "lineaires",
     titre: "Partie 2 — Les deux structures linéaires",
     seances: ["s03", "s04"],
+    bilan: "Piles et files : opérations, parcours, choix.",
   },
   {
     id: "implementations",
     titre: "Partie 3 — Plusieurs implémentations",
     seances: ["s05", "s06"],
+    bilan: "Mesurer un coût, file circulaire, listes chaînées.",
   },
   {
     id: "choisir",
     titre: "Partie 4 — Choisir et appliquer",
     seances: ["s07", "s08"],
+    bilan: "Dictionnaire, choix d'une structure, exercices de type bac.",
   },
 ];
 

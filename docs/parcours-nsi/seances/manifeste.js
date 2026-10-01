@@ -19,26 +19,32 @@ export const PARCOURS = {
   retour: { href: "../NSI/1_Premiers_pas_en_Python/Parcours_interactif/", libelle: "Retour au site" },
 };
 
+/* Chaque partie se clôt par un bilan : `bilan` est le résumé affiché sur
+   l'accueil, la fiche elle-même vit dans bilans.js. */
 export const PALIERS = [
   {
     id: "donnees",
     titre: "Partie 1 — Manipuler des données",
     seances: ["s01", "s02", "s03"],
+    bilan: "Variables, types et conversions, affichage.",
   },
   {
     id: "decider",
     titre: "Partie 2 — Prendre des décisions",
     seances: ["s04", "s05", "s06", "s07"],
+    bilan: "Comparer, puis choisir entre un, deux ou plusieurs cas.",
   },
   {
     id: "repeter",
     titre: "Partie 3 — Répéter des instructions",
     seances: ["s08", "s09", "s10"],
+    bilan: "while, for, boucles imbriquées, break et continue.",
   },
   {
     id: "structurer",
     titre: "Partie 4 — Structurer un programme",
     seances: ["s11", "s12", "s13"],
+    bilan: "Définir, renvoyer, et savoir où vit une variable.",
   },
 ];
 

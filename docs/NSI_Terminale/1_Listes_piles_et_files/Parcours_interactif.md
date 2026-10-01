@@ -34,6 +34,9 @@ petites étapes qui se valident **une par une**, avec correction automatique et 
 
 ## Les huit séances
 
+Les séances sont regroupées en **quatre parties**. Chacune se termine par un
+**bilan** : une fiche qui résume ce qu'il faut savoir faire, exemples à l'appui.
+
 | # | Séance | Ce que tu travailles |
 |---|--------|----------------------|
 | | **Partie 1 — Spécifier avant de programmer** | |

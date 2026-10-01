@@ -33,6 +33,9 @@ valident une par une, avec le cours, les exercices et des défis supplémentaire
 
 ## Les séquences
 
+Les séquences sont regroupées en **quatre parties**. Chacune se termine par un
+**bilan** : une fiche qui résume ce qu'il faut savoir faire, exemples à l'appui.
+
 | # | Séquence | Ce que tu travailles |
 |---|----------|----------------------|
 | | **Partie 1 — Manipuler des données** | |
