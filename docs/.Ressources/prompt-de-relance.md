@@ -50,6 +50,10 @@ Ce document sert à **reprendre le travail sur le site** après une interruption
     des pages statiques hors gabarit MkDocs. Tout est dans
     [parcours-interactifs.md](parcours-interactifs.md).
 
+!!! info "Les cours de SNT ont aussi leur fiche"
+    Chapitres de SNT (thème Internet et suivants) : consignes, structure d'un chapitre, outils
+    interactifs, diaporamas HTML et état d'avancement dans [CoursSNT.md](CoursSNT.md).
+
 !!! warning "Les dossiers commençant par un point ne sont pas publiés"
     C'est ce qui permet de cacher des fichiers tout en les utilisant au build :
 
