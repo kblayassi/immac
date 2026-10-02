@@ -90,9 +90,17 @@ const enAttente = (copie) => {
    Le programme d'un élève tourne ici comme il tournait chez lui : même worker,
    même version de Python. Les input() sont alimentés par les `saisies` du
    critère — personne n'est là pour taper au clavier. Une fois épuisées, on
-   répond par du vide plutôt que de bloquer la correction du paquet entier. */
+   répond par du vide plutôt que de bloquer la correction du paquet entier.
+
+   Un programme qui boucle sans fin est arrêté au bout de 15 s en tuant le
+   worker : l'exécution suivante doit alors recharger Pyodide, et ce chargement
+   se décomptait de SES 15 s. Pour peu qu'il soit lent, elle échouait à son tour,
+   tuait le worker, et ainsi de suite : une seule boucle infinie (q13, 2 octobre
+   2026) laissait le reste du paquet sans note. On attend donc que l'interpréteur
+   soit prêt avant de lancer le chronomètre ; sur un worker chaud, c'est immédiat. */
 
 async function executer(code, { tests, saisies }) {
+  await Python.prechauffer();
   const file = [...(saisies || [])];
   return executerAvecSaisies(Python, code, {
     tests,
@@ -425,6 +433,18 @@ function bloc(copie, q) {
       ? `Dans la version passée par l'élève, cette question était « ${ecart.copie} » : ` +
         `sa réponse ne correspond pas aux critères ci-dessous.`
       : `Cette question n'existait pas dans la version passée par l'élève.`));
+  }
+
+  /* Les collages faits dans cet exercice, d'après le journal : quand et combien
+     de caractères. Le texte collé n'est pas enregistré — c'est dans le code
+     ci-dessous qu'on le cherche. Au-delà de 40 caractères, en rouge. */
+  const colles = (copie.rendu.journal || []).filter((e) => e.e === "colle" && e.q === q.id && e.n > 0);
+  if (colles.length) {
+    const ligneColles = elem("p", "collages",
+      `Collage${colles.length > 1 ? "s" : ""} : ` +
+      colles.map((e) => `${e.n} car. à ${duree(e.t)}`).join(" · "));
+    if (colles.some((e) => e.n > 40)) ligneColles.dataset.gros = "1";
+    boite.appendChild(ligneColles);
   }
 
   /* La réponse de l'élève, telle quelle. C'est elle qu'on corrige — les critères

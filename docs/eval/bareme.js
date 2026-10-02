@@ -37,6 +37,8 @@
  *   sortieStricte   true pour exiger l'espacement exact (figures, colonnes)
  */
 
+import { auPasSuperieur } from "./copie-corrigee.js";
+import { duree } from "./rendu.js";
 import { normaliser, comparable, motifIndulgent, sansAccents, sansCommentaires,
          codeCorrespond,
          SORTIE_MISE_EN_FORME } from "../parcours/comparaison.js";
@@ -283,7 +285,7 @@ function surVingt(total, max, bareme) {
   if (!max) return { noteSur, note: 0 };
   const pas = bareme.arrondi ?? 0.25;
   const brute = (total / max) * noteSur;
-  return { noteSur, note: Math.round(brute / pas) * pas };
+  return { noteSur, note: auPasSuperieur(brute, pas) };
 }
 
 /* ----------------------------------------------------------------- Alertes
@@ -343,11 +345,15 @@ export function alertes(rendu, intact) {
     });
   }
 
+  /* On dit où : un collage de 135 caractères dans l'épargne ne se lit pas comme
+     un nom de variable recopié. Le texte collé, lui, n'est pas enregistré. */
   const colles = journal.filter((e) => e.e === "colle" && (e.n || 0) > 40);
   if (colles.length) {
+    const titres = Object.fromEntries((rendu.evaluation?.questions || []).map((q) => [q.id, q.titre]));
+    const ou = colles.map((e) => `« ${titres[e.q] || e.q} » (${e.n} car., à ${duree(e.t)})`);
     liste.push({
       gravite: "haute",
-      texte: `${colles.length} collage(s) de plus de 40 caractères.`,
+      texte: `${colles.length} collage(s) de plus de 40 caractères : ${ou.join(", ")}.`,
     });
   }
 

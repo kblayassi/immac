@@ -379,6 +379,15 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
   font-size: .86rem; font-weight: 600;
 }
 
+/* Les collages notés dans le journal pour cet exercice. */
+.collages {
+  margin: 0 0 .7em; padding: .4em .8em;
+  border-radius: var(--rayon-petit);
+  background: var(--orange-pale);
+  font-size: .86rem;
+}
+.collages[data-gros="1"] { background: var(--rouge-pale); color: var(--rouge); font-weight: 600; }
+
 /* L'éditeur de la correction : celui des élèves, avec l'onglet qui prévient
    quand le code affiché n'est plus celui qui a été remis. */
 .atelier-correction { margin: 0 0 .8em; }

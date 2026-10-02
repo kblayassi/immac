@@ -86,12 +86,19 @@ export function noteComplete(retouches, note) {
   return posee(retouches?.note) || questionsANoter(retouches, note).length === 0;
 }
 
+/* L'arrondi se fait au pas SUPÉRIEUR (décision du 2 octobre 2026) : 12,1 donne
+   12,25. La marge absorbe les erreurs de virgule flottante — sans elle, un 12
+   calculé 12,000000001 monterait à 12,25. */
+export function auPasSuperieur(brute, pas) {
+  return Math.ceil(brute / pas - 1e-9) * pas;
+}
+
 /* La note que donne le barème, une fois les points de chaque question retenus. */
 export function noteCalculee(retouches, note, bareme) {
   if (!note.max) return 0;
   const pas = bareme.arrondi ?? 0.25;
   const brute = (totalRetenu(retouches, note) / note.max) * (bareme.noteSur ?? note.max);
-  return Math.round(brute / pas) * pas;
+  return auPasSuperieur(brute, pas);
 }
 
 /* …et celle qui compte. Additionner des points ne fait pas toujours une note :
