@@ -40,6 +40,10 @@ elle ouvre n'importe quel sujet, épreuves désactivées comprises, sans
 chronomètre, et libère un poste d'une évaluation déjà rendue. Ce sont des
 gestes de professeur.
 
+En SNT, thème Internet (chapitres 1 et 2), il retire les corrections d'exercices
+comme en NSI, mais laisse les « À retenir ». Partout, il retire les diaporamas de
+cours (`diaporama*.html`) : leur lien n'apparaît qu'en version prof.
+
 Le choix de la version se lit dans `extra.version` du fichier de configuration.
 """
 
@@ -100,7 +104,7 @@ def _contenu_de_cours(lignes, debut, fin, indent_cible):
     return garde
 
 
-def _epurer(markdown):
+def _epurer(markdown, retenir=True):
     lignes = markdown.split('\n')
     sortie = []
     i = 0
@@ -118,7 +122,7 @@ def _epurer(markdown):
             retires += 1
             continue
 
-        m = DEBUT_RETENIR.match(ligne)
+        m = DEBUT_RETENIR.match(ligne) if retenir else None
         if m:
             indent = m.group('indent')
             i = _fin_du_bloc(lignes, i, indent)
@@ -129,7 +133,7 @@ def _epurer(markdown):
         # Section « ## À retenir 📌 » : seule la synthèse qui ouvre la section est
         # remplacée. Ce qui suit — une transition, un bloc de crédits — ne la
         # concerne pas et reste en place.
-        if TITRE_RETENIR.match(ligne):
+        if retenir and TITRE_RETENIR.match(ligne):
             sortie.append(ligne)
             i += 1
             while i < n and not lignes[i].strip():
@@ -185,6 +189,10 @@ def _retirer_div(html, ouverture):
 # de première : ajouter un niveau au site ne doit pas rouvrir les corrections.
 SECTIONS_NSI = ('NSI/', 'NSI_Terminale/')
 
+# SNT, thème Internet : les corrections d'exercices disparaissent comme en NSI,
+# mais les « À retenir » restent — ils ne sont pas construits en classe.
+SECTIONS_CORRECTIONS = ('SNT/1_A_la_decouverte_d_Internet/', 'SNT/2_Plongee_au_coeur_d_Internet/')
+
 
 # ---------------------------------------------------------------------------
 # Pages « Documents », version prof : tout est distribué
@@ -232,6 +240,8 @@ def on_page_markdown(markdown, page, config, files):
         return A_VENIR.sub('*À venir*', markdown) if version == 'eleve' else markdown
     if version != 'eleve':
         return markdown
+    if page.file.src_uri.startswith(SECTIONS_CORRECTIONS):
+        return _epurer(markdown, retenir=False)[0]
     if not page.file.src_uri.startswith(SECTIONS_NSI):
         return markdown
     epure, _ = _epurer(markdown)
@@ -345,6 +355,10 @@ def on_post_build(config):
     racine = Path(config['site_dir'])
     for page_prof in PAGES_PROF:
         (racine / page_prof).unlink(missing_ok=True)
+    # Les diaporamas de cours ne servent qu'au professeur : leur lien n'existe
+    # qu'en version prof, et le fichier lui-même n'est pas publié côté élève.
+    for diaporama in racine.rglob('diaporama*.html'):
+        diaporama.unlink()
     for dossier in sorted(racine.glob('parcours-*/seances')):
       for fichier in sorted(dossier.glob('s*.js')):
         source = fichier.read_text(encoding='utf-8')

@@ -22,7 +22,7 @@ export const PARCOURS = {
   accroche: `Tu viens de Scratch, et c'est exactement le bon point de départ.
     Chaque séance t'explique une idée pas à pas, te fait écrire du code tout de suite,
     et vérifie ton travail à ta place. Ta progression est enregistrée automatiquement.`,
-  retour: { href: "../SNT/1_Python/", libelle: "Retour au site" },
+  retour: { href: "../SNT/0_Python/", libelle: "Retour au site" },
 };
 
 export const PALIERS = [
