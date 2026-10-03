@@ -38,6 +38,13 @@
   margin: 1.6rem 0 1.4rem;
 }
 
+.identite input,
+.identite select {
+  width: 100%; font: inherit; padding: .5em .7em;
+  border-radius: var(--rayon-petit); border: 1px solid var(--bordure);
+  background: var(--surface-2); color: var(--texte);
+}
+
 .bouton.grand { font-size: 1.02rem; padding: .72em 1.6em; }
 
 .alerte {
@@ -499,7 +506,7 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
 
 .appreciation {
   max-width: var(--colonne);
-  margin: 2rem auto 4rem;
+  margin: 0 auto 1.6rem;
   padding: 1.4rem 1.6rem;
   background: var(--violet-pale);
   border-radius: var(--rayon);
@@ -518,3 +525,111 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
 
 /* Consulter une évaluation (version prof) : les traces « déjà rendue » du poste. */
 .ligne-poste { display: flex; align-items: center; gap: 1rem; margin: .5rem 0; }
+
+/* ============================================================ Copies en ligne */
+
+/* Fin d'épreuve : l'envoi de la copie, puis le code de consultation. */
+.remise-envoi {
+  margin: 1rem 0;
+  padding: .9rem 1rem;
+  border-radius: var(--rayon-petit);
+  background: var(--surface-2);
+}
+.remise-envoi p { margin: 0 0 .5em; }
+.remise-envoi p:last-child { margin-bottom: 0; }
+.remise-envoi[data-etat="reussi"] { background: var(--vert-pale); }
+.remise-envoi[data-etat="echec"]  { background: var(--rouge-pale); }
+.remise-envoi .bouton { margin-top: .4rem; }
+.code-consultation {
+  font-family: var(--mono);
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-align: center;
+  padding: .55em .4em;
+  border: 2px dashed var(--violet-vif);
+  border-radius: var(--rayon-petit);
+  background: var(--surface);
+  user-select: all;
+  overflow-wrap: anywhere;
+}
+
+/* Correction : la connexion, le choix de l'évaluation, puis de la classe. */
+.en-ligne {
+  margin-bottom: 1.6rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  background: var(--surface);
+}
+.en-ligne-tete { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .8rem; }
+.en-ligne-tete h2 { margin: 0; font-size: 1.1rem; }
+.connexion { display: flex; flex-wrap: wrap; gap: .6rem; }
+.connexion input,
+.choix-eval select,
+#form-code input {
+  font: inherit; padding: .5em .7em;
+  border-radius: var(--rayon-petit); border: 1px solid var(--bordure);
+  background: var(--surface-2); color: var(--texte);
+}
+.connexion input { flex: 1 1 14rem; }
+.choix-eval { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .9rem; }
+.choix-eval label { font-weight: 600; }
+.choix-eval select { flex: 1 1 18rem; max-width: 100%; }
+.choix-classes { display: flex; flex-wrap: wrap; gap: .6rem; }
+.classe-bouton { display: flex; flex-direction: column; align-items: flex-start; gap: .1em; text-align: left; }
+.classe-bouton .discret { font-size: .8rem; font-weight: 500; }
+#en-ligne-aide { margin: .8rem 0 0; }
+/* Pas de barème : seuls les noms restent lisibles. */
+.table-notes.sans-bareme td:not(.cellule-nom) {
+  filter: blur(3px);
+  opacity: .5;
+  user-select: none;
+  pointer-events: none;
+}
+.alerte-bareme {
+  display: flex; align-items: center; justify-content: space-between; gap: .8rem; flex-wrap: wrap;
+  margin-bottom: 1rem; padding: .75rem 1rem;
+  border: 1px solid var(--orange); border-radius: var(--rayon-petit);
+  background: var(--orange-pale); font-weight: 600;
+}
+.depot[data-attente="1"] { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-pale); }
+.etat-bareme[data-attente="1"] { color: var(--orange); }
+
+.cellule-publiee { text-align: center; font-weight: 700; color: var(--texte-doux); }
+.cellule-publiee[data-etat="oui"]   { color: var(--vert); }
+.cellule-publiee[data-etat="non"]   { color: var(--rouge); }
+.cellule-publiee[data-etat="echec"] { color: var(--orange); }
+.zone-suppression {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  margin-top: 1.4rem; padding-top: .9rem; border-top: 1px solid var(--bordure);
+}
+
+/* Ma copie corrigée : le code, et l'enregistrement en PDF. */
+#form-code { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin: 1.3rem 0 .4rem; }
+#form-code label { flex-basis: 100%; font-weight: 600; }
+#form-code input { flex: 1 1 16rem; min-width: 0; }
+.ou-fichier { margin-top: 2rem; }
+.outils-copie {
+  display: flex; align-items: center; gap: .8rem; flex-wrap: wrap;
+  max-width: var(--colonne); margin: 0 auto 1.4rem;
+}
+
+/* L'impression — c'est elle qui fabrique le PDF : ni barre, ni boutons, ni
+   fond sombre, et une question ne se coupe pas en deux entre deux pages. */
+@media print {
+  /* Un PDF est toujours clair, même pris depuis le thème sombre. */
+  :root, :root[data-theme="dark"], :root:not([data-theme="light"]) {
+    color-scheme: light;
+    --violet-pale: #efeaf9; --orange-pale: #ffe9e2; --vert-pale: #e3f6ee;
+    --rouge-pale: #fdeaea; --violet-vif: #6f4fc0; --vert: #12855c;
+    --rouge: #c62828; --or: #b8860b;
+    --fond: #ffffff; --surface: #ffffff; --surface-2: #f0eef7; --bordure: #e0dced;
+    --texte: #1d1a26; --texte-doux: #625d73; --ombre: none; --ombre-forte: none;
+  }
+  .barre, .toast, .outils-copie { display: none !important; }
+  html, body { background: #fff !important; }
+  .page { padding-top: 0; }
+  .copie-question, .appreciation, .copie-entete { break-inside: avoid; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

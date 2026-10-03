@@ -26,6 +26,32 @@
 
 <main class="page large">
 
+  <!-- Les copies déposées en ligne par la page d'épreuve (Supabase). La page
+       elle-même ne contient rien : il faut se connecter pour lire quoi que ce
+       soit, et la base refuse tout compte qui n'est pas inscrit comme correcteur. -->
+  <section class="en-ligne" id="en-ligne">
+    <div class="en-ligne-tete">
+      <h2>Copies en ligne</h2>
+      <span class="barre-espace"></span>
+      <span id="en-ligne-qui" class="discret"></span>
+      <button class="bouton fantome petit" id="btn-actualiser" type="button" hidden>Actualiser</button>
+      <button class="bouton fantome petit" id="btn-deconnexion" type="button" hidden>Se déconnecter</button>
+    </div>
+    <form id="form-connexion" class="connexion" hidden>
+      <input type="email" id="champ-email" placeholder="Adresse e-mail" autocomplete="username" required>
+      <input type="password" id="champ-mdp" placeholder="Mot de passe" autocomplete="current-password" required>
+      <button class="bouton" type="submit">Se connecter</button>
+    </form>
+    <div id="navigation-copies" hidden>
+      <div class="choix-eval">
+        <label for="choix-eval">Évaluation</label>
+        <select id="choix-eval"></select>
+      </div>
+      <div id="choix-classes" class="choix-classes"></div>
+      <p class="discret" id="en-ligne-aide"></p>
+    </div>
+  </section>
+
   <!-- Cette page ne contient aucun barème : elle attend qu'on lui en donne un.
        C'est pourquoi elle peut être publiée avec le reste du site sans rien
        livrer des attentes d'une évaluation. -->
@@ -50,8 +76,8 @@
   </div>
 
   <p id="vide" class="discret vide">
-    Rien à corriger pour l'instant. Les copies restent dans ce navigateur :
-    elles ne sont envoyées nulle part.
+    Rien à corriger pour l'instant. Choisis une classe dans les copies en ligne,
+    ou dépose des fichiers de copies. Le barème, lui, reste dans ce navigateur.
   </p>
 
   <div id="table"></div>

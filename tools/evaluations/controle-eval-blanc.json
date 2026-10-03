@@ -5,69 +5,119 @@
     "Les questions rédigées ne sont jamais notées automatiquement : leurs points",
     "sont toujours 0 ici, et c'est l'enseignant qui les met en corrigeant."
   ],
-
   "cas": [
-
     {
       "nom": "copie parfaite",
-      "attendu": 12,
+      "attendu": 15,
       "reponses": {
-        "q1": { "code": "print(\"Bonjour\")\n" },
-        "q2": { "code": "somme = 0\nfor i in range(1, 11):\n    somme = somme + i\nprint(somme)\n" },
-        "q3": { "choix": 2 },
-        "q4": { "texte": "L'indentation délimite le bloc d'instructions à répéter ou à exécuter." }
+        "q1": {
+          "code": "print(\"Bonjour\")\n"
+        },
+        "q2": {
+          "code": "somme = 0\nfor i in range(1, 11):\n    somme = somme + i\nprint(somme)\n"
+        },
+        "q3": {
+          "choix": 2
+        },
+        "q5": {
+          "choix": 1
+        }
       }
     },
-
     {
       "nom": "copie blanche",
       "attendu": 0,
       "reponses": {}
     },
-
     {
       "nom": "somme écrite en dur",
-      "attendu": 9,
+      "attendu": 12,
       "reponses": {
-        "q1": { "code": "print(\"Bonjour\")\n" },
-        "q2": { "code": "print(55)\n" },
-        "q3": { "choix": 2 },
-        "q4": { "texte": "L'indentation délimite le bloc." }
+        "q1": {
+          "code": "print(\"Bonjour\")\n"
+        },
+        "q2": {
+          "code": "print(55)\n"
+        },
+        "q3": {
+          "choix": 2
+        },
+        "q5": {
+          "choix": 1
+        }
       }
     },
-
     {
       "nom": "boucle juste, affichage bavard",
-      "attendu": 10,
+      "attendu": 13,
       "reponses": {
-        "q1": { "code": "print(\"Bonjour\")\n" },
-        "q2": { "code": "somme = 0\nfor i in range(1, 11):\n    somme += i\nprint(\"La somme vaut\", somme)\n" },
-        "q3": { "choix": 2 },
-        "q4": { "texte": "Ça sert à rendre le code joli." }
+        "q1": {
+          "code": "print(\"Bonjour\")\n"
+        },
+        "q2": {
+          "code": "somme = 0\nfor i in range(1, 11):\n    somme += i\nprint(\"La somme vaut\", somme)\n"
+        },
+        "q3": {
+          "choix": 2
+        },
+        "q5": {
+          "choix": 1
+        }
       }
     },
-
     {
       "nom": "erreur de syntaxe en q1",
-      "attendu": 9,
+      "attendu": 12,
       "reponses": {
-        "q1": { "code": "print(\"Bonjour\"\n" },
-        "q2": { "code": "somme = 0\nfor i in range(1, 11):\n    somme = somme + i\nprint(somme)\n" },
-        "q3": { "choix": 2 },
-        "q4": { "texte": "Elle délimite le bloc." }
+        "q1": {
+          "code": "print(\"Bonjour\"\n"
+        },
+        "q2": {
+          "code": "somme = 0\nfor i in range(1, 11):\n    somme = somme + i\nprint(somme)\n"
+        },
+        "q3": {
+          "choix": 2
+        },
+        "q5": {
+          "choix": 1
+        }
       }
     },
-
     {
       "nom": "mauvaise réponse au QCM",
-      "attendu": 10,
+      "attendu": 13,
       "reponses": {
-        "q1": { "code": "print(\"Bonjour\")\n" },
-        "q2": { "code": "somme = 0\nfor i in range(1, 11):\n    somme = somme + i\nprint(somme)\n" },
-        "q3": { "choix": 0 },
-        "q4": { "texte": "L'indentation délimite le bloc." }
+        "q1": {
+          "code": "print(\"Bonjour\")\n"
+        },
+        "q2": {
+          "code": "somme = 0\nfor i in range(1, 11):\n    somme = somme + i\nprint(somme)\n"
+        },
+        "q3": {
+          "choix": 0
+        },
+        "q5": {
+          "choix": 1
+        }
+      }
+    },
+    {
+      "nom": "indentation : « plus joli »",
+      "attendu": 12,
+      "reponses": {
+        "q1": {
+          "code": "print(\"Bonjour\")\n"
+        },
+        "q2": {
+          "code": "somme = 0\nfor i in range(1, 11):\n    somme = somme + i\nprint(somme)\n"
+        },
+        "q3": {
+          "choix": 2
+        },
+        "q5": {
+          "choix": 0
+        }
       }
     }
-
   ]
 }

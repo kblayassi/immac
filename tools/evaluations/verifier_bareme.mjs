@@ -102,6 +102,20 @@ async function verifier(cle) {
     }
   }
 
+  /* --- un barème publié (docs/<cle>/bareme.json) : seulement pour une épreuve
+     corrigée par la page elle-même, dont le barème ne cache rien — l'évaluation
+     à blanc. Jamais pour un barème secret, et toujours identique à sa source. */
+  const baremePublie = join(RACINE, "docs", cle, "bareme.json");
+  if (existsSync(baremePublie)) {
+    if (trouver(`bareme-${cle}.json`).startsWith(PRIVE)) {
+      console.log(`  ${ROUGE}✗${NEUTRE} docs/${cle}/bareme.json PUBLIE un barème secret — supprime-le`);
+      fautes++;
+    } else if (JSON.stringify(JSON.parse(readFileSync(baremePublie, "utf8"))) !== JSON.stringify(bareme)) {
+      console.log(`  ${ROUGE}✗${NEUTRE} docs/${cle}/bareme.json diffère de bareme-${cle}.json — recopie-le`);
+      fautes++;
+    }
+  }
+
   /* --- cohérence du sujet et du barème */
   const notables = notablesDe(QUESTIONS);
   for (const q of notables) {

@@ -21,6 +21,9 @@ import { nomDeRendu, telecharger } from "../parcours/archive.js";
 import { FORMAT, sceller, duree } from "./rendu.js";
 import { ouvrir } from "./scelle.js";
 import { EVALUATIONS } from "./evaluations.js";
+import { deposerCopie } from "./supabase.js";
+import { noter } from "./bareme.js";
+import { construireCopie } from "./copie-corrigee.js";
 
 /* Comme pour les parcours : le moteur se repère à l'adresse de la PAGE qui le
    charge, pas à la sienne. Le sujet est toujours à côté de l'index.html. */
@@ -54,6 +57,21 @@ const RENDUS = "eval:rendus";
 
 /* L'évaluation à blanc sert à s'entraîner : elle se repasse à volonté. */
 const REPASSABLES = new Set(["eval-blanc"]);
+
+/* …et elle se corrige toute seule, à la remise : son barème est public
+   (docs/eval-blanc/bareme.json), et l'élève peut ainsi essayer aussi la
+   consultation de sa copie. La base n'accepte une copie corrigée par la page
+   que pour ces évaluations-là (tools/evaluations/supabase.sql). */
+const AUTOCORRIGEES = new Set(["eval-blanc"]);
+const APPRECIATION_AUTO =
+  "Correction automatique de l'évaluation à blanc : cette note n'est qu'un essai. " +
+  "Lors d'un vrai devoir, c'est ton professeur qui corrige ta copie et écrit ici son appréciation.";
+
+/* Les classes proposées à l'accueil. Un menu plutôt qu'une saisie libre : la
+   correction range les copies par classe, et « 2nde 1 », « 2ndI » et « Seconde I »
+   en feraient trois. */
+const CLASSES = ["2nd I", "2nd II", "EDS Maths 1e", "EDS Maths Terminale",
+                 "EDS NSI 1e", "EDS NSI Terminale"];
 
 function lireRendus() {
   try {
@@ -366,8 +384,12 @@ function rendreAccueil() {
             Reste sur le même ordinateur.</li>
         <li>Rien n'est corrigé pendant l'épreuve : tu peux exécuter tes programmes,
             mais la page ne dira jamais si une réponse est juste.</li>
-        <li>À la fin du temps, le fichier de ton devoir est téléchargé
-            automatiquement. C'est lui que tu remets.</li>
+        <li>À la fin, ton devoir est envoyé directement à ton professeur, et la
+            page te donne un <strong>code de consultation</strong> : note-le, il te
+            servira à lire ta copie corrigée. Si l'envoi échoue, un fichier est
+            téléchargé à la place : c'est lui que tu remets.</li>
+        <li>Ce qui est envoyé (nom, prénom, classe, réponses) est conservé sur un
+            serveur situé en Europe, et effacé au bout de cinq mois.</li>
         <li>La page note l'heure de tes actions, tes exécutions, tes collages et
             tes changements d'onglet. Tout figure en clair dans le fichier rendu.</li>
       </ul>
@@ -380,7 +402,10 @@ function rendreAccueil() {
     <div class="champ"><label for="champ-prenom">Prénom</label>
       <input id="champ-prenom" type="text" autocomplete="off" placeholder="Ada"></div>
     <div class="champ"><label for="champ-classe">Classe</label>
-      <input id="champ-classe" type="text" autocomplete="off" placeholder="1re NSI"></div>`;
+      <select id="champ-classe">
+        <option value="">— Choisis ta classe —</option>
+        ${CLASSES.map((c) => `<option>${c}</option>`).join("")}
+      </select></div>`;
   carte.appendChild(identite);
 
   const btn = elem("button", "bouton grand", "Commencer l'évaluation");
@@ -393,7 +418,9 @@ function rendreAccueil() {
   for (const champ of ["nom", "prenom", "classe"]) {
     const input = $(`#champ-${champ}`);
     input.value = etat.eleve?.[champ] || "";
-    input.addEventListener("input", () => {
+    // Une classe retenue d'avant le menu (saisie libre) n'est pas dans la liste.
+    if (input.value !== (etat.eleve?.[champ] || "")) etat.eleve = { ...etat.eleve, [champ]: "" };
+    input.addEventListener(input.tagName === "SELECT" ? "change" : "input", () => {
       etat.eleve = { ...etat.eleve, [champ]: input.value.slice(0, 40) };
       ecrireEtat();
     });
@@ -406,6 +433,12 @@ function rendreAccueil() {
       alerte.textContent = "Indique ton nom et ton prénom avant de commencer.";
       alerte.hidden = false;
       $("#champ-nom").focus();
+      return;
+    }
+    if (!etat.eleve.classe) {
+      alerte.textContent = "Choisis ta classe avant de commencer.";
+      alerte.hidden = false;
+      $("#champ-classe").focus();
       return;
     }
 
@@ -723,12 +756,86 @@ async function remettre(cause) {
 
   const fichier = await construireRendu();
   ouvrirRemise(fichier, cause);
+  envoyer(fichier);
+}
 
-  /* Le téléchargement d'office : il part sans clic, donc certains navigateurs
-     peuvent le retenir. C'est précisément pourquoi la fenêtre qui suit propose
-     le bouton — l'élève n'est jamais coincé avec un devoir qu'il ne peut pas
-     sortir de la page. */
-  try { descendre(fichier); } catch { /* la fenêtre prend le relais */ }
+/* La copie part vers Supabase (./supabase.js), qui rend le code de
+   consultation. Ce code est gardé dans l'état : rouvrir la page après la remise
+   le réaffiche sans renvoyer la copie — et le serveur, de son côté, reconnaît
+   un rendu déjà reçu à son empreinte.
+
+   Si l'envoi échoue (réseau du lycée, serveur injoignable), on retombe sur
+   l'ancien chemin : le fichier est téléchargé d'office, et l'élève le remet.
+   Ce téléchargement part sans clic, donc certains navigateurs peuvent le
+   retenir : la fenêtre de remise garde le bouton pour le relancer. */
+async function envoyer(rendu) {
+  if (etat.depot?.code) { montrerEnvoi("reussi", etat.depot.code, rendu); return; }
+  montrerEnvoi("envoi", null, rendu);
+  try {
+    let corrigee = null;
+    if (AUTOCORRIGEES.has(EVALUATION.cle)) {
+      // Une correction qui échoue n'empêche pas l'envoi : la copie part brute.
+      try { corrigee = await autocorriger(rendu); } catch { corrigee = null; }
+    }
+    const code = await deposerCopie(rendu, corrigee);
+    if (typeof code !== "string" || !code) throw new Error("réponse inattendue du serveur");
+    etat.depot = { code, a: Date.now() };
+    ecrireEtat();
+    montrerEnvoi("reussi", code, rendu);
+  } catch (e) {
+    montrerEnvoi("echec", e.message, rendu);
+    if (!etat.secoursTelecharge) {
+      try { descendre(rendu); etat.secoursTelecharge = true; ecrireEtat(); }
+      catch { /* le bouton de la fenêtre prend le relais */ }
+    }
+  }
+}
+
+async function autocorriger(rendu) {
+  const rep = await fetch(new URL(`../${EVALUATION.cle}/bareme.json`, PAGE));
+  if (!rep.ok) throw new Error("barème introuvable");
+  const bareme = await rep.json();
+  // Comme la page de correction : mêmes saisies, même interpréteur.
+  const executer = async (code, { tests, saisies }) => {
+    await Python.prechauffer();
+    const file = [...(saisies || [])];
+    return executerAvecSaisies(Python, code, {
+      tests, reclamerSaisie: async () => (file.length ? file.shift() : ""), maxSaisies: 80,
+    });
+  };
+  const note = await noter(rendu, bareme, executer);
+  return construireCopie({ rendu, note, bareme, retouches: { commentaire: APPRECIATION_AUTO } });
+}
+
+function montrerEnvoi(phase, valeur, rendu) {
+  const zone = $("#remise-envoi");
+  if (!zone) return;
+  zone.dataset.etat = phase;
+  if (phase === "envoi") {
+    zone.innerHTML = AUTOCORRIGEES.has(EVALUATION.cle)
+      ? `<p>Correction automatique et envoi de ta copie…</p>`
+      : `<p>Envoi de ta copie à ton professeur…</p>`;
+  } else if (phase === "reussi") {
+    zone.innerHTML = `
+      <p>✓ Ta copie est bien arrivée chez ton professeur.</p>
+      <p>Voici ton <strong>code de consultation</strong>. Note-le : il te servira
+         à lire ta copie une fois corrigée.</p>
+      <p class="code-consultation"></p>
+      ${AUTOCORRIGEES.has(EVALUATION.cle)
+        ? `<p>Cette évaluation est corrigée automatiquement :
+             <a href="copie.html" target="_blank" rel="noopener">consulte ta copie</a>
+             dès maintenant avec ce code.</p>`
+        : ""}`;
+    zone.querySelector(".code-consultation").textContent = valeur;
+  } else {
+    zone.innerHTML = `
+      <p><strong>L'envoi a échoué</strong> (<span class="raison"></span>).</p>
+      <p>Ton devoir a été téléchargé dans le fichier <code>${nomFichier()}</code> :
+         remets-le à ton professeur, ou réessaie l'envoi.</p>
+      <button class="bouton" type="button">Réessayer l'envoi</button>`;
+    zone.querySelector(".raison").textContent = valeur || "erreur inconnue";
+    zone.querySelector("button").onclick = () => envoyer(rendu);
+  }
 }
 
 async function construireRendu() {
@@ -774,8 +881,8 @@ function ouvrirRemise(rendu, cause) {
   const dlg = $("#panneau-remise");
   $("#remise-titre").textContent = cause === "temps" ? "Temps écoulé" : "Devoir rendu";
   $("#remise-texte").innerHTML = `
-    <p>Ton devoir est clos. Le fichier <code>${nomFichier()}</code> a été
-       téléchargé — c'est lui que tu remets à ton professeur.</p>
+    <p>Ton devoir est clos.</p>
+    <div id="remise-envoi" class="remise-envoi"></div>
     <p class="discret">Temps utilisé :
        ${duree((etat.termine.a - etat.debut) / 1000)}.</p>`;
 
@@ -789,8 +896,10 @@ function ouvrirRemise(rendu, cause) {
   const sortie = $("#btn-quitter");
   if (sortie) {
     sortie.onclick = () => {
-      if (!confirm("As-tu bien récupéré ton fichier ?\n\n" +
-                   "Quitter effacera ton devoir de cet ordinateur.")) return;
+      const question = etat.depot?.code
+        ? `As-tu bien noté ton code de consultation ?\n\n${etat.depot.code}\n\n`
+        : "As-tu bien récupéré ton fichier ?\n\n";
+      if (!confirm(question + "Quitter effacera ton devoir de cet ordinateur.")) return;
       try {
         localStorage.removeItem(CLE);
         localStorage.removeItem(POINTEUR);

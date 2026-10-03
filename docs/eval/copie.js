@@ -1,15 +1,18 @@
 /* Évaluations — la copie corrigée, côté élève.
  *
- * Une page qui ne fait que lire. L'élève y dépose le fichier que son professeur
- * lui a rendu, et voit sa copie : ses réponses, ses points question par question,
- * les annotations, la note et l'appréciation.
+ * Une page qui ne fait que lire. L'élève y entre son code de consultation —
+ * la copie corrigée vient alors de Supabase (./supabase.js) — ou y dépose le
+ * fichier que son professeur lui a rendu. Il voit sa copie : ses réponses, ses
+ * points question par question, les annotations, la note et l'appréciation, et
+ * peut la télécharger en PDF (./copie-pdf.js).
  *
- * Rien n'y est modifiable, rien n'y est enregistré, rien n'en sort. Le fichier
- * ne quitte pas le navigateur — il est lu, affiché, et oublié dès qu'on ferme
- * l'onglet.
+ * Rien n'y est modifiable, rien n'y est enregistré. Un fichier déposé ne quitte
+ * pas le navigateur ; un code n'ouvre qu'une copie déjà corrigée et publiée.
  */
 
 import { estUneCopie } from "./copie-corrigee.js";
+import { lireCopie } from "./supabase.js";
+import { telechargerPdf } from "./copie-pdf.js";
 
 const $ = (sel, racine = document) => racine.querySelector(sel);
 
@@ -49,14 +52,51 @@ async function ouvrir(fichier) {
   afficher(objet);
 }
 
+/* Le code se tape comme on veut : minuscules, espaces au lieu des tirets. C'est
+   la base qui le ramène à sa forme (tools/evaluations/supabase.sql). */
+async function ouvrirParCode(code) {
+  const alerte = $("#alerte-code");
+  alerte.hidden = true;
+  const bouton = $("#form-code button");
+  bouton.disabled = true;
+  try {
+    const rep = await lireCopie(code);
+    if (rep?.etat === "corrigee" && estUneCopie(rep.copie)) { afficher(rep.copie); return; }
+    alerte.textContent = rep?.etat === "en-attente"
+      ? "Ta copie est bien arrivée, mais elle n'est pas encore corrigée. Reviens plus tard."
+      : "Ce code ne correspond à aucune copie. Vérifie-le : trois mots et un nombre.";
+  } catch (e) {
+    alerte.textContent = `Impossible de joindre le serveur (${e.message}). Réessaie dans un instant.`;
+  } finally {
+    bouton.disabled = false;
+  }
+  alerte.hidden = false;
+}
+
 function afficher(copie) {
   document.body.dataset.phase = "copie";
   const vue = $("#vue");
   vue.innerHTML = "";
 
+  /* Le PDF est fabriqué dans la page et téléchargé directement : pas de fenêtre
+     d'impression. Le premier clic charge la bibliothèque, d'où l'attente affichée. */
+  const outils = elem("div", "outils-copie");
+  const pdf = elem("button", "bouton", "Télécharger en PDF");
+  pdf.type = "button";
+  pdf.addEventListener("click", async () => {
+    pdf.disabled = true;
+    pdf.textContent = "Préparation du PDF…";
+    try { await telechargerPdf(copie); }
+    catch (e) { toast(`PDF impossible : ${e.message}`); }
+    finally { pdf.disabled = false; pdf.textContent = "Télécharger en PDF"; }
+  });
+  outils.appendChild(pdf);
+  vue.appendChild(outils);
+
+  // L'appréciation d'abord, sous la note : c'est ce que l'élève lit en premier.
   vue.appendChild(entete(copie));
-  for (const q of copie.questions) vue.appendChild(question(q));
   if (copie.appreciation?.trim()) vue.appendChild(appreciation(copie));
+  for (const q of copie.questions) vue.appendChild(question(q));
 
   window.scrollTo({ top: 0 });
 }
@@ -185,3 +225,7 @@ function initTheme() {
 
 initTheme();
 initDepot();
+$("#form-code").addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  ouvrirParCode($("#champ-code").value);
+});

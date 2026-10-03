@@ -250,26 +250,29 @@ semaines à l'avance.
 ## Le jour de l'épreuve
 
 1. Écrire le code au tableau.
-2. Les élèves vont sur **NSI Première → Évaluations → Passer une évaluation**, entrent le code,
-   leur nom, et cliquent sur **Commencer**.
-3. À la fin du temps, le fichier part tout seul. Ramasse-le comme tu ramasses des
-   copies — clé USB, ENT, dépôt réseau.
+2. Les élèves vont sur **Passer une évaluation** (`/immac/eval/passer.html`),
+   entrent le code, leur nom, leur prénom, choisissent leur classe, et cliquent
+   sur **Commencer**.
+3. À la fin, la copie part en ligne toute seule et la page donne à l'élève un
+   **code de consultation** : qu'il le note. Si l'envoi échoue, son fichier est
+   téléchargé : ramasse-le comme avant (clé USB, ENT).
 
 Un élève dont la page s'est fermée la rouvre : son devoir revient, le code n'est
 pas redemandé, le temps restant est le bon. **Le même ordinateur**, en revanche.
 
 ## Après l'épreuve
 
-1. Aller sur **/immac/prof/NSI/Evaluations/** → **Corriger les copies**.
-   En local, la version prof est une **seconde construction** :
-   `mkdocs serve -f mkdocs-prof.yml`.
-2. Déposer le barème `bareme-eval-nsi-ch1.json` et les copies, ensemble ou par
-   paquets.
+1. Aller sur **Corriger les copies** (`/immac/eval/correction.html`), bloc
+   **Copies en ligne** : se connecter, choisir l'évaluation, puis la classe.
+2. Déposer le barème `bareme-eval-nsi-ch1.json` (tant qu'il manque, la table
+   est floutée). Des copies reçues en fichier se déposent au même endroit.
 3. Corriger : les points de chaque exercice, une annotation par exercice, la note
    finale, l'appréciation. Ce qui est saisi à la main l'emporte partout.
-4. **Exporter les notes (CSV)** pour le tableur, et **Exporter les copies
-   corrigées (ZIP)** pour les élèves — un fichier par élève, à déposer sur l'ENT.
-5. Les élèves les ouvrent sur **NSI Première → Évaluations → Consulter ma copie corrigée**.
+4. **La copie est publiée d'elle-même** dès que son appréciation générale est
+   écrite et qu'aucune réponse rédigée n'attend ses points (colonne **Publiée**).
+   **Exporter les notes (CSV)** pour le tableur.
+5. Les élèves la lisent avec leur code sur **Consulter ma copie corrigée**, et
+   peuvent la télécharger en PDF.
 
 !!! warning "Le détail du barème est dans la copie corrigée"
     C'est voulu — un barème montré après coup instruit. Mais ne rends pas les

@@ -20,7 +20,7 @@ et propose des notes.
 | Exécuter du code | oui | oui |
 | Savoir si c'est juste | oui | **jamais** |
 | Accès | depuis le cours | la page **NSI Première → Évaluations** |
-| Fin | quand l'élève veut | chronomètre, puis export forcé |
+| Fin | quand l'élève veut | chronomètre, puis envoi en ligne (fichier en secours) |
 | Attentes dans la page | dans `seances/*.js` | **nulle part** — elles sont dans le barème |
 
 ## Les fichiers
@@ -35,6 +35,8 @@ docs/eval/                 le moteur, partagé par toutes les évaluations
   copie-corrigee.js        les retouches et le format de la copie rendue
   rendu.js                 le format du fichier remis, et son empreinte
   eval.css                 ce que la charte des parcours ne couvre pas
+  supabase.js              le lien avec la base des copies (clé PUBLIQUE seulement)
+  copie-pdf.js             la copie corrigée en PDF, fabriquée dans la page
 
   scelle.js                chiffrer et déchiffrer un sujet
 
@@ -43,6 +45,8 @@ docs/eval/                 le moteur, partagé par toutes les évaluations
 
 docs/<cle>/                une évaluation, publiée
   sujet.js                 PRODUIT — questions chiffrées, ne pas modifier à la main
+  bareme.json              eval-blanc SEULEMENT : copie publique du barème, pour
+                           l'autocorrection (le banc vérifie qu'il est identique)
 
 tools/evaluations/         les outils
   console.mjs              la console : une page locale pour tout gérer
@@ -57,6 +61,7 @@ tools/evaluations/         les outils
   codes.mjs                le carnet des codes
   verifier_bareme.mjs      le banc
   executeur.py             l'interpréteur du banc
+  supabase.sql             la base des copies : tables, règles d'accès, purge
   prive/                   HORS DÉPÔT (.gitignore) — tout ce qui est secret
     sujet-<cle>.mjs        le sujet en clair : la source
     bareme-<cle>.json      les critères et les points
@@ -392,14 +397,44 @@ Deux exports : le **CSV** des notes, prêt pour un tableur français, et les
 **copies corrigées** en une archive ZIP — un fichier par élève, à déposer sur
 l'ENT.
 
+## Les copies en ligne (Supabase)
+
+Depuis le 3 octobre 2026, les copies ne passent plus par des fichiers : elles
+vont dans une base Supabase (projet `cfjmmlynttpgjxqtwlhf`, région UE).
+
+| Moment | Ce qui se passe |
+|---|---|
+| Remise | La page envoie la copie (fonction `deposer_copie`) et affiche un **code de consultation** — trois mots et un nombre, que l'élève note. Si l'envoi échoue, le fichier `.json` est téléchargé comme avant, avec « Réessayer l'envoi ». |
+| Correction | `correction.html` → **Copies en ligne** : connexion, évaluation, classe. La classe se charge dans la table ; on dépose le barème comme avant. |
+| Publication | **Automatique**, copie par copie, dès qu'elle est prête : barème appliqué, plus de réponse rédigée à noter, appréciation générale écrite. Chaque retouche ultérieure republie. Colonne **Publiée** : ✓, ✗ (le survol dit ce qui manque), … (envoi), ⚠ (échec). |
+| Consultation | `copie.html` : l'élève entre son code. Il ne voit sa copie qu'une fois publiée. **Télécharger en PDF** la fabrique dans la page (pdfmake et polices chargés depuis jsDelivr au premier clic), sous le nom `NOM_Prenom_Devoir.pdf`. |
+| Effacement | Chaque nuit à 3 h 17 (pg_cron), les copies de plus de **5 mois**. |
+
+**La sécurité est dans la base**, pas dans la page : la clé du site est publique.
+Un visiteur n'a aucun droit sur les tables ; il ne peut qu'appeler
+`deposer_copie` et `lire_copie`. Seul un compte inscrit dans `correcteurs` lit,
+publie et supprime. Le **barème ne part jamais en ligne**. Le script complet,
+rejouable sans perte, est `tools/evaluations/supabase.sql` : à recoller dans
+**SQL Editor** après chaque modification. Pour ajouter un correcteur : créer le
+compte (Authentication → Users), puis la requête en fin de script.
+
+**Ce que ça ne protège pas** : n'importe qui peut déposer une copie avec la clé
+publique. Un dépôt fantaisiste se voit dans la liste ; « Supprimer cette copie
+en ligne », dans le détail d'une copie, sert à ça. Un élève qui a perdu son code
+le retrouve chez le correcteur : il est affiché au même endroit.
+
+**L'évaluation à blanc est autocorrigée** (`AUTOCORRIGEES` dans `eleve.js`) : la
+page applique le barème public `docs/eval-blanc/bareme.json` à la remise et
+envoie la copie déjà corrigée — l'élève peut essayer la consultation tout de
+suite. La base n'accepte une copie précorrigée que pour cette évaluation-là.
+
 ## Rendre la copie
 
-L'élève ouvre **NSI Première → Évaluations** → **Consulter ma copie corrigée**
-(`/immac/eval/copie.html`) et y dépose le fichier reçu (celui
-dont le nom commence par `copie-`). Il y voit ses réponses, ses points question
-par question avec le détail des critères, les annotations, la note et
-l'appréciation. La page ne fait que lire : rien n'y est modifiable, rien n'en
-sort, le fichier ne quitte pas son navigateur.
+L'élève ouvre **Consulter ma copie corrigée** (`/immac/eval/copie.html`) et entre
+son code de consultation. Le dépôt d'un fichier `copie-…` (export ZIP, ancien
+chemin) reste possible. Il y voit ses réponses, ses points question par question
+avec le détail des critères, les annotations, la note et l'appréciation, et peut
+la télécharger en PDF.
 
 Le détail des critères figure dans la copie : c'est la justification des points,
 et un barème montré après coup est un barème qui instruit. Il est donc inutile
@@ -434,8 +469,9 @@ Le vrai garde-fou reste la surveillance en salle.
 
 ## Ce qui reste ouvert
 
-* L'export d'office en fin de temps part sans clic de l'élève ; certains
-  navigateurs peuvent le retenir. La fenêtre de remise propose alors le bouton —
-  **à essayer une fois sur les machines de la salle** avant la première épreuve.
+* **Essayer l'envoi en ligne sur les machines de la salle** avant la première
+  épreuve : le réseau du lycée peut filtrer `supabase.co` ou `jsdelivr.net`.
+  En cas d'échec, le fichier est téléchargé d'office — et ce téléchargement-là
+  peut être retenu par le navigateur : la fenêtre de remise garde le bouton.
 * Rien n'empêche d'ouvrir le cours dans un autre onglet.
 * Aucune reprise de copie après la remise : c'est volontaire.

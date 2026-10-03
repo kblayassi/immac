@@ -18,6 +18,9 @@ import { construireCopie, pointsRetenus, pointsProposes, criteresRetenus,
          totalRetenu, noteCalculee, noteRetenue, questionsANoter, noteComplete }
   from "./copie-corrigee.js";
 import { estUnBareme, noter, alertes, ecartsDeVersion } from "./bareme.js";
+import { EVALUATIONS } from "./evaluations.js";
+import { correcteurConnecte, seConnecter, seDeconnecter, listerCopies, chargerCopies,
+         publierCorrection, supprimerCopie } from "./supabase.js";
 
 const URL_WORKER = new URL("../javascripts/pyodide-worker.js", document.baseURI).href;
 const URL_BUNDLE = new URL("../javascripts/codemirror-bundle.js", document.baseURI).href;
@@ -44,7 +47,7 @@ function toast(message) {
 /* ======================================================================== État */
 
 let bareme = null;
-const copies = [];          // { rendu, intact, note, alertes, retouches }
+const copies = [];          // { rendu, intact, note, alertes, retouches, distant }
 let ouverte = null;         // la copie dépliée
 
 /* Les retouches de l'enseignant, par évaluation et par élève. Ce sont elles qui
@@ -68,6 +71,10 @@ function enregistrerRetouches(rendu, valeur) {
   const tout = lireRetouches();
   tout[identifiant(rendu)] = valeur;
   ecrireRetouches(tout);
+  // Toute retouche d'une copie en ligne peut la rendre publiable, ou changer ce
+  // que l'élève lit déjà : on (re)publie.
+  const copie = copies.find((c) => c.rendu === rendu);
+  if (copie) programmerPublication(copie);
 }
 
 /* Les quatre calculs qui appliquent les retouches vivent dans
@@ -146,8 +153,10 @@ function poserBareme(objet) {
   if (copies.length) recorrigerTout();
 }
 
-async function ajouterRendus(rendus) {
-  for (const rendu of rendus) {
+/* `distants`, en parallèle de `rendus` : pour une copie venue de Supabase, son
+   identifiant et sa date de publication — de quoi y renvoyer la correction. */
+async function ajouterRendus(rendus, distants = []) {
+  for (const [rang0, rendu] of rendus.entries()) {
     if (bareme && rendu.evaluation?.cle && bareme.evaluation &&
         rendu.evaluation.cle !== bareme.evaluation) {
       toast(`${nomAffiche(rendu)} : ce rendu n'est pas celui de ce barème`);
@@ -157,7 +166,7 @@ async function ajouterRendus(rendus) {
        pas un historique. */
     const rang = copies.findIndex((c) => identifiant(c.rendu) === identifiant(rendu));
     const copie = { rendu, intact: await scelleIntact(rendu), note: null,
-                    alertes: [], retouches: retouchesDe(rendu) };
+                    alertes: [], retouches: retouchesDe(rendu), distant: distants[rang0] || null };
     if (rang >= 0) copies[rang] = copie; else copies.push(copie);
   }
   copies.sort((a, b) => nomAffiche(a.rendu).localeCompare(nomAffiche(b.rendu), "fr"));
@@ -179,6 +188,7 @@ async function recorrigerTout() {
     rendre();                      // la table se remplit au fil de l'eau
   }
   barre.hidden = true;
+  publierLesPretes();
 }
 
 /* Une copie faite sur une autre version du sujet : ses réponses sont rangées sous
@@ -201,6 +211,8 @@ function rendre() {
   hote.innerHTML = "";
 
   if (!copies.length) {
+    $("#zone-depot").dataset.attente = "";
+    $("#etat-bareme").dataset.attente = "";
     $("#vide").hidden = false;
     $("#barre-outils").hidden = true;
     return;
@@ -212,11 +224,28 @@ function rendre() {
   /* Une colonne par question débordait de la page dès dix exercices, pour un
      détail qu'on lit mieux en dépliant la copie. La table dit l'essentiel : ce
      qui reste à corriger, le total, la note. */
+  /* Sans barème, rien ne peut être noté : on le dit en tête, et les colonnes de
+     la table restent floues — seuls les noms se lisent — tant qu'il manque. */
+  const sansBareme = !bareme;
+  $("#zone-depot").dataset.attente = sansBareme ? "1" : "";
+  $("#etat-bareme").dataset.attente = sansBareme ? "1" : "";
+  if (sansBareme) {
+    const alerte = elem("div", "alerte-bareme");
+    alerte.appendChild(elem("span", null,
+      "Dépose le barème de cette évaluation pour lancer la correction."));
+    const choisir = elem("button", "bouton petit", "Choisir le barème (.json)");
+    choisir.type = "button";
+    choisir.addEventListener("click", () => $("#champ-fichiers").click());
+    alerte.appendChild(choisir);
+    hote.appendChild(alerte);
+  }
+
   const table = elem("table", "table-notes");
+  if (sansBareme) table.classList.add("sans-bareme");
   const entete = elem("tr");
   entete.append(elem("th", null, "Élève"), elem("th", null, "Classe"),
                 elem("th", null, "À corriger"), elem("th", null, "Total"),
-                elem("th", null, "Note"), elem("th", null, ""));
+                elem("th", null, "Note"), elem("th", null, "Publiée"), elem("th", null, ""));
   table.appendChild(entete);
 
   for (const copie of copies) {
@@ -228,10 +257,11 @@ function rendre() {
   hote.appendChild(cadre);
 }
 
-const COLONNES = 6;
+const COLONNES = 7;
 
 function ligne(copie) {
   const tr = elem("tr", "ligne-eleve");
+  tr.dataset.cle = identifiant(copie.rendu);
   if (ouverte === copie) tr.dataset.ouverte = "1";
 
   const nom = elem("td", "cellule-nom");
@@ -245,6 +275,19 @@ function ligne(copie) {
   tr.appendChild(nom);
   tr.appendChild(elem("td", null, copie.rendu.eleve?.classe || "—"));
 
+  if (!copie.note && !bareme) {
+    // Des cases factices, floutées par la feuille de style : la table garde sa
+    // forme, et ce qui manque se voit.
+    tr.append(elem("td", null, "à corriger"), elem("td", null, "— / —"),
+              elem("td", null, "—"), cellulePubliee(copie));
+    const actions = elem("td");
+    const voir = elem("button", "bouton fantome petit", "Voir");
+    voir.type = "button";
+    voir.disabled = true;
+    actions.appendChild(voir);
+    tr.appendChild(actions);
+    return tr;
+  }
   if (!copie.note) {
     const attente = elem("td", null, "…");
     attente.colSpan = COLONNES - 2;
@@ -281,6 +324,7 @@ function ligne(copie) {
     note.title = `Pas de note tant qu'il reste ${enAttente(copie)}.`;
   }
   tr.appendChild(note);
+  tr.appendChild(cellulePubliee(copie));
 
   const actions = elem("td");
   const btn = elem("button", "bouton fantome petit", ouverte === copie ? "Fermer" : "Voir");
@@ -324,6 +368,7 @@ function detail(copie) {
   for (const q of copie.note.questions) boite.appendChild(bloc(copie, q));
 
   boite.appendChild(bilan(copie));
+  if (copie.distant && correcteurConnecte()) boite.appendChild(zoneSuppression(copie));
 
   td.appendChild(boite);
   tr.appendChild(td);
@@ -697,6 +742,251 @@ function exporterCopies() {
   toast(`${Object.keys(fichiers).length} copies exportées${reste}`);
 }
 
+/* ============================================================ Copies en ligne
+
+   Les copies déposées par la page d'épreuve vivent dans Supabase. On s'y
+   connecte avec le compte de correcteur ; la page montre alors les évaluations
+   qui ont des copies, puis les classes de l'évaluation choisie, et une classe
+   se charge dans la table comme un paquet de fichiers déposés.
+
+   Le barème, lui, ne part jamais en ligne : on le dépose ici comme avant. */
+
+let sommaire = [];          // une ligne par copie en ligne, sans son contenu
+
+function titreEvaluation(cle) {
+  return EVALUATIONS.find((e) => e.cle === cle)?.titre || cle;
+}
+
+function montrerEnLigne() {
+  const qui = correcteurConnecte();
+  $("#form-connexion").hidden = !!qui;
+  $("#navigation-copies").hidden = !qui;
+  $("#btn-deconnexion").hidden = !qui;
+  $("#btn-actualiser").hidden = !qui;
+  $("#en-ligne-qui").textContent = qui ? `Connecté : ${qui}` : "";
+  if (copies.length) rendre();
+}
+
+async function actualiserSommaire() {
+  try {
+    sommaire = await listerCopies();
+  } catch (e) {
+    if (e.statut === 401) { await seDeconnecter(); montrerEnLigne(); }
+    toast(`Copies en ligne : ${e.message}`);
+    return;
+  }
+  const choix = $("#choix-eval");
+  const avant = choix.value;
+  const cles = [...new Set(sommaire.map((l) => l.evaluation))]
+    .sort((a, b) => titreEvaluation(a).localeCompare(titreEvaluation(b), "fr"));
+  choix.innerHTML = "";
+  if (!cles.length) {
+    choix.appendChild(elem("option", null, "Aucune copie en ligne"));
+    choix.disabled = true;
+  } else {
+    choix.disabled = false;
+    for (const cle of cles) {
+      const n = sommaire.filter((l) => l.evaluation === cle).length;
+      const opt = elem("option", null, `${titreEvaluation(cle)} — ${n} copie${n > 1 ? "s" : ""}`);
+      opt.value = cle;
+      choix.appendChild(opt);
+    }
+    // Garder l'évaluation choisie ; sinon, celle du barème déposé.
+    if (cles.includes(avant)) choix.value = avant;
+    else if (bareme && cles.includes(bareme.evaluation)) choix.value = bareme.evaluation;
+  }
+  montrerClasses();
+}
+
+function montrerClasses() {
+  const hote = $("#choix-classes");
+  hote.innerHTML = "";
+  const cle = $("#choix-eval").value;
+  const lignes = sommaire.filter((l) => l.evaluation === cle);
+  const classes = [...new Set(lignes.map((l) => l.classe))].sort((a, b) => a.localeCompare(b, "fr"));
+  for (const classe of classes) {
+    const leurs = lignes.filter((l) => l.classe === classe);
+    const publiees = leurs.filter((l) => l.corrigee_le).length;
+    const btn = elem("button", "bouton fantome classe-bouton");
+    btn.type = "button";
+    btn.appendChild(elem("strong", null, classe));
+    btn.appendChild(elem("span", "discret",
+      `${leurs.length} copie${leurs.length > 1 ? "s" : ""} · ${publiees} publiée${publiees > 1 ? "s" : ""}`));
+    btn.addEventListener("click", () => chargerClasse(cle, classe));
+    hote.appendChild(btn);
+  }
+  $("#en-ligne-aide").textContent = classes.length
+    ? "Choisis une classe pour charger ses copies dans la table."
+    : "";
+}
+
+async function chargerClasse(cle, classe) {
+  if (bareme && bareme.evaluation && bareme.evaluation !== cle) {
+    toast(`Le barème déposé est celui de « ${titreEvaluation(bareme.evaluation)} » : ` +
+          `dépose celui de « ${titreEvaluation(cle)} »`);
+    return;
+  }
+  let lignes;
+  try { lignes = await chargerCopies(cle, classe); }
+  catch (e) {
+    if (e.statut === 401) { await seDeconnecter(); montrerEnLigne(); }
+    toast(`Chargement impossible : ${e.message}`);
+    return;
+  }
+  // Une classe remplace la table : on corrige un paquet à la fois.
+  copies.length = 0;
+  ouverte = null;
+  await ajouterRendus(lignes.map((l) => l.rendu),
+                      lignes.map((l) => ({ id: l.id, code: l.code, corrigee_le: l.corrigee_le })));
+  rendre();
+  toast(`${classe} : ${lignes.length} copie${lignes.length > 1 ? "s" : ""} chargée${lignes.length > 1 ? "s" : ""}` +
+        (bareme ? "" : " — dépose le barème pour les corriger"));
+}
+
+/* Publication automatique. Une copie en ligne part chez l'élève dès qu'elle
+   est prête : barème appliqué, plus aucune réponse rédigée à noter, et une
+   appréciation générale écrite. Chaque retouche ultérieure la republie — ce
+   que l'élève lit est toujours l'état présent de la correction.
+
+   On attend que la frappe se pose (quelques secondes) avant d'envoyer, pour ne
+   pas publier une appréciation à moitié écrite à chaque lettre. */
+const DELAI_PUBLICATION = 2500;
+
+const prete = (copie) => !!(copie.distant && bareme && copie.note && complete(copie) &&
+                            (copie.retouches.commentaire || "").trim());
+
+function programmerPublication(copie, delai = DELAI_PUBLICATION) {
+  if (!copie.distant) return;
+  clearTimeout(copie.distant.minuteur);
+  copie.distant.minuteur = null;
+  if (!prete(copie)) { majPubliee(copie); return; }
+  copie.distant.etat = "attente";
+  majPubliee(copie);
+  copie.distant.minuteur = setTimeout(() => publier(copie), delai);
+}
+
+async function publier(copie) {
+  copie.distant.minuteur = null;
+  if (!prete(copie)) { copie.distant.etat = null; majPubliee(copie); return; }
+  copie.distant.etat = "envoi";
+  majPubliee(copie);
+  try {
+    await publierCorrection(copie.distant.id, copieDe(copie));
+    copie.distant.corrigee_le = new Date().toISOString();
+    copie.distant.etat = null;
+    copie.distant.erreur = null;
+    const l = sommaire.find((x) => x.id === copie.distant.id);
+    if (l) { l.corrigee_le = copie.distant.corrigee_le; montrerClasses(); }
+  } catch (e) {
+    copie.distant.etat = "echec";
+    copie.distant.erreur = e.message;
+    if (e.statut === 401) { await seDeconnecter(); montrerEnLigne(); toast(e.message); }
+  }
+  majPubliee(copie);
+}
+
+/* Après un chargement, une reconnexion ou le dépôt du barème : publier ce qui
+   est prêt et ne l'a pas encore été (ou a échoué). */
+function publierLesPretes() {
+  if (!correcteurConnecte()) return;
+  for (const copie of copies) {
+    if (prete(copie) && (!copie.distant.corrigee_le || copie.distant.etat === "echec")) {
+      programmerPublication(copie, 0);
+    }
+  }
+}
+
+function cellulePubliee(copie) {
+  const td = elem("td", "cellule-publiee");
+  const d = copie.distant;
+  if (!d) {
+    td.textContent = "—";
+    td.title = "Copie déposée en fichier : elle n'est pas en ligne.";
+    return td;
+  }
+  if (d.etat === "attente" || d.etat === "envoi") {
+    td.textContent = "…";
+    td.title = "Publication en cours";
+  } else if (d.etat === "echec") {
+    td.textContent = "⚠";
+    td.dataset.etat = "echec";
+    td.title = `Publication impossible : ${d.erreur || "erreur"}. Elle sera retentée à la prochaine retouche.`;
+  } else if (d.corrigee_le) {
+    td.textContent = "✓";
+    td.dataset.etat = "oui";
+    td.title = `Publiée le ${new Date(d.corrigee_le).toLocaleString("fr-FR")}. ` +
+               "Chaque retouche met à jour ce que l'élève lit.";
+  } else {
+    td.textContent = "✗";
+    td.dataset.etat = "non";
+    td.title = !copie.note ? "En attente du barème"
+      : !complete(copie) ? `Pas encore : il reste ${enAttente(copie)}`
+      : "Pas encore : il manque l'appréciation générale";
+  }
+  return td;
+}
+
+/* Ne redessiner que la cellule : redessiner la table ferait perdre le curseur
+   dans l'appréciation qu'on est en train d'écrire. */
+function majPubliee(copie) {
+  const tr = document.querySelector(`.ligne-eleve[data-cle="${CSS.escape(identifiant(copie.rendu))}"]`);
+  const ancienne = tr?.querySelector(".cellule-publiee");
+  if (ancienne) ancienne.replaceWith(cellulePubliee(copie));
+}
+
+function zoneSuppression(copie) {
+  const zone = elem("div", "zone-suppression");
+  zone.appendChild(elem("span", "discret", `Code de consultation : ${copie.distant.code || "—"}`));
+  const btn = elem("button", "bouton fantome petit", "Supprimer cette copie en ligne");
+  btn.type = "button";
+  btn.addEventListener("click", async () => {
+    if (!confirm(`Supprimer définitivement la copie en ligne de ${nomAffiche(copie.rendu)} ?\n\n` +
+                 "L'élève ne pourra plus la consulter. Cette action est irréversible.")) return;
+    try { await supprimerCopie(copie.distant.id); }
+    catch (e) { toast(`Suppression impossible : ${e.message}`); return; }
+    copies.splice(copies.indexOf(copie), 1);
+    ouverte = null;
+    rendre();
+    actualiserSommaire();
+    toast("Copie supprimée");
+  });
+  zone.appendChild(btn);
+  return zone;
+}
+
+function initEnLigne() {
+  $("#form-connexion").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    try {
+      await seConnecter($("#champ-email").value.trim(), $("#champ-mdp").value);
+    } catch (e) {
+      toast(e.statut === 400 ? "Adresse ou mot de passe incorrect" : `Connexion impossible : ${e.message}`);
+      return;
+    }
+    $("#champ-mdp").value = "";
+    montrerEnLigne();
+    actualiserSommaire();
+    publierLesPretes();
+  });
+  $("#btn-deconnexion").addEventListener("click", async () => {
+    await seDeconnecter();
+    sommaire = [];
+    montrerEnLigne();
+  });
+  $("#btn-actualiser").addEventListener("click", actualiserSommaire);
+  $("#choix-eval").addEventListener("change", montrerClasses);
+  /* Fermer l'onglet pendant qu'une publication attend la fin de la frappe : on
+     prévient, sinon la dernière retouche ne partirait jamais. */
+  window.addEventListener("beforeunload", (ev) => {
+    if (copies.some((c) => c.distant?.minuteur || c.distant?.etat === "envoi")) {
+      ev.preventDefault();
+      ev.returnValue = "";
+    }
+  });
+  montrerEnLigne();
+  if (correcteurConnecte()) actualiserSommaire();
+}
+
 /* ==================================================================== Export */
 
 function exporterCsv() {
@@ -781,5 +1071,6 @@ $("#btn-vider").addEventListener("click", () => {
 });
 
 initDepots();
+initEnLigne();
 rendre();
 Python.prechauffer();

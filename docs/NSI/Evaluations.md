@@ -8,8 +8,8 @@ hide:
 # 📝 Les évaluations sur écran
 
 Certains devoirs se passent directement dans le navigateur : le sujet s'ouvre
-d'un bloc, tu écris tes programmes dans la page, et à la fin du temps imparti ton
-travail est téléchargé sous la forme d'un fichier que tu remets à ton professeur.
+d'un bloc, tu écris tes programmes dans la page, et à la fin ton travail est
+envoyé directement à ton professeur.
 
 [Passer une évaluation :material-arrow-right:](../eval/passer.html){ .md-button }
 [Consulter ma copie corrigée :material-arrow-right:](../eval/copie.html){ .md-button }
@@ -33,13 +33,15 @@ travail est téléchargé sous la forme d'un fichier que tu remets à ton profes
    tableau. C'est lui qui ouvre le sujet, et lui seul : tant qu'il n'est pas
    entré, il n'y a rien à lire dans la page. Ni les majuscules, ni les tirets, ni
    les espaces ne comptent.
-2. **Tu renseignes ton nom, ton prénom et ta classe**, puis tu cliques sur
+2. **Tu renseignes ton nom, ton prénom et choisis ta classe**, puis tu cliques sur
    « Commencer » : le chronomètre démarre à ce moment-là, et plus jamais il ne
    s'arrête. Recharger la page ou changer d'onglet ne le remet pas à zéro.
 3. **Tu composes.** Toutes les questions sont accessibles dès le début, dans
    l'ordre que tu veux. Tu peux exécuter tes programmes autant que nécessaire.
-4. **À la fin du temps**, ton fichier est téléchargé automatiquement. Tu le
-   remets à ton professeur comme il te l'indique.
+4. **À la fin**, ta copie est envoyée à ton professeur et la page te donne un
+   **code de consultation** (trois mots et un nombre) : **note-le**, il te
+   servira à lire ta copie corrigée. Si l'envoi échoue, un fichier est
+   téléchargé à la place : remets-le à ton professeur.
 
 !!! tip "Si la page se ferme"
     Rouvre-la : ton devoir revient tout seul, le code n'est pas redemandé et le
@@ -58,14 +60,15 @@ travail est téléchargé sous la forme d'un fichier que tu remets à ton profes
 !!! info "Ce que la page enregistre"
     Pour que ton devoir puisse être corrigé sans contestation, la page note
     l'heure de tes actions : tes exécutions de programme, tes collages et tes
-    changements d'onglet. Tout cela figure **en clair** dans le fichier que tu
-    remets — tu peux l'ouvrir et le lire.
+    changements d'onglet. Tout cela figure **en clair** dans ta copie. Elle est
+    conservée sur un serveur situé en Europe, et effacée au bout de cinq mois.
 
 ## Après la correction
 
-Ton professeur te rend un second fichier, dont le nom commence par `copie-`.
-Dépose-le sur la page **Consulter ma copie corrigée** : tu y retrouveras tes
-réponses, le détail de tes points question par question, les annotations et
-l'appréciation.
+Entre ton code de consultation sur la page **Consulter ma copie corrigée** : tu
+y retrouveras l'appréciation, tes réponses, le détail de tes points question par
+question et les annotations. Tu peux aussi la **télécharger en PDF**.
 
-Ce fichier ne quitte pas ton navigateur : la page ne fait que le lire.
+Tant que ton professeur n'a pas fini de la corriger, la page te le dit :
+reviens plus tard. L'évaluation à blanc, elle, est corrigée automatiquement :
+tu peux essayer tout de suite.

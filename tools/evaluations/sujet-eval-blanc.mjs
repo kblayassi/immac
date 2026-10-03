@@ -1,8 +1,14 @@
 /* Évaluation à blanc — le sujet.
  *
  * Elle n'évalue personne : elle sert à essayer le dispositif de bout en bout,
- * en cinq minutes, avec les quatre formes de question que le moteur connaît.
- * Son barème vit dans tools/evaluations/bareme-eval-blanc.json, hors du site.
+ * en cinq minutes. Elle est CORRIGÉE AUTOMATIQUEMENT à la remise (eleve.js,
+ * AUTOCORRIGEES) : l'élève peut donc essayer aussi la consultation de sa copie.
+ * D'où aucune réponse rédigée — q4, qui en était une, a été remplacée le
+ * 03/10/2026 par le QCM q5 (on ne réutilise pas un id).
+ *
+ * Son barème, tools/evaluations/bareme-eval-blanc.json, est publié tel quel dans
+ * docs/eval-blanc/bareme.json pour que la page corrige : il ne cache rien. Le
+ * banc vérifie que les deux fichiers sont identiques.
  *
  * CE FICHIER EST PUBLIÉ. Il ne doit donc contenir aucune attente : ni sortie
  * attendue, ni motif à retrouver dans le code, ni bonne réponse de QCM. Un élève
@@ -84,15 +90,19 @@ export const QUESTIONS = [
   },
 
   {
-    id: "q4",
-    type: "texte",
-    titre: "Expliquer",
+    id: "q5",
+    type: "qcm",
+    titre: "À quoi sert l'indentation",
     points: 3,
-    lignes: 3,
     enonce: `
-      <p>En une ou deux phrases : à quoi sert l'<strong>indentation</strong> en
-      Python ?</p>`,
-    placeholder: "L'indentation sert à…",
+      <p>En Python, à quoi sert l'<strong>indentation</strong> (le décalage des
+      lignes vers la droite) ?</p>`,
+    options: [
+      { texte: "À rendre le code plus joli, sans autre effet" },
+      { texte: "À délimiter les blocs : ce qui est dans une boucle, un <code>if</code> ou une fonction" },
+      { texte: "À accélérer l'exécution du programme" },
+      { texte: "À rien : Python ne la lit pas" },
+    ],
   },
 
 ];
