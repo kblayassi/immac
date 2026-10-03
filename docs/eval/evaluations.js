@@ -31,5 +31,11 @@ export const EVALUATIONS = [
     "titre": "Chapitre 1 — Listes, piles et files",
     "niveau": "NSI Terminale",
     "actif": true
+  },
+  {
+    "cle": "eval-snt-p1",
+    "titre": "Partie 1 — Premiers programmes et variables",
+    "niveau": "SNT Seconde",
+    "actif": true
   }
 ];
