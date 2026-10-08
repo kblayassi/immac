@@ -463,6 +463,16 @@ chemin) reste possible. Il y voit ses réponses, ses points question par questio
 avec le détail des critères, les annotations, la note et l'appréciation, et peut
 la télécharger en PDF.
 
+Chaque question y est **remontrée avec son énoncé**, et chaque QCM avec
+**toutes ses propositions** : en vert les bonnes réponses, en rouge celles que
+l'élève a cochées à tort, « ta réponse » en face de ses choix (le PDF fait de
+même). L'énoncé vient du barème quand il le porte — le bouton **Barème (JSON)**
+de la console y joint les énoncés de la source —, sinon du rendu, qui les
+emporte depuis le 8 octobre 2026. Les copies publiées avant cette date se
+complètent d'elles-mêmes : il suffit de rouvrir leur classe dans la page de
+correction avec un barème retéléchargé depuis la console, et elles sont
+republiées une fois.
+
 Le détail des critères figure dans la copie : c'est la justification des points,
 et un barème montré après coup est un barème qui instruit. Il est donc inutile
 de rendre les copies d'une classe avant qu'une autre n'ait composé.

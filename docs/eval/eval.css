@@ -329,6 +329,27 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
 }
 .choix-eleve { font-family: var(--mono); font-size: .86rem; }
 
+/* La copie corrigée remontre l'énoncé, puis la réponse. */
+.copie-enonce { padding-bottom: .9rem; border-bottom: 1px dashed var(--bordure); }
+.etiquette-reponse {
+  margin: 0 0 .35em; font-size: .78rem; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--texte-doux);
+}
+.qcm-corrige { margin: 0 0 .7em; }
+.qcm-corrige .qcm-option { cursor: default; }
+.qcm-corrige .qcm-option:hover { transform: none; border-color: var(--bordure); }
+.qcm-corrige .qcm-option[data-issue="juste"]:hover { border-color: var(--vert); }
+.qcm-corrige .qcm-option[data-issue="faux"]:hover  { border-color: var(--rouge); }
+.qcm-corrige .qcm-texte { flex: 1 1 auto; }
+.ta-reponse {
+  flex: 0 0 auto; align-self: center;
+  font-size: .74rem; font-weight: 700; white-space: nowrap;
+  padding: .1em .55em; border-radius: 999px;
+  border: 1px solid currentColor; color: var(--texte-doux);
+}
+.qcm-option[data-issue="juste"] .ta-reponse { color: var(--vert); }
+.qcm-option[data-issue="faux"]  .ta-reponse { color: var(--rouge); }
+
 .criteres { list-style: none; margin: 0; padding: 0; font-size: .86rem; }
 .criteres li {
   display: flex; gap: .6rem; align-items: baseline;

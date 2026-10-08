@@ -1004,12 +1004,20 @@ async function publier(copie) {
   majPubliee(copie);
 }
 
+/* Les copies publiées avant ce jour ne montrent ni les énoncés ni les
+   propositions des QCM. Un barème qui les porte (téléchargé depuis la console)
+   les republie, une fois : la copie de l'élève se complète d'elle-même. */
+const ENONCES_DEPUIS = Date.parse("2026-10-09T00:00:00+02:00");
+const sansEnonces = (copie) => !!bareme?.sujet &&
+  Date.parse(copie.distant.corrigee_le) < ENONCES_DEPUIS;
+
 /* Après un chargement, une reconnexion ou le dépôt du barème : publier ce qui
-   est prêt et ne l'a pas encore été (ou a échoué). */
+   est prêt et ne l'a pas encore été (ou a échoué, ou date d'avant les énoncés). */
 function publierLesPretes() {
   if (!correcteurConnecte()) return;
   for (const copie of copies) {
-    if (prete(copie) && (!copie.distant.corrigee_le || copie.distant.etat === "echec")) {
+    if (prete(copie) && (!copie.distant.corrigee_le || copie.distant.etat === "echec" ||
+                         sansEnonces(copie))) {
       programmerPublication(copie, 0);
     }
   }

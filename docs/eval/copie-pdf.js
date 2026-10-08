@@ -25,6 +25,8 @@ const VERT = "#12855c";
 const ORANGE = "#b8860b";
 const ROUGE = "#c62828";
 const FOND_CODE = "#f0eef7";
+const VERT_PALE = "#e3f6ee";
+const ROUGE_PALE = "#fdeaea";
 
 let pret = null;
 
@@ -117,6 +119,100 @@ function encadre(contenu, fond, bordure) {
   };
 }
 
+/* ------------------------------------------------- L'énoncé, du HTML au PDF
+
+   Les énoncés n'emploient qu'une poignée de balises : des paragraphes, des
+   listes, du code en ligne et des blocs de code. On les traduit à la main en
+   blocs pdfmake ; ce qui n'est pas reconnu est gardé comme texte. */
+
+function enLigne(noeud, style = {}) {
+  const morceaux = [];
+  for (const n of noeud.childNodes) {
+    if (n.nodeType === Node.TEXT_NODE) {
+      const t = n.textContent.replace(/\s+/g, " ");
+      if (t) morceaux.push({ text: t, ...style });
+    } else if (n.nodeType === Node.ELEMENT_NODE) {
+      if (n.tagName === "BR") { morceaux.push({ text: "\n" }); continue; }
+      const st = { ...style };
+      if (["STRONG", "B"].includes(n.tagName)) st.bold = true;
+      if (["CODE", "KBD"].includes(n.tagName)) { st.font = "Mono"; st.fontSize = 8.5; }
+      morceaux.push(...enLigne(n, st));
+    }
+  }
+  return morceaux;
+}
+
+function enBlocs(noeud) {
+  const blocs = [];
+  let ligne = [];
+  const vider = () => {
+    const texte = ligne.filter((m) => m.text.trim() || m.text === "\n");
+    if (texte.length) blocs.push({ text: ligne, margin: [0, 0, 0, 4] });
+    ligne = [];
+  };
+  for (const n of noeud.childNodes) {
+    if (n.nodeType === Node.ELEMENT_NODE && n.tagName === "PRE") {
+      vider();
+      blocs.push({ ...encadre({ text: n.textContent.replace(/^\n+|\s+$/g, ""), font: "Mono",
+                                fontSize: 8, preserveLeadingSpaces: true, lineHeight: 1.15 }, FOND_CODE),
+                   margin: [0, 0, 0, 5] });
+    } else if (n.nodeType === Node.ELEMENT_NODE && ["UL", "OL"].includes(n.tagName)) {
+      vider();
+      const items = [...n.children].map((li) => ({ stack: enBlocs(li) }));
+      blocs.push({ [n.tagName === "UL" ? "ul" : "ol"]: items, margin: [0, 0, 0, 4] });
+    } else if (n.nodeType === Node.ELEMENT_NODE &&
+               ["P", "DIV", "BLOCKQUOTE", "H3", "H4", "TABLE"].includes(n.tagName)) {
+      vider();
+      blocs.push(...enBlocs(n));
+    } else if (n.nodeType === Node.ELEMENT_NODE) {
+      ligne.push(...enLigne({ childNodes: [n] }));
+    } else if (n.nodeType === Node.TEXT_NODE) {
+      ligne.push(...enLigne({ childNodes: [n] }));
+    }
+  }
+  vider();
+  return blocs;
+}
+
+function depuisHtml(source) {
+  const doc = new DOMParser().parseFromString(`<div>${source || ""}</div>`, "text/html");
+  return enBlocs(doc.body.firstElementChild);
+}
+
+function texteDe(source) {
+  const doc = new DOMParser().parseFromString(`<div>${source || ""}</div>`, "text/html");
+  return enLigne(doc.body.firstElementChild);
+}
+
+/* Toutes les propositions d'un QCM : en vert les bonnes, en rouge celles
+   cochées à tort, et « ta réponse » en face des choix de l'élève. */
+function propositions(q) {
+  const r = q.reponse || {};
+  const coches = new Set((Array.isArray(r.choix) ? r.choix : [r.choix]).filter((i) => typeof i === "number"));
+  const bonnes = new Set(Array.isArray(q.correct) ? q.correct
+    : typeof q.correct === "number" ? [q.correct] : []);
+  const lignes = q.options.map((texte, i) => {
+    const issue = bonnes.has(i) ? "juste" : coches.has(i) ? "faux" : null;
+    const couleur = issue === "juste" ? VERT : issue === "faux" ? ROUGE : DOUX;
+    return [
+      { text: String.fromCharCode(65 + i), bold: true, color: couleur, fontSize: 9 },
+      { text: texteDe(texte), fontSize: 9 },
+      { text: coches.has(i) ? "ta réponse" : "", bold: true, color: couleur, fontSize: 8, alignment: "right" },
+    ];
+  });
+  const fonds = q.options.map((_, i) => (bonnes.has(i) ? VERT_PALE : coches.has(i) ? ROUGE_PALE : null));
+  const bloc = [{
+    table: { widths: [12, "*", "auto"], body: lignes },
+    layout: {
+      fillColor: (i) => fonds[i],
+      hLineWidth: () => 0, vLineWidth: () => 0,
+      paddingLeft: () => 6, paddingRight: () => 6, paddingTop: () => 3, paddingBottom: () => 3,
+    },
+  }];
+  if (!coches.size) bloc.unshift({ text: "Tu n'as pas répondu.", color: DOUX, fontSize: 8.5, margin: [0, 0, 0, 3] });
+  return { stack: bloc };
+}
+
 function reponse(q) {
   const r = q.reponse || {};
   if (q.type === "code") {
@@ -128,6 +224,7 @@ function reponse(q) {
   if (q.type === "texte") {
     return encadre({ text: r.texte?.trim() || "(pas de réponse)", fontSize: 9.5 }, FOND_CODE);
   }
+  if (q.type === "qcm" && Array.isArray(q.options) && q.options.length) return propositions(q);
   if (q.type === "qcm") {
     const choix = (Array.isArray(r.choix) ? r.choix : [r.choix]).filter((i) => i != null);
     return { text: ["Ta réponse : ", { text: choix.map((i) => String.fromCharCode(65 + i)).join(", ") || "aucune", bold: true }],
@@ -148,14 +245,21 @@ function question(q) {
       margin: [0, 0, 0, 4],
     },
   ];
+  if (q.enonce?.trim()) {
+    bloc.push({ stack: depuisHtml(q.enonce), margin: [0, 0, 0, 4] });
+    if (q.type === "code") bloc.push({ text: "TON PROGRAMME", bold: true, color: DOUX, fontSize: 7.5, margin: [0, 0, 0, 2] });
+  }
   const rep = reponse(q);
   if (rep) bloc.push({ ...rep, margin: [0, 0, 0, 4] });
 
-  if (q.criteres?.length) {
+  // Comme à l'écran : pour un QCM détaillé, le critère ne reste que s'il a été revu.
+  const detaille = q.type === "qcm" && Array.isArray(q.options) && q.options.length > 0;
+  const criteres = detaille ? (q.criteres || []).filter((c) => c.retouche) : q.criteres;
+  if (criteres?.length) {
     bloc.push({
       table: {
         widths: [34, "*"],
-        body: q.criteres.map((c) => [
+        body: criteres.map((c) => [
           { text: `${nombre(c.points)}/${nombre(c.max)}`, bold: true, color: couleurDe(c.ok), fontSize: 8.5 },
           { text: [c.libelle || "", c.retouche ? { text: " — revu par ton professeur", color: VIOLET } : ""],
             fontSize: 8.5 },

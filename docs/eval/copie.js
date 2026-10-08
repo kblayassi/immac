@@ -33,6 +33,34 @@ function toast(message) {
 }
 
 const nombre = (n) => (Math.round(n * 100) / 100).toString().replace(".", ",");
+const lettre = (i) => String.fromCharCode(65 + i);
+
+/* Les énoncés et les propositions sont du HTML, venu du sujet. La copie, elle,
+   arrive d'une base où n'importe qui peut déposer : on n'en garde que les
+   balises de mise en forme, sans aucun attribut sinon la classe. */
+const BALISES = new Set(["P", "PRE", "CODE", "STRONG", "EM", "B", "I", "U", "UL", "OL", "LI",
+  "BR", "SPAN", "SUB", "SUP", "KBD", "BLOCKQUOTE", "TABLE", "THEAD", "TBODY", "TR", "TH", "TD",
+  "H3", "H4"]);
+
+function html(source) {
+  const doc = new DOMParser().parseFromString(`<div>${source || ""}</div>`, "text/html");
+  const nettoyer = (noeud) => {
+    for (const n of [...noeud.childNodes]) {
+      if (n.nodeType === Node.TEXT_NODE) continue;
+      if (n.nodeType !== Node.ELEMENT_NODE || ["SCRIPT", "STYLE", "TEMPLATE"].includes(n.tagName)) {
+        n.remove(); continue;
+      }
+      nettoyer(n);
+      if (!BALISES.has(n.tagName)) { n.replaceWith(...n.childNodes); continue; }
+      for (const a of [...n.attributes]) if (a.name !== "class") n.removeAttribute(a.name);
+    }
+  };
+  const racine = doc.body.firstElementChild;
+  nettoyer(racine);
+  const fragment = document.createDocumentFragment();
+  fragment.append(...racine.childNodes);
+  return fragment;
+}
 
 /* ==================================================================== Lecture */
 
@@ -150,13 +178,23 @@ function question(q) {
 
   const corps = elem("div", "question-corps");
 
+  if (q.enonce?.trim()) {
+    const enonce = elem("div", "enonce copie-enonce");
+    enonce.appendChild(html(q.enonce));
+    corps.appendChild(enonce);
+  }
+
   const reponse = q.reponse || {};
+  const qcmDetaille = q.type === "qcm" && Array.isArray(q.options) && q.options.length > 0;
   if (q.type === "code") {
+    if (q.enonce?.trim()) corps.appendChild(elem("p", "etiquette-reponse", "Ton programme"));
     const pre = elem("pre", "code-eleve");
     pre.appendChild(elem("code", null, reponse.code || "(pas de réponse)"));
     corps.appendChild(pre);
   } else if (q.type === "texte") {
     corps.appendChild(elem("blockquote", "texte-eleve", reponse.texte || "(pas de réponse)"));
+  } else if (qcmDetaille) {
+    corps.appendChild(propositions(q, reponse));
   } else if (q.type === "qcm") {
     const choix = Array.isArray(reponse.choix) ? reponse.choix : [reponse.choix];
     corps.appendChild(elem("p", "choix-eleve", "Ta réponse : " +
@@ -164,9 +202,12 @@ function question(q) {
        || "aucune")));
   }
 
-  if (q.criteres?.length) {
+  // Pour un QCM détaillé, les couleurs des propositions disent déjà tout ; le
+  // critère ne reste que si le professeur l'a revu.
+  const criteres = qcmDetaille ? (q.criteres || []).filter((c) => c.retouche) : q.criteres;
+  if (criteres?.length) {
     const liste = elem("ul", "criteres");
-    for (const c of q.criteres) {
+    for (const c of criteres) {
       const li = elem("li");
       li.dataset.ok = c.ok === true ? "1" : c.ok === false ? "0" : c.retouche ? "partiel" : "";
       li.appendChild(elem("span", "critere-points", `${nombre(c.points)}/${nombre(c.max)}`));
@@ -188,6 +229,32 @@ function question(q) {
 
   boite.appendChild(corps);
   return boite;
+}
+
+/* Toutes les propositions : en vert les bonnes réponses, en rouge celles que
+   l'élève a cochées à tort. Ses choix portent la mention « ta réponse ». */
+function propositions(q, reponse) {
+  const coches = new Set((Array.isArray(reponse.choix) ? reponse.choix : [reponse.choix])
+    .filter((i) => typeof i === "number"));
+  const bonnes = new Set(Array.isArray(q.correct) ? q.correct
+    : typeof q.correct === "number" ? [q.correct] : []);
+
+  const bloc = elem("div");
+  if (!coches.size) bloc.appendChild(elem("p", "qcm-consigne", "Tu n'as pas répondu."));
+  const liste = elem("div", "qcm qcm-corrige");
+  q.options.forEach((texte, i) => {
+    const option = elem("div", "qcm-option");
+    if (bonnes.has(i)) option.dataset.issue = "juste";
+    else if (coches.has(i)) option.dataset.issue = "faux";
+    option.appendChild(elem("span", "puce", lettre(i)));
+    const contenu = elem("span", "qcm-texte");
+    contenu.appendChild(html(texte));
+    option.appendChild(contenu);
+    if (coches.has(i)) option.appendChild(elem("span", "ta-reponse", "ta réponse"));
+    liste.appendChild(option);
+  });
+  bloc.appendChild(liste);
+  return bloc;
 }
 
 function appreciation(copie) {

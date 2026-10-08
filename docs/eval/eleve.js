@@ -844,10 +844,15 @@ async function construireRendu() {
       cle: EVALUATION.cle,
       titre: EVALUATION.titre,
       dureeMinutes: etat.dureeMinutes ?? EVALUATION.dureeMinutes,
-      /* Le rendu se décrit lui-même : l'ordre et l'intitulé des questions y
-         figurent, pour qu'il reste lisible dans dix ans sans le sujet. */
+      /* Le rendu se décrit lui-même : l'ordre, l'intitulé, l'énoncé et les
+         propositions des questions y figurent, pour qu'il reste lisible dans
+         dix ans sans le sujet — et que la copie corrigée les remontre. */
       questions: QUESTIONS.filter((q) => q.type !== "document")
-        .map((q) => ({ id: q.id, type: q.type, titre: q.titre || null })),
+        .map((q) => ({
+          id: q.id, type: q.type, titre: q.titre || null, enonce: q.enonce || null,
+          ...(q.type === "qcm" ? { options: (q.options || []).map((o) => o.texte),
+                                   multiple: !!q.multiple } : {}),
+        })),
     },
     eleve: { ...etat.eleve },
     chrono: {

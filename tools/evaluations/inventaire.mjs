@@ -6,7 +6,7 @@
  */
 
 import { existsSync, readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join, basename } from "node:path";
 
 import { lireManifeste, ecrireManifeste, lireExport, memeNiveau, RACINE } from "./manifeste.mjs";
@@ -97,7 +97,31 @@ export async function lireBareme(cle) {
   const connue = (await lireManifeste()).some((e) => e.cle === cle);
   const fichier = connue ? trouverBareme(cle) : null;
   if (!fichier) throw new ErreurDAction(`Aucun barème trouvé pour « ${cle} » (bareme-${cle}.json).`);
-  return { nom: basename(fichier), contenu: readFileSync(fichier, "utf8") };
+  const contenu = readFileSync(fichier, "utf8");
+  const sujet = await enoncesDe(cle);
+  if (!sujet) return { nom: basename(fichier), contenu };
+  return { nom: basename(fichier),
+           contenu: JSON.stringify({ ...JSON.parse(contenu), sujet }, null, 2) + "\n" };
+}
+
+/* Les énoncés et les propositions des QCM, lus dans la source en clair, que
+   le barème téléchargé emporte : la page de correction les remet dans la
+   copie rendue à l'élève (copie-corrigee.js), y compris pour les copies dont
+   le rendu ne les portait pas encore. Le barème ne quitte pas l'enseignant,
+   et la copie corrigée n'est rendue qu'après l'épreuve. */
+let lecturesSource = 0;
+async function enoncesDe(cle) {
+  const source = trouverSource(cle);
+  if (!source) return null;
+  try {
+    const { QUESTIONS } = await import(pathToFileURL(source).href + `?enonces=${++lecturesSource}`);
+    return QUESTIONS.filter((q) => q.type !== "document").map((q) => ({
+      id: q.id, enonce: q.enonce || null,
+      ...(q.type === "qcm" ? { options: (q.options || []).map((o) => o.texte) } : {}),
+    }));
+  } catch {
+    return null;
+  }
 }
 
 /* Changer le code, c'est resceller : le code n'est pas un mot de passe rangé
