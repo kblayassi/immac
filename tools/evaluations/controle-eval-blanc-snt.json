@@ -1,0 +1,85 @@
+{
+  "_": [
+    "Les copies de référence de l'évaluation à blanc de SNT.",
+    "`attendu` est le total de points AUTOMATIQUE, avant toute retouche à la main."
+  ],
+  "cas": [
+    {
+      "nom": "copie parfaite",
+      "attendu": 8,
+      "reponses": {
+        "q1": {
+          "choix": 1
+        },
+        "q2": {
+          "choix": 1
+        },
+        "q3": {
+          "code": "print(\"Bienvenue en SNT !\")\n"
+        },
+        "q4": {
+          "code": "longueur = 7\nlargeur = 3\naire = longueur * largeur\nprint(\"Aire :\", aire)\n"
+        },
+        "q5": {
+          "choix": 1
+        }
+      }
+    },
+    {
+      "nom": "copie blanche",
+      "attendu": 0,
+      "reponses": {}
+    },
+    {
+      "nom": "code de départ laissé tel quel",
+      "attendu": 0,
+      "reponses": {
+        "q4": {
+          "code": "longueur = 7\nlargeur = 3\n\n"
+        }
+      }
+    },
+    {
+      "nom": "aire écrite en dur, mauvaises lectures",
+      "attendu": 5,
+      "reponses": {
+        "q1": {
+          "choix": 0
+        },
+        "q2": {
+          "choix": 2
+        },
+        "q3": {
+          "code": "print(\"Bienvenue en SNT !\")\n"
+        },
+        "q4": {
+          "code": "longueur = 7\nlargeur = 3\nprint(\"Aire : 21\")\n"
+        },
+        "q5": {
+          "choix": 1
+        }
+      }
+    },
+    {
+      "nom": "calcul juste, affichage sans le libellé",
+      "attendu": 4,
+      "reponses": {
+        "q1": {
+          "choix": 1
+        },
+        "q2": {
+          "choix": 1
+        },
+        "q3": {
+          "code": "print(\"Bienvenue en SNT\")\n"
+        },
+        "q4": {
+          "code": "longueur = 7\nlargeur = 3\nprint(longueur * largeur)\n"
+        },
+        "q5": {
+          "choix": 1
+        }
+      }
+    }
+  ]
+}

@@ -45,8 +45,9 @@ docs/eval/                 le moteur, partagé par toutes les évaluations
 
 docs/<cle>/                une évaluation, publiée
   sujet.js                 PRODUIT — questions chiffrées, ne pas modifier à la main
-  bareme.json              eval-blanc SEULEMENT : copie publique du barème, pour
-                           l'autocorrection (le banc vérifie qu'il est identique)
+  bareme.json              évaluations À BLANC SEULEMENT : copie publique du
+                           barème, pour l'autocorrection (le banc vérifie qu'il
+                           est identique)
 
 tools/evaluations/         les outils
   console.mjs              la console : une page locale pour tout gérer
@@ -76,9 +77,9 @@ tools/evaluations/         les outils
     rien. D'où `tools/evaluations/prive/`, ignoré par git — **à sauvegarder sur
     la clé USB, il n'existe nulle part ailleurs.**
 
-    L'évaluation à blanc fait exception et reste dans le dépôt : c'est un
-    exemple, elle ne cache rien, et son code d'accès (`ESSAI-BLANC-2026`) est
-    public de plein droit.
+    Les évaluations à blanc font exception et restent dans le dépôt
+    (`tools/evaluations/sujet-eval-blanc*.mjs`) : elles ne cachent rien, et
+    leurs codes sont publics de plein droit — voir plus bas.
 
 Le moteur emprunte aux parcours `atelier.js` (Python et éditeur),
 `comparaison.js` (ce que « juste » veut dire), `archive.js` et `app.css`.
@@ -320,8 +321,36 @@ Ce repère est effacé quand l'élève clique sur **Quitter l'évaluation** à l
 **Une évaluation ne se passe qu'une fois par navigateur.** À la remise, la page
 note l'évaluation dans `eval:rendus` (date, nom, prénom — aucune réponse), et ce
 repère survit à **Quitter**. Entrer de nouveau le code affiche alors « déjà
-rendue depuis ce navigateur » au lieu du sujet. L'évaluation à blanc fait
-exception (`REPASSABLES` dans `eleve.js`) : elle sert à s'entraîner.
+rendue depuis ce navigateur » au lieu du sujet. Les évaluations à blanc font
+exception : elles servent à s'entraîner (voir ci-dessous).
+
+## Les évaluations à blanc
+
+Une par niveau, pour s'entraîner autant de fois qu'on veut :
+
+| Niveau | Clé | Code | Où l'élève le trouve |
+|---|---|---|---|
+| NSI Première | `eval-blanc` | `EVAL-BLANC-NSI-1E` | NSI → Évaluations |
+| NSI Terminale | `eval-blanc-nsi-term` | `EVAL-BLANC-NSI-TERM` | NSI Terminale → Évaluations |
+| SNT Seconde | `eval-blanc-snt` | `EVAL-BLANC-SNT` | SNT → Parcours Python (bas de page) |
+
+Une évaluation est « à blanc » par sa **clé** : `eval-blanc`, ou `eval-blanc-…`
+(`estBlanche` dans `eleve.js`, même motif dans `supabase.sql`). Il n'y a rien
+d'autre à déclarer pour en ajouter une : source, barème et copies de référence
+dans `tools/evaluations/` (pas dans `prive/`), sceller avec le code voulu, puis
+copier le barème dans `docs/<cle>/bareme.json`. Une évaluation à blanc :
+
+* **se repasse à volonté** : pas de repère `eval:rendus`, et la fenêtre de
+  remise propose **Recommencer**, qui repart d'une copie neuve sans redemander
+  ni le code ni l'identité ;
+* **se corrige dans la page**, à la remise, avant tout envoi : la note s'affiche
+  aussitôt, et **Voir ma correction** ouvre `copie.html#correction` dans un
+  nouvel onglet. La copie corrigée y passe par le stockage local
+  (`eval:correction`, effacé par Quitter) : ni code ni réseau ;
+* part quand même dans la base, déjà corrigée — elle figure dans la table de
+  correction, et le code de consultation permet de la relire plus tard. Si
+  l'envoi échoue, rien n'est téléchargé : la correction est déjà là ;
+* ne contient **aucune question rédigée**, puisque personne ne la note à la main.
 
 ## Consulter une évaluation
 
@@ -405,7 +434,7 @@ vont dans une base Supabase (projet `cfjmmlynttpgjxqtwlhf`, région UE).
 | Moment | Ce qui se passe |
 |---|---|
 | Remise | La page envoie la copie (fonction `deposer_copie`) et affiche un **code de consultation** — trois mots et un nombre, que l'élève note. Si l'envoi échoue, le fichier `.json` est téléchargé comme avant, avec « Réessayer l'envoi ». |
-| Correction | `correction.html` → **Copies en ligne** : connexion, évaluation, classe. La classe se charge dans la table ; on dépose le barème comme avant. |
+| Correction | `correction.html`, en **quatre étapes** : connexion, évaluation, classe, barème. Une étape faite se replie (« Changer » la rouvre). La classe se charge dans la table ; le barème d'une autre évaluation est refusé, et **changer d'évaluation l'oublie**. Recharger la page ramène la sélection et le barème (sessionStorage, le temps de l'onglet). |
 | Publication | **Automatique**, copie par copie, dès qu'elle est prête : barème appliqué, plus de réponse rédigée à noter, appréciation générale écrite. Chaque retouche ultérieure republie. Colonne **Publiée** : ✓, ✗ (le survol dit ce qui manque), … (envoi), ⚠ (échec). |
 | Consultation | `copie.html` : l'élève entre son code. Il ne voit sa copie qu'une fois publiée. **Télécharger en PDF** la fabrique dans la page (pdfmake et polices chargés depuis jsDelivr au premier clic), sous le nom `NOM_Prenom_Devoir.pdf`. |
 | Effacement | Chaque nuit à 3 h 17 (pg_cron), les copies de plus de **5 mois**. |
@@ -423,10 +452,10 @@ publique. Un dépôt fantaisiste se voit dans la liste ; « Supprimer cette copi
 en ligne », dans le détail d'une copie, sert à ça. Un élève qui a perdu son code
 le retrouve chez le correcteur : il est affiché au même endroit.
 
-**L'évaluation à blanc est autocorrigée** (`AUTOCORRIGEES` dans `eleve.js`) : la
-page applique le barème public `docs/eval-blanc/bareme.json` à la remise et
-envoie la copie déjà corrigée — l'élève peut essayer la consultation tout de
-suite. La base n'accepte une copie précorrigée que pour cette évaluation-là.
+**Les évaluations à blanc sont autocorrigées** (`estBlanche` dans `eleve.js`) :
+la page applique le barème public `docs/<cle>/bareme.json` à la remise et
+envoie la copie déjà corrigée. La base n'accepte une copie précorrigée que pour
+les clés `eval-blanc` et `eval-blanc-…`.
 
 ## Rendre la copie
 

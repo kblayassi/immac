@@ -142,13 +142,21 @@ async function accueillir(fichiers) {
   rendre();
 }
 
-function poserBareme(objet) {
+function poserBareme(objet, { silencieux = false } = {}) {
+  if (evalChoisie && objet.evaluation !== evalChoisie) {
+    toast(`Ce barème est celui de « ${titreEvaluation(objet.evaluation)} », ` +
+          `pas de « ${titreEvaluation(evalChoisie)} »`);
+    return;
+  }
   bareme = objet;
+  rouvertes.delete("bareme");
+  try { sessionStorage.setItem(BAREME_SESSION, JSON.stringify(objet)); } catch { /* bloqué */ }
   $("#etat-bareme").textContent =
     `${objet.titre || objet.evaluation} — ${Object.keys(objet.questions).length} questions, ` +
     `note sur ${objet.noteSur ?? "le total des points"}`;
   $("#etat-bareme").dataset.charge = "1";
-  toast("Barème chargé");
+  if (!silencieux) toast("Barème chargé");
+  majEtapes();
   // Les copies déjà déposées attendaient peut-être ce barème.
   if (copies.length) recorrigerTout();
 }
@@ -742,94 +750,181 @@ function exporterCopies() {
   toast(`${Object.keys(fichiers).length} copies exportées${reste}`);
 }
 
-/* ============================================================ Copies en ligne
+/* ============================================================ Les étapes
 
-   Les copies déposées par la page d'épreuve vivent dans Supabase. On s'y
-   connecte avec le compte de correcteur ; la page montre alors les évaluations
-   qui ont des copies, puis les classes de l'évaluation choisie, et une classe
-   se charge dans la table comme un paquet de fichiers déposés.
+   Quatre étapes, dans l'ordre : connexion, évaluation, classe, barème. Chacune
+   est « faite » (repliée en une ligne de résumé, avec un bouton Changer),
+   « active » (dépliée) ou « en attente » de la précédente (grisée).
 
-   Le barème, lui, ne part jamais en ligne : on le dépose ici comme avant. */
+   Les copies en ligne vivent dans Supabase ; une classe se charge dans la table
+   comme un paquet de fichiers déposés. Le barème, lui, ne part jamais en ligne :
+   on le dépose ici. Il est gardé pour la session de l'onglet (sessionStorage),
+   et OUBLIÉ dès qu'on change d'évaluation. */
 
 let sommaire = [];          // une ligne par copie en ligne, sans son contenu
+let evalChoisie = null;     // clé de l'évaluation en cours
+let classeChoisie = null;
+const rouvertes = new Set();   // étapes faites que l'enseignant a rouvertes (« Changer »)
+
+const SELECTION = "correction:selection";
+const BAREME_SESSION = "correction:bareme";
 
 function titreEvaluation(cle) {
   return EVALUATIONS.find((e) => e.cle === cle)?.titre || cle;
 }
+function niveauEvaluation(cle) {
+  return EVALUATIONS.find((e) => e.cle === cle)?.niveau || "";
+}
+const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? "s" : ""}`;
 
-function montrerEnLigne() {
+function garderSelection() {
+  try { sessionStorage.setItem(SELECTION, JSON.stringify({ evalChoisie, classeChoisie })); } catch { /* bloqué */ }
+}
+function lireSession(cle) {
+  try { return JSON.parse(sessionStorage.getItem(cle) || "null"); } catch { return null; }
+}
+
+function etape(id, etat, resume) {
+  const li = $(`#etape-${id}`);
+  li.dataset.etat = etat;
+  const r = li.querySelector(".pas-resume");
+  if (resume != null) r.textContent = resume;
+}
+
+function majEtapes() {
   const qui = correcteurConnecte();
-  $("#form-connexion").hidden = !!qui;
-  $("#navigation-copies").hidden = !qui;
+
+  // 1. Connexion
+  etape("connexion", qui ? "faite" : "active", qui ? `Connecté : ${qui}` : "Pour lire les copies en ligne.");
   $("#btn-deconnexion").hidden = !qui;
+
+  // 2. Évaluation
+  if (!qui) {
+    etape("evaluation", "attente", "Après la connexion.");
+  } else if (evalChoisie && !rouvertes.has("evaluation")) {
+    const n = sommaire.filter((l) => l.evaluation === evalChoisie).length;
+    etape("evaluation", "faite", `${titreEvaluation(evalChoisie)} — ${pluriel(n, "copie")}`);
+  } else {
+    etape("evaluation", "active", sommaire.length ? "Choisis l'évaluation à corriger."
+                                                  : "Aucune copie en ligne pour l'instant.");
+  }
   $("#btn-actualiser").hidden = !qui;
-  $("#en-ligne-qui").textContent = qui ? `Connecté : ${qui}` : "";
-  if (copies.length) rendre();
+  $("#btn-changer-evaluation").hidden = !(qui && evalChoisie && !rouvertes.has("evaluation"));
+
+  // 3. Classe
+  if (!qui || !evalChoisie) {
+    etape("classe", "attente", "Après le choix de l'évaluation.");
+  } else if (classeChoisie && !rouvertes.has("classe")) {
+    const n = sommaire.filter((l) => l.evaluation === evalChoisie && l.classe === classeChoisie).length;
+    etape("classe", "faite", `${classeChoisie} — ${pluriel(n, "copie")}`);
+  } else {
+    etape("classe", "active", "Choisis la classe : ses copies se chargent dans la table.");
+  }
+  $("#btn-changer-classe").hidden = !(classeChoisie && !rouvertes.has("classe"));
+
+  // 4. Barème — attendu seulement une fois la classe choisie, sauf sans connexion
+  //    (copies reçues en fichier).
+  const attendu = evalChoisie ? `bareme-${evalChoisie}.json` : "bareme-….json";
+  $("#consigne-bareme").innerHTML =
+    `Dépose le barème <code>${attendu}</code>${evalChoisie ? ` de « ${titreEvaluation(evalChoisie)} »` : ""}. ` +
+    `La Console des évaluations le télécharge (bouton « Barème (JSON) ») ; il reste dans ce navigateur.`;
+  if (bareme && !rouvertes.has("bareme")) {
+    etape("bareme", "faite", null);
+  } else if (qui && !classeChoisie && !copies.length) {
+    etape("bareme", "attente", "Après le choix de la classe.");
+  } else {
+    etape("bareme", "active", bareme ? null : "Aucun barème chargé");
+  }
+  $("#btn-changer-bareme").hidden = !(bareme && !rouvertes.has("bareme"));
+
+  majListes();
+}
+
+function majListes() {
+  // Les évaluations, de la plus récemment rendue à la plus ancienne (le sommaire
+  // arrive trié par date de dépôt décroissante).
+  const hoteE = $("#liste-evaluations");
+  hoteE.innerHTML = "";
+  for (const cle of [...new Set(sommaire.map((l) => l.evaluation))]) {
+    const leurs = sommaire.filter((l) => l.evaluation === cle);
+    const classes = new Set(leurs.map((l) => l.classe)).size;
+    const publiees = leurs.filter((l) => l.corrigee_le).length;
+    hoteE.appendChild(carteChoix(
+      titreEvaluation(cle),
+      [niveauEvaluation(cle), pluriel(leurs.length, "copie"), pluriel(classes, "classe"),
+       pluriel(publiees, "publiée")].filter(Boolean).join(" · "),
+      cle === evalChoisie,
+      () => choisirEvaluation(cle)));
+  }
+
+  const hoteC = $("#liste-classes");
+  hoteC.innerHTML = "";
+  const lignes = sommaire.filter((l) => l.evaluation === evalChoisie);
+  for (const classe of [...new Set(lignes.map((l) => l.classe))].sort((a, b) => a.localeCompare(b, "fr"))) {
+    const leurs = lignes.filter((l) => l.classe === classe);
+    const publiees = leurs.filter((l) => l.corrigee_le).length;
+    hoteC.appendChild(carteChoix(
+      classe, `${pluriel(leurs.length, "copie")} · ${pluriel(publiees, "publiée")}`,
+      classe === classeChoisie,
+      () => choisirClasse(classe)));
+  }
+}
+
+function carteChoix(titre, detail, choisie, action) {
+  const btn = elem("button", "carte-choix");
+  btn.type = "button";
+  if (choisie) btn.dataset.choisie = "1";
+  btn.appendChild(elem("strong", null, titre));
+  btn.appendChild(elem("span", null, detail));
+  btn.addEventListener("click", action);
+  return btn;
 }
 
 async function actualiserSommaire() {
+  if (!correcteurConnecte()) { sommaire = []; majEtapes(); return; }
   try {
     sommaire = await listerCopies();
   } catch (e) {
-    if (e.statut === 401) { await seDeconnecter(); montrerEnLigne(); }
+    if (e.statut === 401) await deconnecter();
     toast(`Copies en ligne : ${e.message}`);
     return;
   }
-  const choix = $("#choix-eval");
-  const avant = choix.value;
-  const cles = [...new Set(sommaire.map((l) => l.evaluation))]
-    .sort((a, b) => titreEvaluation(a).localeCompare(titreEvaluation(b), "fr"));
-  choix.innerHTML = "";
-  if (!cles.length) {
-    choix.appendChild(elem("option", null, "Aucune copie en ligne"));
-    choix.disabled = true;
-  } else {
-    choix.disabled = false;
-    for (const cle of cles) {
-      const n = sommaire.filter((l) => l.evaluation === cle).length;
-      const opt = elem("option", null, `${titreEvaluation(cle)} — ${n} copie${n > 1 ? "s" : ""}`);
-      opt.value = cle;
-      choix.appendChild(opt);
-    }
-    // Garder l'évaluation choisie ; sinon, celle du barème déposé.
-    if (cles.includes(avant)) choix.value = avant;
-    else if (bareme && cles.includes(bareme.evaluation)) choix.value = bareme.evaluation;
+  // Une évaluation dont toutes les copies ont disparu (purge, suppression).
+  if (evalChoisie && !sommaire.some((l) => l.evaluation === evalChoisie) && !copies.length) {
+    evalChoisie = classeChoisie = null;
+    garderSelection();
   }
-  montrerClasses();
+  majEtapes();
 }
 
-function montrerClasses() {
-  const hote = $("#choix-classes");
-  hote.innerHTML = "";
-  const cle = $("#choix-eval").value;
-  const lignes = sommaire.filter((l) => l.evaluation === cle);
-  const classes = [...new Set(lignes.map((l) => l.classe))].sort((a, b) => a.localeCompare(b, "fr"));
-  for (const classe of classes) {
-    const leurs = lignes.filter((l) => l.classe === classe);
-    const publiees = leurs.filter((l) => l.corrigee_le).length;
-    const btn = elem("button", "bouton fantome classe-bouton");
-    btn.type = "button";
-    btn.appendChild(elem("strong", null, classe));
-    btn.appendChild(elem("span", "discret",
-      `${leurs.length} copie${leurs.length > 1 ? "s" : ""} · ${publiees} publiée${publiees > 1 ? "s" : ""}`));
-    btn.addEventListener("click", () => chargerClasse(cle, classe));
-    hote.appendChild(btn);
+/* Changer d'évaluation vide la table et OUBLIE le barème : il ne vaut que pour
+   l'évaluation qu'il note. */
+function choisirEvaluation(cle) {
+  rouvertes.delete("evaluation");
+  if (cle !== evalChoisie) {
+    evalChoisie = cle;
+    classeChoisie = null;
+    oublierBareme();
+    copies.length = 0;
+    ouverte = null;
+    rendre();
+    garderSelection();
   }
-  $("#en-ligne-aide").textContent = classes.length
-    ? "Choisis une classe pour charger ses copies dans la table."
-    : "";
+  majEtapes();
+  // Une seule classe : inutile de la faire choisir.
+  const classes = [...new Set(sommaire.filter((l) => l.evaluation === cle).map((l) => l.classe))];
+  if (!classeChoisie && classes.length === 1) choisirClasse(classes[0]);
 }
 
-async function chargerClasse(cle, classe) {
-  if (bareme && bareme.evaluation && bareme.evaluation !== cle) {
-    toast(`Le barème déposé est celui de « ${titreEvaluation(bareme.evaluation)} » : ` +
-          `dépose celui de « ${titreEvaluation(cle)} »`);
-    return;
-  }
+async function choisirClasse(classe) {
+  rouvertes.delete("classe");
+  classeChoisie = classe;
+  garderSelection();
+  majEtapes();
   let lignes;
-  try { lignes = await chargerCopies(cle, classe); }
+  try { lignes = await chargerCopies(evalChoisie, classe); }
   catch (e) {
-    if (e.statut === 401) { await seDeconnecter(); montrerEnLigne(); }
+    if (e.statut === 401) await deconnecter();
     toast(`Chargement impossible : ${e.message}`);
     return;
   }
@@ -839,8 +934,32 @@ async function chargerClasse(cle, classe) {
   await ajouterRendus(lignes.map((l) => l.rendu),
                       lignes.map((l) => ({ id: l.id, code: l.code, corrigee_le: l.corrigee_le })));
   rendre();
-  toast(`${classe} : ${lignes.length} copie${lignes.length > 1 ? "s" : ""} chargée${lignes.length > 1 ? "s" : ""}` +
-        (bareme ? "" : " — dépose le barème pour les corriger"));
+  majEtapes();
+  toast(`${classe} : ${pluriel(lignes.length, "copie")} chargée${lignes.length > 1 ? "s" : ""}` +
+        (bareme ? "" : " — dépose maintenant le barème"));
+}
+
+function oublierBareme() {
+  bareme = null;
+  try { sessionStorage.removeItem(BAREME_SESSION); } catch { /* bloqué */ }
+  $("#etat-bareme").textContent = "Aucun barème chargé";
+  $("#etat-bareme").dataset.charge = "";
+}
+
+async function deconnecter() {
+  await seDeconnecter();
+  // Les copies en ligne ne restent pas affichées après la déconnexion.
+  sommaire = [];
+  evalChoisie = classeChoisie = null;
+  garderSelection();
+  if (copies.some((c) => c.distant)) {
+    copies.length = 0;
+    ouverte = null;
+    oublierBareme();
+    rendre();
+  }
+  rouvertes.clear();
+  majEtapes();
 }
 
 /* Publication automatique. Une copie en ligne part chez l'élève dès qu'elle
@@ -876,11 +995,11 @@ async function publier(copie) {
     copie.distant.etat = null;
     copie.distant.erreur = null;
     const l = sommaire.find((x) => x.id === copie.distant.id);
-    if (l) { l.corrigee_le = copie.distant.corrigee_le; montrerClasses(); }
+    if (l) { l.corrigee_le = copie.distant.corrigee_le; majListes(); }
   } catch (e) {
     copie.distant.etat = "echec";
     copie.distant.erreur = e.message;
-    if (e.statut === 401) { await seDeconnecter(); montrerEnLigne(); toast(e.message); }
+    if (e.statut === 401) { toast(e.message); await deconnecter(); }
   }
   majPubliee(copie);
 }
@@ -954,27 +1073,29 @@ function zoneSuppression(copie) {
   return zone;
 }
 
-function initEnLigne() {
+async function initEtapes() {
   $("#form-connexion").addEventListener("submit", async (ev) => {
     ev.preventDefault();
+    const bouton = $("#form-connexion button");
+    bouton.disabled = true;
     try {
       await seConnecter($("#champ-email").value.trim(), $("#champ-mdp").value);
     } catch (e) {
       toast(e.statut === 400 ? "Adresse ou mot de passe incorrect" : `Connexion impossible : ${e.message}`);
       return;
+    } finally {
+      bouton.disabled = false;
     }
     $("#champ-mdp").value = "";
-    montrerEnLigne();
-    actualiserSommaire();
+    await actualiserSommaire();
     publierLesPretes();
   });
-  $("#btn-deconnexion").addEventListener("click", async () => {
-    await seDeconnecter();
-    sommaire = [];
-    montrerEnLigne();
-  });
+  $("#btn-deconnexion").addEventListener("click", deconnecter);
   $("#btn-actualiser").addEventListener("click", actualiserSommaire);
-  $("#choix-eval").addEventListener("change", montrerClasses);
+  for (const id of ["evaluation", "classe", "bareme"]) {
+    $(`#btn-changer-${id}`).addEventListener("click", () => { rouvertes.add(id); majEtapes(); });
+  }
+
   /* Fermer l'onglet pendant qu'une publication attend la fin de la frappe : on
      prévient, sinon la dernière retouche ne partirait jamais. */
   window.addEventListener("beforeunload", (ev) => {
@@ -983,8 +1104,25 @@ function initEnLigne() {
       ev.returnValue = "";
     }
   });
-  montrerEnLigne();
-  if (correcteurConnecte()) actualiserSommaire();
+
+  /* Recharger la page ramène là où l'on en était : évaluation, classe, et le
+     barème s'il est celui de cette évaluation. */
+  const baremeGarde = lireSession(BAREME_SESSION);
+  const selection = lireSession(SELECTION);
+  majEtapes();
+  if (correcteurConnecte()) {
+    await actualiserSommaire();
+    if (selection?.evalChoisie && sommaire.some((l) => l.evaluation === selection.evalChoisie)) {
+      choisirEvaluation(selection.evalChoisie);
+      if (selection.classeChoisie && selection.classeChoisie !== classeChoisie &&
+          sommaire.some((l) => l.evaluation === evalChoisie && l.classe === selection.classeChoisie)) {
+        await choisirClasse(selection.classeChoisie);
+      }
+    }
+  }
+  if (baremeGarde && estUnBareme(baremeGarde) && (!evalChoisie || baremeGarde.evaluation === evalChoisie)) {
+    poserBareme(baremeGarde, { silencieux: true });
+  }
 }
 
 /* ==================================================================== Export */
@@ -1071,6 +1209,6 @@ $("#btn-vider").addEventListener("click", () => {
 });
 
 initDepots();
-initEnLigne();
 rendre();
+initEtapes();
 Python.prechauffer();

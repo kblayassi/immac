@@ -200,15 +200,6 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
 
 .avancement, .compte { font-size: .86rem; color: var(--texte-doux); }
 
-.depot-double {
-  display: grid;
-  grid-template-columns: 1fr minmax(16rem, 22rem);
-  gap: 1.4rem;
-  align-items: center;
-  margin-bottom: 1.6rem;
-}
-@media (max-width: 800px) { .depot-double { grid-template-columns: 1fr; } }
-
 .etat-bareme {
   font-weight: 600;
   margin-bottom: .2em;
@@ -322,6 +313,12 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
   margin: 0 0 .7em;
   overflow-x: auto;
   white-space: pre;
+}
+/* Le <code> d'un bloc hérite sinon de la règle des bouts de code en ligne
+   (app.css : nowrap, fond, bordure) — et le programme perd ses sauts de ligne. */
+.code-eleve code {
+  white-space: pre; background: none; border: 0; padding: 0;
+  font-size: inherit; border-radius: 0;
 }
 .texte-eleve {
   margin: 0 0 .7em;
@@ -540,6 +537,20 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
 .remise-envoi[data-etat="reussi"] { background: var(--vert-pale); }
 .remise-envoi[data-etat="echec"]  { background: var(--rouge-pale); }
 .remise-envoi .bouton { margin-top: .4rem; }
+
+/* Évaluation à blanc : la correction, tout de suite ; l'envoi passe au second plan. */
+.remise-correction {
+  margin: 1rem 0;
+  padding: .9rem 1rem;
+  border-radius: var(--rayon-petit);
+  background: var(--vert-pale);
+  text-align: center;
+}
+.remise-correction p { margin: 0 0 .6em; }
+.remise-correction[data-etat="echec"] { background: var(--rouge-pale); }
+.note-blanc strong { font-size: 1.45rem; }
+.remise-correction + .remise-envoi { padding: 0; background: none; }
+.panneau .pied [hidden] { display: none !important; }   /* .bouton imposerait son display */
 .code-consultation {
   font-family: var(--mono);
   font-size: 1.45rem;
@@ -554,32 +565,65 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
   overflow-wrap: anywhere;
 }
 
-/* Correction : la connexion, le choix de l'évaluation, puis de la classe. */
-.en-ligne {
-  margin-bottom: 1.6rem;
-  padding: 1.1rem 1.2rem;
+/* Correction : quatre étapes — connexion, évaluation, classe, barème.
+   Faite : repliée en une ligne. Active : dépliée. En attente : grisée. */
+.pas-liste { list-style: none; margin: 0 0 1.8rem; padding: 0; display: grid; gap: .7rem; }
+.pas {
   border: 1px solid var(--bordure);
   border-radius: var(--rayon);
   background: var(--surface);
+  padding: .85rem 1.1rem;
 }
-.en-ligne-tete { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .8rem; }
-.en-ligne-tete h2 { margin: 0; font-size: 1.1rem; }
+.pas-tete { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+.pas-tete [hidden] { display: none !important; }   /* .bouton imposerait son display */
+.pas-titres { flex: 1 1 14rem; min-width: 0; }
+.pas-titres h2 { margin: 0; font-size: 1.02rem; }
+.pas-resume { margin: .1em 0 0; font-size: .88rem; color: var(--texte-doux); }
+.pas-num {
+  flex: 0 0 auto;
+  display: grid; place-items: center;
+  width: 1.9rem; height: 1.9rem; border-radius: 50%;
+  font-weight: 700; font-size: .9rem;
+  background: var(--violet-pale); color: var(--violet-vif);
+}
+.pas-corps { margin-top: .9rem; }
+.pas-corps > .discret { margin: .7rem 0 0; }
+
+.pas[data-etat="active"] { border-color: var(--violet-vif); box-shadow: 0 0 0 3px var(--violet-pale); }
+.pas[data-etat="active"] .pas-num { background: var(--violet-vif); color: #fff; }
+.pas[data-etat="faite"] .pas-corps,
+.pas[data-etat="attente"] .pas-corps { display: none; }
+.pas[data-etat="faite"] .pas-num { background: var(--vert-pale); color: var(--vert); font-size: 0; }
+.pas[data-etat="faite"] .pas-num::before { content: "✓"; font-size: .95rem; }
+.pas[data-etat="faite"] .pas-resume { color: var(--texte); font-weight: 600; }
+.pas[data-etat="attente"] { opacity: .55; }
+
+/* Le barème qui manque alors que des copies attendent : l'étape le crie. */
+#etape-bareme[data-etat="active"] .depot[data-attente="1"] { border-color: var(--orange); }
+
 .connexion { display: flex; flex-wrap: wrap; gap: .6rem; }
 .connexion input,
-.choix-eval select,
 #form-code input {
   font: inherit; padding: .5em .7em;
   border-radius: var(--rayon-petit); border: 1px solid var(--bordure);
   background: var(--surface-2); color: var(--texte);
 }
 .connexion input { flex: 1 1 14rem; }
-.choix-eval { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .9rem; }
-.choix-eval label { font-weight: 600; }
-.choix-eval select { flex: 1 1 18rem; max-width: 100%; }
-.choix-classes { display: flex; flex-wrap: wrap; gap: .6rem; }
-.classe-bouton { display: flex; flex-direction: column; align-items: flex-start; gap: .1em; text-align: left; }
-.classe-bouton .discret { font-size: .8rem; font-weight: 500; }
-#en-ligne-aide { margin: .8rem 0 0; }
+
+.liste-choix { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: .6rem; }
+.carte-choix {
+  display: flex; flex-direction: column; align-items: flex-start; gap: .2em;
+  padding: .7em .9em; text-align: left;
+  font: inherit; color: var(--texte); cursor: pointer;
+  border: 1px solid var(--bordure); border-radius: var(--rayon-petit);
+  background: var(--surface-2);
+}
+.carte-choix:hover { border-color: var(--violet-vif); }
+.carte-choix:focus-visible { outline: 3px solid var(--violet-vif); outline-offset: 2px; }
+.carte-choix strong { font-size: .98rem; }
+.carte-choix span { font-size: .82rem; color: var(--texte-doux); }
+.carte-choix[data-choisie="1"] { border-color: var(--violet-vif); background: var(--violet-pale); }
+
 /* Pas de barème : seuls les noms restent lisibles. */
 .table-notes.sans-bareme td:not(.cellule-nom) {
   filter: blur(3px);

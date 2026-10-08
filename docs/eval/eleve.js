@@ -55,17 +55,21 @@ const POINTEUR = "eval:encours";
    l'effacer quand un poste doit resservir. */
 const RENDUS = "eval:rendus";
 
-/* L'évaluation à blanc sert à s'entraîner : elle se repasse à volonté. */
-const REPASSABLES = new Set(["eval-blanc"]);
-
-/* …et elle se corrige toute seule, à la remise : son barème est public
-   (docs/eval-blanc/bareme.json), et l'élève peut ainsi essayer aussi la
-   consultation de sa copie. La base n'accepte une copie corrigée par la page
-   que pour ces évaluations-là (tools/evaluations/supabase.sql). */
-const AUTOCORRIGEES = new Set(["eval-blanc"]);
+/* Les évaluations à blanc — une par niveau : eval-blanc (NSI Première),
+   eval-blanc-snt, eval-blanc-nsi-term. Elles servent à s'entraîner : elles se
+   repassent à volonté, et se corrigent toutes seules à la remise. Leur barème
+   est public (docs/<cle>/bareme.json), et l'élève lit sa correction aussitôt,
+   sans attendre le serveur. La base n'accepte une copie corrigée par la page
+   que pour ces évaluations-là, reconnues au même préfixe
+   (tools/evaluations/supabase.sql). */
+const estBlanche = (cle) => /^eval-blanc(-|$)/.test(cle);
 const APPRECIATION_AUTO =
   "Correction automatique de l'évaluation à blanc : cette note n'est qu'un essai. " +
   "Lors d'un vrai devoir, c'est ton professeur qui corrige ta copie et écrit ici son appréciation.";
+
+/* La dernière correction d'une évaluation à blanc, pour copie.html#correction,
+   qui l'affiche sans code ni réseau. Effacée quand l'élève quitte. */
+const CORRECTION = "eval:correction";
 
 /* Les classes proposées à l'accueil. Un menu plutôt qu'une saisie libre : la
    correction range les copies par classe, et « 2nde 1 », « 2ndI » et « Seconde I »
@@ -95,7 +99,7 @@ function noterRendu() {
 
 /** Si cette évaluation a déjà été rendue ici, la date de la remise ; sinon null. */
 function dejaRendue() {
-  if (REPASSABLES.has(EVALUATION.cle)) return null;
+  if (estBlanche(EVALUATION.cle)) return null;
   return lireRendus()[EVALUATION.cle]?.a ?? null;
 }
 
@@ -769,26 +773,73 @@ async function remettre(cause) {
    Ce téléchargement part sans clic, donc certains navigateurs peuvent le
    retenir : la fenêtre de remise garde le bouton pour le relancer. */
 async function envoyer(rendu) {
+  if (estBlanche(EVALUATION.cle)) await corrigerSurPlace(rendu);
   if (etat.depot?.code) { montrerEnvoi("reussi", etat.depot.code, rendu); return; }
   montrerEnvoi("envoi", null, rendu);
   try {
-    let corrigee = null;
-    if (AUTOCORRIGEES.has(EVALUATION.cle)) {
-      // Une correction qui échoue n'empêche pas l'envoi : la copie part brute.
-      try { corrigee = await autocorriger(rendu); } catch { corrigee = null; }
-    }
-    const code = await deposerCopie(rendu, corrigee);
+    // Une correction qui a échoué n'empêche pas l'envoi : la copie part brute.
+    const code = await deposerCopie(rendu, etat.correction || null);
     if (typeof code !== "string" || !code) throw new Error("réponse inattendue du serveur");
     etat.depot = { code, a: Date.now() };
     ecrireEtat();
     montrerEnvoi("reussi", code, rendu);
   } catch (e) {
     montrerEnvoi("echec", e.message, rendu);
-    if (!etat.secoursTelecharge) {
+    if (!etat.secoursTelecharge && !estBlanche(EVALUATION.cle)) {
       try { descendre(rendu); etat.secoursTelecharge = true; ecrireEtat(); }
       catch { /* le bouton de la fenêtre prend le relais */ }
     }
   }
+}
+
+/* Une évaluation à blanc se corrige dans la page, avant l'envoi : la
+   correction ne dépend donc pas du réseau. Elle est gardée dans l'état, pour
+   qu'une page rouverte après la remise ne la refasse pas. */
+async function corrigerSurPlace(rendu) {
+  if (!etat.correction) {
+    montrerCorrection("encours");
+    try { etat.correction = await autocorriger(rendu); ecrireEtat(); }
+    catch { montrerCorrection("echec"); return; }
+  }
+  montrerCorrection("prete");
+}
+
+function montrerCorrection(phase) {
+  const zone = $("#remise-correction");
+  if (!zone) return;
+  zone.dataset.etat = phase;
+  if (phase === "encours") {
+    zone.innerHTML = `<p>Correction de ta copie…</p>`;
+  } else if (phase === "echec") {
+    zone.innerHTML = `<p>La correction automatique n'a pas abouti. Recommence
+      l'évaluation, ou demande à ton professeur.</p>`;
+  } else {
+    const { valeur, sur } = etat.correction.note || {};
+    zone.innerHTML = `
+      <p class="note-blanc">Ta note : <strong></strong></p>
+      <button class="bouton" type="button">Voir ma correction</button>`;
+    zone.querySelector("strong").textContent = valeur == null ? "—"
+      : `${String(Math.round(valeur * 100) / 100).replace(".", ",")} / ${sur}`;
+    zone.querySelector("button").onclick = voirCorrection;
+  }
+}
+
+/* Dans un nouvel onglet : la fenêtre de remise reste ouverte derrière, avec
+   « Recommencer ». La copie passe par le stockage local, réécrit à chaque clic
+   pour que l'onglet montre toujours la dernière tentative. */
+function voirCorrection() {
+  try { localStorage.setItem(CORRECTION, JSON.stringify(etat.correction)); }
+  catch { toast("Stockage bloqué : la correction ne peut pas s'ouvrir"); return; }
+  window.open("copie.html#correction", "_blank", "noopener");
+}
+
+/* Repasser une évaluation à blanc : on repart d'un état neuf, en gardant le
+   sujet déscellé (pas de code à redemander) et l'identité de l'élève. */
+function recommencer() {
+  etat = { ...structureVide(), eleve: { ...etat.eleve }, sujet: QUESTIONS };
+  ecrireEtat();
+  try { localStorage.removeItem(CORRECTION); } catch { /* stockage bloqué */ }
+  window.location.reload();
 }
 
 async function autocorriger(rendu) {
@@ -812,21 +863,29 @@ function montrerEnvoi(phase, valeur, rendu) {
   if (!zone) return;
   zone.dataset.etat = phase;
   if (phase === "envoi") {
-    zone.innerHTML = AUTOCORRIGEES.has(EVALUATION.cle)
-      ? `<p>Correction automatique et envoi de ta copie…</p>`
-      : `<p>Envoi de ta copie à ton professeur…</p>`;
+    zone.innerHTML = `<p>Envoi de ta copie à ton professeur…</p>`;
+  } else if (phase === "reussi" && estBlanche(EVALUATION.cle)) {
+    // La correction est déjà là : le code ne sert qu'à la relire plus tard.
+    zone.innerHTML = `
+      <p class="discret">Ta copie est aussi arrivée chez ton professeur. Pour la
+         relire plus tard, sur <a href="copie.html" target="_blank" rel="noopener">Consulter
+         ma copie corrigée</a> : <code class="code-consultation-court"></code></p>`;
+    zone.querySelector("code").textContent = valeur;
   } else if (phase === "reussi") {
     zone.innerHTML = `
       <p>✓ Ta copie est bien arrivée chez ton professeur.</p>
       <p>Voici ton <strong>code de consultation</strong>. Note-le : il te servira
          à lire ta copie une fois corrigée.</p>
-      <p class="code-consultation"></p>
-      ${AUTOCORRIGEES.has(EVALUATION.cle)
-        ? `<p>Cette évaluation est corrigée automatiquement :
-             <a href="copie.html" target="_blank" rel="noopener">consulte ta copie</a>
-             dès maintenant avec ce code.</p>`
-        : ""}`;
+      <p class="code-consultation"></p>`;
     zone.querySelector(".code-consultation").textContent = valeur;
+  } else if (estBlanche(EVALUATION.cle)) {
+    // Rien à remettre à la main pour un entraînement : la correction est dans la page.
+    zone.innerHTML = `
+      <p class="discret">L'envoi au serveur a échoué (<span class="raison"></span>) :
+         ton professeur ne verra pas cette copie, mais ta correction est là.</p>
+      <button class="bouton fantome petit" type="button">Réessayer l'envoi</button>`;
+    zone.querySelector(".raison").textContent = valeur || "erreur inconnue";
+    zone.querySelector("button").onclick = () => envoyer(rendu);
   } else {
     zone.innerHTML = `
       <p><strong>L'envoi a échoué</strong> (<span class="raison"></span>).</p>
@@ -880,14 +939,23 @@ function ouvrirRemise(rendu, cause) {
 
   const dlg = $("#panneau-remise");
   $("#remise-titre").textContent = cause === "temps" ? "Temps écoulé" : "Devoir rendu";
+  const blanche = estBlanche(EVALUATION.cle);
   $("#remise-texte").innerHTML = `
     <p>Ton devoir est clos.</p>
+    ${blanche ? `<div id="remise-correction" class="remise-correction"></div>` : ""}
     <div id="remise-envoi" class="remise-envoi"></div>
     <p class="discret">Temps utilisé :
        ${duree((etat.termine.a - etat.debut) / 1000)}.</p>`;
 
   const btn = $("#btn-retelecharger");
   btn.onclick = () => { descendre(rendu); toast("Fichier téléchargé"); };
+  btn.hidden = blanche;
+
+  const encore = $("#btn-recommencer");
+  if (encore) {
+    encore.hidden = !blanche;
+    encore.onclick = recommencer;
+  }
 
   /* Quitter efface le devoir de cet ordinateur. C'est voulu : en salle, le poste
      sert au groupe suivant, et le brouillon d'un élève n'a rien à y faire. D'où
@@ -896,13 +964,15 @@ function ouvrirRemise(rendu, cause) {
   const sortie = $("#btn-quitter");
   if (sortie) {
     sortie.onclick = () => {
-      const question = etat.depot?.code
+      const question = blanche ? ""
+        : etat.depot?.code
         ? `As-tu bien noté ton code de consultation ?\n\n${etat.depot.code}\n\n`
         : "As-tu bien récupéré ton fichier ?\n\n";
       if (!confirm(question + "Quitter effacera ton devoir de cet ordinateur.")) return;
       try {
         localStorage.removeItem(CLE);
         localStorage.removeItem(POINTEUR);
+        localStorage.removeItem(CORRECTION);
       } catch { /* stockage bloqué */ }
       // `replace` : le bouton « page précédente » ne doit pas ramener au sujet.
       window.location.replace(EVALUATION.retour?.href || "../NSI/Evaluations/");

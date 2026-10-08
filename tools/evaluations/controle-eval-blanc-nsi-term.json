@@ -1,0 +1,55 @@
+{
+  "_": [
+    "Les copies de référence de l'évaluation à blanc de NSI Terminale.",
+    "`attendu` est le total de points AUTOMATIQUE, avant toute retouche à la main.",
+    "Les codes reprennent l'implémentation fournie dans le code de départ."
+  ],
+  "cas": [
+    {
+      "nom": "copie parfaite",
+      "attendu": 10,
+      "reponses": {
+        "q1": { "choix": 0 },
+        "q2": { "choix": 1 },
+        "q3": { "choix": 0 },
+        "q4": { "code": "def pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\ndef sommet(p):\n    x = depiler(p)\n    empiler(p, x)\n    return x\n\np = pile_vide()\nempiler(p, 3)\nempiler(p, 8)\nprint(sommet(p))\n" },
+        "q5": { "code": "def file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\ndef somme(f):\n    s = 0\n    while not est_vide(f):\n        s = s + defiler(f)\n    return s\n\nf = file_vide()\nenfiler(f, 5)\nenfiler(f, 1)\nenfiler(f, 4)\nprint(somme(f))\n" }
+      }
+    },
+    {
+      "nom": "copie blanche",
+      "attendu": 0,
+      "reponses": {}
+    },
+    {
+      "nom": "codes de départ laissés tels quels",
+      "attendu": 0,
+      "reponses": {
+        "q4": { "code": "def pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\ndef sommet(p):\n    pass\n\np = pile_vide()\nempiler(p, 3)\nempiler(p, 8)\nprint(sommet(p))\nprint(depiler(p))\nprint(depiler(p))\n" },
+        "q5": { "code": "def file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\ndef somme(f):\n    pass\n\nf = file_vide()\nenfiler(f, 5)\nprint(somme(f))\n" }
+      }
+    },
+    {
+      "nom": "regarde dans la liste (p[-1], sum(f))",
+      "attendu": 8,
+      "reponses": {
+        "q1": { "choix": 0 },
+        "q2": { "choix": 1 },
+        "q3": { "choix": 0 },
+        "q4": { "code": "def pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\ndef sommet(p):\n    return p[-1]\n" },
+        "q5": { "code": "def file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\ndef somme(f):\n    return sum(f)\n" }
+      }
+    },
+    {
+      "nom": "sommet qui dépile sans rempiler",
+      "attendu": 7,
+      "reponses": {
+        "q1": { "choix": 1 },
+        "q2": { "choix": 1 },
+        "q3": { "choix": 0 },
+        "q4": { "code": "def pile_vide():\n    return []\n\ndef est_vide(p):\n    return p == []\n\ndef empiler(p, element):\n    p.append(element)\n\ndef depiler(p):\n    return p.pop()\n\ndef sommet(p):\n    return depiler(p)\n" },
+        "q5": { "code": "def file_vide():\n    return []\n\ndef est_vide(f):\n    return f == []\n\ndef enfiler(f, element):\n    f.append(element)\n\ndef defiler(f):\n    return f.pop(0)\n\ndef somme(f):\n    s = 0\n    while not est_vide(f):\n        s += defiler(f)\n    return s\n" }
+      }
+    }
+  ]
+}

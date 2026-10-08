@@ -20,11 +20,13 @@ envoyé directement à ton professeur.
 {% endif %}
 
 !!! example "Pour t'entraîner : l'évaluation à blanc"
-    Avant un vrai devoir, essaie le dispositif avec l'évaluation à blanc. Elle
-    n'est pas notée. Clique sur **Passer une évaluation** et entre ce code :
+    Avant un vrai devoir, entraîne-toi avec l'évaluation à blanc. Elle ne compte
+    pas, tu peux la passer **autant de fois que tu veux**, et ta correction
+    s'affiche **dès que tu l'as rendue**. Clique sur **Passer une évaluation**
+    et entre ce code :
 
     ```
-    ESSAI-BLANC-2026
+    EVAL-BLANC-NSI-1E
     ```
 
 ## Comment ça se passe
@@ -55,7 +57,7 @@ envoyé directement à ton professeur.
       page se ferme par accident, rouvre-la : tout est là, et le temps restant
       aussi. En revanche, reste sur **le même ordinateur**.
     - **Une évaluation ne se passe qu'une fois.** Une fois ton devoir rendu, le
-      code n'ouvre plus le sujet.
+      code n'ouvre plus le sujet. Seule l'évaluation à blanc se repasse.
 
 !!! info "Ce que la page enregistre"
     Pour que ton devoir puisse être corrigé sans contestation, la page note
@@ -71,4 +73,4 @@ question et les annotations. Tu peux aussi la **télécharger en PDF**.
 
 Tant que ton professeur n'a pas fini de la corriger, la page te le dit :
 reviens plus tard. L'évaluation à blanc, elle, est corrigée automatiquement :
-tu peux essayer tout de suite.
+à la remise, le bouton **Voir ma correction** l'affiche aussitôt.

@@ -112,8 +112,10 @@ revoke all on function public.nouveau_code() from public, anon, authenticated;
 -- Idempotente : le même rendu (même empreinte) redéposé rend le même code.
 --
 -- p_corrigee : la copie déjà corrigée par la page elle-même. Acceptée pour les
--- seules évaluations AUTOCORRIGÉES, dont le barème est public (l'évaluation à
--- blanc) ; ignorée pour toutes les autres — un élève ne se note pas lui-même.
+-- seules évaluations AUTOCORRIGÉES, dont le barème est public (les évaluations
+-- à blanc : eval-blanc, eval-blanc-snt, eval-blanc-nsi-term — même règle que
+-- estBlanche dans eleve.js) ; ignorée pour toutes les autres — un élève ne se
+-- note pas lui-même.
 
 drop function if exists public.deposer_copie(jsonb);
 
@@ -126,7 +128,7 @@ declare
   v_code text;
   v_emp  text := nullif(p_rendu->>'empreinte', '');
   v_corr jsonb := case
-    when (p_rendu#>>'{evaluation,cle}') = any (array['eval-blanc'])
+    when (p_rendu#>>'{evaluation,cle}') ~ '^eval-blanc(-|$)'
      and coalesce(p_corrigee->>'format', '') like 'copie/%'
      and pg_column_size(p_corrigee) <= 2000000
     then p_corrigee end;

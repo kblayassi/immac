@@ -1,8 +1,11 @@
-/* Évaluation à blanc — le sujet.
+/* Évaluation à blanc de NSI Première — le sujet.
  *
- * Elle n'évalue personne : elle sert à essayer le dispositif de bout en bout,
- * en cinq minutes. Elle est CORRIGÉE AUTOMATIQUEMENT à la remise (eleve.js,
- * AUTOCORRIGEES) : l'élève peut donc essayer aussi la consultation de sa copie.
+ * Elle n'évalue personne : elle sert à s'entraîner et à essayer le dispositif
+ * de bout en bout. Elle se repasse à volonté et elle est CORRIGÉE
+ * AUTOMATIQUEMENT à la remise (eleve.js, estBlanche) : l'élève lit sa
+ * correction aussitôt. Ses sœurs : sujet-eval-blanc-snt.mjs et
+ * sujet-eval-blanc-nsi-term.mjs. Sa clé reste « eval-blanc », sans suffixe :
+ * c'est la première, et des copies en ligne la portent déjà.
  * D'où aucune réponse rédigée — q4, qui en était une, a été remplacée le
  * 03/10/2026 par le QCM q5 (on ne réutilise pas un id).
  *
@@ -23,16 +26,17 @@
 
 export const EVALUATION = {
   cle: "eval-blanc",
-  titre: "Évaluation à blanc",
-  surTitre: "Essai du dispositif",
+  titre: "Évaluation à blanc — NSI Première",
+  surTitre: "NSI · Première · Entraînement",
   niveau: "NSI Première",
-  dureeMinutes: 5,
+  dureeMinutes: 10,
+  retour: { href: "../NSI/Evaluations/" },
 
   consignes: `
-    <p>Cette évaluation ne compte pas. Elle sert à vérifier que tout fonctionne :
-    le chronomètre, l'éditeur, et surtout le fichier que tu remettras à la fin.</p>
-    <p>Réponds n'importe quoi si tu veux — ce qu'on regarde, c'est que le fichier
-    arrive bien jusqu'à ton professeur.</p>`,
+    <p>Cette évaluation <strong>ne compte pas</strong>. Elle sert à t'entraîner
+    avant un vrai devoir : le chronomètre, l'éditeur, la remise.</p>
+    <p>Tu peux la passer <strong>autant de fois que tu veux</strong>. Dès que tu
+    l'as rendue, elle est corrigée et tu peux lire ta correction.</p>`,
 };
 
 export const QUESTIONS = [

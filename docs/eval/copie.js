@@ -73,10 +73,18 @@ async function ouvrirParCode(code) {
   alerte.hidden = false;
 }
 
+/* La copie s'affiche à côté de l'accueil, qu'on masque : « Retour » le fait
+   réapparaître tel qu'il était, code saisi compris. Afficher une copie ajoute
+   une entrée à l'historique, pour que le bouton « page précédente » du
+   navigateur et « ← Retour » fassent la même chose. */
 function afficher(copie) {
   document.body.dataset.phase = "copie";
-  const vue = $("#vue");
-  vue.innerHTML = "";
+  $(".accueil").hidden = true;
+  $("#copie")?.remove();
+  const vue = elem("div");
+  vue.id = "copie";
+  $("#vue").appendChild(vue);
+  if (history.state?.copie !== true) history.pushState({ copie: true }, "");
 
   /* Le PDF est fabriqué dans la page et téléchargé directement : pas de fenêtre
      d'impression. Le premier clic charge la bibliothèque, d'où l'attente affichée. */
@@ -223,8 +231,41 @@ function initTheme() {
   if (choix !== "auto") document.documentElement.dataset.theme = choix;
 }
 
+function fermerCopie() {
+  $("#copie")?.remove();
+  $(".accueil").hidden = false;
+  document.body.dataset.phase = "";
+  window.scrollTo({ top: 0 });
+}
+
+/* « ← Retour » : depuis une copie, revenir au code ; depuis l'accueil, à la
+   page d'où l'on vient — ou au site, si l'on est arrivé directement ici. */
+$("#btn-retour").addEventListener("click", (ev) => {
+  ev.preventDefault();
+  if ($("#copie")) { history.back(); return; }
+  const depuisLeSite = document.referrer && new URL(document.referrer).origin === location.origin;
+  if (depuisLeSite && history.length > 1) history.back();
+  else location.href = $("#btn-retour").href;
+});
+window.addEventListener("popstate", () => { if ($("#copie")) fermerCopie(); });
+
+/* copie.html#correction : la correction d'une évaluation à blanc, que la page
+   d'épreuve vient de faire et a laissée dans le stockage local (eleve.js,
+   voirCorrection). Ni code ni réseau. */
+function ouvrirCorrectionDirecte() {
+  if (location.hash !== "#correction") return;
+  let copie = null;
+  try { copie = JSON.parse(localStorage.getItem("eval:correction") || "null"); } catch { /* illisible */ }
+  if (estUneCopie(copie)) { afficher(copie); return; }
+  const alerte = $("#alerte-code");
+  alerte.textContent = "Cette correction n'est plus sur cet ordinateur. Repasse l'évaluation, " +
+                       "ou entre ton code de consultation.";
+  alerte.hidden = false;
+}
+
 initTheme();
 initDepot();
+ouvrirCorrectionDirecte();
 $("#form-code").addEventListener("submit", (ev) => {
   ev.preventDefault();
   ouvrirParCode($("#champ-code").value);

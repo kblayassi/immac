@@ -1,7 +1,7 @@
 {
   "format": "bareme/v1",
   "evaluation": "eval-blanc",
-  "titre": "Évaluation à blanc",
+  "titre": "Évaluation à blanc — NSI Première",
   "noteSur": 20,
   "arrondi": 0.25,
   "questions": {

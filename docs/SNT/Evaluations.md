@@ -26,7 +26,7 @@ envoyé directement à ton professeur.
     et entre ce code :
 
     ```
-    EVAL-BLANC-NSI-TERM
+    EVAL-BLANC-SNT
     ```
 
 ## Comment ça se passe

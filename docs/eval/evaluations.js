@@ -16,8 +16,20 @@
 export const EVALUATIONS = [
   {
     "cle": "eval-blanc",
-    "titre": "Évaluation à blanc",
+    "titre": "Évaluation à blanc — NSI Première",
     "niveau": "NSI Première",
+    "actif": true
+  },
+  {
+    "cle": "eval-blanc-nsi-term",
+    "titre": "Évaluation à blanc — NSI Terminale",
+    "niveau": "NSI Terminale",
+    "actif": true
+  },
+  {
+    "cle": "eval-blanc-snt",
+    "titre": "Évaluation à blanc — SNT",
+    "niveau": "SNT Seconde",
     "actif": true
   },
   {
