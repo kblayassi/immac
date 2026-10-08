@@ -20,10 +20,11 @@ envoyé directement à ton professeur.
 {% endif %}
 
 !!! example "Pour t'entraîner : l'évaluation à blanc"
-    Avant un vrai devoir, entraîne-toi avec l'évaluation à blanc. Elle ne compte
-    pas, tu peux la passer **autant de fois que tu veux**, et ta correction
-    s'affiche **dès que tu l'as rendue**. Clique sur **Passer une évaluation**
-    et entre ce code :
+    Avant un vrai devoir, entraîne-toi avec l'évaluation à blanc : elle se
+    déroule exactement comme un devoir, mais elle ne compte pas et tu peux la
+    passer **autant de fois que tu veux**. Elle est corrigée **dès que tu l'as
+    rendue** : ton code de consultation l'ouvre aussitôt. Clique sur **Passer
+    une évaluation** et entre ce code :
 
     ```
     EVAL-BLANC-SNT
@@ -73,4 +74,4 @@ question et les annotations. Tu peux aussi la **télécharger en PDF**.
 
 Tant que ton professeur n'a pas fini de la corriger, la page te le dit :
 reviens plus tard. L'évaluation à blanc, elle, est corrigée automatiquement :
-à la remise, le bouton **Voir ma correction** l'affiche aussitôt.
+ton code de consultation l'ouvre dès que tu l'as rendue.

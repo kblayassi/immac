@@ -537,20 +537,6 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
 .remise-envoi[data-etat="reussi"] { background: var(--vert-pale); }
 .remise-envoi[data-etat="echec"]  { background: var(--rouge-pale); }
 .remise-envoi .bouton { margin-top: .4rem; }
-
-/* Évaluation à blanc : la correction, tout de suite ; l'envoi passe au second plan. */
-.remise-correction {
-  margin: 1rem 0;
-  padding: .9rem 1rem;
-  border-radius: var(--rayon-petit);
-  background: var(--vert-pale);
-  text-align: center;
-}
-.remise-correction p { margin: 0 0 .6em; }
-.remise-correction[data-etat="echec"] { background: var(--rouge-pale); }
-.note-blanc strong { font-size: 1.45rem; }
-.remise-correction + .remise-envoi { padding: 0; background: none; }
-.panneau .pied [hidden] { display: none !important; }   /* .bouton imposerait son display */
 .code-consultation {
   font-family: var(--mono);
   font-size: 1.45rem;

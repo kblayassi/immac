@@ -340,16 +340,14 @@ d'autre à déclarer pour en ajouter une : source, barème et copies de référe
 dans `tools/evaluations/` (pas dans `prive/`), sceller avec le code voulu, puis
 copier le barème dans `docs/<cle>/bareme.json`. Une évaluation à blanc :
 
-* **se repasse à volonté** : pas de repère `eval:rendus`, et la fenêtre de
-  remise propose **Recommencer**, qui repart d'une copie neuve sans redemander
-  ni le code ni l'identité ;
-* **se corrige dans la page**, à la remise, avant tout envoi : la note s'affiche
-  aussitôt, et **Voir ma correction** ouvre `copie.html#correction` dans un
-  nouvel onglet. La copie corrigée y passe par le stockage local
-  (`eval:correction`, effacé par Quitter) : ni code ni réseau ;
-* part quand même dans la base, déjà corrigée — elle figure dans la table de
-  correction, et le code de consultation permet de la relire plus tard. Si
-  l'envoi échoue, rien n'est téléchargé : la correction est déjà là ;
+* **se déroule comme un vrai devoir**, jusqu'à la fenêtre de remise : code de
+  consultation, « Télécharger le fichier », « Quitter ». Elle simule l'examen —
+  ni note affichée, ni bouton pour recommencer (essayés le 08/10/2026, retirés) ;
+* **se repasse à volonté** : pas de repère `eval:rendus` ; après « Quitter »,
+  le code rouvre le sujet ;
+* **se corrige dans la page**, à la remise, avant l'envoi, et part déjà
+  corrigée : le code de consultation l'ouvre aussitôt dans `copie.html`. Si la
+  correction échoue, la copie part brute (elle attendra le correcteur) ;
 * ne contient **aucune question rédigée**, puisque personne ne la note à la main.
 
 ## Consulter une évaluation

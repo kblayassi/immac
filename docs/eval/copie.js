@@ -249,23 +249,8 @@ $("#btn-retour").addEventListener("click", (ev) => {
 });
 window.addEventListener("popstate", () => { if ($("#copie")) fermerCopie(); });
 
-/* copie.html#correction : la correction d'une évaluation à blanc, que la page
-   d'épreuve vient de faire et a laissée dans le stockage local (eleve.js,
-   voirCorrection). Ni code ni réseau. */
-function ouvrirCorrectionDirecte() {
-  if (location.hash !== "#correction") return;
-  let copie = null;
-  try { copie = JSON.parse(localStorage.getItem("eval:correction") || "null"); } catch { /* illisible */ }
-  if (estUneCopie(copie)) { afficher(copie); return; }
-  const alerte = $("#alerte-code");
-  alerte.textContent = "Cette correction n'est plus sur cet ordinateur. Repasse l'évaluation, " +
-                       "ou entre ton code de consultation.";
-  alerte.hidden = false;
-}
-
 initTheme();
 initDepot();
-ouvrirCorrectionDirecte();
 $("#form-code").addEventListener("submit", (ev) => {
   ev.preventDefault();
   ouvrirParCode($("#champ-code").value);
