@@ -349,6 +349,14 @@ body[data-phase="termine"] #vue { filter: grayscale(.4) opacity(.6); }
 }
 .qcm-option[data-issue="juste"] .ta-reponse { color: var(--vert); }
 .qcm-option[data-issue="faux"]  .ta-reponse { color: var(--rouge); }
+/* Correction : la bonne réponse que l'élève n'a pas cochée — contour vert,
+   sans fond. Cochée, elle serait remplie (« juste ») ; une erreur cochée est
+   remplie de rouge (« faux »). */
+.qcm-option[data-issue="manquee"] { border-color: var(--vert); background: var(--surface); }
+.qcm-option[data-issue="manquee"] .puce { border-color: var(--vert); color: var(--vert); }
+.qcm-corrige .qcm-option[data-issue="manquee"]:hover { border-color: var(--vert); }
+.enonce-correction { font-size: .9rem; margin: .2rem 0 .8rem; }
+.question-corrigee .qcm-corrige { margin-bottom: .6rem; }
 
 .criteres { list-style: none; margin: 0; padding: 0; font-size: .86rem; }
 .criteres li {

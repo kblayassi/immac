@@ -111,25 +111,26 @@ export function noteRetenue(retouches, note, bareme) {
 
 /* ------------------------------------------------------------- Le fichier */
 
+/* L'énoncé et les propositions d'une question : ceux du barème quand il les
+   porte (la console les y joint depuis la source — c'est le cas des copies
+   rendues avant que le rendu ne les emporte), sinon ceux du rendu. Pour un QCM,
+   la bonne réponse, lue dans le barème. */
+export function enonceDe(q, bareme) {
+  const s = (bareme?.sujet || []).find((x) => x.id === q.id) || {};
+  const enonce = s.enonce ?? q.enonce ?? null;
+  if (q.type !== "qcm") return enonce ? { enonce } : {};
+  const options = s.options ?? q.options ?? null;
+  const regle = bareme?.questions?.[q.id];
+  return {
+    ...(enonce ? { enonce } : {}),
+    ...(options ? { options, correct: regle?.correct ?? null,
+                    multiple: Array.isArray(regle?.correct) } : {}),
+  };
+}
+
 /* Le détail des critères y figure : c'est la justification des points, et un
    barème montré après coup est un barème qui instruit. */
 export function construireCopie({ rendu, note, retouches, bareme }) {
-  /* L'énoncé et les propositions : ceux du barème quand il les porte (la
-     console les y joint depuis la source — c'est le cas des copies rendues
-     avant que le rendu ne les emporte), sinon ceux du rendu. */
-  const sujet = new Map((bareme.sujet || []).map((q) => [q.id, q]));
-  const enonceDe = (q) => {
-    const s = sujet.get(q.id) || {};
-    const enonce = s.enonce ?? q.enonce ?? null;
-    if (q.type !== "qcm") return enonce ? { enonce } : {};
-    const options = s.options ?? q.options ?? null;
-    const regle = bareme.questions?.[q.id];
-    return {
-      ...(enonce ? { enonce } : {}),
-      ...(options ? { options, correct: regle?.correct ?? null,
-                      multiple: Array.isArray(regle?.correct) } : {}),
-    };
-  };
   return {
     format: FORMAT_COPIE,
     evaluation: {
@@ -153,7 +154,7 @@ export function construireCopie({ rendu, note, retouches, bareme }) {
       max: q.max,
       annotation: retouches?.annotations?.[q.id] || "",
       reponse: q.reponse || null,
-      ...enonceDe(q),
+      ...enonceDe(q, bareme),
       // Le verdict retenu, pas celui du barème : l'élève lit la correction de
       // son professeur. `retouche` le signale sans le mettre en avant.
       criteres: criteresRetenus(retouches, q).map((c) => ({

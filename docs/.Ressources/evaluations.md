@@ -392,6 +392,11 @@ que tout se corrige :
   critères décider ;
 * **une annotation par exercice** — c'est elle qui fait la différence entre une
   note et une correction : l'élève doit lire *pourquoi* il a perdu ces points-là ;
+* **l'énoncé de chaque exercice** au-dessus de la réponse, et pour un QCM
+  **toutes les propositions** : rempli de vert, le choix juste de l'élève ;
+  rempli de rouge, son choix faux ; cerclée de vert sans fond, la bonne
+  réponse qu'il n'a pas cochée. L'énoncé vient du barème s'il le porte
+  (téléchargé depuis la console), sinon du rendu ;
 * **la note finale**, elle aussi retouchable : additionner des points ne fait pas
   toujours une note ;
 * **l'appréciation générale**.

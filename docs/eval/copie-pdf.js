@@ -26,6 +26,7 @@ const ORANGE = "#b8860b";
 const ROUGE = "#c62828";
 const FOND_CODE = "#f0eef7";
 const VERT_PALE = "#e3f6ee";
+const BORD_CARTE = "#dcd6ea";
 const ROUGE_PALE = "#fdeaea";
 
 let pret = null;
@@ -272,10 +273,79 @@ function question(q) {
   if (q.annotation?.trim()) {
     bloc.push({ ...encadre({ text: q.annotation, fontSize: 9 }, VIOLET_PALE, VIOLET), margin: [0, 3, 0, 0] });
   }
-  return { stack: bloc, margin: [0, 0, 0, 12], unbreakable: q.type !== "code" };
+  return cadre(bloc, { bord: BORD_CARTE, insecable: q.type !== "code" });
+}
+
+/* ------------------------------------------------ Les cadres à coins ronds
+
+   pdfmake ne sait pas arrondir une bordure de tableau. Chaque bloc à encadrer
+   est donc borné par deux repères invisibles ; une première mise en page relève
+   leur position (pageBreakBefore voit passer tous les nœuds, placés), et la
+   seconde trace les cadres en fond de page, sous le texte. Un exercice coupé
+   par un saut de page reçoit un cadre sur chaque page. */
+
+const PAGE = { largeur: 595.28, hauteur: 841.89, marges: [40, 40, 40, 44] };
+const RAYON = 6;
+let cadres = [];
+
+/* pdfmake ne signale que les nœuds qui écrivent quelque chose : un repère est
+   donc une espace d'un point de corps, invisible et sans encombre. */
+const repere = (id) => ({ text: " ", fontSize: 1, lineHeight: 1, id });
+
+/* Les repères restent hors du bloc insécable : à l'intérieur, pdfmake leur
+   donne à tous deux la position du début du bloc. Le retrait intérieur est
+   porté par une cellule de tableau, et non par une marge : après un saut de
+   page, pdfmake oublie la marge droite d'une pile, et le texte déborde. */
+const SANS_TRAIT = {
+  hLineWidth: () => 0, vLineWidth: () => 0,
+  paddingLeft: () => 10, paddingRight: () => 10, paddingTop: () => 7, paddingBottom: () => 7,
+};
+
+function cadre(contenu, { insecable = false, ...style }) {
+  const id = `cadre:${cadres.length}`;
+  cadres.push({ id, insecable, ...style });
+  return {
+    stack: [
+      repere(`${id}:debut`),
+      { table: { widths: ["*"], body: [[{ stack: [repere(`${id}:contenu`), ...contenu] }]],
+                 dontBreakRows: insecable },
+        layout: SANS_TRAIT, unbreakable: insecable },
+      repere(`${id}:fin`),
+    ],
+    margin: [0, 0, 0, 12],
+  };
+}
+
+function fonds(positions, liste) {
+  const [gauche, haut, droite, bas] = PAGE.marges;
+  const largeur = PAGE.largeur - gauche - droite;
+  const parPage = {};
+  for (const c of liste) {
+    const debut = positions[`${c.id}:debut`];
+    const fin = positions[`${c.id}:fin`];
+    if (!debut || !fin) continue;
+    // Un bloc qui ne tenait plus en bas de page est passé à la suivante, et son
+    // repère de début est resté derrière lui. Le repère placé en tête du
+    // contenu dit où il commence vraiment (dans un bloc insécable, il ne dit
+    // rien : le bloc commence alors sur la page de sa fin).
+    const contenu = c.insecable ? fin : positions[`${c.id}:contenu`] || debut;
+    const premiere = contenu.page;
+    for (let page = premiere; page <= fin.page; page++) {
+      const y1 = page === debut.page ? debut.top : page === premiere ? haut : haut - 4;
+      const y2 = page === fin.page ? fin.top : PAGE.hauteur - bas + 4;
+      if (y2 - y1 < 12) continue;            // un repère resté seul en bas de page
+      (parPage[page] ||= []).push({
+        type: "rect", x: gauche, y: y1, w: largeur, h: y2 - y1, r: RAYON,
+        ...(c.fond ? { color: c.fond } : {}),
+        lineColor: c.bord || c.fond, lineWidth: c.bord ? 0.8 : 0,
+      });
+    }
+  }
+  return (page) => (parPage[page] ? { canvas: parPage[page] } : null);
 }
 
 export function documentDe(copie) {
+  cadres = [];
   const nom = `${(copie.eleve?.nom || "").toUpperCase()} ${copie.eleve?.prenom || ""}`.trim();
   const sousTitre = [
     copie.eleve?.classe,
@@ -301,18 +371,18 @@ export function documentDe(copie) {
       ],
       margin: [0, 0, 0, 10],
     },
-    { canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.6, lineColor: "#e0dced" }],
-      margin: [0, 0, 0, 10] },
   ];
+  // L'appréciation sous la note, comme à l'écran, avant le trait qui ouvre les exercices.
   if (copie.appreciation?.trim()) {
     contenu.push({
-      ...encadre({ stack: [
+      ...cadre([
         { text: "Appréciation", bold: true, fontSize: 10, color: VIOLET, margin: [0, 0, 0, 3] },
         { text: copie.appreciation, fontSize: 9.5 },
-      ] }, VIOLET_PALE),
-      margin: [0, 0, 0, 14],
+      ], { fond: VIOLET_PALE, insecable: true }),
     });
   }
+  contenu.push({ canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.6, lineColor: "#e0dced" }],
+                 margin: [0, 2, 0, 12] });
   for (const q of copie.questions || []) contenu.push(question(q));
 
   return {
@@ -325,6 +395,7 @@ export function documentDe(copie) {
       alignment: "center", fontSize: 7.5, color: DOUX, margin: [0, 14, 0, 0],
     }),
     content: contenu,
+    cadres,
   };
 }
 
@@ -332,5 +403,23 @@ export function documentDe(copie) {
     le chargement de pdfmake et des polices. */
 export async function telechargerPdf(copie) {
   const pdfMake = await preparer();
-  await new Promise((fini) => pdfMake.createPdf(documentDe(copie)).download(nomDuPdf(copie), fini));
+
+  // Première passe : où tombent les repères des cadres.
+  const essai = documentDe(copie);
+  delete essai.cadres;
+  const positions = {};
+  essai.pageBreakBefore = (noeud) => {
+    if (typeof noeud.id === "string" && noeud.id.startsWith("cadre:") && noeud.startPosition) {
+      positions[noeud.id] = { page: noeud.startPosition.pageNumber, top: noeud.startPosition.top };
+    }
+    return false;
+  };
+  await new Promise((fini) => pdfMake.createPdf(essai).getBuffer(fini));
+
+  // Seconde passe : le même document, ses cadres en fond de page.
+  const doc = documentDe(copie);
+  const trace = fonds(positions, doc.cadres);
+  delete doc.cadres;
+  doc.background = (page) => trace(page);
+  await new Promise((fini) => pdfMake.createPdf(doc).download(nomDuPdf(copie), fini));
 }

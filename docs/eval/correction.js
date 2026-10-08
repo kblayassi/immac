@@ -14,7 +14,8 @@
 import { creerPython, creerEditeur, executerAvecSaisies } from "../parcours/atelier.js";
 import { telecharger, creerZip, nomDeRendu } from "../parcours/archive.js";
 import { estUnRendu, nomAffiche, scelleIntact, duree } from "./rendu.js";
-import { construireCopie, pointsRetenus, pointsProposes, criteresRetenus,
+import { blocEnonce, propositionsCorrection, qcmDetaille } from "./enonce.js";
+import { construireCopie, enonceDe, pointsRetenus, pointsProposes, criteresRetenus,
          totalRetenu, noteCalculee, noteRetenue, questionsANoter, noteComplete }
   from "./copie-corrigee.js";
 import { estUnBareme, noter, alertes, ecartsDeVersion } from "./bareme.js";
@@ -500,10 +501,16 @@ function bloc(copie, q) {
     boite.appendChild(ligneColles);
   }
 
-  /* La réponse de l'élève, telle quelle. C'est elle qu'on corrige — les critères
-     ne sont qu'un avis. */
+  /* La consigne, puis la réponse de l'élève, telle quelle. C'est elle qu'on
+     corrige — les critères ne sont qu'un avis. */
+  const sujet = { ...q, ...enonceDe(q, bareme) };
+  const enonce = blocEnonce(sujet.enonce, "enonce copie-enonce enonce-correction");
+  if (enonce) boite.appendChild(enonce);
+
   const reponse = q.reponse || {};
-  if (q.type === "code") {
+  if (qcmDetaille(sujet)) {
+    boite.appendChild(propositionsCorrection(sujet, reponse));
+  } else if (q.type === "code") {
     boite.appendChild(atelierDeCorrection(reponse.code || ""));
   } else if (q.type === "texte") {
     boite.appendChild(elem("blockquote", "texte-eleve", reponse.texte || "(rien)"));
