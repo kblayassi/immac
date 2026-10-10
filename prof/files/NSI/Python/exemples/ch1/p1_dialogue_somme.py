@@ -1,0 +1,3 @@
+# Demande deux nombres à l'utilisateur, puis affiche leur somme.
+nombre_1 = ...
+

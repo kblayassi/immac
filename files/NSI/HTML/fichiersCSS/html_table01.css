@@ -1,0 +1,22 @@
+@charset "utf-8";
+/**---- Author : Jean-Manuel M�ny & Nicolas Buyle-Bodin ----- Groupe ISN-IREM ----- LYON ----**/
+
+
+table{
+	border-collapse: collapse; 
+	}
+
+td, th { 
+	border: 1px solid; 
+	padding: 10px 20px; 
+	text-align: center; 
+	max-width: 300px;
+	}
+
+tr:first-of-type th{
+	background-color: red;
+	}
+
+th{
+	background-color: pink;
+	}

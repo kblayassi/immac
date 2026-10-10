@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr" >
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parcours Web — Seconde</title>
+<meta name="description" content="Apprendre HTML et CSS pas à pas, en Seconde : cours interactif, aperçu en direct et projet guidé.">
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../parcours/app.css">
+</head>
+<body>
+
+<header class="barre">
+  <div class="barre-interieur">
+    <a class="marque" href="#/" id="lien-accueil" title="Accueil du parcours">
+      <span class="logo" aria-hidden="true">&gt;_</span>
+    </a>
+
+    <a class="bouton fantome retour" id="lien-retour" href="../SNT/3_Le_Web/">
+      <span aria-hidden="true">←</span> <span class="libelle-retour">Retour au site</span>
+    </a>
+
+    <div class="barre-titre" id="barre-titre"></div>
+
+    <span class="barre-espace"></span>
+
+    <div class="jauge" id="jauge-barre" role="progressbar" aria-label="Avancement" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+    <span class="compteur" id="compteur-barre"></span>
+
+    <button class="bouton fantome icone" id="btn-theme" title="Changer de thème" aria-label="Changer de thème">◐</button>
+    <button class="bouton fantome icone" id="btn-progression" title="Ma progression" aria-label="Ma progression">☰</button>
+  </div>
+</header>
+
+<main id="vue" class="page" tabindex="-1"></main>
+
+<!-- Sauvegarde : la progression vit dans ce navigateur ; ce panneau sert à
+     l'emporter d'un poste à l'autre. -->
+<dialog class="panneau" id="panneau-progression">
+  <form method="dialog" class="corps">
+    <h2>Ma progression</h2>
+    <p id="resume-progression"></p>
+
+    <div class="champ">
+      <label for="champ-nom">Mon nom</label>
+      <input type="text" id="champ-nom" autocomplete="off" placeholder="Lovelace">
+    </div>
+
+    <div class="champ">
+      <label for="champ-prenom">Mon prénom</label>
+      <input type="text" id="champ-prenom" autocomplete="off" placeholder="Ada">
+    </div>
+
+    <p style="font-size:.9rem;color:var(--texte-doux)">
+      Ils restent dans ce navigateur, et servent à nommer les fichiers que tu
+      télécharges — <strong>NOM_Prenom</strong>.
+    </p>
+
+    <p style="font-size:.9rem;color:var(--texte-doux)">
+      Ta progression est enregistrée <strong>dans ce navigateur</strong>, automatiquement.
+      Si tu changes de poste, télécharge le fichier ci-dessous et redépose-le sur
+      l'autre ordinateur.
+    </p>
+
+    <div class="champ">
+      <span class="etiquette">Reprendre une progression enregistrée</span>
+      <input type="file" id="champ-fichier" class="hors-vue" accept="application/json,.json">
+      <label class="depot" id="zone-depot" for="champ-fichier">
+        <span class="depot-icone" aria-hidden="true">&#11015;</span>
+        <span class="depot-titre sur-pointeur">D&eacute;pose ici ton fichier <code>.json</code></span>
+        <span class="depot-titre sur-tactile">Ton fichier de progression</span>
+        <span class="depot-sous sur-pointeur">ou <u>clique pour parcourir</u> tes fichiers</span>
+        <span class="depot-sous sur-tactile"><u>Touche ici pour le choisir</u></span>
+      </label>
+    </div>
+  </form>
+
+  <div class="pied">
+    <button class="bouton" id="btn-telecharger">Télécharger ma progression</button>
+    <button class="bouton fantome" id="btn-fermer-progression">Fermer</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="../parcours/app.js"></script>
+</body>
+</html>

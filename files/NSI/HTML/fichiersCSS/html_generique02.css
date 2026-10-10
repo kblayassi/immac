@@ -1,0 +1,45 @@
+#menu{
+	display: block;
+    text-align: left;
+	line-height: 30px;
+	margin: 0;
+	padding: 0;
+    list-style: none;
+	}
+
+
+#menu li {
+	position: relative;						/* pour placer en absolu un ul fils d'un li */
+    z-index: 5;
+	margin: -1px 0 0 -1px;
+	text-align: center;
+	list-style-type: none;
+	color : green;
+	border: 1px solid;
+	width: 130px;
+	}
+
+	
+#menu>.onglet{
+    float: left;
+	cursor: pointer;
+    }
+
+#menu .item{
+    display: none;
+	}
+
+#menu>.onglet:hover>.item{
+    display: block;
+    position: absolute;
+	margin-top: -1px;
+	margin-right: -1px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	right: 0;
+    }
+
+#menu>.onglet:hover>.item>li{
+    line-height: 30px;
+    }
+

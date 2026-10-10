@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Correction des évaluations</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../parcours/app.css">
+<link rel="stylesheet" href="eval.css">
+</head>
+<body>
+
+<header class="barre">
+  <div class="barre-interieur">
+    <span class="marque" aria-hidden="true"><span class="logo">&gt;_</span></span>
+    <div class="barre-titre">Correction</div>
+    <span class="barre-espace"></span>
+    <span id="avancement" class="avancement" hidden></span>
+    <span id="compte" class="compte"></span>
+  </div>
+</header>
+
+<main class="page large">
+
+  <!-- Quatre étapes, dans l'ordre : se connecter, choisir l'évaluation, choisir
+       la classe, déposer le barème. Une étape faite se replie en une ligne, avec
+       de quoi la changer ; une étape qui attend la précédente reste grisée.
+       La page elle-même ne contient ni copie ni barème : les copies sont en
+       ligne derrière la connexion, et le barème ne quitte pas ce navigateur. -->
+  <ol class="pas-liste" id="pas-liste">
+
+    <li class="pas" id="etape-connexion">
+      <header class="pas-tete">
+        <span class="pas-num" aria-hidden="true">1</span>
+        <div class="pas-titres">
+          <h2>Connexion</h2>
+          <p class="pas-resume" id="resume-connexion"></p>
+        </div>
+        <button class="bouton fantome petit" id="btn-deconnexion" type="button" hidden>Se déconnecter</button>
+      </header>
+      <div class="pas-corps">
+        <form id="form-connexion" class="connexion">
+          <input type="email" id="champ-email" placeholder="Adresse e-mail" autocomplete="username" required>
+          <input type="password" id="champ-mdp" placeholder="Mot de passe" autocomplete="current-password" required>
+          <button class="bouton" type="submit">Se connecter</button>
+        </form>
+        <p class="discret">Pas de connexion ? Les copies reçues en fichier se corrigent
+           quand même : passe directement à l'étape 4.</p>
+      </div>
+    </li>
+
+    <li class="pas" id="etape-evaluation">
+      <header class="pas-tete">
+        <span class="pas-num" aria-hidden="true">2</span>
+        <div class="pas-titres">
+          <h2>Évaluation</h2>
+          <p class="pas-resume" id="resume-evaluation"></p>
+        </div>
+        <button class="bouton fantome petit" id="btn-actualiser" type="button" hidden>Actualiser</button>
+        <button class="bouton fantome petit" id="btn-changer-evaluation" type="button" hidden>Changer</button>
+      </header>
+      <div class="pas-corps">
+        <div class="liste-choix" id="liste-evaluations"></div>
+      </div>
+    </li>
+
+    <li class="pas" id="etape-classe">
+      <header class="pas-tete">
+        <span class="pas-num" aria-hidden="true">3</span>
+        <div class="pas-titres">
+          <h2>Classe</h2>
+          <p class="pas-resume" id="resume-classe"></p>
+        </div>
+        <button class="bouton fantome petit" id="btn-changer-classe" type="button" hidden>Changer</button>
+      </header>
+      <div class="pas-corps">
+        <div class="liste-choix" id="liste-classes"></div>
+      </div>
+    </li>
+
+    <li class="pas" id="etape-bareme">
+      <header class="pas-tete">
+        <span class="pas-num" aria-hidden="true">4</span>
+        <div class="pas-titres">
+          <h2>Barème</h2>
+          <p class="pas-resume etat-bareme" id="etat-bareme">Aucun barème chargé</p>
+        </div>
+        <button class="bouton fantome petit" id="btn-changer-bareme" type="button" hidden>Changer</button>
+      </header>
+      <div class="pas-corps">
+        <p class="discret" id="consigne-bareme"></p>
+        <input type="file" id="champ-fichiers" class="hors-vue" accept="application/json,.json" multiple>
+        <label class="depot" id="zone-depot" for="champ-fichiers">
+          <span class="depot-icone" aria-hidden="true">&#11015;</span>
+          <span class="depot-titre">Dépose ici le barème <code>.json</code></span>
+          <span class="depot-sous">ou <u>clique pour le choisir</u> — des copies reçues en fichier
+            se déposent au même endroit</span>
+        </label>
+      </div>
+    </li>
+
+  </ol>
+
+  <div class="barre-outils" id="barre-outils" hidden>
+    <button class="bouton" id="btn-csv" type="button">Exporter les notes (CSV)</button>
+    <button class="bouton" id="btn-copies" type="button">Exporter les copies corrigées (ZIP)</button>
+    <button class="bouton fantome" id="btn-vider" type="button">Vider la table</button>
+  </div>
+
+  <p id="vide" class="discret vide">
+    Rien à corriger pour l'instant. Choisis une classe dans les copies en ligne,
+    ou dépose des fichiers de copies. Le barème, lui, reste dans ce navigateur.
+  </p>
+
+  <div id="table"></div>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="correction.js"></script>
+</body>
+</html>
