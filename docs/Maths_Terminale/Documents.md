@@ -28,7 +28,7 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà abordés en cla
 
 - TD3 - Limites de suites
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td3.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td3-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td3.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td3-correction.pdf) -->
 
 - TD4 - Dérivations de fonctions composées
     
@@ -77,7 +77,7 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà abordés en cla
 
 - TD B - Dénombrement 1
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdB.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdB-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdB.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdB-correction.pdf) -->
 
 - TD C - Droites et plans de l'espace
     
@@ -124,15 +124,15 @@ Vous trouverez sur cette page les sujets et les correction des divers DHC de typ
 
 - DHC1 - Métropole 2025 :  
     
-    [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc1.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc1-correction.pdf) -->
+    [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc1.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc1-correction.pdf)
 
 - DHC2 - Liban 2016 :  
     
-    *À venir* <!-- [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc2.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc2-correction.pdf) -->
+    [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc2.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc2-correction.pdf)
 
 - DHC3 - Polynésie 2024 :  
     
-    *À venir* <!-- [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc3.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc3-correction.pdf) -->
+    [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc3.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc3-correction.pdf) -->
 
 - DHC4 - Centres étrangers 2021 :  
     

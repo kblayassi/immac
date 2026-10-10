@@ -24,11 +24,11 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà aborder en clas
 
 - TD2 - Dérivation locale
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td2.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td2-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td2.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td2-correction.pdf)
 
 - TD3 - Généralités sur les suites
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td3.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td3-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td3.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td3-correction.pdf) -->
 
 - TD4 - Trigonométrie
     

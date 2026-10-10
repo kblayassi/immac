@@ -29,11 +29,11 @@ correction. Ils sont mis en ligne au fur et à mesure de l'année.
 
 - TD2 - Vecteurs (partie 1)
 
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td2.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td2-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td2.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td2-correction.pdf)
 
 - TD3 - Fractions, puissances, racines carrées et valeur absolue
 
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td3.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td3-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td3.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td3-correction.pdf) -->
 
 - TD4 - Nombres réels
 

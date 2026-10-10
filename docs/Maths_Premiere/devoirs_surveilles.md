@@ -6,6 +6,12 @@ weight: 16
 
 Vous trouverez sur cette page les sujets et les correction des devoirs surveillés (DS) des années précédentes.
 
+## 2026-2027
+
+* DS1 - Second degré (partie 1) :  
+    
+    [Sujet :fontawesome-solid-file-pdf:](../files/ds_maths_1e/26_27/ds1.pdf) / [Correction :fontawesome-solid-file-pdf:](../files/ds_maths_1e/26_27/ds1-correction.pdf)
+
 ## 2025-2026
 
 * DS1 - Second degré (partie 1) :  
