@@ -1,0 +1,152 @@
+{
+  "v": 4,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-15T11:41:07Z"
+  },
+  "lists": "css",
+  "title": "NSI – Représentation des nombres entiers",
+  "cover": "cover",
+  "faces": {
+    "quicksand": {
+      "family": "Quicksand",
+      "href": "https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap"
+    },
+    "red-hat-mono": {
+      "family": "Red Hat Mono",
+      "href": "https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@400;700&display=swap"
+    }
+  },
+  "designSystems": [],
+  "order": [
+    "cover",
+    "intro",
+    "citation",
+    "td1",
+    "p1",
+    "decimal",
+    "ex-343",
+    "ex-343-sol",
+    "anciens",
+    "base",
+    "binaire",
+    "hexa",
+    "recap-bases",
+    "exos-1-14",
+    "methode-vers-10",
+    "ex-bin-10",
+    "ex-bin-10-sol",
+    "ex-oct-10",
+    "ex-oct-10-sol",
+    "ex-hex-10",
+    "ex-hex-10-sol",
+    "exos-15-20",
+    "methode-depuis-10",
+    "ex-13-2",
+    "ex-13-2-sol",
+    "ex-46-8",
+    "ex-46-8-sol",
+    "ex-47-16",
+    "ex-47-16-sol",
+    "python-bases",
+    "ex-python",
+    "ex-python-sol",
+    "exos-21-28",
+    "addition",
+    "ex-add",
+    "ex-add-sol",
+    "multiplication",
+    "ex-mul",
+    "ex-mul-sol",
+    "erreurs",
+    "exos-29-34",
+    "carte-mentale",
+    "td2",
+    "p2",
+    "relatifs-intro",
+    "bit-signe",
+    "ex-bit-signe",
+    "ex-bit-signe-sol",
+    "bit-signe-plage",
+    "bit-signe-limites",
+    "exos-35-44",
+    "complement-un",
+    "ex-complement-un",
+    "ex-complement-un-sol",
+    "complement-un-limites",
+    "c2-principe",
+    "c2-coder",
+    "ex-c2-coder",
+    "ex-c2-coder-sol",
+    "c2-lire",
+    "ex-c2-lire",
+    "ex-c2-lire-sol",
+    "c2-plage",
+    "exos-45-52",
+    "soustraction",
+    "ex-soustraction",
+    "ex-soustraction-sol",
+    "synthese-relatifs",
+    "retenir-relatifs",
+    "exos-53-57",
+    "p3",
+    "reels-intro",
+    "decimal-methode",
+    "ex-6-25",
+    "ex-6-25-sol",
+    "ex-0-75",
+    "ex-0-75-sol",
+    "ex-0-1",
+    "ex-0-1-sol",
+    "retenir-decimaux",
+    "exos-59-62",
+    "ex-approx",
+    "ex-approx-sol",
+    "comparer",
+    "flottant",
+    "ex-flottant",
+    "ex-flottant-sol",
+    "flottant-def",
+    "ieee",
+    "retenir-flottants",
+    "exos-58-63",
+    "mini-projets",
+    "p4",
+    "conclusion",
+    "competences"
+  ],
+  "sections": {
+    "s1": {
+      "description": "Introduction : de quoi parle le chapitre, et le TD1 sur les numérations historiques",
+      "start": "cover"
+    },
+    "s2": {
+      "description": "Partie 1 : les bases 2, 8, 10 et 16 (exercices 1 à 14)",
+      "start": "p1"
+    },
+    "s3": {
+      "description": "Partie 1 : conversions vers et depuis la base 10 (exercices 15 à 28)",
+      "start": "methode-vers-10"
+    },
+    "s4": {
+      "description": "Partie 1 : additions et multiplications posées (exercices 29 à 34), résumé et TD2",
+      "start": "addition"
+    },
+    "s5": {
+      "description": "Partie 2 : bit de signe et complément à un (exercices 35 à 44)",
+      "start": "p2"
+    },
+    "s6": {
+      "description": "Partie 2 : complément à deux et soustraction (exercices 45 à 57)",
+      "start": "c2-principe"
+    },
+    "s7": {
+      "description": "Partie 3 : décimaux en binaire et approximations (exercices 58 à 63), mini-projets",
+      "start": "p3"
+    },
+    "s8": {
+      "description": "Conclusion : bilan et compétences",
+      "start": "p4"
+    }
+  }
+}

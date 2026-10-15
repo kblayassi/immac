@@ -23,3 +23,8 @@ Bref, on entre dans les **coulisses du cerveau de la machine** 🔍
 ---
 
 ![citation](../../files/NSI/Numeration/quote1.png)
+
+{% if config.extra.version == "prof" %}
+!!! note "Pour le professeur"
+    [Ouvrir le diaporama du chapitre :fontawesome-solid-person-chalkboard:](diaporama.html){ .md-button target="_blank" }
+{% endif %}

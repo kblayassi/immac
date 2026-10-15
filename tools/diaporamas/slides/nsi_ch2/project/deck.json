@@ -1,0 +1,117 @@
+{
+  "v": 4,
+  "attachments": {},
+  "cover": "cover",
+  "createdOnFiles": {
+    "at": "2026-09-24T12:08:14Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "faces": {
+    "quicksand": {
+      "family": "Quicksand",
+      "href": "https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap"
+    },
+    "red-hat-mono": {
+      "family": "Red Hat Mono",
+      "href": "https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@400;700&display=swap"
+    }
+  },
+  "order": [
+    "cover",
+    "intro",
+    "p1",
+    "materiel",
+    "partage",
+    "definition",
+    "couches",
+    "retenir-os",
+    "processus",
+    "fonctions",
+    "retenir-fonctions",
+    "histoire",
+    "reperes",
+    "familles",
+    "objets",
+    "libre",
+    "noyau",
+    "libre-exemples",
+    "libre-retenir",
+    "tp1",
+    "exos-1-4",
+    "tp2",
+    "p2",
+    "pourquoi-cli",
+    "terminal-console",
+    "ouvrir-terminal",
+    "arborescence",
+    "arbre",
+    "chemins",
+    "ex-chemins",
+    "ex-chemins-sol",
+    "cmd-nav",
+    "ex-cd",
+    "ex-cd-sol",
+    "cmd-creer",
+    "cmd-fichiers",
+    "ex-mv",
+    "ex-mv-sol",
+    "cmd-attention",
+    "ex-cp",
+    "ex-cp-sol",
+    "cmd-systeme",
+    "bonnes-pratiques",
+    "exos-5-13",
+    "p3",
+    "pourquoi-droits",
+    "utilisateurs",
+    "sudo",
+    "types-droits",
+    "droits-repertoire",
+    "a-qui",
+    "ls-l",
+    "decoder",
+    "ex-ls-l",
+    "ex-ls-l-sol",
+    "chown-chmod",
+    "chown",
+    "chmod",
+    "ex-chmod",
+    "ex-chmod-sol",
+    "exos-14-18",
+    "p4",
+    "conclusion",
+    "competences"
+  ],
+  "sections": {
+    "s1": {
+      "description": "Introduction : de quoi parle le chapitre",
+      "start": "cover"
+    },
+    "s2": {
+      "description": "Partie 1 : matériel et logiciels, définition, fonctions et histoire des systèmes d'exploitation",
+      "start": "p1"
+    },
+    "s3": {
+      "description": "Des systèmes d'exploitation partout : libres et propriétaires",
+      "start": "familles"
+    },
+    "s4": {
+      "description": "Travaux pratiques : TP1 (installer Linux) et TP2 (Terminus)",
+      "start": "tp1"
+    },
+    "s5": {
+      "description": "Partie 2 : terminal, arborescence, chemins et commandes de base",
+      "start": "p2"
+    },
+    "s6": {
+      "description": "Partie 3 : utilisateurs, groupes, droits r/w/x, chown et chmod",
+      "start": "p3"
+    },
+    "s7": {
+      "description": "Conclusion : bilan et compétences",
+      "start": "p4"
+    }
+  },
+  "title": "NSI – Système d'exploitation"
+}
