@@ -338,11 +338,27 @@ function ligne(copie) {
   const actions = elem("td");
   const btn = elem("button", "bouton fantome petit", ouverte === copie ? "Fermer" : "Voir");
   btn.type = "button";
-  btn.addEventListener("click", () => { ouverte = ouverte === copie ? null : copie; rendre(); });
+  btn.addEventListener("click", () => {
+    ouverte = ouverte === copie ? null : copie;
+    rendre();
+    if (ouverte) allerAuDebutDeLaCopie();
+  });
   actions.appendChild(btn);
   tr.appendChild(actions);
 
   return tr;
+}
+
+/* Ouvrir une copie amène à son début. Sans cela, la page gardait sa position :
+   en finissant une copie puis en ouvrant celle du dessous, on arrivait en bas
+   de la nouvelle. La ligne de l'élève se cale sous la barre du haut, collante. */
+function allerAuDebutDeLaCopie() {
+  const ligneEleve = $(".ligne-detail")?.previousElementSibling;
+  if (!ligneEleve) return;
+  const barre = $(".barre");
+  const hauteurBarre = barre ? barre.offsetHeight : 0;
+  const y = ligneEleve.getBoundingClientRect().top + window.scrollY - hauteurBarre - 8;
+  window.scrollTo({ top: Math.max(0, y) });
 }
 
 const arrondi = (n) => (Math.round(n * 100) / 100).toString().replace(".", ",");

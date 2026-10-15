@@ -489,6 +489,9 @@ function rendreSujet() {
 
   demarrerChrono();
   majSommaire();
+  // Le sujet remplace l'accueil sans recharger la page : sans cela, il s'ouvrait
+  // à la hauteur où l'on avait cliqué « Commencer » (à l'exercice 2 en SNT).
+  window.scrollTo({ top: 0 });
 }
 
 /* Le sommaire sert à naviguer, et à voir d'un coup d'œil ce qui reste blanc.
