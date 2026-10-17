@@ -65,6 +65,7 @@ docs/parcours-python/           un parcours (SNT)
 docs/parcours-nsi/              l'autre (NSI chapitre 1), même structure
 docs/parcours-web/              le troisième (SNT, Le Web) — langage: "web"
 docs/parcours-nsi-term/         le quatrième (NSI Terminale, chapitre 1)
+docs/parcours-nsi-ch4/          le cinquième (NSI Première, chapitre 4)
 ```
 
 !!! info "Le moteur ne sait rien du cours"
@@ -83,6 +84,7 @@ docs/parcours-nsi-term/         le quatrième (NSI Terminale, chapitre 1)
 | NSI — chapitre 1 | `…/immac/parcours-nsi/` | `…/immac/prof/parcours-nsi/` | 13 séances, 225 étapes |
 | SNT — Le Web | `…/immac/parcours-web/` | `…/immac/prof/parcours-web/` | 4 séances, 84 étapes |
 | NSI Terminale — chapitre 1 | `…/immac/parcours-nsi-term/` | `…/immac/prof/parcours-nsi-term/` | 8 séances, 182 étapes |
+| NSI — chapitre 4 | `…/immac/parcours-nsi-ch4/` | `…/immac/prof/parcours-nsi-ch4/` | 12 séances, 241 étapes |
 
 L'adresse `prof/` n'est pas listée mais **n'est pas protégée** : qui la connaît y accède.
 
@@ -651,6 +653,13 @@ la commande habituelle sans argument couvre les trois parcours.
 
 ---
 
+!!! tip "Un organigramme : du SVG, pas de l'ASCII"
+    Les caractères de dessin de boîtes (`┌─┐`) s'alignent mal dans la police du bloc de
+    code et débordent sur téléphone. Les deux organigrammes de `parcours-nsi-ch4/s07.js`
+    sont des `<svg viewBox="0 0 360 …">` en ligne, `width:100%`, traits et texte en
+    `currentColor` pour suivre le thème sombre. Garder une largeur de 360 unités : au-delà,
+    le texte devient illisible sur un téléphone.
+
 ## 9 ter · Sur téléphone et tablette
 
 Rien à écrire dans une séance : tout est dans `app.css` et `app.js`, valable pour
@@ -737,6 +746,7 @@ mkdocs build -f mkdocs-prof.yml   # version prof : corrections conservées
 | NSI — chapitre 1 | 13 | 225 | ✅ complet, vérifié |
 | SNT — Le Web | 4 | 84 | ✅ complet, vérifié |
 | NSI Terminale — chapitre 1 | 8 | 182 | ✅ complet, vérifié |
+| NSI — chapitre 4 | 12 | 241 | ✅ complet, vérifié |
 
 ### Décisions arrêtées, à ne pas re-proposer
 
@@ -774,8 +784,8 @@ mkdocs build -f mkdocs-prof.yml   # version prof : corrections conservées
 ### Pistes non tranchées
 
 - **Les autres chapitres de NSI de Première** pourraient recevoir le même traitement. Le
-  chapitre 4 (listes et chaînes) et le chapitre 5 (spécifier et tester) s'y prêtent bien :
-  beaucoup d'exercices déjà auto-corrigés à convertir.
+  chapitre 4 (listes et chaînes) est fait ; le chapitre 5 (spécifier et tester) s'y prête
+  bien : beaucoup d'exercices déjà auto-corrigés à convertir.
 - **Le chapitre 2 de Terminale, la programmation objet**, reprendra les piles et les files
   de ce chapitre pour les réécrire en classes. La conclusion du chapitre 1 l'annonce déjà.
   Les séances 3 à 6 fournissent les implémentations à convertir telles quelles.
