@@ -28,11 +28,11 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà abordés en cla
 
 - TD3 - Limites de suites
     
-    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td3.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td3-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td3.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td3-correction.pdf)
 
 - TD4 - Dérivations de fonctions composées
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td4.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td4-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td4.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td4-correction.pdf) -->
 
 - TD5 - Théorèmes de convergence
     
@@ -77,11 +77,11 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà abordés en cla
 
 - TD B - Dénombrement 1
     
-    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdB.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdB-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdB.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdB-correction.pdf)
 
 - TD C - Droites et plans de l'espace
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdC.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdC-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdC.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdC-correction.pdf) -->
 
 - TD D - Repérage dans l'espace
     
