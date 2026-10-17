@@ -1,0 +1,52 @@
+/* 
+Page de style pour le premier site en html/css.
+NSI LMD 
+Sur une idée originale de Jean-Manuel Meny et Ludovic Fasquelle
+*/
+
+ 
+html{ 
+    font-size: 20px; /* taille de référence des fontes */
+}
+
+img{
+    width: 100%;
+}
+
+header{
+    height: 297px; /* on impose la hauteur du header pour la photo */
+    background-image: url('../images/immac.gif');
+    text-align:center;
+    color: white;
+    font-weight: bold;
+}
+
+body{
+    width: 70%; /* occupe 70% de la page en largeur */
+    margin: 0 auto; /* auto permet ici de centrer le body en laissant marge gauche et marge droite identiques */
+}
+h1{
+    font-size: 2rem; /* 2rem = 2 fois la taille de référence, soit 40px */
+    padding-top: 1rem;  
+}
+h2{
+    font-size: 1.5rem;
+    border: 1px solid #aaa;
+    text-align:center;
+    border-radius: 20px;
+}
+p#eleve{
+    font-size: 1.5rem;
+}
+footer{
+    text-align:center;
+    margin: 2rem;
+}
+footer a{
+    
+    text-decoration: none;
+    background-color:yellow;
+    color: blue;
+    border-radius: 20px;
+    padding: 5px;
+}

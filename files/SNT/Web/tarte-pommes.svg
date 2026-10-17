@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400" role="img" aria-label="Une tarte aux pommes vue de dessus">
+  <rect width="600" height="400" fill="#f4efe6"/>
+  <circle cx="300" cy="200" r="160" fill="#d9a55f"/>
+  <circle cx="300" cy="200" r="142" fill="#e9c68a"/>
+  <circle cx="300" cy="200" r="126" fill="#f0d3a0"/>
+  <g fill="#e8a95c" stroke="#c9853c" stroke-width="2">
+    <ellipse cx="300" cy="130" rx="46" ry="17"/>
+    <ellipse cx="368" cy="168" rx="46" ry="17" transform="rotate(60 368 168)"/>
+    <ellipse cx="368" cy="242" rx="46" ry="17" transform="rotate(120 368 242)"/>
+    <ellipse cx="300" cy="278" rx="46" ry="17"/>
+    <ellipse cx="232" cy="242" rx="46" ry="17" transform="rotate(60 232 242)"/>
+    <ellipse cx="232" cy="168" rx="46" ry="17" transform="rotate(120 232 168)"/>
+    <ellipse cx="300" cy="204" rx="40" ry="15"/>
+  </g>
+  <circle cx="300" cy="204" r="10" fill="#c9853c"/>
+</svg>

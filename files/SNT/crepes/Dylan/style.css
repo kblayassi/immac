@@ -1,0 +1,13 @@
+body {
+   background-color: red;
+   front-family: comic sans MS;
+   color: orange;
+}
+
+h1 {
+   texte-decoration: underline;
+   front-size: 70px;
+   texte-align: center;
+   front-family: comic sans MS;
+}
+   

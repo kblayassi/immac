@@ -1,0 +1,49 @@
+{
+  "format": "bareme/v1",
+  "evaluation": "eval-blanc-snt",
+  "titre": "Évaluation à blanc — SNT",
+  "noteSur": 20,
+  "arrondi": 0.25,
+  "questions": {
+    "q1": {
+      "titre": "Avec ou sans guillemets",
+      "points": 1,
+      "correct": 1
+    },
+    "q2": {
+      "titre": "Une variable qui change",
+      "points": 1,
+      "correct": 1
+    },
+    "q3": {
+      "titre": "Afficher un message",
+      "criteres": [
+        {
+          "points": 2,
+          "libelle": "Affiche « Bienvenue en SNT ! »",
+          "sortieRegex": "^Bienvenue en SNT !$"
+        }
+      ]
+    },
+    "q4": {
+      "titre": "L'aire d'un rectangle",
+      "criteres": [
+        {
+          "points": 2,
+          "libelle": "Affiche « Aire : 21 »",
+          "sortieRegex": "^Aire : 21$"
+        },
+        {
+          "points": 1,
+          "libelle": "L'aire est calculée par Python (longueur * largeur)",
+          "codeContient": "longueur\\s*\\*\\s*largeur|largeur\\s*\\*\\s*longueur"
+        }
+      ]
+    },
+    "q5": {
+      "titre": "Ranger une valeur",
+      "points": 1,
+      "correct": 1
+    }
+  }
+}

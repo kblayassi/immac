@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400" role="img" aria-label="Une pile de crêpes dans une assiette">
+  <rect width="600" height="400" fill="#fdf3e3"/>
+  <ellipse cx="300" cy="330" rx="215" ry="42" fill="#e8d5b7"/>
+  <ellipse cx="300" cy="322" rx="190" ry="34" fill="#f6ead6"/>
+  <g>
+    <ellipse cx="300" cy="292" rx="150" ry="30" fill="#c98a3c"/>
+    <ellipse cx="300" cy="285" rx="150" ry="30" fill="#e5aa5c"/>
+    <ellipse cx="300" cy="258" rx="145" ry="29" fill="#c98a3c"/>
+    <ellipse cx="300" cy="251" rx="145" ry="29" fill="#eab970"/>
+    <ellipse cx="300" cy="225" rx="150" ry="30" fill="#c98a3c"/>
+    <ellipse cx="300" cy="218" rx="150" ry="30" fill="#e5aa5c"/>
+    <ellipse cx="300" cy="192" rx="142" ry="28" fill="#c98a3c"/>
+    <ellipse cx="300" cy="185" rx="142" ry="28" fill="#efc484"/>
+  </g>
+  <path d="M300 160 q-55 4 -78 26 q22 26 44 12 q10 22 34 20 q28 -2 34 -24 q26 8 40 -14 q-26 -20 -74 -20 z" fill="#7a4a22" opacity=".85"/>
+  <circle cx="248" cy="176" r="11" fill="#d94f4f"/>
+  <circle cx="352" cy="180" r="9" fill="#d94f4f"/>
+  <circle cx="300" cy="166" r="10" fill="#e46a6a"/>
+  <path d="M300 156 q6 -14 -4 -22 q14 4 16 22 z" fill="#4a8f4a"/>
+</svg>
