@@ -66,6 +66,7 @@ docs/parcours-nsi/              l'autre (NSI chapitre 1), même structure
 docs/parcours-web/              le troisième (SNT, Le Web) — langage: "web"
 docs/parcours-nsi-term/         le quatrième (NSI Terminale, chapitre 1)
 docs/parcours-nsi-ch4/          le cinquième (NSI Première, chapitre 4)
+docs/parcours-maths-1e/         le sixième (Maths Première : rappels de Seconde + listes)
 ```
 
 !!! info "Le moteur ne sait rien du cours"
@@ -85,6 +86,7 @@ docs/parcours-nsi-ch4/          le cinquième (NSI Première, chapitre 4)
 | SNT — Le Web | `…/immac/parcours-web/` | `…/immac/prof/parcours-web/` | 4 séances, 84 étapes |
 | NSI Terminale — chapitre 1 | `…/immac/parcours-nsi-term/` | `…/immac/prof/parcours-nsi-term/` | 8 séances, 182 étapes |
 | NSI — chapitre 4 | `…/immac/parcours-nsi-ch4/` | `…/immac/prof/parcours-nsi-ch4/` | 12 séances, 241 étapes |
+| Maths Première — Python | `…/immac/parcours-maths-1e/` | `…/immac/prof/parcours-maths-1e/` | 9 séances, 147 étapes |
 
 L'adresse `prof/` n'est pas listée mais **n'est pas protégée** : qui la connaît y accède.
 
@@ -747,6 +749,7 @@ mkdocs build -f mkdocs-prof.yml   # version prof : corrections conservées
 | SNT — Le Web | 4 | 84 | ✅ complet, vérifié |
 | NSI Terminale — chapitre 1 | 8 | 182 | ✅ complet, vérifié |
 | NSI — chapitre 4 | 12 | 241 | ✅ complet, vérifié |
+| Maths Première — Python | 9 | 147 | ✅ complet, vérifié |
 
 ### Décisions arrêtées, à ne pas re-proposer
 
@@ -777,6 +780,12 @@ mkdocs build -f mkdocs-prof.yml   # version prof : corrections conservées
   vocabulaire objet dans la même rubrique que les structures de données, mais les deux sont
   séparés ici : le chapitre suivant reprendra les mêmes piles et files pour les réécrire en
   objet. Décision prise avec Kévin le 12/09/2026.
+- **Maths Première : pas de défis dans les séances**, mais une séance de défis à la fin
+  (Kévin, 17/10/2026). Les élèves, peu à l'aise, travaillent **seuls à la maison** :
+  séances 1 à 8 en deux parties (découverte, application), la séance 9 n'a qu'une partie
+  `defis`. Une étape d'accueil (s01/d1) explique les boutons et la sauvegarde, et chaque
+  chasse aux bugs annonce dans son premier coup de pouce **le message que Python affiche
+  réellement en premier** — vérifié en exécutant chaque code de départ.
 - **Le parcours de Terminale *est* le chapitre**, il n'y a pas de pages de cours en double
   comme pour le chapitre 1 de Première : seulement une introduction, la page du parcours et
   une conclusion.

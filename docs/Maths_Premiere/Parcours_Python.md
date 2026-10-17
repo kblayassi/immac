@@ -16,7 +16,10 @@ bases de Seconde, avec les suites et le second degré comme terrain de jeu.
 ## Comment ça marche
 
 - Le parcours est découpé en **neuf séances courtes**. Chacune commence par une
-  **découverte** guidée, puis des **exercices** pour t'entraîner.
+  **découverte** guidée, puis des **exercices** pour t'entraîner. La dernière
+  rassemble huit **défis**.
+- Les deux premières parties se terminent par un **bilan** : la liste de ce qu'il faut
+  savoir faire, à relire avant de continuer.
 - Les étapes s'ouvrent **les unes après les autres** : chaque réussite débloque la
   suivante, aucune notion n'arrive avant d'avoir été expliquée.
 - Tu écris ton code **dans la page** : rien à installer, ton travail est vérifié
@@ -45,8 +48,8 @@ bases de Seconde, avec les suites et le second degré comme terrain de jeu.
 | 4 | Les fonctions | `def` et `return` : *f*(*x*), *u*(*n*), `delta(a, b, c)` |
 | | **Partie 2 — Les listes** | |
 | 5 | Créer une liste et lire ses éléments | crochets, indices, `len()` |
-| 6 | Modifier et remplir une liste | `append()`, `sum`, `min`, `max` : la liste des termes d'une suite |
+| 6 | Modifier et remplir une liste | `append()`, `sum`, `min`, `max` : les termes d'une suite, Fibonacci |
 | 7 | Parcourir une liste | moyenne, comptage, tableau de valeurs |
 | 8 | Les listes en compréhension | construire et filtrer en une ligne |
 | | **Partie 3 — Le défi final** | |
-| 9 | Le défi final | tout ensemble, et un sujet libre |
+| 9 | Le défi final | racines d'un trinôme, nombres parfaits, espérance, Syracuse, simulation d'un dé, triangle de Pascal, et un sujet libre |
