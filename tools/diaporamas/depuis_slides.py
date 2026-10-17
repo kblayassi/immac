@@ -1,11 +1,14 @@
-"""Diaporama HTML autonome à partir d'un deck Slides (Artifact claude.ai).
+"""Diaporama HTML autonome à partir d'un deck au format Slides.
 
-Les diaporamas de NSI se construisent dans un Artifact de type Slides ; une copie de
-ses fichiers est rangée dans tools/diaporamas/slides/<nom>/ :
+Les diaporamas de NSI sont nés dans un Artifact de type Slides ; leurs sources vivent
+désormais ici, dans tools/diaporamas/slides/<nom>/ :
 
     project/deck.json          l'index (ordre des diapos)
     project/slides/<id>.html   une <section> par diapo, styles en ligne
     images.json                /_blob/<id> → chemin de l'image sous docs/
+
+Une image ou une vidéo du site peut aussi s'écrire directement src="files/…" (chemin
+sous docs/).
 
 Ce script en fait un fichier unique, publié à côté de la page du chapitre, avec le
 même lecteur que les diaporamas de SNT (diaporama.py) : flèches, Espace, F plein
@@ -21,6 +24,7 @@ import re
 import sys
 from html import escape
 from pathlib import Path
+from urllib.parse import unquote
 
 ICI = Path(__file__).resolve().parent
 DOCS = ICI.parent.parent / "docs"
@@ -53,6 +57,8 @@ def convertir(section, images, vers_docs):
             sys.exit(f"Image inconnue : {blob} (à ajouter dans images.json)")
         return f'src="{vers_docs}{images[blob]}"'
     section = re.sub(r'src="(/_blob/[0-9a-f]+)"', image, section)
+    # Images et vidéos du site, écrites directement par leur chemin sous docs/.
+    section = re.sub(r'src="(files/[^"]+)"', lambda m: f'src="{vers_docs}{m.group(1)}"', section)
     section = re.sub(r'<x-icon name="(\w+)" style="[^"]*?width:(\d+)px[^"]*"></x-icon>', icone, section)
     section = re.sub(r'<x-shape kind="arrow-right" style="background:([^;]+); width:(\d+)px; height:(\d+)px[^"]*"></x-shape>',
                      fleche, section)
@@ -71,8 +77,11 @@ def ecrire(nom, sortie):
     for chemin in images.values():
         if not (DOCS / chemin).exists():
             sys.exit(f"Image absente du site : docs/{chemin}")
-    diapos = [convertir((dossier / "project" / "slides" / f"{sid}.html").read_text(encoding="utf-8"), images, vers_docs)
-              for sid in deck["order"]]
+    sources = [(dossier / "project" / "slides" / f"{sid}.html").read_text(encoding="utf-8") for sid in deck["order"]]
+    for chemin in re.findall(r'src="(files/[^"]+)"', "".join(sources)):
+        if not (DOCS / unquote(chemin)).exists():
+            sys.exit(f"Fichier absent du site : docs/{unquote(chemin)}")
+    diapos = [convertir(s, images, vers_docs) for s in sources]
     html = MODELE.replace("@TITRE@", escape(deck["title"])).replace("@DIAPOS@", "\n".join(diapos))
     sortie.write_text(html, encoding="utf-8")
     print(f"{sortie.relative_to(DOCS.parent)} : {len(diapos)} diapos")
@@ -132,6 +141,7 @@ MODELE = r"""<!doctype html>
   function montrer(n) {
     i = Math.min(Math.max(n, 0), diapos.length - 1);
     diapos.forEach((d, j) => d.classList.toggle("active", j === i));
+    diapos.forEach((d, j) => { if (j !== i) d.querySelectorAll("video").forEach((v) => v.pause()); });
     document.getElementById("progression").style.width = ((i + 1) / diapos.length * 100) + "%";
     history.replaceState(null, "", "#" + (i + 1));
   }
@@ -146,7 +156,7 @@ MODELE = r"""<!doctype html>
     }
   });
   addEventListener("click", (e) => {
-    if (e.target.closest("a, button")) return;
+    if (e.target.closest("a, button, video")) return;
     montrer(e.clientX > innerWidth / 2 ? i + 1 : i - 1);
   });
   ajuster();
