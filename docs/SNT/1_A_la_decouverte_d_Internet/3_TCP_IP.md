@@ -5,64 +5,7 @@ weight: 3
 
 # Comment voyagent les données ? 📦
 
-## 1 - Le jeu des cartes postales ✉️
-
-!!! example "Activité 5 - Le message en cartes postales (sans ordinateur)"
-    Partie en vacances, Aurore veut écrire à ses parents. Sa phrase est trop longue pour une
-    seule carte postale : elle la coupe en **quatre morceaux**, un par carte. Nous allons
-    rejouer le voyage de ces cartes dans la classe.
-
-    ![Le réseau postal de la classe : Aurore, six centres de tri A à F reliés par des flèches, ses parents](../../files/SNT/Internet/plan-cartes-postales.svg){ .snt-schema }
-
-    **Mise en place** (5 minutes)
-
-    - Un élève joue **Aurore**. Il écrit une phrase coupée en quatre morceaux, un par carte,
-      **sans numéroter** les cartes. Par exemple : *« Le chien du voisin »*, *« a poursuivi »*,
-      *« le chat de ma tante »*, *« jusque dans le jardin. »*
-    - Six élèves jouent les **centres de tri** A à F, placés dans la classe comme sur le plan.
-      Un élève joue **les parents**, au bout du réseau.
-    - Les autres élèves sont **observateurs** : chacun suit une carte et note son chemin.
-
-    **La règle** : une carte avance toujours **en suivant les flèches**. Quand deux flèches
-    partent d'une case, les **deux destinataires possibles jouent à pierre-feuille-ciseaux** :
-    le gagnant prend la carte (en cas d'égalité, on rejoue). Quand une seule flèche part
-    d'une case, on donne simplement la carte. Aurore envoie ses quatre cartes l'une après
-    l'autre, sans attendre que la précédente soit arrivée.
-
-    **Manche 1** : les parents posent les cartes sur la table dans l'ordre où elles arrivent,
-    puis lisent la phrase à voix haute. Est-ce bien celle d'Aurore ?
-
-    **Manche 2** : Aurore écrit une nouvelle phrase, mais elle **numérote** ses cartes
-    (1/4, 2/4, 3/4, 4/4). Pendant le trajet, le professeur **confisque** discrètement une
-    carte, comme si elle s'était perdue. Quand les parents s'en aperçoivent, ils demandent à
-    Aurore de la **renvoyer**.
-
-    **Questions**
-
-    1. Manche 1 : les parents ont-ils retrouvé la phrase d'Aurore ? Pourquoi les cartes ne
-       sont-elles pas arrivées dans l'ordre où elles sont parties ?
-    2. D'après les observateurs, toutes les cartes ont-elles pris le même chemin ?
-    3. Manche 2 : qu'est-ce qui a permis aux parents de remettre les cartes dans l'ordre ?
-    4. Comment les parents ont-ils su qu'une carte manquait ? Comment l'ont-ils récupérée ?
-    5. Aurore pouvait-elle savoir **quand** ses cartes arriveraient ?
-
-    ??? success "Correction"
-        1. Rarement : un pierre-feuille-ciseaux qui s'éternise retarde une carte, un chemin plus
-           long en retarde une autre. Les cartes arrivent **dans le désordre**, et sans numéro la
-           phrase devient… « Le chat de ma tante a poursuivi le chien du voisin ».
-        2. Non : à chaque case, le chemin a été choisi **au moment où la carte est arrivée**.
-           Deux cartes de la même phrase ont pu prendre des chemins différents.
-        3. La **numérotation** des cartes.
-        4. Il manquait un numéro dans la suite : ils ont **redemandé** la carte à Aurore.
-        5. Non : on sait que les cartes finissent par arriver, mais **pas quand**.
-
-        Sur Internet, c'est exactement pareil : les cartes sont des **paquets**, les centres de
-        tri des **routeurs**, et la numérotation comme le renvoi des paquets perdus sont le
-        travail du protocole **TCP**. C'est la suite du cours.
-
----
-
-## 2 - S'identifier : l'adresse IP 🏷️
+## 1 - S'identifier : l'adresse IP 🏷️
 
 Pour qu'un message arrive, il faut savoir **où** l'envoyer. Sur Internet, chaque machine
 connectée possède une adresse, comme chaque maison a une adresse postale.
@@ -85,13 +28,13 @@ Il en existe deux versions :
 
 ---
 
-## 3 - Des paquets et des routeurs 🛣️
+## 2 - Des paquets et des routeurs 🛣️
 
 Un fichier n'est jamais envoyé d'un seul bloc. Il est **découpé en petits paquets** qui
 voyagent chacun de leur côté. Chaque paquet porte un **en-tête**, comme l'adresse au dos
 d'une carte postale :
 
-![Un paquet : les adresses IP, le numéro du segment, puis les données](../../files/SNT/Internet/paquet.svg){ .snt-schema }
+![Un paquet : les adresses IP et le TTL, puis les données](../../files/SNT/Internet/paquet-ip.svg){ .snt-schema }
 
 Entre l'expéditeur et le destinataire, les paquets traversent des **routeurs**. Chaque
 routeur lit l'adresse IP de destination et transmet le paquet au routeur voisin le mieux
@@ -103,37 +46,84 @@ placé pour le rapprocher du but : c'est le **routage**.
     - Le **routage** est le mécanisme qui achemine un paquet de sa source à sa destination
       à travers les routeurs.
 
-!!! example "Activité 6 - Le jeu du routeur"
-    Joue le rôle du réseau. Chaque paquet porte un nombre : c'est son **TTL**, qui diminue de
-    1 à chaque routeur traversé.
+!!! example "Activité 5 - Le routage en deux simulations"
+    Deux façons de voir le routage à l'œuvre : en classe, sans ordinateur, avec des cartes
+    postales ; puis sur le simulateur.
 
-    <div class="snt-outil" data-outil="routage"></div>
+    === "Simulation réelle (sans ordinateur)"
 
-    1. Envoie plusieurs paquets, un par un. Prennent-ils toujours le même chemin ? Le chemin
-       est-il fixé à l'avance ?
-    2. Le routeur R5 tombe en panne et le lien R1–R2 est coupé par des travaux. Trouve un
-       chemin que peut encore prendre un paquet, puis vérifie avec le simulateur.
-    3. Quel est l'intérêt qu'il existe **plusieurs chemins** entre deux machines ?
-    4. Clique sur « Tout réparer », puis mets R3 en panne. Envoie des paquets : certains
-       font demi-tour. Où, et pourquoi ?
-    5. Mets maintenant **aussi** R6 en panne. Que deviennent les paquets ? Observe leur TTL.
-    6. Pour finir, mets R1 en panne. Que se passe-t-il ?
+        Partie en vacances, Aurore veut écrire à ses parents. Sa phrase est trop longue pour
+        une seule carte postale : elle la coupe en **quatre morceaux**, un par carte. Nous
+        allons rejouer le voyage de ces cartes dans la classe.
 
-    ??? success "Correction"
-        1. Non : chaque routeur choisit le saut suivant **au moment où le paquet arrive**,
-           selon l'état du réseau. Deux paquets d'un même fichier peuvent prendre des routes
-           différentes.
-        2. Par exemple : Expéditeur → R1 → R7 → R6 → R8 → Destinataire.
-        3. Si un routeur ou un lien tombe en panne, les paquets **contournent** l'obstacle :
-           le réseau continue de fonctionner.
-        4. En R2 : sans R3, R2 n'a plus d'autre voisin que R1. C'est un **cul-de-sac**, le
-           paquet doit revenir sur ses pas. Même chose en R4, qui ne touche plus que R8.
-        5. Il n'existe plus aucun chemin jusqu'au destinataire : les paquets errent de
-           cul-de-sac en cul-de-sac, leur TTL diminue, et ils sont **détruits** quand il atteint 0.
-        6. Plus aucun paquet ne passe : R1 est le seul accès de l'expéditeur au réseau.
+        ![Le réseau postal de la classe : Aurore, six centres de tri A à F reliés par des flèches, ses parents](../../files/SNT/Internet/plan-cartes-postales.svg){ .snt-schema }
 
-        Le routage a ses **limites** : une panne mal placée, ou un routeur saturé qui jette
-        des paquets, et le message n'arrive pas.
+        **Mise en place** (5 minutes)
+
+        - Un élève joue **Aurore**. Il écrit une phrase coupée en quatre morceaux, un par
+          carte, **sans numéroter** les cartes. Par exemple : *« Le chien du voisin »*,
+          *« a poursuivi »*, *« le chat de ma tante »*, *« jusque dans le jardin. »*
+        - Six élèves jouent les **centres de tri** A à F, placés dans la classe comme sur le
+          plan. Un élève joue **les parents**, au bout du réseau.
+        - Les autres élèves sont **observateurs** : chacun suit une carte et note son chemin.
+
+        **La règle** : une carte avance toujours **en suivant les flèches**. Quand deux flèches
+        partent d'une case, les **deux destinataires possibles jouent à
+        pierre-feuille-ciseaux** : le gagnant prend la carte (en cas d'égalité, on rejoue).
+        Quand une seule flèche part d'une case, on donne simplement la carte. Aurore envoie ses
+        quatre cartes l'une après l'autre, sans attendre que la précédente soit arrivée.
+
+        À l'arrivée, les parents posent les cartes sur la table dans l'ordre où elles
+        arrivent, puis lisent la phrase à voix haute.
+
+        1. Dans ce jeu, que représentent les cartes ? les centres de tri ?
+        2. D'après les observateurs, toutes les cartes ont-elles pris le même chemin ? Le
+           chemin était-il fixé à l'avance ?
+        3. Les parents ont-ils retrouvé la phrase d'Aurore ? Pourquoi les cartes ne sont-elles
+           pas arrivées dans l'ordre où elles sont parties ?
+
+        ??? success "Correction"
+            1. Les cartes sont les **paquets**, les centres de tri sont les **routeurs**.
+            2. Non : à chaque case, le chemin a été choisi **au moment où la carte est
+               arrivée** (le pierre-feuille-ciseaux). Deux cartes de la même phrase ont pu
+               prendre des chemins différents.
+            3. Rarement : un pierre-feuille-ciseaux qui s'éternise retarde une carte, un chemin
+               plus long en retarde une autre. Les cartes arrivent **dans le désordre**, et
+               sans numéro la phrase devient… « Le chat de ma tante a poursuivi le chien du
+               voisin ». Nous reprendrons ce problème avec le protocole TCP.
+
+    === "Simulation numérique"
+
+        Joue le rôle du réseau. Chaque paquet porte un nombre : c'est son **TTL**, qui diminue de
+        1 à chaque routeur traversé.
+
+        <div class="snt-outil" data-outil="routage"></div>
+
+        1. Envoie plusieurs paquets, un par un. Prennent-ils toujours le même chemin ? Le chemin
+           est-il fixé à l'avance ?
+        2. Le routeur R5 tombe en panne et le lien R1–R2 est coupé par des travaux. Trouve un
+           chemin que peut encore prendre un paquet, puis vérifie avec le simulateur.
+        3. Quel est l'intérêt qu'il existe **plusieurs chemins** entre deux machines ?
+        4. Clique sur « Tout réparer », puis mets R3 en panne. Envoie des paquets : certains
+           font demi-tour. Où, et pourquoi ?
+        5. Mets maintenant **aussi** R6 en panne. Que deviennent les paquets ? Observe leur TTL.
+        6. Pour finir, mets R1 en panne. Que se passe-t-il ?
+
+        ??? success "Correction"
+            1. Non : chaque routeur choisit le saut suivant **au moment où le paquet arrive**,
+               selon l'état du réseau. Deux paquets d'un même fichier peuvent prendre des routes
+               différentes.
+            2. Par exemple : Expéditeur → R1 → R7 → R6 → R8 → Destinataire.
+            3. Si un routeur ou un lien tombe en panne, les paquets **contournent** l'obstacle :
+               le réseau continue de fonctionner.
+            4. En R2 : sans R3, R2 n'a plus d'autre voisin que R1. C'est un **cul-de-sac**, le
+               paquet doit revenir sur ses pas. Même chose en R4, qui ne touche plus que R8.
+            5. Il n'existe plus aucun chemin jusqu'au destinataire : les paquets errent de
+               cul-de-sac en cul-de-sac, leur TTL diminue, et ils sont **détruits** quand il atteint 0.
+            6. Plus aucun paquet ne passe : R1 est le seul accès de l'expéditeur au réseau.
+
+            Le routage a ses **limites** : une panne mal placée, ou un routeur saturé qui jette
+            des paquets, et le message n'arrive pas.
 
 !!! definition "Définition : TTL"
     Le **TTL** (*Time To Live*, « reste à vivre ») est un compteur inscrit dans chaque paquet,
@@ -149,11 +139,38 @@ placé pour le rapprocher du but : c'est le **routage**.
 
 ---
 
-## 4 - Remettre de l'ordre : le protocole TCP 🧩
+## 3 - Remettre de l'ordre : le protocole TCP 🧩
+
+Revenons aux cartes postales d'Aurore : comment ses parents pourraient-ils retrouver la
+bonne phrase, et s'apercevoir qu'une carte s'est perdue ?
+
+!!! example "Activité 6 - Les cartes numérotées (sans ordinateur)"
+    On rejoue le jeu des cartes postales de l'activité 5, sur le même plan et avec les mêmes
+    règles, avec deux changements :
+
+    - Aurore écrit une nouvelle phrase et **numérote** ses cartes : 1/4, 2/4, 3/4, 4/4 ;
+    - pendant le trajet, le professeur **confisque** discrètement une carte, comme si elle
+      s'était perdue. Quand les parents s'en aperçoivent, ils demandent à Aurore de la
+      **renvoyer**.
+
+    1. Qu'est-ce qui a permis aux parents de remettre les cartes dans l'ordre ?
+    2. Comment les parents ont-ils su qu'une carte manquait ? Comment l'ont-ils récupérée ?
+    3. Aurore pouvait-elle savoir **quand** ses cartes arriveraient ?
+
+    ??? success "Correction"
+        1. La **numérotation** des cartes.
+        2. Il manquait un numéro dans la suite : ils ont **redemandé** la carte à Aurore.
+        3. Non : on sait que les cartes finissent par arriver, mais **pas quand**.
+
+        Sur Internet, la numérotation comme le renvoi des paquets perdus sont le travail du
+        protocole **TCP**.
 
 Puisque IP ne garantit pas que tout arrive, ni dans l'ordre, un second protocole travaille
 avec lui : **TCP**. Avant l'envoi, TCP découpe les données en **segments numérotés**. À
-l'arrivée, il les **remet dans l'ordre** et **redemande** ceux qui manquent.
+l'arrivée, il les **remet dans l'ordre** et **redemande** ceux qui manquent. Le numéro du
+segment s'ajoute à l'en-tête du paquet :
+
+![Un paquet complet : les adresses IP, le TTL, le numéro du segment, puis les données](../../files/SNT/Internet/paquet.svg){ .snt-schema }
 
 ![TCP : le destinataire redemande le segment 2, qui s'est perdu, et l'expéditeur le renvoie](../../files/SNT/Internet/tcp-renvoi.svg){ .snt-schema }
 
@@ -173,7 +190,7 @@ l'arrivée, il les **remet dans l'ordre** et **redemande** ceux qui manquent.
 
 ---
 
-## 5 - Fiable… mais pas ponctuel ⏱️
+## 4 - Fiable… mais pas ponctuel ⏱️
 
 TCP/IP garantit que tout arrive, quitte à renvoyer des paquets. Mais il ne garantit **pas
 quand** : un paquet renvoyé arrive en retard, un routeur encombré ralentit tout.

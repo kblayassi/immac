@@ -83,14 +83,26 @@ def reseau_de_reseaux():
 # 2. Un paquet ---------------------------------------------------------------
 def paquet():
     c = texte(380, 34, "Un paquet qui voyage sur Internet", 17, VIOLET, 700)
-    c += f'<rect x="30" y="60" width="200" height="70" rx="10" fill="{VIOLET}"/>' + texte(130, 90, "Adresses IP", 15, "#fff", 700) + texte(130, 112, "expéditeur → destinataire", 12, "#fff", 500)
-    c += f'<rect x="230" y="60" width="150" height="70" fill="{ORANGE}"/>' + texte(305, 90, "Numéro", 15, "#fff", 700) + texte(305, 112, "segment n°3 sur 8", 12, "#fff", 500)
+    c += f'<rect x="30" y="60" width="200" height="70" rx="10" fill="{VIOLET}"/>' + f'<rect x="210" y="60" width="20" height="70" fill="{VIOLET}"/>' + texte(130, 90, "Adresses IP", 15, "#fff", 700) + texte(130, 112, "expéditeur → destinataire", 12, "#fff", 500)
+    c += f'<rect x="230" y="60" width="70" height="70" fill="#7E64B5"/>' + texte(265, 90, "TTL", 15, "#fff", 700) + texte(265, 112, "64", 12, "#fff", 500)
+    c += f'<rect x="300" y="60" width="150" height="70" fill="{ORANGE}"/>' + texte(375, 90, "Numéro", 15, "#fff", 700) + texte(375, 112, "segment n°3 sur 8", 12, "#fff", 500)
+    c += f'<rect x="450" y="60" width="280" height="70" rx="10" fill="{BLEU}"/>' + f'<rect x="450" y="60" width="20" height="70" fill="{BLEU}"/>' + texte(590, 90, "Données", 15, "#fff", 700) + texte(590, 112, "un petit morceau du fichier", 12, "#fff", 500)
+    c += texte(165, 160, "écrit grâce à IP", 13, VIOLET, 700) + texte(165, 178, "pour trouver le chemin", 12, GRIS, 500)
+    c += texte(375, 160, "écrit grâce à TCP", 13, ORANGE, 700) + texte(375, 178, "pour remettre en ordre", 12, GRIS, 500)
+    c += texte(590, 160, "ce que l'on veut envoyer", 13, BLEU, 700) + texte(590, 178, "texte, image, son, vidéo…", 12, GRIS, 500)
+    c += texte(380, 212, "Comme une carte postale numérotée : l'adresse au dos, le numéro de la carte, et le message.", 13, ENCRE, 500)
+    return doc(760, 235, c, "Un paquet : en-tête avec les adresses IP, le TTL et le numéro, puis les données")
+
+# 2 bis. Un paquet vu par IP (avant TCP) ---------------------------------------
+def paquet_ip():
+    c = texte(380, 34, "Un paquet qui voyage sur Internet", 17, VIOLET, 700)
+    c += f'<rect x="30" y="60" width="230" height="70" rx="10" fill="{VIOLET}"/>' + f'<rect x="240" y="60" width="20" height="70" fill="{VIOLET}"/>' + texte(145, 90, "Adresses IP", 15, "#fff", 700) + texte(145, 112, "expéditeur → destinataire", 12, "#fff", 500)
+    c += f'<rect x="260" y="60" width="120" height="70" fill="#7E64B5"/>' + texte(320, 90, "TTL", 15, "#fff", 700) + texte(320, 112, "64", 12, "#fff", 500)
     c += f'<rect x="380" y="60" width="350" height="70" rx="10" fill="{BLEU}"/>' + f'<rect x="380" y="60" width="20" height="70" fill="{BLEU}"/>' + texte(555, 90, "Données", 15, "#fff", 700) + texte(555, 112, "un petit morceau du fichier", 12, "#fff", 500)
-    c += texte(130, 160, "écrit grâce à IP", 13, VIOLET, 700) + texte(130, 178, "pour trouver le chemin", 12, GRIS, 500)
-    c += texte(305, 160, "écrit grâce à TCP", 13, ORANGE, 700) + texte(305, 178, "pour remettre en ordre", 12, GRIS, 500)
+    c += texte(205, 160, "l'en-tête, lu par les routeurs", 13, VIOLET, 700) + texte(205, 178, "pour trouver le chemin", 12, GRIS, 500)
     c += texte(555, 160, "ce que l'on veut envoyer", 13, BLEU, 700) + texte(555, 178, "texte, image, son, vidéo…", 12, GRIS, 500)
-    c += texte(380, 212, "Comme une carte postale : l'adresse au dos, le numéro de la carte, et le message.", 13, ENCRE, 500)
-    return doc(760, 235, c, "Un paquet : en-tête avec les adresses IP et le numéro, puis les données")
+    c += texte(380, 212, "Comme une carte postale : l'adresse au dos, et le message.", 13, ENCRE, 500)
+    return doc(760, 235, c, "Un paquet : en-tête avec les adresses IP et le TTL, puis les données")
 
 # 3. TCP redemande un segment -----------------------------------------------
 def renvoi():
@@ -170,7 +182,7 @@ def plan_cartes():
 
 if __name__ == "__main__":
     from snt_internet_2 import SCHEMAS as CHAPITRE_2
-    for nom, f in [("reseau-de-reseaux", reseau_de_reseaux), ("paquet", paquet), ("tcp-renvoi", renvoi),
+    for nom, f in [("reseau-de-reseaux", reseau_de_reseaux), ("paquet", paquet), ("paquet-ip", paquet_ip), ("tcp-renvoi", renvoi),
                    ("trafic", trafic), ("petit-reseau", petit_reseau),
                    ("plan-cartes-postales", plan_cartes)] + CHAPITRE_2:
         (OUT / f"{nom}.svg").write_text(f(), encoding="utf-8")

@@ -71,23 +71,14 @@ d.contenu("Partie 2 · Réseaux physiques", "Filaire ou sans fil ?", Deck.cartes
                            "<ul><li>Wi-Fi, Bluetooth</li><li>4G, 5G</li><li>satellite</li></ul>"),
 ]))
 
-d.contenu("Partie 2 · Réseaux physiques", "Qui va le plus vite ? 🏎️",
-          "<table><tr><th>Réseau</th><th>Filaire ?</th><th>Débit (ordre de grandeur)</th><th>Usage</th></tr>"
-          "<tr><td>Modem 56k</td><td>oui</td><td>56 kbit/s</td><td>obsolète</td></tr>"
-          "<tr><td>Bluetooth</td><td>non</td><td>2 Mbit/s</td><td>casque, montre</td></tr>"
-          "<tr><td>ADSL</td><td>oui</td><td>10 à 50 Mbit/s</td><td>box, en voie de disparition</td></tr>"
-          "<tr><td>4G</td><td>non</td><td>100 Mbit/s</td><td>smartphone</td></tr>"
-          "<tr><td>Wi-Fi</td><td>non</td><td>100 Mbit/s à 1 Gbit/s</td><td>autour de la box</td></tr>"
-          "<tr><td>Ethernet (RJ45)</td><td>oui</td><td>100 Mbit/s à 1 Gbit/s</td><td>ordinateur fixe, console</td></tr>"
-          "<tr><td>5G</td><td>non</td><td>1 Gbit/s</td><td>smartphone</td></tr>"
-          "<tr><td>Fibre optique</td><td>oui</td><td>1 à 8 Gbit/s</td><td>box, liaisons entre pays</td></tr></table>")
-
 d.retenir("Câbles ou ondes : le <em>vocabulaire</em> des réseaux physiques.",
           "<ul><li>Le <b>réseau physique</b> est le support qui transporte l'information entre deux machines.</li>"
           "<li>Une <b>liaison filaire</b> utilise un <b>câble</b> : cuivre (ADSL, Ethernet) ou fibre optique.</li>"
           "<li>Une <b>liaison sans fil</b>, ou <b>liaison hertzienne</b>, utilise des <b>ondes radio</b> : Wi-Fi, Bluetooth, 4G, 5G, satellite.</li>"
           "<li>Internet <b>ne dépend pas</b> d'un réseau physique particulier : ses règles sont des <b>logiciels</b>, installés dans "
           "chaque machine. Ton téléphone passe de la 4G au Wi-Fi sans couper ta vidéo.</li></ul>")
+
+d.outil("Partie 2 · Le débit", "La course au téléchargement 🏁", "debit")
 
 d.contenu("Partie 2 · Le débit", "Le débit 🚀",
           '<div class="deux">'
@@ -104,8 +95,6 @@ d.contenu("Partie 2 · Le débit", "Le débit 🚀",
               "<li>Δt = 16 384 ÷ 100 ≈ <b>164 s</b>, soit 2 min 44 s</li></ol>")
           + "</div>")
 
-d.outil("Partie 2 · Le débit", "La course au téléchargement 🏁", "debit")
-
 d.contenu("Activité 2", "Les appareils de Chloé 🎧", Deck.appel(
     "Chloé écoute de la musique en streaming avec son casque Bluetooth.",
     "Elle se demande comment chacun de ses appareils est relié à Internet. Réponds sur ton cahier.",
@@ -115,7 +104,7 @@ d.contenu("Activité 2", "Les appareils de Chloé 🎧", Deck.appel(
                                      "<li>Son ordinateur portable chez elle, puis chez une copine.</li>"
                                      "<li>Sa montre connectée, reliée à son smartphone.</li></ol>"),
      ("2. à 4. 💡", "<ol start=\"2\"><li>Chacun de ces réseaux est-il filaire ou sans fil ?</li>"
-                   "<li>Avec le tableau : quel réseau utilisé aujourd'hui est le plus lent ? le plus rapide ? Lequel est devenu obsolète ?</li>"
+                   "<li>Avec la course au téléchargement : quel réseau utilisé aujourd'hui est le plus lent ? le plus rapide ? Lequel est devenu obsolète ?</li>"
                    "<li>Le Bluetooth est bien plus lent que le Wi-Fi. Pourquoi le fabricant du casque l'a-t-il choisi ?</li></ol>")]),
     notes="Réponse attendue à la question 4 : le Bluetooth consomme très peu d'énergie, idéal sur batterie.")
 
@@ -123,15 +112,17 @@ d.contenu("Activité 2", "Les appareils de Chloé 🎧", Deck.appel(
 d.partie("3", "Le trafic sur Internet 📈", "Toujours plus de données… surtout de la vidéo")
 
 d.contenu("Activité 3", "Comment a évolué le trafic ?",
-          f'<div class="deux"><img class="schema" src="{IMG}trafic.svg" alt="Trafic mensuel mondial de 2017 à 2022">'
-          "<div style=\"display:grid;gap:22px\">"
+          "<div class=\"deux\" style=\"align-items:start\">"
+          "<div style=\"display:grid;gap:18px\">"
+          f'<img class="schema" src="{IMG}trafic.svg" alt="Trafic mensuel mondial de 2017 à 2022">'
+          "<ol style=\"font-size:27px\"><li>Décris l'évolution du trafic mensuel entre 2017 et 2022. Par combien a-t-il été multiplié ?</li>"
+          "<li>Quelle activité est responsable de la plus grande part du trafic&nbsp;?</li></ol></div>"
+          "<div style=\"display:grid;gap:18px\">"
           "<table><tr><th>En France</th><th>2009</th><th>2019</th></tr>"
           "<tr><td>Nombre d'internautes</td><td>30 millions</td><td>57 millions</td></tr>"
           "<tr><td>Part ayant un smartphone</td><td>12 %</td><td>81 %</td></tr>"
           "<tr><td>Temps sur Internet par jour</td><td>1 h 30</td><td>4 h 48</td></tr></table>"
-          "<ol style=\"font-size:27px\"><li>Décris l'évolution du trafic mensuel entre 2017 et 2022. Par combien a-t-il été multiplié ?</li>"
-          "<li>Quelle activité est responsable de la plus grande part du trafic ?</li>"
-          "<li>Comment expliquer que le temps passé sur Internet ait été multiplié par trois en dix ans ?</li>"
+          "<ol start=\"3\" style=\"font-size:27px\"><li>Comment expliquer que le temps passé sur Internet ait été multiplié par trois en dix ans ?</li>"
           "<li>La 5G multiplie environ par dix le débit des smartphones. Que peut-on prévoir pour le trafic ?</li></ol></div></div>")
 
 d.retenir("Le trafic <em>explose</em>, et c'est surtout de la vidéo.",
@@ -156,34 +147,6 @@ d.contenu("Activité 4", "Débat : un Internet à plusieurs vitesses ? 🗣️",
 # ------------------------------------------------------------------ Partie 4
 d.partie("4", "Comment voyagent les données ? 📦", "Adresses, paquets, routeurs… et TCP/IP")
 
-d.contenu("Activité 5 · sans ordinateur", "Le message en cartes postales ✉️",
-          '<div class="deux">'
-          f'<img class="schema" src="{IMG}plan-cartes-postales.svg" alt="Le réseau postal de la classe">'
-          + Deck.cartes([("Mise en place 🎭",
-                          "<ul><li><b>Aurore</b> coupe une phrase en 4 morceaux, un par carte, <b>sans numéros</b>.</li>"
-                          "<li>6 élèves <b>centres de tri</b> A à F, placés comme sur le plan ; 1 élève <b>les parents</b>.</li>"
-                          "<li>Les autres <b>observent</b> : chacun suit une carte et note son chemin.</li></ul>"),
-                         ("La règle ✊✋✌️",
-                          "<ul><li>Une carte suit toujours <b>les flèches</b>.</li>"
-                          "<li>Deux flèches au départ d'une case : les deux destinataires jouent à <b>pierre-feuille-ciseaux</b>, "
-                          "le gagnant prend la carte.</li><li>Aurore envoie ses 4 cartes à la suite, sans attendre.</li></ul>")], "orange")
-          + "</div>",
-          notes="Exemple de phrase : « Le chien du voisin » / « a poursuivi » / « le chat de ma tante » / "
-                "« jusque dans le jardin. » Dans le désordre, le chat poursuit le chien…")
-
-d.contenu("Activité 5 · sans ordinateur", "Deux manches, cinq questions ✉️", Deck.cartes([
-    ("Manche 1", "<p>Cartes <b>sans numéros</b>. Les parents les posent dans l'ordre d'arrivée et lisent la phrase à voix haute. "
-                 "Est-ce bien celle d'Aurore ?</p>"),
-    ("Manche 2", "<p>Nouvelle phrase, cartes <b>numérotées</b> 1/4 à 4/4. Le professeur <b>confisque</b> une carte en route : "
-                 "les parents demandent à Aurore de la <b>renvoyer</b>.</p>"),
-    ("Questions ❓", "<ol><li>Manche 1 : la phrase est-elle arrivée intacte ? Pourquoi ?</li>"
-                    "<li>Toutes les cartes ont-elles pris le même chemin ?</li>"
-                    "<li>Manche 2 : qu'est-ce qui a permis de remettre les cartes dans l'ordre ?</li>"
-                    "<li>Comment les parents ont-ils su qu'une carte manquait ?</li>"
-                    "<li>Aurore pouvait-elle savoir <b>quand</b> ses cartes arriveraient ?</li></ol>"),
-], "orange"), notes="Cartes = paquets, centres de tri = routeurs, pierre-feuille-ciseaux = choix du chemin au moment "
-                    "où le paquet arrive, numéros et renvoi = TCP.")
-
 d.contenu("Partie 4 · Adresse IP", "Chaque machine a une adresse 🏷️",
           E("definition", "Définition : Adresse IP",
             "<p>Une <b>adresse IP</b> est un numéro qui <b>identifie de façon unique</b> une machine connectée à un réseau.</p>")
@@ -197,7 +160,7 @@ d.retenir("4,3 milliards d'adresses IPv4, <em>ce n'est pas assez</em>.",
 
 d.contenu("Partie 4 · Paquets", "Un fichier voyage en paquets 📦",
           "<p>Un fichier n'est jamais envoyé d'un bloc : il est <b>découpé en petits paquets</b>, qui voyagent chacun de leur côté.</p>"
-          f'<img class="schema" src="{IMG}paquet.svg" alt="Un paquet : adresses IP, numéro, données">')
+          f'<img class="schema" src="{IMG}paquet-ip.svg" alt="Un paquet : adresses IP, TTL, données">')
 
 d.contenu("Partie 4 · Routage", "De routeur en routeur 🛣️",
           E("definition", "Définitions : Routeur et routage",
@@ -207,7 +170,7 @@ d.contenu("Partie 4 · Routage", "De routeur en routeur 🛣️",
           + "<p>Chaque routeur lit l'adresse IP de destination et confie le paquet à un voisin qui le rapproche du but. "
             "Le chemin <b>n'est pas fixé à l'avance</b>.</p>")
 
-d.contenu("Activité 6", "Le jeu du routeur 🎮", Deck.appel(
+d.contenu("Activité 5", "Le jeu du routeur 🎮", Deck.appel(
     "Avec le simulateur de la diapo suivante, ou sur le site (page « Comment voyagent les données ? »)",
     "Le nombre affiché dans chaque paquet est son <b>TTL</b> : il diminue de 1 à chaque routeur.",
     [("Observer 👀", "<ol><li>Envoie plusieurs paquets un par un : prennent-ils le même chemin ?</li>"
@@ -217,7 +180,7 @@ d.contenu("Activité 6", "Le jeu du routeur 🎮", Deck.appel(
                            "<li>R6 en panne aussi : que deviennent les paquets ? Regarde leur TTL.</li>"
                            "<li>R1 en panne : que se passe-t-il ?</li></ol>")]))
 
-d.outil("Activité 6", "Le jeu du routeur 🎮", "routage")
+d.outil("Activité 5", "Le jeu du routeur 🎮", "routage")
 
 d.contenu("Partie 4 · Routage", "Et le TTL ? ⏳",
           E("definition", "Définition : TTL (Time To Live, « reste à vivre »)",

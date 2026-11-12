@@ -81,6 +81,14 @@ Pour transporter l'information d'une machine à une autre, il faut un **support*
 
 ## 3 - Le débit 🚀
 
+Tous les réseaux ne vont pas à la même vitesse. Lance la course et observe les écarts : en
+temps réel, certaines barres n'avancent presque pas, accélère la simulation pour les voir
+finir.
+
+<div class="snt-outil" data-outil="debit"></div>
+
+Ce qui distingue ces réseaux, c'est leur **débit**.
+
 !!! definition "Définition : Débit"
     Le **débit** est la **quantité d'informations** transmise **par seconde**. On le note $d$ :
 
@@ -114,11 +122,6 @@ Pour transporter l'information d'une machine à une autre, il faut un **support*
     1. 2 Go = 2 × 1 024 = 2 048 Mo ;
     2. 2 048 Mo = 2 048 × 8 = 16 384 Mbit ;
     3. $\Delta t = \dfrac{16\,384}{100} \approx 164$ s, soit environ **2 min 44 s**.
-
-À toi de jouer : lance la course et observe les écarts entre les réseaux. En temps réel,
-certaines barres n'avancent presque pas : accélère la simulation pour les voir finir.
-
-<div class="snt-outil" data-outil="debit"></div>
 
 !!! example "Activité 2 - Les appareils de Chloé"
     Chloé écoute de la musique en streaming avec son casque Bluetooth. Elle se demande comment
