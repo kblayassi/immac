@@ -46,7 +46,7 @@ placé pour le rapprocher du but : c'est le **routage**.
     - Le **routage** est le mécanisme qui achemine un paquet de sa source à sa destination
       à travers les routeurs.
 
-!!! example "Activité 5 - Le routage en deux simulations"
+!!! example "Activité 4 - Le routage en deux simulations"
     Deux façons de voir le routage à l'œuvre : en classe, sans ordinateur, avec des cartes
     postales ; puis sur le simulateur.
 
@@ -144,8 +144,8 @@ placé pour le rapprocher du but : c'est le **routage**.
 Revenons aux cartes postales d'Aurore : comment ses parents pourraient-ils retrouver la
 bonne phrase, et s'apercevoir qu'une carte s'est perdue ?
 
-!!! example "Activité 6 - Les cartes numérotées (sans ordinateur)"
-    On rejoue le jeu des cartes postales de l'activité 5, sur le même plan et avec les mêmes
+!!! example "Activité 5 - Les cartes numérotées (sans ordinateur)"
+    On rejoue le jeu des cartes postales de l'activité 4, sur le même plan et avec les mêmes
     règles, avec deux changements :
 
     - Aurore écrit une nouvelle phrase et **numérote** ses cartes : 1/4, 2/4, 3/4, 4/4 ;
@@ -201,7 +201,7 @@ quand** : un paquet renvoyé arrive en retard, un routeur encombré ralentit tou
     page web, ce n'est pas grave. Pour une **visioconférence** ou un **jeu en ligne**, un
     paquet en retard, c'est une image figée ou un « lag ».
 
-!!! example "Activité 7 - Mesurer le voyage des paquets avec `ping` (sur ordinateur)"
+!!! example "Activité 6 - Mesurer le voyage des paquets avec `ping` (sur ordinateur)"
     La commande `ping` envoie quelques petits paquets à une machine, qui répond à chacun : on
     mesure ainsi le temps d'un **aller-retour**.
 

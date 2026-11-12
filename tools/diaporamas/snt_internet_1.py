@@ -3,7 +3,8 @@
     python3 tools/diaporamas/snt_internet_1.py
 
 Le contenu suit les pages du site (docs/SNT/1_A_la_decouverte_d_Internet/),
-« À retenir » remplis, une diapo d'appel par activité. Les consignes des activités sont
+« À retenir » remplis, une diapo d'appel par activité, et, après chaque notion, la
+diapo des exercices qui la travaillent (énoncé et correction seulement pour un exercice seul). Les consignes des activités sont
 complètes : les élèves n'ont pas toujours la page du site sous les yeux.
 """
 from pathlib import Path
@@ -15,6 +16,8 @@ IMG = "../../files/SNT/Internet/"
 
 d = Deck("Diaporama — À la découverte d'Internet", "SNT · Internet · Chapitre 1 — À la découverte d'Internet")
 E = Deck.encadre
+X = d.exercice     # un exercice seul : énoncé, puis correction
+L = d.exercices    # plusieurs : la diapo qui les liste, comme en NSI
 
 # ------------------------------------------------------------------ Ouverture
 d.couverture("SNT · Thème Internet · Chapitre 1", "À la découverte<br>d'Internet 🔌",
@@ -25,7 +28,7 @@ d.contenu("Introduction", "Au programme 🧭", Deck.cartes([
     ("2 · Les réseaux physiques 📡", "<p>Câbles, ondes et <b>débit</b>.</p>"),
     ("3 · Le trafic 📈", "<p>L'explosion des échanges et la <b>neutralité du Net</b>.</p>"),
     ("4 · Le voyage des données 📦", "<p>Adresses IP, paquets, routeurs, <b>TCP/IP</b>.</p>"),
-]) + E("histoire", "Le saviez-vous ?",
+]) + E("histoire", etiquette="Le saviez-vous ?", texte=
        "<p>En 1999, avec l'ADSL à 128 kbit/s, il fallait <b>1 h 45</b> pour télécharger 100 Mo, "
        "c'est-à-dire <b>une vingtaine de chansons en MP3</b>. Avec la fibre, <b>moins d'une seconde</b> suffit.</p>"))
 
@@ -48,11 +51,11 @@ d.contenu("Partie 1 · Internet", "Compare avec ton dessin 👀",
           f'<img class="schema" src="{IMG}reseau-de-reseaux.svg" alt="Internet relie des réseaux locaux par des routeurs">')
 
 d.contenu("Partie 1 · Internet", "Définition : Internet",
-          E("definition", "Définition : Internet",
+          E("definition",
             "<p><b>Internet</b> est un <b>réseau de réseaux</b> : il relie entre eux, à l'échelle mondiale, "
             "des millions de réseaux plus petits (maison, lycée, entreprise…) et permet à des milliards "
             "d'appareils de <b>communiquer</b>.</p>")
-          + E("attention", "Internet ≠ Web",
+          + E("attention", titre="Internet ≠ Web", texte=
               "<p><b>Internet</b> est le réseau qui transporte les données. Le <b>Web</b> n'est qu'<b>un des services</b> "
               "qui l'utilisent, comme la messagerie, les jeux en ligne ou la visioconférence.</p>"))
 
@@ -82,36 +85,27 @@ d.outil("Partie 2 · Le débit", "La course au téléchargement 🏁", "debit")
 
 d.contenu("Partie 2 · Le débit", "Le débit 🚀",
           '<div class="deux">'
-          + E("definition", "Définition : Débit",
+          + E("definition",
               "<p>Le <b>débit</b> est la quantité d'informations transmise <b>par seconde</b> :</p>"
               '<p style="font-size:48px;text-align:center"><i>d</i> = <i>q</i> ÷ Δ<i>t</i></p>'
               "<ul><li><i>d</i> : le débit, en bits par seconde (kbit/s, Mbit/s, Gbit/s) ;</li>"
               "<li><i>q</i> : la <b>quantité de données</b> transférée, en bits ;</li>"
               "<li>Δ<i>t</i> : la <b>durée</b> du transfert, en secondes.</li></ul>")
-          + E("methode", "Méthode : calculer une durée",
+          + E("methode", titre="Calculer une durée", texte=
               "<p><b>1 octet = 8 bits</b> · 1 Ko = 1 024 octets · 1 Mo = 1 024 Ko · 1 Go = 1 024 Mo</p>"
               "<p>Film de <b>2 Go</b>, connexion à <b>100 Mbit/s</b> :</p>"
               "<ol><li>en Mo : 2 × 1 024 = 2 048 Mo</li><li>en Mbit : 2 048 × 8 = 16 384 Mbit</li>"
               "<li>Δt = 16 384 ÷ 100 ≈ <b>164 s</b>, soit 2 min 44 s</li></ol>")
           + "</div>")
 
-d.contenu("Activité 2", "Les appareils de Chloé 🎧", Deck.appel(
-    "Chloé écoute de la musique en streaming avec son casque Bluetooth.",
-    "Elle se demande comment chacun de ses appareils est relié à Internet. Réponds sur ton cahier.",
-    [("1. Quel réseau physique ? 📌", "<p>Parmi : câble Ethernet, Wi-Fi, 4G/5G, Bluetooth.</p>"
-                                     "<ol type=\"a\"><li>Son smartphone chez elle, puis sur le chemin du lycée.</li>"
-                                     "<li>Sa console de jeux, branchée à la box.</li>"
-                                     "<li>Son ordinateur portable chez elle, puis chez une copine.</li>"
-                                     "<li>Sa montre connectée, reliée à son smartphone.</li></ol>"),
-     ("2. à 4. 💡", "<ol start=\"2\"><li>Chacun de ces réseaux est-il filaire ou sans fil ?</li>"
-                   "<li>Avec la course au téléchargement : quel réseau utilisé aujourd'hui est le plus lent ? le plus rapide ? Lequel est devenu obsolète ?</li>"
-                   "<li>Le Bluetooth est bien plus lent que le Wi-Fi. Pourquoi le fabricant du casque l'a-t-il choisi ?</li></ol>")]),
-    notes="Réponse attendue à la question 4 : le Bluetooth consomme très peu d'énergie, idéal sur batterie.")
+L("Partie 2", [(1, 1, "Les appareils de Chloé", False), (2, 1, "Qui peut se connecter comment ?", False),
+               (3, 1, "Quel réseau physique choisir ?", False), (4, 2, "Écologie : 4G ou Wi-Fi ?", False),
+               (5, 2, "Le débit depuis l'an 2000", False), (6, 2, "Le film de Liam", False)])
 
 # ------------------------------------------------------------------ Partie 3
 d.partie("3", "Le trafic sur Internet 📈", "Toujours plus de données… surtout de la vidéo")
 
-d.contenu("Activité 3", "Comment a évolué le trafic ?",
+d.contenu("Activité 2", "Comment a évolué le trafic ?",
           "<div class=\"deux\" style=\"align-items:start\">"
           "<div style=\"display:grid;gap:18px\">"
           f'<img class="schema" src="{IMG}trafic.svg" alt="Trafic mensuel mondial de 2017 à 2022">'
@@ -129,14 +123,28 @@ d.retenir("Le trafic <em>explose</em>, et c'est surtout de la vidéo.",
           "<ul><li>Multiplié par plus de <b>3</b> en cinq ans : des <b>milliards de milliards d'octets</b> chaque mois.</li>"
           "<li>La <b>vidéo</b> (streaming, réseaux sociaux, visio) représente <b>plus de 80 %</b> du trafic.</li></ul>")
 
+X("Partie 3", 7, "La consommation des vidéos 📺", 1,
+  "<div class=\"deux\"><table><tr><th>Type de données consultées</th><th>Quantité échangée par heure</th></tr>"
+  "<tr><td>Vidéo 4K (très haute définition)</td><td>7 Go</td></tr><tr><td>Vidéo HD (haute définition)</td><td>3 Go</td></tr>"
+  "<tr><td>Vidéo SD (définition standard)</td><td>0,7 Go</td></tr><tr><td>Réseaux sociaux</td><td>0,156 Go</td></tr>"
+  "<tr><td>Navigation sur le Web</td><td>0,020 Go</td></tr></table>"
+  "<ol><li>Compare la quantité de données échangée en une heure entre :<ol type=\"a\"><li>une vidéo SD et une vidéo 4K ;</li>"
+  "<li>une vidéo HD et les réseaux sociaux ;</li><li>les réseaux sociaux et la navigation sur le Web.</li></ol></li>"
+  "<li>Explique pourquoi le trafic mondial sur Internet a été multiplié par plus de trois en cinq ans.</li></ol></div>",
+  "<ol><li><ol type=\"a\"><li>7 ÷ 0,7 = 10 : la 4K consomme <b>10 fois plus</b>.</li>"
+  "<li>3 ÷ 0,156 ≈ 19 : une heure de vidéo HD vaut <b>près de 20 heures</b> de réseaux sociaux.</li>"
+  "<li>0,156 ÷ 0,020 ≈ 8 : les réseaux sociaux (pleins de vidéos) consomment <b>8 fois plus</b> que le Web.</li></ol></li>"
+  "<li>On regarde de plus en plus de vidéos, en meilleure qualité (HD, 4K), sur des smartphones toujours connectés, "
+  "et le nombre d'internautes augmente.</li></ol>")
+
 d.contenu("Partie 3 · Neutralité du Net", "Tous les paquets sont égaux ⚖️",
           "<p>Sur Internet, rien ne distingue à première vue un paquet de vidéo d'un paquet de musique ou d'un e-mail.</p>"
-          + E("definition", "Définition : Neutralité du Net",
-              "<p>Les fournisseurs d'accès doivent traiter <b>toutes les données de la même manière</b>, quels que soient "
+          + E("definition",
+              "<p>La <b>neutralité du Net</b> : les fournisseurs d'accès doivent traiter <b>toutes les données de la même manière</b>, quels que soient "
               "leur contenu, leur origine ou leur destination : ni ralentissement, ni priorité, ni supplément payant.</p>")
           + "<p>Principe fondateur d'Internet, protégé en Europe depuis 2015… mais régulièrement remis en cause.</p>")
 
-d.contenu("Activité 4", "Débat : un Internet à plusieurs vitesses ? 🗣️", Deck.appel(
+d.contenu("Activité 3", "Débat : un Internet à plusieurs vitesses ? 🗣️", Deck.appel(
     "Un opérateur propose deux forfaits…",
     "<b>Essentiel</b> à 10 € : Web, e-mails et réseaux sociaux à pleine vitesse, vidéos limitées en basse qualité. "
     "<b>Premium</b> à 25 € : tout à pleine vitesse, et tes plateformes de streaming favorites en priorité.",
@@ -148,7 +156,7 @@ d.contenu("Activité 4", "Débat : un Internet à plusieurs vitesses ? 🗣️",
 d.partie("4", "Comment voyagent les données ? 📦", "Adresses, paquets, routeurs… et TCP/IP")
 
 d.contenu("Partie 4 · Adresse IP", "Chaque machine a une adresse 🏷️",
-          E("definition", "Définition : Adresse IP",
+          E("definition",
             "<p>Une <b>adresse IP</b> est un numéro qui <b>identifie de façon unique</b> une machine connectée à un réseau.</p>")
           + "<table><tr><th>Version</th><th>Exemple</th><th>Nombre d'adresses</th></tr>"
             "<tr><td><b>IPv4</b></td><td><code>193.51.24.12</code><br>4 nombres de 0 à 255</td><td>≈ 4,3 milliards</td></tr>"
@@ -163,14 +171,14 @@ d.contenu("Partie 4 · Paquets", "Un fichier voyage en paquets 📦",
           f'<img class="schema" src="{IMG}paquet-ip.svg" alt="Un fichier découpé en morceaux, chacun reçoit un en-tête (adresses IP, TTL) et devient un paquet">')
 
 d.contenu("Partie 4 · Routage", "De routeur en routeur 🛣️",
-          E("definition", "Définitions : Routeur et routage",
+          E("definition", etiquette="Définitions", texte=
             "<ul><li>Un <b>routeur</b> relie plusieurs réseaux et fait passer les paquets de l'un à l'autre, "
             "<b>de proche en proche</b>. Ta box en contient un.</li>"
             "<li>Le <b>routage</b> est le mécanisme qui achemine un paquet de sa source à sa destination à travers les routeurs.</li></ul>")
           + "<p>Chaque routeur lit l'adresse IP de destination et confie le paquet à un voisin qui le rapproche du but. "
             "Le chemin <b>n'est pas fixé à l'avance</b>.</p>")
 
-d.contenu("Activité 5", "Le jeu du routeur 🎮", Deck.appel(
+d.contenu("Activité 4", "Le jeu du routeur 🎮", Deck.appel(
     "Avec le simulateur de la diapo suivante, ou sur le site (page « Comment voyagent les données ? »)",
     "Le nombre affiché dans chaque paquet est son <b>TTL</b> : il diminue de 1 à chaque routeur.",
     [("Observer 👀", "<ol><li>Envoie plusieurs paquets un par un : prennent-ils le même chemin ?</li>"
@@ -180,11 +188,11 @@ d.contenu("Activité 5", "Le jeu du routeur 🎮", Deck.appel(
                            "<li>R6 en panne aussi : que deviennent les paquets ? Regarde leur TTL.</li>"
                            "<li>R1 en panne : que se passe-t-il ?</li></ol>")]))
 
-d.outil("Activité 5", "Le jeu du routeur 🎮", "routage")
+d.outil("Activité 4", "Le jeu du routeur 🎮", "routage")
 
 d.contenu("Partie 4 · Routage", "Et le TTL ? ⏳",
-          E("definition", "Définition : TTL (Time To Live, « reste à vivre »)",
-            "<p>Chaque paquet porte un compteur, souvent fixé à 64 au départ, qui <b>diminue de 1 à chaque routeur</b>. "
+          E("definition",
+            "<p>Le <b>TTL</b> (<i>Time To Live</i>, « reste à vivre ») est un compteur que porte chaque paquet, souvent fixé à 64 au départ, qui <b>diminue de 1 à chaque routeur</b>. "
             "Quand il atteint 0, le routeur <b>détruit</b> le paquet.</p>")
           + "<p class=\"grand\">Pourquoi ? Pour qu'un paquet perdu, qui tournerait en rond entre des routeurs, "
             "n'encombre pas le réseau indéfiniment.</p>")
@@ -197,7 +205,7 @@ d.contenu("Partie 4 · TCP", "TCP remet de l'ordre 🧩",
           f'<div class="deux"><img class="schema" src="{IMG}tcp-renvoi.svg" alt="TCP redemande le segment perdu">'
           "<div style=\"display:grid;gap:24px\"><p>Avant l'envoi, <b>TCP</b> découpe les données en <b>segments numérotés</b>. "
           "À l'arrivée, il les <b>remet dans l'ordre</b> et <b>redemande</b> ceux qui manquent.</p>"
-          + E("definition", "Définition : Protocole",
+          + E("definition",
               "<p>Un <b>protocole</b> est un ensemble de <b>règles communes</b> que les machines respectent pour communiquer, "
               "comme une langue partagée.</p>") + "</div></div>")
 
@@ -208,7 +216,10 @@ d.retenir("Ensemble, <em>TCP/IP</em> assurent la fiabilité de la transmission."
           "<li><b>TCP</b> numérote les segments, les remet dans l'ordre et fait renvoyer ceux qui se sont perdus.</li>"
           "<li>Tout le message finit par arriver, <b>complet et dans l'ordre</b>.</li></ul>")
 
-d.contenu("Activité 7 · sur ordinateur", "Mesurer le voyage des paquets avec ping ⏱️", Deck.appel(
+L("Partie 4", [(8, 1, "Combien de chemins ?", False), (9, 2, "L'en-tête d'un paquet", False),
+               (10, 2, "Combien de paquets ?", False)])
+
+d.contenu("Activité 6 · sur ordinateur", "Mesurer le voyage des paquets avec ping ⏱️", Deck.appel(
     "Dans le Terminal de Windows (touche Windows, tape cmd, puis Entrée)",
     "La commande <code>ping</code> envoie quelques petits paquets à une machine, qui répond à chacun : on mesure le temps d'un aller-retour.",
     [("Mesurer 📏", "<ol><li>Tape <code>ping qwant.fr</code>. Relève l'adresse IP, les paquets envoyés et reçus, leur taille, "
@@ -223,20 +234,15 @@ d.retenir("Fiable… mais <em>pas ponctuel</em>.",
           "<ul><li>Pour un e-mail ou une page web : pas grave.</li>"
           "<li>Pour une <b>visioconférence</b> ou un <b>jeu en ligne</b> : image figée, son haché, « lag ».</li></ul>")
 
-# ------------------------------------------------------------------ Bilan
-d.contenu("Bilan", "Les exercices ✏️", Deck.appel(
-    "Sur le site, page « Exercices »",
-    "Douze exercices, du plus simple au plus difficile. La correction est vérifiée avec le professeur.",
-    [("Réseaux et débit", "<ul><li>1 à 3 : choisir un réseau physique</li><li>4 et 5 : calculer une durée de téléchargement</li>"
-                         "<li>6 : la consommation des vidéos</li></ul>"),
-     ("TCP/IP", "<ul><li>7 à 9 : chemins, en-têtes, nombre de paquets</li><li>10 : <code>tracert</code> jusqu'en Nouvelle-Zélande (ordinateur)</li>"
-                "<li>11 et 12 : IPv6 et un site inaccessible ★★★</li></ul>")]))
+L("Partie 4", [(11, 2, "Le voyage d'un paquet jusqu'en Nouvelle-Zélande (tracert)", True),
+               (12, 3, "Assez d'adresses pour tout le monde ?", False), (13, 3, "Le site est inaccessible !", False)])
 
+# ------------------------------------------------------------------ Bilan
 d.contenu("Bilan", "Ai-je compris l'essentiel ? ✅", Deck.appel(
     "Sur le site, page « Conclusion »",
     "Un QCM de 12 questions, corrigé automatiquement.",
     [("QCM ✅", "<ul><li>Une seule bonne réponse par question</li><li>Lis les explications de tes erreurs</li></ul>"),
-     ("Et ensuite 🎯", "<ul><li>Relis les « À retenir » des notions ratées</li><li>Refais l'exercice correspondant</li></ul>")]))
+     ("Et ensuite 🎯", "<ul><li>Relis les « À retenir » des notions ratées</li><li>Refais l'exercice correspondant</li></ul>")]), badge="jouer")
 
 d.contenu("Bilan", "Ce que tu dois savoir faire 🎯",
           "<ul>"

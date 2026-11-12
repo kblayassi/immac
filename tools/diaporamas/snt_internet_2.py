@@ -3,7 +3,8 @@
     python3 tools/diaporamas/snt_internet_2.py
 
 Le contenu suit les pages du site (docs/SNT/2_Plongee_au_coeur_d_Internet/), « À retenir »
-remplis, une diapo d'appel par activité, consignes complètes.
+remplis, une diapo d'appel par activité, consignes complètes, et, après chaque notion, la
+diapo des exercices qui la travaillent (énoncé et correction seulement pour un exercice seul).
 """
 from pathlib import Path
 from diaporama import Deck
@@ -14,6 +15,8 @@ IMG = "../../files/SNT/Internet/"
 
 d = Deck("Diaporama — Plongée au cœur d'Internet", "SNT · Internet · Chapitre 2 — Plongée au cœur d'Internet")
 E = Deck.encadre
+X = d.exercice     # un exercice seul : énoncé, puis correction
+L = d.exercices    # plusieurs : la diapo qui les liste, comme en NSI
 
 # ------------------------------------------------------------------ Ouverture
 d.couverture("SNT · Thème Internet · Chapitre 2", "Plongée au cœur<br>d'Internet 🌊",
@@ -24,13 +27,13 @@ d.contenu("Introduction", "Au programme 🧭", Deck.cartes([
     ("2 · Le DNS 📖", "<p>Comment un nom comme <code>wikipedia.org</code> devient une adresse IP.</p>"),
     ("3 · Le pair-à-pair 🔗", "<p>Quand chaque ordinateur devient aussi serveur.</p>"),
     ("4 · Légal ou illégal ? ⚖️", "<p>Télécharger, partager… et respecter les créateurs.</p>"),
-]) + E("histoire", "Le saviez-vous ?",
+]) + E("histoire", etiquette="Le saviez-vous ?", texte=
        "<p>Chaque seconde, Google reçoit environ <b>100 000 recherches</b>, réparties entre des "
        "<b>centaines de milliers de serveurs</b> dans le monde entier.</p>"))
 
 d.contenu("Introduction", "Vrai ou faux ? 🤔",
           '<p class="grand">Nejma a lu sur un réseau social :</p>'
-          + E("attention", "Sur un réseau social",
+          + E("info", etiquette="Lu sur un réseau social", texte=
               "<p style=\"font-size:40px\">« Si des pirates rendaient tous les serveurs DNS indisponibles, "
               "plus personne ne pourrait surfer sur le Web. »</p>")
           + "<p>Garde cette phrase en tête : nous y répondrons à la fin de la partie 2.</p>")
@@ -49,7 +52,7 @@ d.contenu("Activité 1", "Qui sert qui ? 🙋", Deck.appel(
 
 d.contenu("Partie 1 · Clients et serveurs", "Client et serveur",
           '<div class="deux">'
-          + E("definition", "Définitions : Client et serveur",
+          + E("definition", etiquette="Définitions", texte=
               "<ul><li>Un <b>serveur</b> stocke des données ou rend un service, et le met à disposition d'autres machines.</li>"
               "<li>Un <b>client</b> se connecte à un serveur pour utiliser ce service. Ton navigateur est un client.</li>"
               "<li>Le client envoie une <b>requête</b>, le serveur renvoie une <b>réponse</b>.</li></ul>")
@@ -73,17 +76,20 @@ d.contenu("Activité 2", "La billetterie du concert 🎫", Deck.appel(
 d.outil("Activité 2", "La billetterie du concert 🎫", "charge")
 
 d.contenu("Partie 1 · Attaques", "L'attaque par déni de service ☠️",
-          E("definition", "Définition : Attaque par déni de service (DDoS)",
-            "<p>Un pirate prend le contrôle d'un grand nombre de machines, souvent à l'insu de leurs propriétaires, "
+          E("definition",
+            "<p>Lors d'une <b>attaque par déni de service</b> (DDoS), un pirate prend le contrôle d'un grand nombre de machines, souvent à l'insu de leurs propriétaires, "
             "et leur fait envoyer <b>en même temps</b> une avalanche de requêtes vers un même site. "
             "Le site, surchargé, devient <b>inaccessible</b>.</p>")
-          + E("attention", "C'est un délit",
+          + E("attention", titre="C'est un délit", texte=
               "<p>Entraver le fonctionnement d'un système informatique : jusqu'à <b>5 ans de prison et 150 000 € d'amende</b> "
               "(article 323-2 du Code pénal).</p>"))
 
 d.retenir("Un serveur se <em>duplique</em>… et peut être <em>attaqué</em>.",
           "<ul><li>Pour supporter de nombreux clients en même temps, on <b>duplique</b> un serveur à l'identique.</li>"
           "<li>En le saturant de requêtes, une <b>attaque par déni de service</b> rend un serveur indisponible.</li></ul>")
+
+L("Partie 1", [(1, 1, "Les Jeux olympiques en ligne", False), (2, 2, "Le débit partagé (Python)", False)],
+  notes="La question 4 de l'exercice 2 anticipe la partie 3 (pair-à-pair).")
 
 # ------------------------------------------------------------------ Partie 2
 d.partie("2", "Les noms de domaine et le DNS 📖", "Le répertoire d'Internet")
@@ -101,14 +107,16 @@ d.contenu("Activité 3", "Le Web sans noms de domaine 💬",
 
 d.contenu("Partie 2 · Noms de domaine", "Le nom de domaine 🏷️",
           f'<img class="schema" src="{IMG}url.svg" alt="Anatomie d\'une adresse web" style="height:260px;flex:none">'
-          + E("definition", "Définition : Nom de domaine",
-              "<p>Une adresse composée de lettres, facile à retenir, qui désigne un site : <code>lycee-exemple.fr</code>, "
+          + E("definition",
+              "<p>Un <b>nom de domaine</b> est une adresse composée de lettres, facile à retenir, qui désigne un site : <code>lycee-exemple.fr</code>, "
               "<code>wikipedia.org</code>. Elle se termine par une <b>extension</b> : <code>.fr</code> (un pays), "
               "<code>.com</code> (commercial), <code>.org</code> (non commercial), <code>.gouv.fr</code> (gouvernement)…</p>"))
 
+L("Partie 2", [(3, 1, "Les extensions", False), (4, 1, "Lire une adresse web", False)])
+
 d.contenu("Partie 2 · DNS", "Le répertoire d'Internet : le DNS 📖",
           '<div class="deux">'
-          + E("definition", "Définition : Serveur DNS",
+          + E("definition",
               "<p>Un <b>serveur DNS</b> (<i>Domain Name System</i>) fait la <b>correspondance entre les noms de domaine "
               "et les adresses IP</b>, comme le répertoire d'un téléphone entre les noms et les numéros.</p>"
               "<ol><li>Le navigateur demande l'adresse IP du site au serveur DNS.</li><li>Le serveur DNS la lui renvoie.</li>"
@@ -144,10 +152,14 @@ d.contenu("Activité 5 · sur ordinateur", "Retrouver des adresses IP 💻", Dec
                                       "<li>Que peux-tu conclure ?</li></ol>")]))
 
 d.contenu("Vrai ou faux ?", "Alors, Nejma avait-elle raison ? 🤔",
-          E("attention", "« Si tous les serveurs DNS tombaient, plus personne ne pourrait surfer sur le Web. »",
+          E("attention", titre="« Si tous les serveurs DNS tombaient, plus personne ne pourrait surfer sur le Web. »", texte=
             "<p><b>En grande partie vrai.</b> Les routeurs fonctionneraient toujours, et on pourrait en théorie taper les "
             "adresses IP… mais personne ne les connaît, et un serveur qui héberge plusieurs sites a besoin du nom.</p>")
           + '<p class="grand">C\'est pourquoi les serveurs DNS sont <b>très nombreux</b> et <b>répartis dans le monde entier</b>.</p>')
+
+L("Partie 2", [(5, 2, "Quelles sont leurs adresses IP ?", True), (6, 2, "Un lycée à la page", True),
+               (7, 2, "Le site est inaccessible !", False), (8, 3, "Le voyage d'une requête DNS", False),
+               (9, 3, "Cybersécurité : le DNS empoisonné", False)])
 
 # ------------------------------------------------------------------ Partie 3
 d.partie("3", "Le pair-à-pair 🔗", "Quand chaque ordinateur devient aussi serveur")
@@ -164,7 +176,7 @@ d.outil("Activité 6", "La mise à jour du jeu 🎮", "p2p")
 
 d.contenu("Partie 3 · Pair-à-pair", "Le modèle pair-à-pair",
           '<div class="deux">'
-          + E("definition", "Définition : Modèle pair-à-pair",
+          + E("definition",
               "<p>Le <b>pair-à-pair</b> (<i>peer-to-peer</i>, <b>P2P</b>) est un principe d'échange où <b>chaque ordinateur "
               "est à la fois client et serveur</b> : il reçoit des données des autres et leur en fournit.</p>"
               "<p>Les fichiers sont <b>découpés en morceaux</b> : on peut partager un fichier avant même de l'avoir en entier.</p>")
@@ -183,11 +195,15 @@ d.contenu("Partie 3 · Usages", "À quoi sert le pair-à-pair ? 🧰", Deck.cart
     ("📁 Le partage de fichiers", "<p>Entre internautes… légal ou non, selon ce que l'on partage.</p>"),
 ]))
 
+L("Partie 3", [(10, 1, "Distribuer un logiciel gratuit", False), (12, 2, "Des mises à jour plus écologiques", False),
+               (13, 2, "Écologie : le coût du Bitcoin", False), (14, 3, "Le calcul partagé", False)],
+  notes="L'exercice 11 (légal ou non) vient avec la partie 4.")
+
 # ------------------------------------------------------------------ Partie 4
 d.partie("4", "Télécharger : légal ou illégal ? ⚖️", "Ce qui compte, c'est ce qu'on partage")
 
 d.contenu("Partie 4 · Droit d'auteur", "Le droit d'auteur ©️",
-          E("definition", "Définition : Droit d'auteur",
+          E("definition",
             "<p>Une œuvre (film, chanson, jeu vidéo, livre, logiciel…) appartient à son auteur. Le <b>droit d'auteur</b> lui "
             "permet de décider qui peut la copier, la diffuser, et à quel prix.</p>")
           + '<p class="grand">Utiliser un logiciel de pair-à-pair est <b>légal</b>. Télécharger ou partager une œuvre '
@@ -206,10 +222,10 @@ d.contenu("Partie 4 · L'Arcom", "Les risques encourus 🚨",
           '<div class="deux">'
           f'<img class="schema" src="{IMG}arcom-modes-illicites.svg" alt="Moyens de consommation illégale, Arcom 2023">'
           + '<div style="display:grid;gap:24px">'
-          + E("definition", "L'Arcom",
+          + E("info", titre="L'Arcom", texte=
               "<p>Née en 2022 de la fusion du CSA et d'Hadopi, l'<b>Arcom</b> protège les œuvres en luttant contre les offres "
               "illégales et en encourageant les offres légales.</p>")
-          + E("attention", "Les sanctions",
+          + E("attention", titre="Les sanctions", texte=
               "<p>Un premier avertissement par e-mail, un second par courrier, puis la justice : jusqu'à <b>1 500 € d'amende</b>.</p>")
           + "</div></div>")
 
@@ -230,21 +246,22 @@ d.retenir("Le pair-à-pair est <em>légal</em>… pas le piratage.",
           "<li>Le téléchargement illégal nuit à la <b>rémunération des créateurs</b>.</li>"
           "<li>L'<b>Arcom</b> avertit, puis la justice peut sanctionner : jusqu'à <b>1 500 € d'amende</b>.</li></ul>")
 
-# ------------------------------------------------------------------ Bilan
-d.contenu("Bilan", "Les exercices ✏️", Deck.appel(
-    "Sur le site, page « Exercices »",
-    "Quatorze exercices, du plus simple au plus difficile. La correction est vérifiée avec le professeur.",
-    [("Clients, serveurs, DNS", "<ul><li>1 et 2 : serveurs dupliqués, débit partagé (Python)</li>"
-                               "<li>3 et 4 : extensions et adresses web</li><li>5 et 6 : adresses IP réelles (ordinateur)</li>"
-                               "<li>7 à 9 : site inaccessible, requête DNS ★★★, DNS empoisonné ★★★</li></ul>"),
-     ("Pair-à-pair", "<ul><li>10 et 11 : logiciel gratuit, légal ou non</li><li>12 et 13 : écologie, Bitcoin</li>"
-                    "<li>14 : le calcul partagé ★★★</li></ul>")]))
+X("Partie 4", 11, "Est-ce légal ? ⚖️", 1,
+  "<p>Dans chacune des situations suivantes, le réseau pair-à-pair est-il utilisé dans un cadre légal ?</p>"
+  "<ol type=\"a\"><li>Un achat sur le Web payé avec une cryptomonnaie.</li>"
+  "<li>Le partage de l'album photo d'une réunion de famille.</li>"
+  "<li>La rediffusion d'un match de football enregistré sur une chaîne payante.</li>"
+  "<li>Le téléchargement d'un logiciel libre.</li>"
+  "<li>Le téléchargement d'un jeu vidéo payant, sans l'avoir acheté.</li></ol>",
+  "<ol type=\"a\"><li><b>Légal.</b></li><li><b>Légal.</b></li>"
+  "<li><b>Illégal</b> : la chaîne n'a pas donné son accord.</li><li><b>Légal.</b></li><li><b>Illégal.</b></li></ol>")
 
+# ------------------------------------------------------------------ Bilan
 d.contenu("Bilan", "Ai-je compris l'essentiel ? ✅", Deck.appel(
     "Sur le site, page « Conclusion »",
     "Un QCM de 12 questions, corrigé automatiquement.",
     [("QCM ✅", "<ul><li>Une seule bonne réponse par question</li><li>Lis les explications de tes erreurs</li></ul>"),
-     ("Et ensuite 🎯", "<ul><li>Relis les « À retenir » des notions ratées</li><li>Refais l'exercice correspondant</li></ul>")]))
+     ("Et ensuite 🎯", "<ul><li>Relis les « À retenir » des notions ratées</li><li>Refais l'exercice correspondant</li></ul>")]), badge="jouer")
 
 d.contenu("Bilan", "Ce que tu dois savoir faire 🎯",
           "<ul>"

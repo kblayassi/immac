@@ -17,14 +17,26 @@ from html import escape
 from pathlib import Path
 
 VIOLET = "#573D91"
-COULEURS = {   # les admonitions du site
-    "definition": ("#107FB3", "#E7F2F8", "#0C5F87", "📘"),
-    "retenir": ("#00B8D4", "#E5F8FB", "#00697A", "⭐"),
-    "attention": ("#FF9100", "#FFF4E5", "#9A5700", "⚠️"),
-    "histoire": ("#E67E22", "#FDF0E6", "#94480F", "🏛️"),
-    "methode": ("#00C853", "#E8F9EE", "#0B7A3B", "🛠️"),
-    "astuce": ("#00BFA5", "#E5F8F5", "#00695C", "💡"),
+# Les encadrés, aux couleurs des diaporamas de NSI : (trait et étiquette, bande teintée, icône, étiquette).
+COULEURS = {
+    "definition": ("#107FB3", "#E5F1F8", "📘", "Définition"),
+    "retenir": ("#0097A7", "#E0F3F5", "⭐", "À retenir"),
+    "info": ("#0097A7", "#E0F3F5", "⭐", "Info"),
+    "attention": ("#E07800", "#FDEFDD", "⚠️", "Attention"),
+    "histoire": ("#D9701E", "#FBEDE1", "🕰️", "Histoire"),
+    "methode": ("#2E8B3A", "#E6F3E7", "🛠️", "Méthode"),
+    "astuce": ("#00897B", "#DFF2F0", "💡", "Astuce"),
 }
+# La capsule en haut à droite des diapos.
+BADGES = {
+    "exemple": ("#107FB3", "Exemple"),
+    "resolution": ("#2E8B3A", "Résolution"),
+    "jouer": ("#D84315", "À vous de jouer"),
+    "exercice": ("#D84315", "Exercice"),
+    "exercices": ("#D84315", "Exercices"),
+    "correction": ("#2E8B3A", "Correction"),
+}
+ETOILES = {1: "★☆☆", 2: "★★☆", 3: "★★★"}
 
 
 class Deck:
@@ -51,14 +63,22 @@ class Deck:
     def partie(self, numero, titre, soustitre=""):
         self._page(f'<p class="grand-numero">{numero}</p><h1>{titre}</h1><p class="sous">{soustitre}</p>', "couverture")
 
-    def contenu(self, rubrique, titre, corps, notes=""):
+    def contenu(self, rubrique, titre, corps, notes="", badge=None):
+        """Une diapo de contenu. Les diapos d'activité (rubrique « Activité … ») portent
+        d'office la capsule « À vous de jouer »."""
+        if badge is None and rubrique.startswith("Activité"):
+            badge = "jouer"
+        capsule = ""
+        if badge:
+            couleur, texte = BADGES[badge]
+            capsule = f'<p class="badge" style="background:{couleur}">{texte}</p>'
         self._page(f'<div class="bandeau"></div><header><p class="rubrique">{rubrique}</p><h2>{titre}</h2></header>'
-                   f'<div class="corps">{corps}</div>', notes=notes)
+                   f'{capsule}<div class="corps">{corps}</div>', notes=notes)
 
     def retenir(self, titre, texte):
         """Une diapo pleine page « À retenir », toujours remplie."""
-        self._page(f'<p class="retenir-titre">⭐ À retenir !</p><h2>{titre}</h2><div class="retenir-texte">{texte}</div>',
-                   "retenir")
+        self._page(f'<p class="retenir-titre"><span>⭐</span> À retenir</p><h2>{titre}</h2>'
+                   f'<div class="retenir-texte">{texte}</div>', "retenir")
 
     def outil(self, rubrique, titre, nom, consigne=""):
         """Une démonstration en direct, avec l'outil interactif du site."""
@@ -66,20 +86,49 @@ class Deck:
         self.contenu(rubrique, titre, (f'<p class="consigne">{consigne}</p>' if consigne else "")
                      + f'<div class="snt-outil" data-outil="{nom}"></div>')
 
+    def exercice(self, partie, numero, titre, niveau, enonce, correction, ordi=False, notes=""):
+        """Un exercice de la page « Exercices » du site, en deux diapos : l'énoncé (capsule
+        orange), puis sa correction (capsule verte, même titre). Numéro et étoiles du site."""
+        support = "💻 sur ordinateur" if ordi else "✏️ sur papier"
+        meta = f'<p class="meta"><span class="etoiles">{ETOILES[niveau]}</span> · {support}</p>'
+        rubrique = f"{partie} · Exercice {numero}"
+        self.contenu(rubrique, titre, meta + enonce, badge="exercice", notes=notes)
+        self.contenu(rubrique, titre, correction, badge="correction")
+
+    def exercices(self, partie, liste, notes=""):
+        """La diapo d'exercices, comme en NSI : les numéros de la page « Exercices » du site,
+        leur niveau et leur thème. `liste` : (numéro, étoiles, thème, sur ordinateur ?)."""
+        nums = [n for n, *_ in liste]
+        if nums == list(range(nums[0], nums[-1] + 1)) and len(nums) > 2:
+            titre = f"Exercices {nums[0]} à {nums[-1]}"
+        else:
+            titre = "Exercices " + ", ".join(map(str, nums[:-1])) + f" et {nums[-1]}"
+        lignes = "".join(f'<tr><td><b>{n}</b></td><td class="etoiles">{ETOILES[e]}</td><td>{t}</td>'
+                         f'<td>{"💻" if o else "✏️"}</td></tr>' for n, e, t, o in liste)
+        corps = ('<p>Page <b>Exercices</b> du site · correction vérifiée avec le professeur.</p>'
+                 '<table class="liste-exos"><tr><th style="width:9%">N°</th><th style="width:14%">Niveau</th>'
+                 f'<th>Thème</th><th style="width:10%">Support</th></tr>{lignes}</table>'
+                 '<p class="consigne">✏️ sur papier · 💻 sur ordinateur</p>')
+        self.contenu(f"{partie} · Exercices", titre, corps, notes=notes, badge="exercices")
+
     # --- encadrés ------------------------------------------------------------
     @staticmethod
-    def encadre(genre, titre, texte):
-        bord, fond, encre, icone = COULEURS[genre]
-        return (f'<div class="encadre" style="border-left-color:{bord}">'
-                f'<p class="encadre-titre" style="background:{fond};color:{encre}">{icone} {titre}</p>'
-                f'<div class="encadre-corps">{texte}</div></div>')
+    def encadre(genre, texte, titre="", etiquette=None):
+        """Boîte blanche, trait coloré à gauche, bande teintée portant l'étiquette en
+        capitales, titre éventuel dessous. Une définition n'a pas de titre."""
+        bord, fond, icone, nom = COULEURS[genre]
+        tete = (f'<p class="encadre-bande" style="background:{fond};color:{bord}">'
+                f'<span>{icone}</span>{etiquette or nom}</p>')
+        titre = f'<h3>{titre}</h3>' if titre else ""
+        return (f'<div class="encadre" style="border-left-color:{bord}">{tete}'
+                f'<div class="encadre-corps">{titre}{texte}</div></div>')
 
     @staticmethod
     def appel(titre_activite, texte, cartes):
-        """Diapo d'appel d'une activité : pastille « À vous de jouer ! » et cartes."""
-        c = "".join(f'<div class="carte orange"><h3>{t}</h3>{v}</div>' for t, v in cartes)
-        return (f'<p class="pastille">À vous de jouer !</p><h3 class="activite">{titre_activite}</h3>'
-                f'<p>{texte}</p><div class="cartes">{c}</div>')
+        """Corps d'une diapo d'activité : la situation, puis les consignes en cartes."""
+        c = "".join(f'<div class="carte"><h3>{t}</h3>{v}</div>' for t, v in cartes)
+        return (f'<div class="situation"><p class="activite">{titre_activite}</p><p>{texte}</p></div>'
+                f'<div class="cartes">{c}</div>')
 
     @staticmethod
     def chrono(minutes):
@@ -135,7 +184,8 @@ MODELE = r"""<!doctype html>
   @keyframes apparait { from { opacity: 0; } }
   aside { display: none; }
   b, strong { color: var(--encre); }
-  code { font-family: "Red Hat Mono", monospace; background: #efeaf9; padding: 0 .25em; border-radius: 6px; font-size: .92em; }
+  code { font-family: "Red Hat Mono", monospace; background: #F3F0F8; padding: 0 .25em; border-radius: 6px; font-size: .92em; }
+  pre code { background: none; padding: 0; font-size: 1em; }
 
   /* couverture et intercalaires */
   .couverture { background: linear-gradient(135deg, #3E2A6E 0%, #573D91 60%, #7A5BB8 100%); color: #F6F2FC; padding: 128px; justify-content: center; gap: 36px; }
@@ -145,46 +195,60 @@ MODELE = r"""<!doctype html>
   .couverture .grand-numero { font-size: 200px; font-weight: 700; color: #B9A6E3; line-height: 1; }
   .couverture .trait { position: absolute; left: 128px; bottom: 112px; width: 220px; height: 8px; background: #FF5722; border-radius: 4px; }
 
-  /* diapo de contenu */
-  .contenu { padding: 96px 128px 150px; gap: 36px; }
+  /* diapo de contenu (charte des diaporamas de NSI) */
+  .contenu { padding: 104px 128px 160px; gap: 40px; }
   .bandeau { position: absolute; left: 0; top: 0; width: 100%; height: 14px; background: linear-gradient(90deg, #573D91, #8E6CC9); }
+  header { display: flex; flex-direction: column; gap: 10px; padding-right: 300px; }
+  .contenu:has(.chrono) header { padding-right: 460px; }
   .rubrique { font-size: 24px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--violet); }
-  .contenu h2 { font-size: 58px; color: var(--encre); line-height: 1.1; margin-top: 8px; }
+  .contenu h2 { font-size: 60px; color: var(--encre); line-height: 1.1; }
+  .badge { position: absolute; right: 128px; top: 92px; font-size: 24px; font-weight: 700; letter-spacing: 2px;
+           text-transform: uppercase; color: #fff; padding: 8px 22px; border-radius: 999px; white-space: nowrap; }
   .corps { display: flex; flex-direction: column; gap: 30px; font-size: 32px; line-height: 1.4; flex: 1; min-height: 0; }
-  .corps > p { max-width: 1600px; }
+  .corps > p { max-width: 1640px; }
   .corps ul, .corps ol { padding-left: 1.2em; display: grid; gap: 10px; }
-  .pied { position: absolute; left: 128px; bottom: 56px; font-size: 22px; color: var(--doux); }
-  .numero { position: absolute; right: 128px; bottom: 56px; font-size: 24px; font-weight: 700; color: var(--violet); }
+  .corps ol ol, .corps ol ul { margin-top: 8px; }
+  .pied { position: absolute; left: 128px; bottom: 64px; font-size: 24px; color: var(--doux); }
+  .numero { position: absolute; right: 128px; bottom: 64px; font-size: 24px; font-weight: 700; color: var(--violet); }
+  .meta { font-size: 28px; color: var(--doux); margin-top: -12px; }
+  .meta .etoiles { color: #E07800; letter-spacing: 2px; }
+  table.liste-exos { width: 1400px; font-size: 32px; }
+  td.etoiles { color: #E07800; letter-spacing: 2px; }
 
-  /* encadrés et cartes */
-  .encadre { background: #fff; border-left: 8px solid; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 20px rgba(34,26,51,.08); }
-  .encadre-titre { font-size: 30px; font-weight: 700; padding: 16px 30px; }
-  .encadre-corps { padding: 22px 34px 26px; display: grid; gap: 12px; }
-  .cartes { display: flex; gap: 26px; align-items: stretch; }
-  .carte { flex: 1; background: #fff; padding: 26px 30px; border-radius: 16px; border-top: 6px solid var(--violet); box-shadow: 0 6px 20px rgba(34,26,51,.08); display: grid; gap: 10px; align-content: start; font-size: 27px; }
-  .carte h3 { font-size: 32px; color: var(--encre); line-height: 1.2; }
-  .carte.orange { border-top-color: var(--orange); }
-  .carte.histoire { border-top-color: #E67E22; }
-  .carte .annee { font-size: 40px; font-weight: 700; color: #94480F; line-height: 1; }
-  .pastille { align-self: start; font-size: 30px; font-weight: 700; color: #fff; background: var(--orange); padding: 8px 26px; border-radius: 999px; }
-  h3.activite { font-size: 40px; color: var(--encre); }
-  table { border-collapse: collapse; font-size: 25px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 20px rgba(34,26,51,.08); }
-  th { background: var(--violet); color: #fff; text-align: left; padding: 12px 18px; }
-  td { padding: 9px 18px; border-bottom: 1px solid #ece8f4; }
+  /* encadrés et cartes : une seule boîte blanche, coins de 20 px */
+  .encadre { background: #fff; border-left: 8px solid; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 16px rgba(34,26,51,.07); flex: none; }
+  .encadre-bande { display: flex; align-items: center; gap: 12px; padding: 14px 32px; font-size: 24px; font-weight: 700;
+                   letter-spacing: 2px; text-transform: uppercase; }
+  .encadre-bande span { font-size: 28px; letter-spacing: 0; }
+  .encadre-corps { padding: 22px 36px 30px; display: grid; gap: 14px; }
+  .encadre-corps h3 { font-size: 34px; color: var(--encre); line-height: 1.25; }
+  .cartes { display: flex; gap: 32px; align-items: stretch; }
+  .carte { flex: 1; background: #fff; padding: 32px 36px 36px; border-radius: 20px; box-shadow: 0 4px 16px rgba(34,26,51,.07);
+           display: grid; gap: 14px; align-content: start; font-size: 30px; }
+  .carte h3 { font-size: 34px; color: var(--encre); line-height: 1.2; }
+  .situation { display: grid; gap: 10px; background: #fff; padding: 26px 36px 30px; border-radius: 20px; border-left: 8px solid var(--orange);
+               box-shadow: 0 4px 16px rgba(34,26,51,.07); }
+  .situation .activite { font-size: 34px; font-weight: 700; color: var(--encre); line-height: 1.3; }
+  table { border-collapse: collapse; font-size: 28px; line-height: 1.35; align-self: flex-start; }
+  th { background: #EAE3F5; color: #3E2A6E; text-align: left; padding: 12px 20px; border: 2px solid rgba(20,20,19,.12); }
+  td { background: #fff; padding: 10px 20px; border: 2px solid rgba(20,20,19,.12); vertical-align: top; }
+  pre { font-family: "Red Hat Mono", monospace; font-size: 26px; line-height: 1.4; background: #F3F0F8; color: #2A2238;
+        padding: 16px 26px; border-radius: 12px; white-space: pre; }
   .schema { display: block; margin: 0 auto; max-width: 100%; min-height: 0; object-fit: contain; }
   .corps > .schema { flex: 1; width: 100%; height: 0; }          /* seul ou presque : il prend toute la place */
   .deux > .schema { width: 100%; height: 640px; }
-  .deux { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .deux { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
   .lien { font-size: 34px; font-weight: 700; color: var(--violet); }
   .consigne { font-size: 28px; color: var(--doux); }
   .grand { font-size: 44px; line-height: 1.3; color: var(--encre); font-weight: 600; }
 
   /* À retenir plein écran */
-  .retenir { background: #E5F8FB; color: var(--encre); padding: 128px; justify-content: center; gap: 40px; }
-  .retenir-titre { font-size: 36px; font-weight: 700; color: #00697A; letter-spacing: 2px; text-transform: uppercase; }
-  .retenir h2 { font-size: 62px; line-height: 1.2; }
+  .retenir { background: #E8F6F8; color: var(--encre); padding: 128px; justify-content: center; gap: 40px; }
+  .retenir-titre { display: flex; align-items: center; gap: 16px; font-size: 30px; font-weight: 700; color: #00727E; letter-spacing: 3px; text-transform: uppercase; }
+  .retenir-titre span { font-size: 44px; letter-spacing: 0; }
+  .retenir h2 { font-size: 60px; line-height: 1.2; }
   .retenir h2 em { font-style: normal; color: var(--violet); }
-  .retenir-texte { font-size: 36px; line-height: 1.45; color: var(--texte); display: grid; gap: 16px; }
+  .retenir-texte { font-size: 38px; line-height: 1.45; color: var(--texte); display: grid; gap: 16px; }
   .retenir-texte ul { padding-left: 1.1em; display: grid; gap: 12px; }
 
   /* outils interactifs dans une diapo */
@@ -209,7 +273,7 @@ MODELE = r"""<!doctype html>
   .diapo .snt-outil .snt-consigne { margin-bottom: .3em; }
 
   /* chronomètre et vidéo */
-  .chrono { position: absolute; right: 128px; top: 96px; display: flex; align-items: center; gap: 14px;
+  .chrono { position: absolute; right: 128px; top: 160px; display: flex; align-items: center; gap: 14px;
             background: #fff; border-radius: 999px; padding: 10px 14px 10px 26px; box-shadow: 0 6px 20px rgba(34,26,51,.12); }
   .chrono-temps { font-family: "Red Hat Mono", monospace; font-size: 44px; font-weight: 600; color: var(--encre); min-width: 150px; }
   .chrono button { font: 700 22px Quicksand, sans-serif; border: 0; border-radius: 999px; padding: 10px 20px; cursor: pointer;

@@ -21,6 +21,32 @@ Vous trouverez ci-dessous les exercices de ce chapitre.
 
 ## Réseaux physiques et débit
 
+!!! exopapier ":fontawesome-solid-star: :fontawesome-regular-star: :fontawesome-regular-star: Les appareils de Chloé"
+    Chloé écoute de la musique en streaming avec son casque Bluetooth. Elle se demande comment
+    ses différents appareils sont reliés à Internet.
+
+    1. Pour chacun des cas suivants, précise le réseau physique utilisé parmi : câble Ethernet,
+       Wi-Fi, 4G/5G, Bluetooth.
+
+        a. Son smartphone quand elle est chez elle, puis sur le chemin du lycée.  
+        b. Sa console de jeux, branchée à la box.  
+        c. Son ordinateur portable chez elle, puis chez une copine.  
+        d. Sa montre connectée, reliée à son smartphone.
+
+    2. Indique pour chacun de ces réseaux s'il est filaire ou sans fil.
+    3. À l'aide du cours sur le débit, cite le réseau le plus lent et le plus rapide
+       encore utilisés aujourd'hui. Quel réseau physique est devenu obsolète ?
+    4. Le Bluetooth est bien plus lent que le Wi-Fi. Pourquoi le fabricant du casque l'a-t-il
+       pourtant choisi ?
+
+    ??? success "Correction"
+        1. a. Wi-Fi chez elle, 4G/5G dans la rue. b. Câble Ethernet (ou Wi-Fi).
+           c. Wi-Fi dans les deux cas. d. Bluetooth.
+        2. Seul le câble Ethernet est filaire ; Wi-Fi, 4G/5G et Bluetooth sont sans fil.
+        3. Le plus lent est le Bluetooth, le plus rapide la fibre optique. Le modem 56k est obsolète.
+        4. Le Bluetooth **consomme très peu d'énergie** : idéal pour un appareil sur batterie.
+           Son débit suffit largement pour transmettre de la musique.
+
 !!! exopapier ":fontawesome-solid-star: :fontawesome-regular-star: :fontawesome-regular-star: Qui peut se connecter comment ?"
     Recopie et complète le tableau par « oui » ou « non » : l'appareil peut-il, en général,
     utiliser ce type de liaison pour se connecter à Internet ?

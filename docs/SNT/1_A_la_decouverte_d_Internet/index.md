@@ -33,9 +33,32 @@ noms de domaine et réseaux pair-à-pair.
 
 {% if config.extra.version == "prof" %}
 !!! note "Pour le professeur"
-    Chapitre prévu en **deux séances d'1 h 30** : séance 1 → pages *Internet et les réseaux
-    physiques* et *Le trafic sur Internet* ; séance 2 → page *Comment voyagent les données ?*
-    (jeu des cartes postales, jeu du routeur, TP `ping` sur les postes), puis exercices et QCM.
+    Chapitre prévu en **deux séances d'1 h 30**, à suivre avec le diaporama : les exercices
+    viennent au fil du cours, juste après la notion qu'ils travaillent.
+
+    **Séance 1 — Internet, les réseaux physiques et le trafic** (diapos 1 à 21)
+
+    | Durée | Diapos | Déroulé |
+    |---|---|---|
+    | 15 min | 1 à 4 | Activité 1 « Dessine-moi Internet », puis l'archive INA de 1996 |
+    | 10 min | 5 à 8 | Internet, un réseau de réseaux : comparaison avec les dessins |
+    | 20 min | 9 à 13 | Filaire ou sans fil, la course au téléchargement, le débit et la méthode de calcul |
+    | 20 min | 14 | Exercices 1 à 6 : 1 à 4 en classe, 5 et 6 à finir à la maison |
+    | 10 min | 15 à 19 | Activité 2 sur le trafic, puis l'exercice 7 (la consommation des vidéos) |
+    | 15 min | 20 et 21 | La neutralité du Net et l'activité 3 (débat) |
+
+    **Séance 2 — Comment voyagent les données ?** (diapos 22 à 39, en salle informatique)
+
+    | Durée | Diapos | Déroulé |
+    |---|---|---|
+    | 15 min | 22 à 26 | Adresse IP, paquets, routeurs et routage |
+    | 15 min | 27 et 28 | Activité 4, le jeu du routeur (la version cartes postales du site est facultative) |
+    | 5 min | 29 et 30 | Le TTL, « À retenir » sur IP |
+    | 10 min | 31 à 33 | TCP et son simulateur (l'activité 5, cartes numérotées, reste facultative : elle n'est pas au diaporama) |
+    | 15 min | 34 | Exercices 8 à 10 |
+    | 15 min | 35 et 36 | Activité 6, `ping` sur les postes, puis l'absence de garantie temporelle |
+    | 10 min | 37 | Exercices 11 à 13 : le 11 (`tracert`) sur les postes, 12 et 13 à finir à la maison |
+    | 5 min | 38 et 39 | QCM de la page Conclusion et compétences |
 
     [Ouvrir le diaporama du chapitre :fontawesome-solid-person-chalkboard:](diaporama.html){ .md-button target="_blank" }
 {% endif %}

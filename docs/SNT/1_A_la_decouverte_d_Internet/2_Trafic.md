@@ -7,7 +7,7 @@ weight: 2
 
 ## 1 - Une explosion des échanges 💥
 
-!!! example "Activité 3 - Comment a évolué le trafic ?"
+!!! example "Activité 2 - Comment a évolué le trafic ?"
     ![Évolution du trafic mensuel mondial sur Internet de 2017 à 2022](../../files/SNT/Internet/trafic.svg){ .snt-schema }
 
     | En France | 2009 | 2019 |
@@ -57,7 +57,7 @@ certains opérateurs aimeraient faire payer davantage les plateformes ou les uti
 les plus gourmands. En Europe, un règlement de 2015 protège la neutralité du Net ; ailleurs,
 elle est régulièrement remise en cause.
 
-!!! example "Activité 4 - Débat : faut-il un Internet à plusieurs vitesses ?"
+!!! example "Activité 3 - Débat : faut-il un Internet à plusieurs vitesses ?"
     Imaginons qu'un opérateur propose deux forfaits :
 
     - **Essentiel** à 10 € : Web, e-mails et réseaux sociaux à pleine vitesse, mais vidéos limitées à la basse qualité ;
