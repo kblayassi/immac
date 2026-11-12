@@ -93,16 +93,41 @@ def paquet():
     c += texte(380, 212, "Comme une carte postale numérotée : l'adresse au dos, le numéro de la carte, et le message.", 13, ENCRE, 500)
     return doc(760, 235, c, "Un paquet : en-tête avec les adresses IP, le TTL et le numéro, puis les données")
 
-# 2 bis. Un paquet vu par IP (avant TCP) ---------------------------------------
+# 2 bis. Découpage d'un fichier en paquets (avant TCP) -------------------------
 def paquet_ip():
-    c = texte(380, 34, "Un paquet qui voyage sur Internet", 17, VIOLET, 700)
-    c += f'<rect x="30" y="60" width="230" height="70" rx="10" fill="{VIOLET}"/>' + f'<rect x="240" y="60" width="20" height="70" fill="{VIOLET}"/>' + texte(145, 90, "Adresses IP", 15, "#fff", 700) + texte(145, 112, "expéditeur → destinataire", 12, "#fff", 500)
-    c += f'<rect x="260" y="60" width="120" height="70" fill="#7E64B5"/>' + texte(320, 90, "TTL", 15, "#fff", 700) + texte(320, 112, "64", 12, "#fff", 500)
-    c += f'<rect x="380" y="60" width="350" height="70" rx="10" fill="{BLEU}"/>' + f'<rect x="380" y="60" width="20" height="70" fill="{BLEU}"/>' + texte(555, 90, "Données", 15, "#fff", 700) + texte(555, 112, "un petit morceau du fichier", 12, "#fff", 500)
-    c += texte(205, 160, "l'en-tête, lu par les routeurs", 13, VIOLET, 700) + texte(205, 178, "pour trouver le chemin", 12, GRIS, 500)
-    c += texte(555, 160, "ce que l'on veut envoyer", 13, BLEU, 700) + texte(555, 178, "texte, image, son, vidéo…", 12, GRIS, 500)
-    c += texte(380, 212, "Comme une carte postale : l'adresse au dos, et le message.", 13, ENCRE, 500)
-    return doc(760, 235, c, "Un paquet : en-tête avec les adresses IP et le TTL, puis les données")
+    VIO2 = "#7E64B5"
+    X0, PAS, W, H = 190, 180, 170, 70   # 4 paquets : départ, pas, largeur ; H = largeur de l'en-tête
+    LF = 3*PAS + W                       # largeur du fichier entier
+    c = texte(530, 30, "Comment un fichier devient des paquets", 18, VIOLET, 700)
+    c += texte(20, 103, "① Le fichier", 15, VIOLET, 700, "start") + texte(20, 122, "photo-de-vacances.jpg", 12, GRIS, 600, "start")
+    c += texte(20, 198, "② Il est découpé", 15, VIOLET, 700, "start")
+    c += texte(20, 293, "③ On ajoute", 15, VIOLET, 700, "start") + texte(20, 312, "l'en-tête", 15, VIOLET, 700, "start")
+    # ① le fichier entier, avec les coups de ciseaux
+    c += f'<rect x="{X0}" y="76" width="{LF}" height="44" rx="10" fill="{BLEU}"/>'
+    for k in range(1, 4):
+        x = X0 + k*LF/4
+        c += ligne(x, 70, x, 126, ENCRE, 2, "5 4") + texte(x, 64, "✂", 16, ENCRE, 700)
+    for k in range(4):
+        sx = X0 + (k + .5)*LF/4                  # centre du morceau dans le fichier
+        x = X0 + k*PAS; mx = x + H + (W - H)/2   # paquet k, centre de sa partie données
+        c += texte(sx, 104, f"morceau {k+1}", 13, "#fff", 700)
+        # ② les morceaux séparés, déjà à l'aplomb de leur place dans le paquet
+        c += fleche(sx, 126, mx, 168, GRIS, 2)
+        c += f'<rect x="{x+H}" y="175" width="{W-H}" height="44" rx="8" fill="{BLEU}"/>'
+        c += texte(mx, 202, f"morceau {k+1}", 13, "#fff", 700)
+        # ③ l'en-tête vient se coller devant
+        c += fleche(mx, 223, mx, 261, GRIS, 2)
+        c += f'<rect x="{x}" y="268" width="{W}" height="44" rx="8" fill="{BLEU}"/>'
+        c += f'<rect x="{x}" y="268" width="{H}" height="44" rx="8" fill="{VIOLET}"/>'
+        c += f'<rect x="{x+40}" y="268" width="30" height="44" fill="{VIO2}"/>'
+        c += texte(x + 20, 295, "IP", 13, "#fff", 700) + texte(x + 55, 288, "TTL", 10, "#fff", 700) + texte(x + 55, 304, "64", 12, "#fff", 700)
+        c += texte(mx, 295, f"morceau {k+1}", 13, "#fff", 700)
+        c += texte(x + W/2, 332, f"paquet {k+1}", 13, ENCRE, 700)
+    # légende
+    c += f'<rect x="190" y="356" width="18" height="18" rx="4" fill="{VIOLET}"/>' + texte(216, 370, "adresses IP : expéditeur → destinataire", 13, ENCRE, 600, "start")
+    c += f'<rect x="520" y="356" width="18" height="18" rx="4" fill="{VIO2}"/>' + texte(546, 370, "TTL : 64 au départ, −1 à chaque routeur", 13, ENCRE, 600, "start")
+    c += texte(530, 402, "L'en-tête, c'est l'adresse au dos de la carte postale : les routeurs le lisent pour choisir le chemin.", 13, GRIS, 600)
+    return doc(1060, 422, c, "Un fichier découpé en morceaux ; chaque morceau reçoit un en-tête (adresses IP et TTL) et devient un paquet")
 
 # 3. TCP redemande un segment -----------------------------------------------
 def renvoi():

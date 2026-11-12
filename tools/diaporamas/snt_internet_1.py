@@ -160,7 +160,7 @@ d.retenir("4,3 milliards d'adresses IPv4, <em>ce n'est pas assez</em>.",
 
 d.contenu("Partie 4 · Paquets", "Un fichier voyage en paquets 📦",
           "<p>Un fichier n'est jamais envoyé d'un bloc : il est <b>découpé en petits paquets</b>, qui voyagent chacun de leur côté.</p>"
-          f'<img class="schema" src="{IMG}paquet-ip.svg" alt="Un paquet : adresses IP, TTL, données">')
+          f'<img class="schema" src="{IMG}paquet-ip.svg" alt="Un fichier découpé en morceaux, chacun reçoit un en-tête (adresses IP, TTL) et devient un paquet">')
 
 d.contenu("Partie 4 · Routage", "De routeur en routeur 🛣️",
           E("definition", "Définitions : Routeur et routage",

@@ -34,7 +34,7 @@ Un fichier n'est jamais envoyé d'un seul bloc. Il est **découpé en petits paq
 voyagent chacun de leur côté. Chaque paquet porte un **en-tête**, comme l'adresse au dos
 d'une carte postale :
 
-![Un paquet : les adresses IP et le TTL, puis les données](../../files/SNT/Internet/paquet-ip.svg){ .snt-schema }
+![Un fichier découpé en quatre morceaux ; chaque morceau reçoit un en-tête (adresses IP et TTL) et devient un paquet](../../files/SNT/Internet/paquet-ip.svg){ .snt-schema }
 
 Entre l'expéditeur et le destinataire, les paquets traversent des **routeurs**. Chaque
 routeur lit l'adresse IP de destination et transmet le paquet au routeur voisin le mieux
