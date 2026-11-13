@@ -112,6 +112,10 @@ MODELE = r"""<!doctype html>
   .diapo th, .diapo td { border: 2px solid rgba(20, 20, 19, .22); padding: .35em .6em; text-align: left;
                          vertical-align: top; overflow-wrap: break-word; }
   .diapo aside { display: none; }
+  html, body { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  #plein-ecran { position: fixed; right: 12px; top: 12px; z-index: 3; width: 44px; height: 44px; border: 0; border-radius: 12px;
+                 background: rgba(20, 16, 29, .55); color: #fff; font-size: 24px; line-height: 44px; cursor: pointer; }
+  #plein-ecran[hidden] { display: none; }
   #progression { position: fixed; left: 0; bottom: 0; height: 5px; background: #FF5722; transition: width .3s; z-index: 2; }
   #aide { position: fixed; right: 14px; bottom: 12px; color: #8a8399; font: 12px Quicksand, sans-serif; opacity: .6; z-index: 2; }
   @media print {
@@ -128,6 +132,7 @@ MODELE = r"""<!doctype html>
 </div>
 <div id="progression"></div>
 <div id="aide">← → pour naviguer · F plein écran</div>
+<button id="plein-ecran" hidden aria-label="Plein écran">⛶</button>
 <script>
 (function () {
   const diapos = [...document.querySelectorAll(".diapo")];
@@ -152,13 +157,47 @@ MODELE = r"""<!doctype html>
     else if (e.key === "Home") montrer(0);
     else if (e.key === "End") montrer(diapos.length - 1);
     else if (e.key === "f" || e.key === "F") {
-      document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+      basculerPleinEcran();
     }
   });
   addEventListener("click", (e) => {
+    if (Date.now() - dernierGeste < 600) return;
     if (e.target.closest("a, button, video")) return;
     montrer(e.clientX > innerWidth / 2 ? i + 1 : i - 1);
   });
+  /* Écrans tactiles (iPhone, iPad) : glisser vers la gauche ou la droite change de diapo ;
+     toucher la moitié droite ou gauche fait de même. Dans un outil interactif, une vidéo,
+     un bouton ou un champ, le geste est laissé à l'élément touché. */
+  let depart = null, dernierGeste = 0;
+  addEventListener("touchstart", (e) => {
+    const t = e.touches[0];
+    depart = e.touches.length === 1 && !e.target.closest("a, button, input, select, textarea, label, video") ? { x: t.clientX, y: t.clientY } : null;
+  }, { passive: true });
+  addEventListener("touchend", (e) => {
+    if (!depart) return;
+    const t = e.changedTouches[0], dx = t.clientX - depart.x, dy = t.clientY - depart.y;
+    depart = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) {
+      dernierGeste = Date.now();   // le « clic » qui suit parfois un glissé ne doit pas tourner une 2e page
+      montrer(dx < 0 ? i + 1 : i - 1);
+    }
+  }, { passive: true });
+  /* Plein écran : touche F au clavier, bouton ⛶ sur tablette (iPad ; l'iPhone ne le permet pas). */
+  const plein = () => document.fullscreenElement || document.webkitFullscreenElement;
+  function basculerPleinEcran() {
+    const d = document.documentElement;
+    if (plein()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else if (d.requestFullscreen || d.webkitRequestFullscreen) (d.requestFullscreen || d.webkitRequestFullscreen).call(d);
+  }
+  if (matchMedia("(pointer: coarse)").matches) {
+    document.getElementById("aide").textContent = "Glisser ou toucher un bord pour naviguer";
+    const d = document.documentElement, bouton = document.getElementById("plein-ecran");
+    if (d.requestFullscreen || d.webkitRequestFullscreen) {
+      bouton.hidden = false;
+      bouton.addEventListener("click", basculerPleinEcran);
+    }
+  }
+
   ajuster();
   montrer(i);
 })();
