@@ -1,0 +1,12 @@
+id_commande,id_client,descriptif
+1,2,bouilloire
+2,3,Livre Apprende Python 
+3,2,Livre Apprendre HTML 
+4,4,Livre Apprendre CSS 
+5,6,couverture
+6,4,VTT
+7,4,smartphone
+8,1,cahiers
+9,2,Livre Le réseau internet 
+10,3,Livre Les systèmes d’exploitation  
+11,1,Livre  Algorithmique 

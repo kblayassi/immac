@@ -1,0 +1,12 @@
+body {
+   background-color: pink;
+   font-family: comic sans MS;
+   color: purple;
+}
+
+h1 {
+   text-decoration: underline;
+   font-size: 70px; 
+   text-align: center;
+   font-family: comic sans MS;
+}

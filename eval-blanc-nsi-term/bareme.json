@@ -1,0 +1,64 @@
+{
+  "format": "bareme/v1",
+  "evaluation": "eval-blanc-nsi-term",
+  "titre": "Évaluation à blanc — NSI Terminale",
+  "noteSur": 20,
+  "arrondi": 0.25,
+  "questions": {
+    "q1": {
+      "titre": "Une pile à la trace",
+      "points": 1,
+      "correct": 0
+    },
+    "q2": {
+      "titre": "Une file à la trace",
+      "points": 1,
+      "correct": 1
+    },
+    "q3": {
+      "titre": "À chaque besoin sa structure",
+      "points": 1,
+      "correct": 0
+    },
+    "q4": {
+      "titre": "Lire le sommet",
+      "criteres": [
+        {
+          "points": 2,
+          "libelle": "sommet(p) renvoie l'élément du sommet",
+          "tests": "p = pile_vide()\nfor v in [3, 8]:\n    empiler(p, v)\nassert sommet(p) == 8, \"sommet(p) doit renvoyer 8 pour la pile 3 8\"\nq = pile_vide()\nempiler(q, 5)\nassert sommet(q) == 5, \"sommet(q) doit renvoyer 5 pour la pile 5\""
+        },
+        {
+          "points": 1,
+          "libelle": "La pile est intacte après l'appel",
+          "tests": "p = pile_vide()\nfor v in [3, 8]:\n    empiler(p, v)\nassert sommet(p) is not None, \"sommet(p) ne renvoie rien\"\n_sortis = []\nwhile not est_vide(p):\n    _sortis.append(depiler(p))\nassert _sortis == [8, 3], \"Après sommet(p), la pile doit toujours contenir 3 8\""
+        },
+        {
+          "points": 1,
+          "libelle": "N'utilise que l'interface (essayée sur une autre implémentation)",
+          "tests": "def pile_vide():\n    return {\"sommet\": None}\ndef est_vide(p):\n    return p[\"sommet\"] is None\ndef empiler(p, element):\n    p[\"sommet\"] = (element, p[\"sommet\"])\ndef depiler(p):\n    element, p[\"sommet\"] = p[\"sommet\"]\n    return element\np = pile_vide()\nfor v in [3, 8]:\n    empiler(p, v)\nassert sommet(p) == 8, \"Avec une autre implémentation, sommet(p) doit toujours renvoyer 8\"\n_sortis = []\nwhile not est_vide(p):\n    _sortis.append(depiler(p))\nassert _sortis == [8, 3], \"Avec une autre implémentation, la pile doit rester intacte\""
+        }
+      ]
+    },
+    "q5": {
+      "titre": "La somme d'une file",
+      "criteres": [
+        {
+          "points": 1,
+          "libelle": "somme(f) renvoie 10 pour la file 5 1 4",
+          "tests": "f = file_vide()\nfor v in [5, 1, 4]:\n    enfiler(f, v)\nassert somme(f) == 10, \"somme(f) doit renvoyer 10 pour la file 5 1 4\""
+        },
+        {
+          "points": 1,
+          "libelle": "Une file vide a pour somme 0",
+          "tests": "assert somme(file_vide()) == 0, \"somme d'une file vide : 0\""
+        },
+        {
+          "points": 1,
+          "libelle": "N'utilise que l'interface (essayée sur une autre implémentation)",
+          "tests": "def file_vide():\n    return {\"entree\": [], \"sortie\": []}\ndef est_vide(f):\n    return f[\"entree\"] == [] and f[\"sortie\"] == []\ndef enfiler(f, element):\n    f[\"entree\"].append(element)\ndef defiler(f):\n    if f[\"sortie\"] == []:\n        while f[\"entree\"] != []:\n            f[\"sortie\"].append(f[\"entree\"].pop())\n    return f[\"sortie\"].pop()\nf = file_vide()\nfor v in [5, 1, 4, 2]:\n    enfiler(f, v)\nassert somme(f) == 12, \"Avec une autre implémentation, somme(f) doit toujours renvoyer 12 pour la file 5 1 4 2\""
+        }
+      ]
+    }
+  }
+}

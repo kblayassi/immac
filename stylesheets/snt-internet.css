@@ -1,0 +1,171 @@
+/* SNT, thème Internet : outils interactifs (docs/javascripts/snt-internet.js).
+   Les couleurs passent par les variables de Material : l'outil suit le thème
+   clair ou sombre du site sans rien faire de plus. */
+
+.snt-outil {
+  --snt-violet: #7750cd;
+  --snt-violet-pale: rgba(119, 80, 205, .12);
+  --snt-vert: #12855c;
+  --snt-rouge: #c62828;
+  --snt-orange: #e67e22;
+  margin: 1.2em 0;
+  padding: 1em 1.2em;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 18px;
+  box-shadow: 0 4px 11px rgba(0, 0, 0, .1);
+  background: var(--md-default-bg-color);
+}
+[data-md-color-scheme="slate"] .snt-outil { --snt-vert: #4ad9a0; --snt-rouge: #ff8a80; --snt-violet: #a58ae8; }
+
+.snt-consigne { margin-top: 0; font-weight: 600; }
+.snt-note { font-size: .75rem; color: var(--md-default-fg-color--light); margin-bottom: 0; }
+.snt-sous-titre { font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+                  color: var(--md-default-fg-color--light); margin: .9em 0 .3em; }
+
+.snt-choix { display: flex; flex-wrap: wrap; gap: .5em; margin: .6em 0; }
+.snt-bouton {
+  font: inherit; font-size: .8rem; font-weight: 600;
+  padding: .45em 1em; border-radius: 100px; cursor: pointer;
+  border: 1px solid var(--snt-violet); color: var(--snt-violet); background: transparent;
+  transition: background .15s, color .15s;
+}
+.snt-bouton:hover:not(:disabled), .snt-bouton.actif { background: var(--snt-violet); color: #fff; }
+.snt-bouton:disabled { opacity: .45; cursor: not-allowed; }
+.snt-bouton.discret { border-color: var(--md-default-fg-color--lighter); color: var(--md-default-fg-color--light); }
+.snt-bouton.discret:hover:not(:disabled) { background: var(--md-default-fg-color--lightest); color: var(--md-default-fg-color); }
+
+/* --- Course au téléchargement */
+.snt-pistes { display: grid; gap: .45em; margin: .8em 0; }
+.snt-piste { display: grid; grid-template-columns: 11em 1fr 7.5em; gap: .8em; align-items: center; }
+.snt-piste-nom { line-height: 1.2; font-size: .8rem; }
+.snt-piste-nom small { display: block; color: var(--md-default-fg-color--light); font-size: .68rem; }
+.snt-piste-barre { height: .9em; border-radius: 100px; background: var(--md-default-fg-color--lightest); overflow: hidden; }
+.snt-piste-barre i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--snt-violet), #e67e22); border-radius: 100px; }
+.snt-piste-temps { font-variant-numeric: tabular-nums; font-size: .8rem; font-weight: 600; text-align: right; }
+.snt-piste-temps { color: var(--md-default-fg-color--light); }
+.snt-piste-temps.fini { color: var(--snt-vert); }
+.snt-piste-temps.fini::after { content: " ✓"; }
+.snt-vitesses { align-items: center; }
+.snt-vitesses .snt-bouton { font-size: .7rem; padding: .3em .8em; }
+.snt-etiquette { font-size: .75rem; font-weight: 600; color: var(--md-default-fg-color--light); }
+.snt-horloge { font-variant-numeric: tabular-nums; font-weight: 700; font-size: .85rem; color: var(--snt-violet); }
+.snt-calcul { font-size: .8rem; padding: .6em .9em; border-left: 3px solid var(--snt-violet);
+              background: var(--snt-violet-pale); border-radius: 0 10px 10px 0; }
+.snt-calcul:empty { display: none; }
+@media (max-width: 600px) {
+  .snt-piste { grid-template-columns: 1fr 6.5em; }
+  .snt-piste-barre { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* --- Jeu du routeur */
+.snt-carte svg { width: 100%; height: auto; display: block; }
+.snt-lien line { stroke: #d3746b; stroke-width: 3; }
+.snt-lien line.cible { stroke: transparent; stroke-width: 18; cursor: pointer; }
+.snt-lien.fixe line.cible { cursor: default; }
+.snt-lien:hover:not(.fixe) line:not(.cible) { stroke: var(--snt-violet); stroke-width: 5; }
+.snt-lien.coupe line:not(.cible) { stroke: var(--md-default-fg-color--lighter); stroke-dasharray: 6 6; }
+.snt-routeur { cursor: pointer; }
+.snt-routeur circle { fill: #4a4a5e; stroke: var(--md-default-bg-color); stroke-width: 3; }
+.snt-routeur text { fill: #fff; font-size: 13px; font-weight: 700; pointer-events: none; }
+.snt-routeur:hover circle { fill: var(--snt-violet); }
+.snt-routeur.panne circle { fill: var(--snt-rouge); }
+.snt-routeur.panne text { text-decoration: line-through; }
+.snt-machine rect { fill: #5b8def; }
+.snt-machine text { fill: var(--md-default-fg-color); font-size: 13px; font-weight: 600; }
+.snt-paquet rect { fill: #f4b400; stroke: #8a6400; }
+.snt-paquet text { font-size: 11px; font-weight: 700; fill: #3b2a00; }
+.snt-paquet.arrive rect { fill: var(--snt-vert); stroke: none; }
+.snt-paquet.detruit rect { fill: var(--snt-rouge); stroke: none; }
+.snt-paquet.detruit text, .snt-paquet.arrive text { fill: #fff; }
+.snt-routeur.alerte circle { fill: var(--snt-orange); }
+
+.snt-journal { font-size: .78rem; max-height: 12em; overflow-y: auto; margin: .4em 0 0; }
+.snt-journal li.perdu { color: var(--snt-rouge); }
+
+/* --- Le message en morceaux */
+.snt-segments { display: flex; flex-wrap: wrap; gap: .5em; min-height: 3em; }
+.snt-segment {
+  font: inherit; font-size: .8rem; text-align: left; cursor: pointer;
+  padding: .4em .7em; border-radius: 10px; max-width: 14em;
+  border: 1px solid var(--md-default-fg-color--lighter); background: var(--md-code-bg-color); color: var(--md-default-fg-color);
+  animation: snt-arrive .3s ease-out;
+}
+.snt-segment span { display: block; font-size: .65rem; font-weight: 700; color: var(--snt-violet); }
+.snt-segment.place { opacity: .35; cursor: default; }
+.snt-segment.renvoi { border-color: var(--snt-orange); }
+.snt-segment.refus { animation: snt-refus .35s; }
+.snt-message { font-size: .9rem; padding: .7em 1em; border-radius: 10px; background: var(--snt-violet-pale); min-height: 2.6em; }
+@keyframes snt-arrive { from { transform: translateY(-8px); opacity: 0; } }
+@keyframes snt-refus { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+.snt-retour { font-size: .82rem; font-weight: 600; margin-bottom: 0; }
+.snt-retour:empty { display: none; }
+.snt-retour.bravo { color: var(--snt-vert); }
+
+/* --- QCM */
+.snt-qcm { margin: 0; padding-left: 1.4em; }
+.snt-qcm > li { margin-bottom: 1em; padding: .4em .7em; border-radius: 12px; border: 1px solid transparent; }
+.snt-qcm > li[data-etat="juste"] { border-color: var(--snt-vert); }
+.snt-qcm > li[data-etat="faux"] { border-color: var(--snt-rouge); }
+.snt-qcm > li[data-etat="vide"] { border-color: var(--snt-orange); border-style: dashed; }
+.snt-qcm-question { font-weight: 600; margin: 0 0 .3em; }
+.snt-qcm-options { display: grid; gap: .15em; font-size: .85rem; }
+.snt-qcm-options label { cursor: pointer; }
+.snt-qcm-explication { font-size: .8rem; margin: .4em 0 0; color: var(--md-default-fg-color--light); }
+.snt-qcm > li[data-etat="juste"] .snt-qcm-explication::before { content: "✅ "; }
+.snt-qcm > li[data-etat="faux"] .snt-qcm-explication::before { content: "❌ "; }
+
+/* --- Schémas : un fond clair même en thème sombre, les figures sont dessinées dessus */
+.md-typeset img.snt-schema { display: block; margin: 1em auto; background: #fff; border-radius: 14px; padding: .6em; max-width: 100%; }
+
+/* --- Vidéos intégrées */
+.md-typeset figure.snt-video { margin: 1.2em auto; max-width: 820px; }
+.md-typeset figure.snt-video video { width: 100%; border-radius: 14px; background: #000; display: block; }
+.md-typeset figure.snt-video figcaption { font-size: .75rem; color: var(--md-default-fg-color--light); margin-top: .4em; }
+
+/* --- Chapitre 2 : résolution DNS */
+.snt-option { display: block; font-size: .78rem; margin: .2em 0 .4em; cursor: pointer; }
+.snt-dns-noeud rect.ecran { fill: #5b8def; }
+.snt-dns-noeud rect.dns { fill: var(--snt-orange); }
+.snt-dns-noeud rect.web { fill: #4caf50; }
+.snt-dns-noeud text { fill: var(--md-default-fg-color); font-size: 13px; font-weight: 700; }
+.snt-dns-noeud.coulisse rect { opacity: .85; }
+.snt-dns-trait { stroke-width: 3; }
+.snt-dns-trait.dns { stroke: var(--snt-orange); }
+.snt-dns-trait.web { stroke: #4caf50; }
+.snt-dns-num { font-size: 13px; font-weight: 700; fill: var(--md-default-fg-color); paint-order: stroke; stroke: var(--md-default-bg-color); stroke-width: 4px; }
+.snt-dns-bas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 1em; align-items: start; }
+@media (max-width: 700px) { .snt-dns-bas { grid-template-columns: 1fr; } }
+.snt-navigateur { border: 1px solid var(--md-default-fg-color--lighter); border-radius: 10px; overflow: hidden; font-size: .8rem; }
+.snt-navigateur-barre { background: var(--md-default-fg-color--lightest); padding: .35em .7em; font-family: var(--md-code-font-family); }
+.snt-navigateur-page { padding: 1.2em .8em; min-height: 5em; color: var(--md-default-fg-color--light); }
+.snt-navigateur-page.ok { color: var(--md-default-fg-color); font-size: 1rem; font-weight: 700; }
+.snt-navigateur-page.erreur { color: var(--snt-rouge); }
+.snt-journal-dns { max-height: 14em; margin-top: 0; }
+
+/* --- Chapitre 2 : charge d'un serveur */
+.snt-reglages { display: grid; grid-template-columns: auto 1fr; gap: .4em 1em; align-items: center; font-size: .8rem; }
+.snt-reglages input[type=range] { width: 100%; accent-color: var(--snt-violet); }
+.snt-serveurs { display: flex; gap: .8em; flex-wrap: wrap; margin: 1em 0 .4em; min-height: 8em; align-items: flex-end; }
+.snt-serveur { display: grid; justify-items: center; gap: .3em; font-size: .7rem; color: var(--md-default-fg-color--light); }
+.snt-serveur-jauge { width: 2.6em; height: 6em; border-radius: 6px; background: var(--md-default-fg-color--lightest); display: flex; align-items: flex-end; overflow: hidden; border: 2px solid var(--md-default-fg-color--lighter); }
+.snt-serveur-jauge i { display: block; width: 100%; background: var(--snt-vert); transition: height .3s, background .3s; }
+.snt-serveur-jauge i.charge { background: var(--snt-orange); }
+.snt-serveur-jauge i.sature { background: var(--snt-rouge); }
+
+/* --- Chapitre 2 : client-serveur ou pair-à-pair */
+.snt-bouton.petit { padding: .3em .8em; }
+.snt-p2p-serveur rect { fill: var(--snt-orange); }
+.snt-p2p-serveur.panne rect { fill: var(--snt-rouge); }
+.snt-p2p-serveur text, .snt-p2p-pair text { fill: var(--md-default-fg-color); font-size: 13px; font-weight: 700; }
+.snt-p2p-pair rect.ecran { fill: #5b8def; }
+.snt-p2p-pair.complet rect.ecran { fill: var(--snt-vert); }
+.snt-p2p-pair rect.morceau { fill: var(--md-default-fg-color--lighter); }
+.snt-p2p-pair rect.morceau.recu { fill: var(--snt-violet); }
+.snt-p2p-lien { stroke: #9bc58a; stroke-width: 2; }
+.snt-p2p-lien.serveur { stroke: var(--snt-orange); stroke-width: 3; }
+.snt-resultats { font-size: .78rem; margin-top: .5em; }
+.snt-resultats tbody:empty { display: none; }
+.md-typeset .snt-resultats { border-collapse: collapse; }
+.md-typeset .snt-resultats th, .md-typeset .snt-resultats td { padding: .3em 1em; border-bottom: 1px solid var(--md-default-fg-color--lightest); text-align: left; }
+.md-typeset .snt-resultats th { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: var(--md-default-fg-color--light); }
