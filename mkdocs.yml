@@ -2,6 +2,7 @@ site_name: Mathématiques, SNT et NSI
 site_url: https://kblayassi.github.io/immac/
 theme:
   name: material #pyodide-mkdocs-theme #OLD :material
+  custom_dir: overrides
   font: 
     text: Quicksand
     code: Red Hat Mono

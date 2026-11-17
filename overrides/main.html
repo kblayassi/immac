@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{#
+  Icônes PNG en plus du favicon SVG : Safari et iOS ne lisent pas toujours le
+  SVG et retombent sinon sur l'icône d'un autre site du même domaine
+  (kblayassi.github.io), comme celle du site des maisons.
+#}
+{% block extrahead %}
+  {{ super() }}
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ 'assets/favicon-32.png' | url }}">
+  <link rel="icon" type="image/png" sizes="192x192" href="{{ 'assets/icon-192.png' | url }}">
+  <link rel="apple-touch-icon" href="{{ 'assets/apple-touch-icon.png' | url }}">
+{% endblock %}
