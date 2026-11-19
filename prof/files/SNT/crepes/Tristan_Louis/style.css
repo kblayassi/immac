@@ -1,0 +1,17 @@
+body{
+      background-color: #F2DCBD;
+	  font-family: comic sans MS ;
+	  color: #050505 ;
+}
+
+h1  {
+       text-decoration: underline ;
+	   font-size: 70px ;
+	   text-align: center ;
+	   font-family: comic sans MS ;
+}
+
+img {
+	width: 35%;
+	text-align: center;
+}

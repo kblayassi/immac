@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMMAC KOXO — Installation du proxy automatique</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0f0f13;
+    --surface: #16161d;
+    --border: #2a2a38;
+    --accent: #5b6ef5;
+    --accent2: #a78bfa;
+    --green: #34d399;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+
+  .wrap { max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* Header */
+  header { text-align: center; padding: 3rem 0 2.5rem; }
+
+  .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    margin-bottom: 1.2rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 30%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.8rem;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* Alert box */
+  .alert {
+    background: rgba(91, 110, 245, 0.08);
+    border: 1px solid rgba(91, 110, 245, 0.3);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+    font-size: 0.9rem;
+    color: #c4caff;
+    line-height: 1.5;
+  }
+  .alert-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.05rem; }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; gap: 1.2rem; }
+
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.4rem 1.5rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .step:hover { border-color: rgba(91, 110, 245, 0.4); }
+
+  .step-num {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.95rem;
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  .step-content { flex: 1; }
+  .step-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: #fff; }
+  .step-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+  .step-desc strong { color: var(--text); }
+
+  /* Code block */
+  .code-block {
+    background: #0a0a10;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    margin-top: 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    word-break: break-all;
+  }
+
+  .copy-btn {
+    background: var(--border);
+    border: none;
+    border-radius: 6px;
+    padding: 0.3rem 0.7rem;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--accent); color: #fff; }
+  .copy-btn.copied { background: var(--green); color: #000; }
+
+  /* Download button */
+  .download-wrap { text-align: center; margin: 2rem 0; }
+
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.9rem 2rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 8px 32px rgba(91, 110, 245, 0.35);
+  }
+  .btn-download:hover { opacity: 0.9; transform: translateY(-2px); }
+  .btn-download svg { width: 18px; height: 18px; }
+
+  /* Result */
+  .result {
+    background: rgba(52, 211, 153, 0.06);
+    border: 1px solid rgba(52, 211, 153, 0.25);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 2rem;
+    display: flex;
+    gap: 0.8rem;
+  }
+  .result-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .result-text { font-size: 0.9rem; color: #a7f3d0; line-height: 1.6; }
+  .result-text strong { color: var(--green); }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    margin-top: 3rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="wrap">
+
+  <header>
+    <div class="badge">IMMAC KOXO</div>
+    <h1>Proxy automatique</h1>
+    <p class="subtitle">Configure ton Mac ou PC une seule fois. Le proxy s'activera et se désactivera tout seul selon le réseau Wi-Fi.</p>
+  </header>
+
+  <div class="alert">
+    <span class="alert-icon">ℹ️</span>
+    <span>Suis les étapes ci-dessous <strong>depuis le réseau Wi-Fi IMMAC KOXO</strong> (à l'école). Tu n'auras plus jamais à toucher aux paramètres proxy manuellement.</span>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Télécharge le script d'installation</div>
+        <div class="step-desc">Clique sur le bouton ci-dessous pour télécharger le fichier <strong>install-proxy-immac.ps1</strong>.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Ouvre PowerShell en administrateur</div>
+        <div class="step-desc">
+          Appuie sur <strong>Windows + X</strong> puis clique sur <strong>"Terminal (administrateur)"</strong> ou <strong>"Windows PowerShell (administrateur)"</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Autorise l'exécution des scripts</div>
+        <div class="step-desc">Colle cette commande dans PowerShell et appuie sur <strong>Entrée</strong> :</div>
+        <div class="code-block">
+          <span>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned</span>
+          <button class="copy-btn" onclick="copyCode(this, 'Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned')">Copier</button>
+        </div>
+        <div class="step-desc" style="margin-top:0.6rem">Si une confirmation est demandée, tape <strong>O</strong> puis Entrée.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Lance le script d'installation</div>
+        <div class="step-desc">Dans PowerShell, va dans le dossier Téléchargements et lance le script :</div>
+        <div class="code-block">
+          <span>cd "$env:USERPROFILE\Downloads"; .\install-proxy-immac.ps1</span>
+          <button class="copy-btn" onclick="copyCode(this, 'cd &quot;$env:USERPROFILE\\Downloads&quot;; .\\install-proxy-immac.ps1')">Copier</button>
+        </div>
+        <div class="step-desc" style="margin-top:0.6rem">Une fenêtre bleue s'ouvre et t'indique la progression. Attends le message <strong>"Installation terminée"</strong>.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="download-wrap">
+    <a class="btn-download" href="install-proxy-immac.ps1" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Télécharger le script
+    </a>
+  </div>
+
+  <div class="result">
+    <span class="result-icon">✅</span>
+    <div class="result-text">
+      Une fois installé, <strong>plus rien à faire</strong> — connecte-toi au Wi-Fi IMMAC KOXO et le proxy s'active automatiquement. Sur ton réseau à la maison, il se désactive tout seul.
+    </div>
+  </div>
+
+  <footer>IMMAC KOXO &nbsp;·&nbsp; Configuration réseau automatique</footer>
+
+</div>
+
+<script>
+function copyCode(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copier';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
