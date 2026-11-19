@@ -28,15 +28,15 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà aborder en clas
 
 - TD3 - Généralités sur les suites
     
-    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td3.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td3-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td3.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td3-correction.pdf)
 
 - TD4 - Trigonométrie
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td4.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td4-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td4.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td4-correction.pdf)
 
 - TD5 - Second degré (partie 2)
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td5.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td5-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td5.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_premiere/td5-correction.pdf) -->
 
 - TD6 - Dérivation globale
     

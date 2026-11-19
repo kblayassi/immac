@@ -32,11 +32,11 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà abordés en cla
 
 - TD4 - Dérivations de fonctions composées
     
-    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td4.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td4-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td4.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td4-correction.pdf)
 
 - TD5 - Théorèmes de convergence
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td5.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td5-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td5.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/td5-correction.pdf) -->
 
 - TD6 - Convexité d'une fonction
     
@@ -81,11 +81,11 @@ Vous trouverez ci-dessous l'ensemble des TD des chapitres déjà abordés en cla
 
 - TD C - Droites et plans de l'espace
     
-    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdC.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdC-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdC.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdC-correction.pdf)
 
 - TD D - Repérage dans l'espace
     
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdD.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdD-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdD.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_term/tdD-correction.pdf) -->
 
 - TD E - Dénombrement (partie 2)
     

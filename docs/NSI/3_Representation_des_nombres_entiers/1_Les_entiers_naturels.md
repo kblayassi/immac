@@ -66,7 +66,7 @@ Dans la suite, nous travaillerons principalement avec les trois bases suivantes 
     - Avec $n$ bits, on peut représenter $2^n$ nombres. Dans le cas des entiers naturels, on peut compter de $0$ à $2^n-1$...
 
 !!! definition "Système hexadécimal (base 16)"
-    - Le **système binaire** est le système de numération de base $b=16$.
+    - Le **système hexadécimal** est le système de numération de base $b=16$.
     - Il utilise donc **16 chiffres** : 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E et F.
     - Bien qu'il nécessite plus de chiffres, ce système donne des **écritures plus courtes** et particulièrement pratique du fait que 16 est une puissance de 2 : la conversion entre les systèmes binaire et hexadécimal se fait sans calcul, uniquement par **regroupement de 4 bits**.
     - Il permet également de représenter des** adresses mémoires** ou même des [**couleurs**](http://www.proftnj.com/RGB3.htm) !
@@ -158,10 +158,10 @@ Voici quelques exemples :
     | Rang           | 3      | 2      | 1      | 0      |
     |----------------|--------|--------|--------|--------|
     | Chiffre        | 2      | C      | 8      | F      |
-    | Puissance de 8 | $16^3$ | $16^2$ | $16^1$ | $16^0$ |
+    | Puissance de 16 | $16^3$ | $16^2$ | $16^1$ | $16^0$ |
     | Valeur         | 8192   | 3072   | 128    | 15     |
 
-    Ainsi, on a : $2C8F_{16} = 2\times 16^3 + 11\times 16^2 + 8\times 16^1 + 15 \times 16^0 = 2\times 4096 + 11\times 256+ 8\times 16 + 15\times 1 = 8192+ 3072 + 128 + 15 = 11407$
+    Ainsi, on a : $2C8F_{16} = 2\times 16^3 + 12\times 16^2 + 8\times 16^1 + 15 \times 16^0 = 2\times 4096 + 12\times 256+ 8\times 16 + 15\times 1 = 8192+ 3072 + 128 + 15 = 11407$
 
 --- 
 
@@ -271,7 +271,7 @@ On pose l'addition colonne par colonne, avec les retenues au-dessus :
 
 \[
 \begin{array}{ccccc}
-  & (1) & (1) & (1) & (1) \\
+  & (1) & (1) & (1) &  \\
   & 1 & 0 & 1 & 1 \\
 + & 1 & 1 & 0 & 1 \\
 \hline

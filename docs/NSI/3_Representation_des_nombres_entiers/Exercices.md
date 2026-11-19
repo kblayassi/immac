@@ -440,7 +440,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
     Effectuer les additions suivantes en base 2 (avec retenue simple) :
 
     a) $1011_2 + 0101_2$  
-    b) $1110_2 + 0001_2$  
+    b) $1010_2 + 0011_2$  
     c) $0111_2 + 0001_2$
 
     ??? success "Correction"
@@ -461,10 +461,11 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
 
         \[
         \begin{array}{ccccc}
-          & 1 & 1 & 1 & 0 \\
-        + & 0 & 0 & 0 & 1 \\
+          &  & (1) &  &  \\
+          & 1 & 0 & 1 & 0 \\
+        + & 0 & 0 & 1 & 1 \\
         \hline
-          & 1 & 1 & 1 & 1
+          & 1 & 1 & 0 & 1
         \end{array}
         \]
 

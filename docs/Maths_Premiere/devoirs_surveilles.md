@@ -12,6 +12,16 @@ Vous trouverez sur cette page les sujets et les correction des devoirs surveill�
     
     [Sujet :fontawesome-solid-file-pdf:](../files/ds_maths_1e/26_27/ds1.pdf) / [Correction :fontawesome-solid-file-pdf:](../files/ds_maths_1e/26_27/ds1-correction.pdf)
 
+* DS2 - Dérivation locale :  
+    
+    [Sujet :fontawesome-solid-file-pdf:](../files/ds_maths_1e/26_27/ds2.pdf) / [Correction :fontawesome-solid-file-pdf:](../files/ds_maths_1e/26_27/ds2-correction.pdf)
+
+<!-- DS3 préparé, à décommenter après le devoir.
+* DS3 - Généralités sur les suites et trigonométrie :  
+    
+    [Sujet :fontawesome-solid-file-pdf:](../files/ds_maths_1e/26_27/ds3.pdf) / [Correction :fontawesome-solid-file-pdf:](../files/ds_maths_1e/26_27/ds3-correction.pdf)
+-->
+
 ## 2025-2026
 
 * DS1 - Second degré (partie 1) :  

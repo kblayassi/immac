@@ -33,15 +33,15 @@ correction. Ils sont mis en ligne au fur et à mesure de l'année.
 
 - TD3 - Fractions, puissances, racines carrées et valeur absolue
 
-    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td3.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td3-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td3.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td3-correction.pdf)
 
 - TD4 - Nombres réels
 
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td4.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td4-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td4.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td4-correction.pdf)
 
 - TD5 - Statistiques (une variable)
 
-    *À venir* <!-- [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td5.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td5-correction.pdf) -->
+    [Fiche du TD <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td5.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/td_seconde/td5-correction.pdf) -->
 
 - TD6 - Inéquations
 
