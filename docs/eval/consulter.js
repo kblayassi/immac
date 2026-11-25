@@ -128,7 +128,8 @@ function rendreSujet({ entree, evaluation, scelle, questions }) {
     .filter(Boolean).join(" · ")));
   titres.appendChild(elem("h1", null, evaluation.titre));
   titres.appendChild(elem("p", "discret",
-    `${evaluation.dureeMinutes} minutes · ${numerotees.length} questions · ${points(total)}` +
+    `${evaluation.dureeMinutes ? `${evaluation.dureeMinutes} minutes` : "sans limite de temps"}` +
+    ` · ${numerotees.length} questions · ${points(total)}` +
     (entree.actif === false ? " · désactivée : son code n'ouvre plus rien côté élève" : "")));
   entete.appendChild(titres);
   vue.appendChild(entete);

@@ -39,6 +39,12 @@ export const EVALUATIONS = [
     "actif": true
   },
   {
+    "cle": "eval-nsi-ch6-santa",
+    "titre": "Projet — Secret Santa",
+    "niveau": "NSI Première",
+    "actif": true
+  },
+  {
     "cle": "eval-nsi-term-ch1",
     "titre": "Chapitre 1 — Listes, piles et files",
     "niveau": "NSI Terminale",

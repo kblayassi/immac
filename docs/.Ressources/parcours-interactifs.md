@@ -67,6 +67,7 @@ docs/parcours-web/              le troisième (SNT, Le Web) — langage: "web"
 docs/parcours-nsi-term/         le quatrième (NSI Terminale, chapitre 1)
 docs/parcours-nsi-ch4/          le cinquième (NSI Première, chapitre 4)
 docs/parcours-maths-1e/         le sixième (Maths Première : rappels de Seconde + listes)
+docs/parcours-nsi-ch6/          le septième (NSI Première, chapitre 6 : types construits)
 ```
 
 !!! info "Le moteur ne sait rien du cours"
@@ -87,6 +88,7 @@ docs/parcours-maths-1e/         le sixième (Maths Première : rappels de Second
 | NSI Terminale — chapitre 1 | `…/immac/parcours-nsi-term/` | `…/immac/prof/parcours-nsi-term/` | 8 séances, 182 étapes |
 | NSI — chapitre 4 | `…/immac/parcours-nsi-ch4/` | `…/immac/prof/parcours-nsi-ch4/` | 12 séances, 241 étapes |
 | Maths Première — Python | `…/immac/parcours-maths-1e/` | `…/immac/prof/parcours-maths-1e/` | 9 séances, 147 étapes |
+| NSI — chapitre 6 | `…/immac/parcours-nsi-ch6/` | `…/immac/prof/parcours-nsi-ch6/` | 9 séances, 158 étapes, 3 bilans |
 
 L'adresse `prof/` n'est pas listée mais **n'est pas protégée** : qui la connaît y accède.
 
@@ -750,6 +752,7 @@ mkdocs build -f mkdocs-prof.yml   # version prof : corrections conservées
 | NSI Terminale — chapitre 1 | 8 | 182 | ✅ complet, vérifié |
 | NSI — chapitre 4 | 12 | 241 | ✅ complet, vérifié |
 | Maths Première — Python | 9 | 147 | ✅ complet, vérifié |
+| NSI — chapitre 6 | 9 | 158 | ✅ complet, vérifié (25/11/2026) |
 
 ### Décisions arrêtées, à ne pas re-proposer
 

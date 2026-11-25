@@ -31,6 +31,9 @@
  *   codeContient    un motif attendu dans le programme (commentaires retirés)
  *   codeAbsent      un motif interdit dans le programme
  *   tests           des assertions Python jouées sur son espace de noms
+ *   manuel          true : aucune attente automatique, l'enseignant met les
+ *                   points (commentaires, organisation du code…). La copie
+ *                   attend ce verdict, comme une réponse rédigée.
  * et deux réglages facultatifs :
  *   saisies         les réponses à donner aux input() du programme — à déclarer
  *                   plutôt sur la question, où tous les critères en héritent
@@ -64,6 +67,7 @@ function cleDExecution(c) {
 }
 
 function jugerCritere(c, code, execution) {
+  if (c.manuel) return { ok: null, detail: "à évaluer à la main" };
   const nu = c.avecCommentaires ? code : sansCommentaires(code);
 
   if (c.codeContient != null) {
@@ -174,6 +178,7 @@ async function noterCode(q, regle, executer) {
       points: verdict.ok ? (c.points || 0) : 0,
       ok: verdict.ok,
       detail: verdict.detail || null,
+      ...(c.manuel ? { manuel: true } : {}),
     };
   });
 
@@ -189,6 +194,7 @@ function libelleDe(c) {
   if (c.codeContient != null) return "Le programme emploie ce qui est demandé";
   if (c.codeAbsent != null) return "Le programme évite ce qui est interdit";
   if (c.tests != null) return "Les tests passent";
+  if (c.manuel) return "Évalué par le professeur";
   return "Critère";
 }
 
@@ -333,7 +339,11 @@ export function alertes(rendu, intact) {
   }
 
   const journal = rendu.journal || [];
-  const sorties = journal.filter((e) => e.e === "onglet-quitte");
+  /* Une évaluation sans limite de temps se fait aussi à la maison : quitter
+     l'onglet ou coller son propre code d'un exercice à l'autre n'y signale rien.
+     On garde les collages, mais comme simple repère. */
+  const libre = rendu.evaluation?.sansLimite === true;
+  const sorties = libre ? [] : journal.filter((e) => e.e === "onglet-quitte");
   if (sorties.length) {
     const total = sorties.reduce((s, sortie) => {
       const retour = journal.find((e) => e.e === "onglet-revient" && e.t >= sortie.t);
@@ -352,7 +362,7 @@ export function alertes(rendu, intact) {
     const titres = Object.fromEntries((rendu.evaluation?.questions || []).map((q) => [q.id, q.titre]));
     const ou = colles.map((e) => `« ${titres[e.q] || e.q} » (${e.n} car., à ${duree(e.t)})`);
     liste.push({
-      gravite: "haute",
+      gravite: libre ? "basse" : "haute",
       texte: `${colles.length} collage(s) de plus de 40 caractères : ${ou.join(", ")}.`,
     });
   }

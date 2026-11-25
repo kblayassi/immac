@@ -34,6 +34,9 @@
       <span id="chrono" role="timer" aria-label="Temps restant">--:--</span>
     </div>
 
+    <!-- Évaluation sans limite de temps : à la place du chronomètre. -->
+    <button class="bouton fantome" id="btn-travail" hidden>💾 Mon travail</button>
+
     <button class="bouton" id="btn-rendre" hidden>Rendre</button>
   </div>
 </header>
@@ -50,6 +53,32 @@
   <div class="pied">
     <button class="bouton fantome" id="btn-retelecharger">Télécharger le fichier</button>
     <button class="bouton fantome" id="btn-quitter">Quitter l'évaluation</button>
+  </div>
+</dialog>
+
+<!-- « Mon travail » : seulement pour une évaluation sans limite de temps.
+     Emporter son travail d'un ordinateur à l'autre, par un fichier. -->
+<dialog class="panneau" id="panneau-travail">
+  <div class="corps">
+    <h2>Mon travail</h2>
+    <p>Ton travail est enregistré <strong>dans ce navigateur</strong>, à chaque
+       frappe. Pour le continuer sur un autre ordinateur :</p>
+    <ol>
+      <li>ici, clique sur <strong>Télécharger mon travail</strong> ;</li>
+      <li>sur l'autre ordinateur, ouvre la page de l'évaluation, entre le même
+          code, puis dépose ce fichier ci-dessous.</li>
+    </ol>
+    <p class="discret">Ce fichier n'est pas ta copie : ton professeur ne reçoit
+       ton devoir que quand tu cliques sur « Rendre ».</p>
+    <div class="champ">
+      <label for="champ-travail">Reprendre un travail enregistré</label>
+      <input type="file" id="champ-travail" accept="application/json,.json">
+    </div>
+    <p class="alerte" id="travail-alerte" hidden></p>
+  </div>
+  <div class="pied">
+    <button class="bouton" id="btn-travail-telecharger" type="button">Télécharger mon travail</button>
+    <button class="bouton fantome" id="btn-travail-fermer" type="button">Fermer</button>
   </div>
 </dialog>
 

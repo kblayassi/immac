@@ -54,6 +54,10 @@
   font-size: .93rem;
 }
 
+/* Les boutons de la barre et des panneaux (.bouton, #cadre-chrono) imposent leur display, qui
+   l'emporte sur l'attribut hidden : on le rétablit explicitement. */
+.barre [hidden], .panneau [hidden] { display: none !important; }
+
 /* ---------------------------------------------------------------- Chrono */
 
 #cadre-chrono {

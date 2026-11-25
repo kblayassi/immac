@@ -184,6 +184,13 @@ function reponse(id) {
 
 const enCours = () => etat?.debut != null && !etat.termine;
 
+/* Une évaluation sans limite de temps — un projet à finir chez soi — se déclare
+   par `dureeMinutes: null` dans le sujet. Pas de chronomètre, donc pas de remise
+   d'office : l'élève rend quand il a fini. Et comme il change d'ordinateur entre
+   le lycée et la maison, son travail voyage dans un fichier (« Mon travail »),
+   qu'il télécharge sur un poste et redépose sur l'autre. */
+const sansLimite = () => !(etat?.dureeMinutes ?? EVALUATION?.dureeMinutes);
+
 /* ===================================================================== Journal
 
    Ce que la page enregistre est annoncé à l'élève sur l'écran d'accueil, et
@@ -214,7 +221,7 @@ function surveiller() {
   /* Fermer l'onglet pendant l'épreuve n'efface rien — le travail est dans ce
      navigateur — mais l'élève ne le sait pas, et la panique coûte des minutes. */
   window.addEventListener("beforeunload", (ev) => {
-    if (!enCours()) return;
+    if (!enCours() || sansLimite()) return;
     ev.preventDefault();
     ev.returnValue = "";
   });
@@ -373,16 +380,24 @@ function rendreAccueil() {
   carte.innerHTML = `
     <p class="sur-titre">${EVALUATION.surTitre || ""}</p>
     <h1>${EVALUATION.titre}</h1>
-    <p class="duree-annoncee"><strong>${EVALUATION.dureeMinutes} minutes</strong>
+    <p class="duree-annoncee"><strong>${sansLimite() ? "Sans limite de temps"
+                                                   : `${EVALUATION.dureeMinutes} minutes`}</strong>
        &middot; ${nbQuestionsAnnonce()} questions</p>
     ${EVALUATION.consignes || ""}
     <div class="encadre" data-ton="attention">
       <span class="chapo">Avant de commencer</span>
       <ul>
+        ${sansLimite() ? `
+        <li>Il n'y a <strong>pas de chronomètre</strong> : tu rends ton devoir quand
+            tu as fini, en cliquant sur « Rendre ». Une fois rendu, il ne se modifie plus.</li>
+        <li>Ton travail est enregistré dans ce navigateur à chaque frappe. Pour le
+            continuer sur un <strong>autre ordinateur</strong>, clique sur
+            « 💾 Mon travail » : télécharge le fichier sur ce poste, puis dépose-le
+            sur l'autre, après y avoir entré le même code.</li>` : `
         <li>Le chronomètre démarre au clic sur le bouton, et ne s'arrête plus :
             recharger la page ou changer d'onglet ne le remet pas à zéro.</li>
         <li>Ton travail est enregistré dans ce navigateur à chaque frappe.
-            Reste sur le même ordinateur.</li>
+            Reste sur le même ordinateur.</li>`}
         <li>Rien n'est corrigé pendant l'épreuve : tu peux exécuter tes programmes,
             mais la page ne dira jamais si une réponse est juste.</li>
         <li>À la fin, ton devoir est envoyé directement à ton professeur, et la
@@ -414,6 +429,13 @@ function rendreAccueil() {
   const alerte = elem("p", "alerte");
   alerte.hidden = true;
   carte.append(btn, alerte);
+  if (sansLimite()) {
+    const reprise = elem("p", "discret");
+    reprise.innerHTML = `Tu as déjà commencé ce devoir sur un autre ordinateur ?
+      <button type="button" class="bouton fantome">Reprendre mon travail</button>`;
+    reprise.querySelector("button").onclick = ouvrirTravail;
+    carte.appendChild(reprise);
+  }
   vue.appendChild(carte);
 
   for (const champ of ["nom", "prenom", "classe"]) {
@@ -463,7 +485,8 @@ function rendreSujet() {
   $("#identite-barre").textContent =
     `${(etat.eleve.nom || "").toUpperCase()} ${etat.eleve.prenom || ""}`.trim();
   $("#btn-rendre").hidden = false;
-  $("#cadre-chrono").hidden = false;
+  $("#cadre-chrono").hidden = sansLimite();
+  $("#btn-travail").hidden = !sansLimite();
 
   vue.appendChild(construireSommaire());
 
@@ -487,7 +510,7 @@ function rendreSujet() {
   pied.appendChild(btn);
   vue.appendChild(pied);
 
-  demarrerChrono();
+  if (!sansLimite()) demarrerChrono();
   majSommaire();
   // Le sujet remplace l'accueil sans recharger la page : sans cela, il s'ouvrait
   // à la hauteur où l'on avait cliqué « Commencer » (à l'exercice 2 en SNT).
@@ -846,7 +869,8 @@ async function construireRendu() {
     evaluation: {
       cle: EVALUATION.cle,
       titre: EVALUATION.titre,
-      dureeMinutes: etat.dureeMinutes ?? EVALUATION.dureeMinutes,
+      dureeMinutes: etat.dureeMinutes ?? EVALUATION.dureeMinutes ?? null,
+      ...(sansLimite() ? { sansLimite: true } : {}),
       /* Le rendu se décrit lui-même : l'ordre, l'intitulé, l'énoncé et les
          propositions des questions y figurent, pour qu'il reste lisible dans
          dix ans sans le sujet — et que la copie corrigée les remontre. */
@@ -884,14 +908,16 @@ function ouvrirRemise(rendu, cause) {
   document.body.dataset.phase = "termine";
   $("#btn-rendre").hidden = true;
   $("#cadre-chrono").hidden = true;
+  $("#btn-travail").hidden = true;
 
   const dlg = $("#panneau-remise");
   $("#remise-titre").textContent = cause === "temps" ? "Temps écoulé" : "Devoir rendu";
   $("#remise-texte").innerHTML = `
     <p>Ton devoir est clos.</p>
     <div id="remise-envoi" class="remise-envoi"></div>
-    <p class="discret">Temps utilisé :
-       ${duree((etat.termine.a - etat.debut) / 1000)}.</p>`;
+    <p class="discret">${sansLimite()
+      ? `Rendu le ${new Date(etat.termine.a).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short" })}.`
+      : `Temps utilisé : ${duree((etat.termine.a - etat.debut) / 1000)}.`}</p>`;
 
   const btn = $("#btn-retelecharger");
   btn.onclick = () => { descendre(rendu); toast("Fichier téléchargé"); };
@@ -922,6 +948,94 @@ function ouvrirRemise(rendu, cause) {
   if (!dlg.open) dlg.showModal();
 }
 
+/* ================================================================ Mon travail
+
+   Seulement pour une évaluation sans limite de temps. Le fichier emporte de quoi
+   reprendre ailleurs : identité, heure de début, réponses et journal — pas le
+   sujet, que le code rouvre sur l'autre poste. Son format ne commence PAS par
+   « evaluation/ » : ce n'est pas une copie, et la page de correction le refuse
+   (estUnRendu). Seul le rendu final, envoyé par « Rendre », compte. */
+
+const FORMAT_TRAVAIL = "travail-evaluation/v1";
+
+function nomFichierTravail() {
+  const rendu = nomDeRendu(etat.eleve?.nom, etat.eleve?.prenom) || "eleve";
+  return `${EVALUATION.cle}-${rendu}-travail.json`;
+}
+
+function telechargerTravail() {
+  journal("emporte");
+  const travail = {
+    format: FORMAT_TRAVAIL,
+    cle: EVALUATION.cle,
+    enregistre: new Date().toISOString(),
+    eleve: { ...etat.eleve },
+    debut: etat.debut,
+    dureeMinutes: etat.dureeMinutes ?? null,
+    reponses: etat.reponses,
+    journal: etat.journal,
+  };
+  telecharger(new Blob([JSON.stringify(travail, null, 2)], { type: "application/json" }),
+              nomFichierTravail());
+  toast("Fichier téléchargé : dépose-le sur l'autre ordinateur pour continuer.");
+}
+
+/** Lit un fichier de travail ; rend un message d'erreur, ou null si tout va bien. */
+async function reprendreTravail(fichier) {
+  let lu;
+  try { lu = JSON.parse(await fichier.text()); }
+  catch { return "Ce fichier n'est pas un fichier de travail lisible."; }
+  if (lu?.format !== FORMAT_TRAVAIL || !lu.reponses || typeof lu.reponses !== "object") {
+    return "Ce fichier n'est pas un fichier « Mon travail ».";
+  }
+  if (lu.cle !== EVALUATION.cle) {
+    return "Ce fichier appartient à une autre évaluation.";
+  }
+  if (etat.termine) return "Ce devoir est déjà rendu : il ne se modifie plus.";
+
+  const local = Object.keys(etat.reponses || {}).length > 0 && etat.debut != null;
+  if (local && !confirm("Remplacer le travail enregistré sur cet ordinateur par celui du fichier ?")) {
+    return "";
+  }
+
+  etat = {
+    ...structureVide(),
+    eleve: { nom: "", prenom: "", classe: "", ...(lu.eleve || {}) },
+    debut: Number.isFinite(lu.debut) ? lu.debut : Date.now(),
+    dureeMinutes: null,
+    sujet: QUESTIONS,
+    reponses: lu.reponses,
+    journal: Array.isArray(lu.journal) ? lu.journal : [],
+  };
+  ecrireEtat();
+  journal("reprise", { depuis: String(lu.enregistre || "").slice(0, 30) });
+  return null;
+}
+
+function ouvrirTravail() {
+  const dlg = $("#panneau-travail");
+  const alerte = $("#travail-alerte");
+  alerte.hidden = true;
+  $("#btn-travail-telecharger").hidden = etat.debut == null;
+
+  $("#btn-travail-telecharger").onclick = telechargerTravail;
+  $("#btn-travail-fermer").onclick = () => dlg.close();
+
+  const champ = $("#champ-travail");
+  champ.value = "";
+  champ.onchange = async () => {
+    const fichier = champ.files?.[0];
+    if (!fichier) return;
+    const erreur = await reprendreTravail(fichier);
+    if (erreur) { alerte.textContent = erreur; alerte.hidden = !erreur; return; }
+    dlg.close();
+    toast("Travail repris : tu continues là où tu t'étais arrêté.");
+    Python.prechauffer();
+    rendre();
+  };
+  if (!dlg.open) dlg.showModal();
+}
+
 /* ======================================================================= Boot */
 
 function rendre() {
@@ -929,7 +1043,9 @@ function rendre() {
   rendreSujet();
   /* Rouvrir la page après la remise, ou après l'heure : le sujet s'affiche en
      lecture, et la fenêtre de remise revient par-dessus. */
-  if (etat.termine || resteEnSecondes() <= 0) remettre(etat.termine?.cause || "temps");
+  if (etat.termine || (!sansLimite() && resteEnSecondes() <= 0)) {
+    remettre(etat.termine?.cause || "temps");
+  }
 }
 
 /* Le thème suit le même réglage que les parcours : un élève qui a mis le site
@@ -945,6 +1061,7 @@ function initTheme() {
 async function demarrer() {
   initTheme();
   surveiller();
+  $("#btn-travail").onclick = ouvrirTravail;
 
   let encours = null;
   try { encours = localStorage.getItem(POINTEUR); } catch { /* stockage bloqué */ }

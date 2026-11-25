@@ -74,8 +74,17 @@ export function totalRetenu(retouches, note) {
    barème (max 0), et une réponse laissée vide, qui vaut zéro sans qu'on ait à
    le taper copie après copie. */
 export function questionsANoter(retouches, note) {
-  return note.questions.filter((q) => q.manuel && q.max > 0 && !q.vide &&
-                                      !posee(retouches?.questions?.[q.id]));
+  return note.questions.filter((q) => !posee(retouches?.questions?.[q.id]) && (
+    (q.manuel && q.max > 0 && !q.vide) || criteresManuelsEnAttente(retouches, q) > 0));
+}
+
+/* Les critères « manuel » d'une question de code — commentaires, organisation —
+   auxquels l'enseignant n'a pas encore donné de verdict. Un programme laissé
+   vide n'en a pas : ses critères valent zéro d'office. */
+export function criteresManuelsEnAttente(retouches, question) {
+  const verdicts = retouches?.criteres?.[question.id] || {};
+  return (question.criteres || [])
+    .filter((c, rang) => c.manuel && c.max > 0 && verdicts[rang] == null).length;
 }
 
 /* Une note n'existe qu'une fois complète. Tant qu'une réponse rédigée attend ses

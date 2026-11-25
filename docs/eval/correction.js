@@ -376,7 +376,9 @@ function detail(copie) {
   const c = copie.rendu.chrono || {};
   chapeau.innerHTML = `
     <span>${new Date(c.debut).toLocaleString("fr-FR")}</span>
-    <span>${duree(c.tempsUtiliseS)} utilisées</span>
+    <span>${copie.rendu.evaluation?.sansLimite
+      ? `sans limite de temps, rendu le ${new Date(c.fin).toLocaleString("fr-FR")}`
+      : `${duree(c.tempsUtiliseS)} utilisées`}</span>
     <span>${c.cause === "temps" ? "rendu par le chronomètre" : "rendu par l'élève"}</span>`;
   boite.appendChild(chapeau);
 
@@ -574,7 +576,8 @@ function bloc(copie, q) {
     copie.retouches.criteres ||= {};
     const verdicts = (copie.retouches.criteres[q.id] ||= {});
     const points = typeof verdict === "boolean" ? (verdict ? auto.max : 0) : verdict;
-    if (points === auto.points) delete verdicts[rang]; else verdicts[rang] = verdict;
+    // Un critère manuel n'a pas d'avis du barème : même un zéro est une décision.
+    if (points === auto.points && !auto.manuel) delete verdicts[rang]; else verdicts[rang] = verdict;
     if (!Object.keys(verdicts).length) delete copie.retouches.criteres[q.id];
     apresChangement();
   };

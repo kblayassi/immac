@@ -252,12 +252,23 @@ Un `.json` dans `tools/evaluations/`, jamais dans `docs/`.
 | `codeContient` | un motif dans le programme, commentaires retirés |
 | `codeAbsent` | un motif interdit |
 | `tests` | des assertions Python jouées sur son espace de noms |
+| `manuel` | `true` : aucune attente automatique, l'enseignant met les points (commentaires, organisation…) |
 
 Deux réglages facultatifs : `saisies` (les réponses données aux `input()`, puisque
 personne n'est là pour taper) et `sortieStricte` (espacement exact, pour les figures).
 
 `saisies` se déclare **sur la question**, à côté de `criteres` : tous les critères
 en héritent. Un critère peut la redéfinir pour un second jeu de valeurs.
+
+**Seuls les `assert` de premier niveau comptent** dans `tests` : un `assert`
+placé dans une boucle `for` n'est pas un résultat, et le critère tombe sur
+« aucun test n'a pu être joué ». Calculer dans une compréhension, puis
+`assert all(…)` au premier niveau.
+
+**Un critère `manuel`** n'a pas d'avis automatique (« à évaluer à la main »). La
+copie attend son verdict comme une réponse rédigée : elle n'a pas de note et ne
+se publie pas tant que chaque critère manuel n'a pas reçu un verdict — un zéro
+posé est une décision — ou que les points de l'exercice ne sont pas tapés.
 
 **Les `tests` sont joués même si le programme plante plus bas.** Un élève laisse
 souvent des essais sous ses fonctions ; si l'un d'eux lève une erreur, les
@@ -508,6 +519,25 @@ Le site est statique : pas de serveur, donc pas de contrôle réel.
   qui cherche la réponse produisent le même événement.
 
 Le vrai garde-fou reste la surveillance en salle.
+
+## Les évaluations sans limite de temps
+
+`dureeMinutes: null` dans la source : pas de chronomètre, pas de remise
+d'office — l'élève rend quand il a fini. Fait pour un projet commencé en classe
+et fini à la maison (premier cas : `eval-nsi-ch6-santa`, le Secret Santa, code
+public `SECRET-SANTA-NSI` affiché sur la page du projet).
+
+* Le bouton **💾 Mon travail** remplace le chronomètre : il télécharge
+  `<cle>-NOM_Prenom-travail.json` (format `travail-evaluation/v1` : identité,
+  début, réponses, journal — pas le sujet), et reprend un tel fichier. Sur
+  l'autre poste, l'élève entre le même code, puis « Reprendre mon travail » dès
+  l'écran d'accueil. Le journal note `emporte` et `reprise`.
+* Ce fichier n'est **pas une copie** : la correction le refuse (`estUnRendu`).
+* Le rendu porte `evaluation.sansLimite: true` ; la correction n'y signale ni
+  les sorties d'onglet, ni les collages comme graves (l'élève recolle son propre
+  code d'une question à l'autre), et affiche la date de remise au lieu du temps.
+* Rien n'empêche un élève de rendre depuis deux postes différents : deux copies
+  au même nom, la plus récente fait foi.
 
 ## Ce qui reste ouvert
 
