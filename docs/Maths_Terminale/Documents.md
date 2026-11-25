@@ -132,7 +132,7 @@ Vous trouverez sur cette page les sujets et les correction des divers DHC de typ
 
 - DHC3 - Polynésie 2024 :  
     
-    [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc3.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc3-correction.pdf) -->
+    [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc3.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc3-correction.pdf)
 
 - DHC4 - Centres étrangers 2021 :  
     
