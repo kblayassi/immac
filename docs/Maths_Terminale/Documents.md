@@ -134,13 +134,13 @@ Vous trouverez sur cette page les sujets et les correction des divers DHC de typ
     
     [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc3.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc3-correction.pdf) -->
 
-- DHC4 - Métropole 2022 et Centres étrangers 2021 :  
+- DHC4 - Centres étrangers 2021 :  
     
     [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc4.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc4-correction.pdf)
 
-- DHC5 - Amérique du Nord 2025:  
+- DHC5 - Amérique du Sud 2023 :  
     
-    *À venir* <!-- [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc5.pdf) / [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc5-correction.pdf) -->
+    [Sujet <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc5.pdf) / *À venir* <!-- [Correction <i class="fa-solid fa-file-pdf"></i>](../files/dhc_bac_term/dhc5-correction.pdf) -->
 
 - DHC6 - Polynésie 2025 : 
     
