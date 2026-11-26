@@ -950,7 +950,7 @@ Les corrections sont généralement disponibles, mais elles ne doivent être con
         \]
 
 !!! exopapier "Exercice 54 - :fontawesome-solid-star: :fontawesome-solid-star: :fontawesome-solid-star:"
-    On vous donne $11101000_{2}$ sur 8 bits. À quel entier décimal correspond ce nombre en complément à deux ?
+    On vous donne $11101000_{2}$ sur 8 bits. À quel entier relatif (écrit en base 10) correspond ce nombre en complément à deux ?
 
     ??? success "Correction"
         Bit de poids fort = 1 → c’est un nombre négatif  

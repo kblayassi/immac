@@ -228,7 +228,7 @@ Nous aurons l'occasion de programmer nous même des fonctions permettant d'effec
 
         Par exemple, `hex(195)` renvoie `0xc3`. Ainsi, $195_{10}=C3_{16}$
 
-    - `int(chaine, base)` convertit la chaine écrite dans la base passée en paramètre en un nombre entier décimal.
+    - `int(chaine, base)` convertit la chaine écrite dans la base passée en paramètre en un nombre entier relatif en base 10.
 
         Par exemple, `int('1110', base=2)` renvoie `14` et `int('1110', base=16)` renvoie `4368`.
 
