@@ -159,6 +159,7 @@ else:
             codeContient: [
               { motif: "\\bage\\b[\\s\\S]*\\bage\\b", message: "Sers-toi de la variable age déjà définie, plutôt que de réécrire sa valeur." },
               { motif: "\\bif\\b", message: "Il faut un if…" },
+              { motif: "\\bif\\s*\\(?\\s*(\\bage\\s*(>=|>|<=|<)\\s*1[78]\\b|\\b1[78]\\s*(>=|>|<=|<)\\s*age\\b)", message: "Ta condition doit comparer l'âge à l'âge de la majorité, 18 ans : elle doit marcher pour tous les âges, pas seulement pour 15." },
               { motif: "\\belse\\b", message: "… et un else pour l'autre cas." },
             ],
             sortie: "Tu es mineur.",
