@@ -204,8 +204,10 @@ bleu</code></pre>`,
           contenu: `
             <p>La fonction <code>len()</code> — pour <em>length</em>, longueur — renvoie
             le <strong>nombre d'éléments</strong> d'une liste.</p>
-            <pre class="bloc-code"><code>len([12, 15, 8, 18])    # vaut 4
-len([])                 # vaut 0</code></pre>
+            <pre class="bloc-code"><code>notes = [12, 15, 8, 18]
+vide = []
+len(notes)    # vaut 4
+len(vide)     # vaut 0</code></pre>
             <p>Affiche le nombre de planètes du système solaire, <strong>calculé par
             Python</strong> à partir de la liste :</p>
             <pre class="bloc-code"><code>8</code></pre>`,
@@ -264,7 +266,9 @@ len([])                 # vaut 0</code></pre>
           depart: `planetes = ["Mercure", "Vénus", "Terre", "Mars",\n            "Jupiter", "Saturne", "Uranus", "Neptune"]\n\n`,
           validation: {
             codeContient: [
-              { motif: "planetes\\s*\\[\\s*len\\s*\\(\\s*planetes\\s*\\)\\s*-\\s*1\\s*\\]", message: "L'indice du dernier élément se calcule avec len(planetes)." },
+              // len(planetes) - 1 écrit entre les crochets, ou rangé d'abord dans une variable
+              // (n = len(planetes) puis planetes[n - 1], ou n = len(planetes) - 1 puis planetes[n]).
+              { motif: "planetes\\s*\\[\\s*len\\s*\\(\\s*planetes\\s*\\)\\s*-\\s*1\\s*\\]|\\b(\\w+)\\s*=\\s*len\\s*\\(\\s*planetes\\s*\\)\\s*$[\\s\\S]*planetes\\s*\\[\\s*\\1\\s*-\\s*1\\s*\\]|\\b(\\w+)\\s*=\\s*len\\s*\\(\\s*planetes\\s*\\)\\s*-\\s*1\\s*$[\\s\\S]*planetes\\s*\\[\\s*\\2\\s*\\]", options: "m", message: "L'indice du dernier élément se calcule avec len(planetes)." },
             ],
             sortie: "Neptune",
           },
