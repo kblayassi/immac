@@ -1,0 +1,425 @@
+/* La copie corrigée en PDF — fabriquée dans le navigateur, sans fenêtre
+ * d'impression.
+ *
+ * La fenêtre d'impression était lente à s'ouvrir, imposait la taille du texte
+ * de l'écran et laissait le navigateur choisir le nom du fichier. Ici, le PDF est
+ * construit directement (pdfmake) et téléchargé sous le nom
+ * NOM_Prenom_NomDuDevoir.pdf.
+ *
+ * pdfmake (1,4 Mo) et les polices du site ne sont chargés qu'au premier clic :
+ * un élève qui ne fait que lire sa copie ne les télécharge jamais. Ils viennent
+ * de jsDelivr, comme Pyodide.
+ */
+
+const PDFMAKE = "https://cdn.jsdelivr.net/npm/pdfmake@0.2.12/build/pdfmake.min.js";
+const POLICES = {
+  "Quicksand-Regular.ttf": "https://cdn.jsdelivr.net/fontsource/fonts/quicksand@5.0.0/latin-400-normal.ttf",
+  "Quicksand-Bold.ttf":    "https://cdn.jsdelivr.net/fontsource/fonts/quicksand@5.0.0/latin-700-normal.ttf",
+  "RedHatMono-Regular.ttf": "https://cdn.jsdelivr.net/fontsource/fonts/red-hat-mono@5.0.0/latin-400-normal.ttf",
+};
+
+const VIOLET = "#573D91";
+const VIOLET_PALE = "#efeaf9";
+const DOUX = "#625d73";
+const VERT = "#12855c";
+const ORANGE = "#b8860b";
+const ROUGE = "#c62828";
+const FOND_CODE = "#f0eef7";
+const VERT_PALE = "#e3f6ee";
+const BORD_CARTE = "#dcd6ea";
+const ROUGE_PALE = "#fdeaea";
+
+let pret = null;
+
+function chargerScript(url) {
+  return new Promise((ok, ko) => {
+    const s = document.createElement("script");
+    s.src = url;
+    s.onload = ok;
+    s.onerror = () => ko(new Error("bibliothèque PDF injoignable"));
+    document.head.appendChild(s);
+  });
+}
+
+async function enBase64(url) {
+  const rep = await fetch(url);
+  if (!rep.ok) throw new Error("police injoignable");
+  const octets = new Uint8Array(await rep.arrayBuffer());
+  let binaire = "";
+  for (let i = 0; i < octets.length; i += 0x8000) {
+    binaire += String.fromCharCode(...octets.subarray(i, i + 0x8000));
+  }
+  return btoa(binaire);
+}
+
+function preparer() {
+  if (!pret) {
+    pret = (async () => {
+      const [, ...polices] = await Promise.all([
+        window.pdfMake ? null : chargerScript(PDFMAKE),
+        ...Object.values(POLICES).map(enBase64),
+      ]);
+      const vfs = {};
+      Object.keys(POLICES).forEach((nom, i) => { vfs[nom] = polices[i]; });
+      window.pdfMake.vfs = vfs;
+      window.pdfMake.fonts = {
+        Quicksand: {
+          normal: "Quicksand-Regular.ttf", bold: "Quicksand-Bold.ttf",
+          italics: "Quicksand-Regular.ttf", bolditalics: "Quicksand-Bold.ttf",
+        },
+        Mono: {
+          normal: "RedHatMono-Regular.ttf", bold: "RedHatMono-Regular.ttf",
+          italics: "RedHatMono-Regular.ttf", bolditalics: "RedHatMono-Regular.ttf",
+        },
+      };
+      return window.pdfMake;
+    })();
+    pret.catch(() => { pret = null; });     // un échec réseau ne condamne pas le clic suivant
+  }
+  return pret;
+}
+
+/* ------------------------------------------------------------- Le nom */
+
+/* DUPONT, Léa, « Partie 1 — Premiers programmes »
+   → DUPONT_Lea_Partie-1-Premiers-programmes.pdf
+   Sans accents ni signes : le nom doit survivre à une clé USB, à l'ENT et à un
+   courriel. */
+function morceau(texte) {
+  return String(texte || "")
+    .normalize("NFD").replace(/\p{M}/gu, "")
+    .replace(/[^A-Za-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function nomDuPdf(copie) {
+  const devoir = morceau(copie.evaluation?.titre || copie.evaluation?.cle) || "Devoir";
+  const nom = morceau((copie.eleve?.nom || "").toUpperCase()) || "NOM";
+  const prenom = morceau(copie.eleve?.prenom) || "Prenom";
+  return `${nom}_${prenom}_${devoir}.pdf`;
+}
+
+/* --------------------------------------------------------- Le document */
+
+const nombre = (n) => (Math.round((n ?? 0) * 100) / 100).toString().replace(".", ",");
+
+function couleurDe(ok) {
+  return ok === true ? VERT : ok === false ? ROUGE : ORANGE;
+}
+
+function encadre(contenu, fond, bordure) {
+  return {
+    table: { widths: ["*"], body: [[contenu]] },
+    layout: {
+      fillColor: () => fond,
+      hLineWidth: () => 0,
+      vLineWidth: (i) => (bordure && i === 0 ? 2.5 : 0),
+      vLineColor: () => bordure,
+      paddingLeft: () => 8, paddingRight: () => 8, paddingTop: () => 6, paddingBottom: () => 6,
+    },
+  };
+}
+
+/* ------------------------------------------------- L'énoncé, du HTML au PDF
+
+   Les énoncés n'emploient qu'une poignée de balises : des paragraphes, des
+   listes, du code en ligne et des blocs de code. On les traduit à la main en
+   blocs pdfmake ; ce qui n'est pas reconnu est gardé comme texte. */
+
+function enLigne(noeud, style = {}) {
+  const morceaux = [];
+  for (const n of noeud.childNodes) {
+    if (n.nodeType === Node.TEXT_NODE) {
+      const t = n.textContent.replace(/\s+/g, " ");
+      if (t) morceaux.push({ text: t, ...style });
+    } else if (n.nodeType === Node.ELEMENT_NODE) {
+      if (n.tagName === "BR") { morceaux.push({ text: "\n" }); continue; }
+      const st = { ...style };
+      if (["STRONG", "B"].includes(n.tagName)) st.bold = true;
+      if (["CODE", "KBD"].includes(n.tagName)) { st.font = "Mono"; st.fontSize = 8.5; }
+      morceaux.push(...enLigne(n, st));
+    }
+  }
+  return morceaux;
+}
+
+function enBlocs(noeud) {
+  const blocs = [];
+  let ligne = [];
+  const vider = () => {
+    const texte = ligne.filter((m) => m.text.trim() || m.text === "\n");
+    if (texte.length) blocs.push({ text: ligne, margin: [0, 0, 0, 4] });
+    ligne = [];
+  };
+  for (const n of noeud.childNodes) {
+    if (n.nodeType === Node.ELEMENT_NODE && n.tagName === "PRE") {
+      vider();
+      blocs.push({ ...encadre({ text: n.textContent.replace(/^\n+|\s+$/g, ""), font: "Mono",
+                                fontSize: 8, preserveLeadingSpaces: true, lineHeight: 1.15 }, FOND_CODE),
+                   margin: [0, 0, 0, 5] });
+    } else if (n.nodeType === Node.ELEMENT_NODE && ["UL", "OL"].includes(n.tagName)) {
+      vider();
+      const items = [...n.children].map((li) => ({ stack: enBlocs(li) }));
+      blocs.push({ [n.tagName === "UL" ? "ul" : "ol"]: items, margin: [0, 0, 0, 4] });
+    } else if (n.nodeType === Node.ELEMENT_NODE &&
+               ["P", "DIV", "BLOCKQUOTE", "H3", "H4", "TABLE"].includes(n.tagName)) {
+      vider();
+      blocs.push(...enBlocs(n));
+    } else if (n.nodeType === Node.ELEMENT_NODE) {
+      ligne.push(...enLigne({ childNodes: [n] }));
+    } else if (n.nodeType === Node.TEXT_NODE) {
+      ligne.push(...enLigne({ childNodes: [n] }));
+    }
+  }
+  vider();
+  return blocs;
+}
+
+function depuisHtml(source) {
+  const doc = new DOMParser().parseFromString(`<div>${source || ""}</div>`, "text/html");
+  return enBlocs(doc.body.firstElementChild);
+}
+
+function texteDe(source) {
+  const doc = new DOMParser().parseFromString(`<div>${source || ""}</div>`, "text/html");
+  return enLigne(doc.body.firstElementChild);
+}
+
+/* Toutes les propositions d'un QCM : en vert les bonnes, en rouge celles
+   cochées à tort, et « ta réponse » en face des choix de l'élève. */
+function propositions(q) {
+  const r = q.reponse || {};
+  const coches = new Set((Array.isArray(r.choix) ? r.choix : [r.choix]).filter((i) => typeof i === "number"));
+  const bonnes = new Set(Array.isArray(q.correct) ? q.correct
+    : typeof q.correct === "number" ? [q.correct] : []);
+  const lignes = q.options.map((texte, i) => {
+    const issue = bonnes.has(i) ? "juste" : coches.has(i) ? "faux" : null;
+    const couleur = issue === "juste" ? VERT : issue === "faux" ? ROUGE : DOUX;
+    return [
+      { text: String.fromCharCode(65 + i), bold: true, color: couleur, fontSize: 9 },
+      { text: texteDe(texte), fontSize: 9 },
+      { text: coches.has(i) ? "ta réponse" : "", bold: true, color: couleur, fontSize: 8, alignment: "right" },
+    ];
+  });
+  const fonds = q.options.map((_, i) => (bonnes.has(i) ? VERT_PALE : coches.has(i) ? ROUGE_PALE : null));
+  const bloc = [{
+    table: { widths: [12, "*", "auto"], body: lignes },
+    layout: {
+      fillColor: (i) => fonds[i],
+      hLineWidth: () => 0, vLineWidth: () => 0,
+      paddingLeft: () => 6, paddingRight: () => 6, paddingTop: () => 3, paddingBottom: () => 3,
+    },
+  }];
+  if (!coches.size) bloc.unshift({ text: "Tu n'as pas répondu.", color: DOUX, fontSize: 8.5, margin: [0, 0, 0, 3] });
+  return { stack: bloc };
+}
+
+function reponse(q) {
+  const r = q.reponse || {};
+  if (q.type === "code") {
+    return encadre({
+      text: r.code?.trim() ? r.code.replace(/\s+$/, "") : "(pas de réponse)",
+      font: "Mono", fontSize: 8, preserveLeadingSpaces: true, lineHeight: 1.15,
+    }, FOND_CODE);
+  }
+  if (q.type === "texte") {
+    return encadre({ text: r.texte?.trim() || "(pas de réponse)", fontSize: 9.5 }, FOND_CODE);
+  }
+  if (q.type === "qcm" && Array.isArray(q.options) && q.options.length) return propositions(q);
+  if (q.type === "qcm") {
+    const choix = (Array.isArray(r.choix) ? r.choix : [r.choix]).filter((i) => i != null);
+    return { text: ["Ta réponse : ", { text: choix.map((i) => String.fromCharCode(65 + i)).join(", ") || "aucune", bold: true }],
+             fontSize: 9.5 };
+  }
+  return null;
+}
+
+function question(q) {
+  const part = q.max ? (q.points >= q.max ? true : q.points > 0 ? null : false) : null;
+  const bloc = [
+    {
+      columns: [
+        { text: q.titre || q.id, bold: true, fontSize: 11, color: VIOLET },
+        { text: `${nombre(q.points)} / ${nombre(q.max)}`, bold: true, fontSize: 11,
+          color: couleurDe(part), alignment: "right", width: "auto" },
+      ],
+      margin: [0, 0, 0, 4],
+    },
+  ];
+  if (q.enonce?.trim()) {
+    bloc.push({ stack: depuisHtml(q.enonce), margin: [0, 0, 0, 4] });
+    if (q.type === "code") bloc.push({ text: "TON PROGRAMME", bold: true, color: DOUX, fontSize: 7.5, margin: [0, 0, 0, 2] });
+  }
+  const rep = reponse(q);
+  if (rep) bloc.push({ ...rep, margin: [0, 0, 0, 4] });
+
+  // Comme à l'écran : pour un QCM détaillé, le critère ne reste que s'il a été revu.
+  const detaille = q.type === "qcm" && Array.isArray(q.options) && q.options.length > 0;
+  const criteres = detaille ? (q.criteres || []).filter((c) => c.retouche) : q.criteres;
+  if (criteres?.length) {
+    bloc.push({
+      table: {
+        widths: [34, "*"],
+        body: criteres.map((c) => [
+          { text: `${nombre(c.points)}/${nombre(c.max)}`, bold: true, color: couleurDe(c.ok), fontSize: 8.5 },
+          { text: [c.libelle || "", c.retouche ? { text: " — revu par ton professeur", color: VIOLET } : ""],
+            fontSize: 8.5 },
+        ]),
+      },
+      layout: "noBorders",
+      margin: [0, 0, 0, 2],
+    });
+  }
+  if (q.annotation?.trim()) {
+    bloc.push({ ...encadre({ text: q.annotation, fontSize: 9 }, VIOLET_PALE, VIOLET), margin: [0, 3, 0, 0] });
+  }
+  return cadre(bloc, { bord: BORD_CARTE, insecable: q.type !== "code" });
+}
+
+/* ------------------------------------------------ Les cadres à coins ronds
+
+   pdfmake ne sait pas arrondir une bordure de tableau. Chaque bloc à encadrer
+   est donc borné par deux repères invisibles ; une première mise en page relève
+   leur position (pageBreakBefore voit passer tous les nœuds, placés), et la
+   seconde trace les cadres en fond de page, sous le texte. Un exercice coupé
+   par un saut de page reçoit un cadre sur chaque page. */
+
+const PAGE = { largeur: 595.28, hauteur: 841.89, marges: [40, 40, 40, 44] };
+const RAYON = 6;
+let cadres = [];
+
+/* pdfmake ne signale que les nœuds qui écrivent quelque chose : un repère est
+   donc une espace d'un point de corps, invisible et sans encombre. */
+const repere = (id) => ({ text: " ", fontSize: 1, lineHeight: 1, id });
+
+/* Les repères restent hors du bloc insécable : à l'intérieur, pdfmake leur
+   donne à tous deux la position du début du bloc. Le retrait intérieur est
+   porté par une cellule de tableau, et non par une marge : après un saut de
+   page, pdfmake oublie la marge droite d'une pile, et le texte déborde. */
+const SANS_TRAIT = {
+  hLineWidth: () => 0, vLineWidth: () => 0,
+  paddingLeft: () => 10, paddingRight: () => 10, paddingTop: () => 7, paddingBottom: () => 7,
+};
+
+function cadre(contenu, { insecable = false, ...style }) {
+  const id = `cadre:${cadres.length}`;
+  cadres.push({ id, insecable, ...style });
+  return {
+    stack: [
+      repere(`${id}:debut`),
+      { table: { widths: ["*"], body: [[{ stack: [repere(`${id}:contenu`), ...contenu] }]],
+                 dontBreakRows: insecable },
+        layout: SANS_TRAIT, unbreakable: insecable },
+      repere(`${id}:fin`),
+    ],
+    margin: [0, 0, 0, 12],
+  };
+}
+
+function fonds(positions, liste) {
+  const [gauche, haut, droite, bas] = PAGE.marges;
+  const largeur = PAGE.largeur - gauche - droite;
+  const parPage = {};
+  for (const c of liste) {
+    const debut = positions[`${c.id}:debut`];
+    const fin = positions[`${c.id}:fin`];
+    if (!debut || !fin) continue;
+    // Un bloc qui ne tenait plus en bas de page est passé à la suivante, et son
+    // repère de début est resté derrière lui. Le repère placé en tête du
+    // contenu dit où il commence vraiment (dans un bloc insécable, il ne dit
+    // rien : le bloc commence alors sur la page de sa fin).
+    const contenu = c.insecable ? fin : positions[`${c.id}:contenu`] || debut;
+    const premiere = contenu.page;
+    for (let page = premiere; page <= fin.page; page++) {
+      const y1 = page === debut.page ? debut.top : page === premiere ? haut : haut - 4;
+      const y2 = page === fin.page ? fin.top : PAGE.hauteur - bas + 4;
+      if (y2 - y1 < 12) continue;            // un repère resté seul en bas de page
+      (parPage[page] ||= []).push({
+        type: "rect", x: gauche, y: y1, w: largeur, h: y2 - y1, r: RAYON,
+        ...(c.fond ? { color: c.fond } : {}),
+        lineColor: c.bord || c.fond, lineWidth: c.bord ? 0.8 : 0,
+      });
+    }
+  }
+  return (page) => (parPage[page] ? { canvas: parPage[page] } : null);
+}
+
+export function documentDe(copie) {
+  cadres = [];
+  const nom = `${(copie.eleve?.nom || "").toUpperCase()} ${copie.eleve?.prenom || ""}`.trim();
+  const sousTitre = [
+    copie.eleve?.classe,
+    copie.corrigeLe && `Corrigée le ${new Date(copie.corrigeLe).toLocaleDateString("fr-FR")}`,
+  ].filter(Boolean).join(" · ");
+  const contenu = [
+    {
+      columns: [
+        {
+          stack: [
+            { text: copie.evaluation?.titre || "Évaluation", color: VIOLET, bold: true, fontSize: 9 },
+            { text: nom || "Ta copie", bold: true, fontSize: 16, margin: [0, 2, 0, 2] },
+            sousTitre && { text: sousTitre, color: DOUX, fontSize: 8.5 },
+          ].filter(Boolean),
+        },
+        {
+          width: "auto",
+          text: [
+            { text: nombre(copie.note?.valeur), fontSize: 24, bold: true, color: VIOLET },
+            { text: ` / ${nombre(copie.note?.sur ?? 20)}`, fontSize: 11, color: DOUX },
+          ],
+        },
+      ],
+      margin: [0, 0, 0, 10],
+    },
+  ];
+  // L'appréciation sous la note, comme à l'écran, avant le trait qui ouvre les exercices.
+  if (copie.appreciation?.trim()) {
+    contenu.push({
+      ...cadre([
+        { text: "Appréciation", bold: true, fontSize: 10, color: VIOLET, margin: [0, 0, 0, 3] },
+        { text: copie.appreciation, fontSize: 9.5 },
+      ], { fond: VIOLET_PALE, insecable: true }),
+    });
+  }
+  contenu.push({ canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.6, lineColor: "#e0dced" }],
+                 margin: [0, 2, 0, 12] });
+  for (const q of copie.questions || []) contenu.push(question(q));
+
+  return {
+    pageSize: "A4",
+    pageMargins: [40, 40, 40, 44],
+    defaultStyle: { font: "Quicksand", fontSize: 9.5, lineHeight: 1.2 },
+    info: { title: `${copie.evaluation?.titre || "Copie"} — ${nom}` },
+    footer: (page, total) => ({
+      text: `${nom} — ${copie.evaluation?.titre || ""} · ${page} / ${total}`,
+      alignment: "center", fontSize: 7.5, color: DOUX, margin: [0, 14, 0, 0],
+    }),
+    content: contenu,
+    cadres,
+  };
+}
+
+/** Fabrique et télécharge le PDF. Rend une promesse : le premier appel attend
+    le chargement de pdfmake et des polices. */
+export async function telechargerPdf(copie) {
+  const pdfMake = await preparer();
+
+  // Première passe : où tombent les repères des cadres.
+  const essai = documentDe(copie);
+  delete essai.cadres;
+  const positions = {};
+  essai.pageBreakBefore = (noeud) => {
+    if (typeof noeud.id === "string" && noeud.id.startsWith("cadre:") && noeud.startPosition) {
+      positions[noeud.id] = { page: noeud.startPosition.pageNumber, top: noeud.startPosition.top };
+    }
+    return false;
+  };
+  await new Promise((fini) => pdfMake.createPdf(essai).getBuffer(fini));
+
+  // Seconde passe : le même document, ses cadres en fond de page.
+  const doc = documentDe(copie);
+  const trace = fonds(positions, doc.cadres);
+  delete doc.cadres;
+  doc.background = (page) => trace(page);
+  await new Promise((fini) => pdfMake.createPdf(doc).download(nomDuPdf(copie), fini));
+}
