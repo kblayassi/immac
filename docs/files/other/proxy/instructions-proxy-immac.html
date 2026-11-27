@@ -202,7 +202,7 @@
   <header>
     <div class="badge">IMMAC KOXO</div>
     <h1>Proxy automatique</h1>
-    <p class="subtitle">Configure ton Mac ou PC une seule fois. Le proxy s'activera et se désactivera tout seul selon le réseau Wi-Fi.</p>
+    <p class="subtitle">Configure ton PC Windows une seule fois. Le proxy s'activera et se désactivera tout seul selon le réseau Wi-Fi.</p>
   </header>
 
   <div class="alert">
@@ -233,26 +233,14 @@
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-content">
-        <div class="step-title">Autorise l'exécution des scripts</div>
+        <div class="step-title">Lance le script d'installation</div>
         <div class="step-desc">Colle cette commande dans PowerShell et appuie sur <strong>Entrée</strong> :</div>
         <div class="code-block">
-          <span>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned</span>
-          <button class="copy-btn" onclick="copyCode(this, 'Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned')">Copier</button>
+          <span>powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Downloads\install-proxy-immac.ps1"</span>
+          <button class="copy-btn" onclick="copyCode(this, 'powershell -ExecutionPolicy Bypass -File &quot;$env:USERPROFILE\\Downloads\\install-proxy-immac.ps1&quot;')">Copier</button>
         </div>
-        <div class="step-desc" style="margin-top:0.6rem">Si une confirmation est demandée, tape <strong>O</strong> puis Entrée.</div>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-content">
-        <div class="step-title">Lance le script d'installation</div>
-        <div class="step-desc">Dans PowerShell, va dans le dossier Téléchargements et lance le script :</div>
-        <div class="code-block">
-          <span>cd "$env:USERPROFILE\Downloads"; .\install-proxy-immac.ps1</span>
-          <button class="copy-btn" onclick="copyCode(this, 'cd &quot;$env:USERPROFILE\\Downloads&quot;; .\\install-proxy-immac.ps1')">Copier</button>
-        </div>
-        <div class="step-desc" style="margin-top:0.6rem">Une fenêtre bleue s'ouvre et t'indique la progression. Attends le message <strong>"Installation terminée"</strong>.</div>
+        <div class="step-desc" style="margin-top:0.6rem">Le script s'exécute et affiche sa progression. Attends le message <strong>"Installation terminée"</strong>, puis appuie sur Entrée.</div>
+        <div class="step-desc" style="margin-top:0.6rem">Si tu as téléchargé le fichier plusieurs fois, il peut s'appeler <strong>install-proxy-immac (1).ps1</strong> : supprime les anciens exemplaires et retélécharge-le.</div>
       </div>
     </div>
 

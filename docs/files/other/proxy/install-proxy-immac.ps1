@@ -1,6 +1,6 @@
 # =============================================================
 #  IMMAC KOXO - Configuration automatique du proxy
-#  Double-cliquer sur ce fichier pour installer
+#  Lancer avec : powershell -ExecutionPolicy Bypass -File install-proxy-immac.ps1
 # =============================================================
 
 $PROXY_SERVER   = "10.0.0.1"
