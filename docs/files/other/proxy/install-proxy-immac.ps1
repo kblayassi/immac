@@ -1,4 +1,4 @@
-# =============================================================
+﻿# =============================================================
 #  IMMAC KOXO - Configuration automatique du proxy
 #  Lancer avec : powershell -ExecutionPolicy Bypass -File install-proxy-immac.ps1
 # =============================================================
@@ -10,6 +10,7 @@ $WORK_GW_MAC    = "00-0c-29-1d-62-78"   # MAC passerelle réseau école
 $TASK_NAME      = "IMMAC_ProxySwitch"
 $SCRIPT_DIR     = "$env:APPDATA\IMMAC"
 $SCRIPT_PATH    = "$SCRIPT_DIR\proxy-switch.ps1"
+$LOG_PATH       = "$SCRIPT_DIR\proxy-switch.log"
 
 # --- Couleurs console ---
 function Write-Step  { param($msg) Write-Host "  > $msg" -ForegroundColor Cyan }
@@ -31,49 +32,69 @@ Write-OK "Dossier créé : $SCRIPT_DIR"
 # --- 2. Écrire le script de détection/bascule ---
 Write-Step "Écriture du script de bascule proxy..."
 
-$switchScript = @"
+# Here-string entre apostrophes : rien n'est interprété ici, les valeurs
+# réelles remplacent les marqueurs __XXX__ juste après.
+$switchScript = @'
 # IMMAC KOXO - Proxy Switch (ne pas modifier)
-`$PROXY_SERVER = "$PROXY_SERVER"
-`$PROXY_PORT   = "$PROXY_PORT"
-`$WORK_GW_MAC  = "$WORK_GW_MAC"
-`$regPath      = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+$PROXY_SERVER = "__PROXY_SERVER__"
+$PROXY_PORT   = "__PROXY_PORT__"
+$WORK_SSID    = "__WORK_SSID__"
+$WORK_GW_MAC  = "__WORK_GW_MAC__"
+$LOG_PATH     = "__LOG_PATH__"
+$regPath      = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
 
-Start-Sleep -Seconds 3
+# Laisser à Windows le temps d'identifier le réseau
+Start-Sleep -Seconds 5
 
-# Récupérer la passerelle par défaut
-`$gateway = (Get-NetRoute -DestinationPrefix "0.0.0.0/0" -ErrorAction SilentlyContinue |
+# 1) Nom du réseau : pour le Wi-Fi, c'est le nom (SSID) ; Windows peut ajouter
+#    un numéro (« IMMAC KOXO 2 »), d'où le -like.
+$profils = @(Get-NetConnectionProfile -ErrorAction SilentlyContinue | ForEach-Object { $_.Name })
+$parNom  = [bool]($profils | Where-Object { $_ -like "$WORK_SSID*" })
+
+# 2) Adresse MAC de la passerelle (utile en filaire, sans nom de Wi-Fi)
+$gateway = (Get-NetRoute -DestinationPrefix "0.0.0.0/0" -ErrorAction SilentlyContinue |
     Sort-Object RouteMetric | Select-Object -First 1).NextHop
-
-# Récupérer la MAC de la passerelle via ARP
-`$gatewayMAC = ""
-if (`$gateway) {
-    # Forcer une entrée ARP
-    ping -n 1 -w 500 `$gateway | Out-Null
-    `$arpLine = arp -a `$gateway 2>`$null | Select-String `$gateway
-    if (`$arpLine) {
-        `$gatewayMAC = (`$arpLine.ToString().Trim() -split "\s+")[1]
-    }
+$gatewayMAC = ""
+if ($gateway) {
+    ping -n 1 -w 500 $gateway | Out-Null
+    $voisin = Get-NetNeighbor -IPAddress $gateway -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($voisin) { $gatewayMAC = $voisin.LinkLayerAddress }
 }
+$parMAC = ($gatewayMAC -and ($gatewayMAC -eq $WORK_GW_MAC))   # -eq ignore la casse
 
-# Fonction pour appliquer le changement de proxy à Windows
+# Appliquer le changement de proxy à Windows sans redémarrer
 function Set-ProxyRefresh {
-    `$sig = '[DllImport("wininet.dll")] public static extern bool InternetSetOption(IntPtr h, int o, IntPtr b, int l);'
-    `$t = Add-Type -MemberDefinition `$sig -Name WinInet -Namespace Win32 -PassThru -ErrorAction SilentlyContinue
-    if (`$t) {
-        `$t::InternetSetOption([IntPtr]::Zero, 39, [IntPtr]::Zero, 0) | Out-Null
-        `$t::InternetSetOption([IntPtr]::Zero, 37, [IntPtr]::Zero, 0) | Out-Null
+    $sig = '[DllImport("wininet.dll")] public static extern bool InternetSetOption(IntPtr h, int o, IntPtr b, int l);'
+    $t = Add-Type -MemberDefinition $sig -Name WinInet -Namespace Win32 -PassThru -ErrorAction SilentlyContinue
+    if ($t) {
+        $t::InternetSetOption([IntPtr]::Zero, 39, [IntPtr]::Zero, 0) | Out-Null
+        $t::InternetSetOption([IntPtr]::Zero, 37, [IntPtr]::Zero, 0) | Out-Null
     }
 }
 
-if (`$gatewayMAC -eq `$WORK_GW_MAC) {
-    Set-ItemProperty -Path `$regPath -Name ProxyEnable -Value 1
-    Set-ItemProperty -Path `$regPath -Name ProxyServer -Value "`${PROXY_SERVER}:`${PROXY_PORT}"
-    Set-ProxyRefresh
+if ($parNom -or $parMAC) {
+    Set-ItemProperty -Path $regPath -Name ProxyEnable -Value 1
+    Set-ItemProperty -Path $regPath -Name ProxyServer -Value "${PROXY_SERVER}:${PROXY_PORT}"
+    $decision = "proxy ACTIVE"
 } else {
-    Set-ItemProperty -Path `$regPath -Name ProxyEnable -Value 0
-    Set-ProxyRefresh
+    Set-ItemProperty -Path $regPath -Name ProxyEnable -Value 0
+    $decision = "proxy desactive"
 }
-"@
+Set-ProxyRefresh
+
+# Journal (50 dernières lignes) pour comprendre une bascule ratée
+$ligne = "{0} | reseaux: {1} | passerelle: {2} ({3}) | {4}" -f (Get-Date -Format "yyyy-MM-dd HH:mm:ss"),
+    ($profils -join ", "), $gateway, $gatewayMAC, $decision
+$anciennes = @()
+if (Test-Path $LOG_PATH) { $anciennes = @(Get-Content $LOG_PATH -Tail 49) }
+($anciennes + $ligne) | Set-Content -Path $LOG_PATH -Encoding UTF8
+'@
+
+$switchScript = $switchScript.Replace("__PROXY_SERVER__", $PROXY_SERVER)
+$switchScript = $switchScript.Replace("__PROXY_PORT__",   $PROXY_PORT)
+$switchScript = $switchScript.Replace("__WORK_SSID__",    $WORK_SSID)
+$switchScript = $switchScript.Replace("__WORK_GW_MAC__",  $WORK_GW_MAC)
+$switchScript = $switchScript.Replace("__LOG_PATH__",     $LOG_PATH)
 
 $switchScript | Out-File -FilePath $SCRIPT_PATH -Encoding UTF8
 Write-OK "Script écrit : $SCRIPT_PATH"
@@ -110,7 +131,9 @@ $triggerLogon = New-ScheduledTaskTrigger -AtLogOn
 
 $settings = New-ScheduledTaskSettingsSet `
     -ExecutionTimeLimit (New-TimeSpan -Minutes 1) `
-    -MultipleInstances IgnoreNew
+    -MultipleInstances IgnoreNew `
+    -AllowStartIfOnBatteries `
+    -DontStopIfGoingOnBatteries
 
 $principal = New-ScheduledTaskPrincipal `
     -UserId $env:USERNAME `
@@ -130,7 +153,13 @@ Write-OK "Tâche planifiée créée : $TASK_NAME"
 # --- 4. Appliquer le proxy maintenant ---
 Write-Step "Application immédiate des paramètres..."
 & powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "$SCRIPT_PATH"
-Write-OK "Paramètres appliqués"
+$etat = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings").ProxyEnable
+if ($etat -eq 1) {
+    Write-OK "Réseau de l'école détecté : proxy activé ($PROXY_SERVER`:$PROXY_PORT)"
+} else {
+    Write-Fail "Réseau de l'école non détecté : proxy désactivé"
+    if (Test-Path $LOG_PATH) { Write-Host "    $(Get-Content $LOG_PATH -Tail 1)" -ForegroundColor Gray }
+}
 
 # --- Résumé ---
 Write-Host ""

@@ -91,8 +91,7 @@ print(couleurs)              # ['rouge', 'jaune', 'bleu']</code></pre>
           id: "d3",
           type: "prediction",
           titre: "Une case calculée",
-          contenu: `<p>Lis ce programme sans l'exécuter. Attention à la deuxième ligne :
-            la droite du <code>=</code> est calculée avant d'être rangée.</p>`,
+          contenu: `<p>Lis ce programme sans l'exécuter.</p>`,
           code: `L = [3, 6, 9]\nL[1] = L[0] + L[2]\nprint(L)`,
           question: "Qu'affiche-t-il ?",
           options: [
